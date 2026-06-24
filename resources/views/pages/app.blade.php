@@ -212,6 +212,18 @@
                 <span x-text="lang==='FR' ? 'Calc. TVA' : 'VAT Calc'"></span>
             </button>
 
+            <button @click="setPage('import')" :class="page==='import' ? 'nav-item active' : 'nav-item'">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                <span x-text="lang==='FR' ? 'Import CSV' : 'CSV Import'"></span>
+            </button>
+            <button @click="setPage('subledgers')" :class="page==='subledgers' ? 'nav-item active' : 'nav-item'">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                <span x-text="lang==='FR' ? 'Sous-Comptes' : 'Sub-Ledgers'"></span>
+            </button>
+            <button @click="setPage('sync')" :class="page==='sync' ? 'nav-item active' : 'nav-item'">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                <span x-text="lang==='FR' ? 'Sync Hors Ligne' : 'Offline Sync'"></span>
+            </button>
             <button @click="setPage('team')" :class="page==='team' ? 'nav-item active' : 'nav-item'">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                 <span x-text="lang==='FR' ? 'Équipe' : 'Team'"></span>
@@ -345,11 +357,18 @@
             <div class="flex flex-wrap items-end justify-between gap-3">
                 <h2 class="text-2xl font-black text-white uppercase tracking-wide"
                     x-text="lang==='FR' ? 'Journal Comptable' : 'Accounting Journal'"></h2>
-                <div class="flex gap-2">
+                <div class="flex flex-wrap gap-2 items-center">
                     <input type="date" x-model="journalFilter.from" @change="loadJournal()"
                            class="glass-input !w-auto px-3 py-1.5 text-[11px]">
                     <input type="date" x-model="journalFilter.to" @change="loadJournal()"
                            class="glass-input !w-auto px-3 py-1.5 text-[11px]">
+                    <button @click="exportDgiFiscalis()"
+                            :disabled="dgiExporting"
+                            class="glass-btn-amber px-4 py-1.5 rounded-xl text-[10px] uppercase tracking-widest flex items-center gap-2 disabled:opacity-40">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        <span x-show="!dgiExporting" x-text="lang==='FR' ? 'Export DGI Fiscalis' : 'DGI Export'"></span>
+                        <span x-show="dgiExporting" x-cloak>…</span>
+                    </button>
                 </div>
             </div>
 
@@ -371,12 +390,13 @@
                                 <th class="py-3 px-5 whitespace-nowrap" x-text="lang==='FR' ? 'Mémo' : 'Memo'"></th>
                                 <th class="py-3 px-5 whitespace-nowrap" x-text="lang==='FR' ? 'Source' : 'Source'"></th>
                                 <th class="py-3 px-5 whitespace-nowrap text-center" x-text="lang==='FR' ? 'Statut' : 'Status'"></th>
+                                <th class="py-3 px-5 whitespace-nowrap text-center">PDF</th>
                             </tr>
                         </thead>
                         <tbody class="text-xs font-medium">
                             <template x-if="journalEntries.length === 0">
                                 <tr>
-                                    <td colspan="5" class="py-14 text-center">
+                                    <td colspan="6" class="py-14 text-center">
                                         <div class="flex flex-col items-center gap-3">
                                             <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl"
                                                  style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08)">📋</div>
@@ -404,6 +424,12 @@
                                                 ? 'background:rgba(244,63,94,0.15);border:1px solid rgba(244,63,94,0.3);color:rgb(252,165,165)'
                                                 : 'background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);color:rgb(252,211,77)'"
                                               x-text="txn.transaction_status"></span>
+                                    </td>
+                                    <td class="py-3 px-5 text-center whitespace-nowrap">
+                                        <button @click="downloadInvoice(txn)"
+                                                class="text-[9px] font-black px-2.5 py-1 rounded-lg uppercase tracking-wider transition-all active:scale-95"
+                                                style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.25);color:rgb(252,211,77)"
+                                                x-text="lang==='FR' ? '↓ PDF' : '↓ PDF'"></button>
                                     </td>
                                 </tr>
                             </template>
@@ -677,6 +703,313 @@
                         <span class="text-slate-400 font-black">Taux Cameroun:</span>
                         TVA 17.5% + CAC 10% de la TVA = <span class="text-amber-400 font-black">19.25% TTC</span>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!-- BANK STATEMENT IMPORT PAGE                                 -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <div x-show="page==='import'" x-cloak class="p-6 space-y-5 float-in" x-data="bankImport()">
+            <div>
+                <h2 class="text-2xl font-black text-white uppercase tracking-wide"
+                    x-text="lang==='FR' ? 'Import Relevé Bancaire CSV' : 'Bank Statement CSV Import'"></h2>
+                <p class="text-xs text-slate-400 mt-1"
+                   x-text="lang==='FR' ? 'Compatible Afriland, Ecobank, SGBC, UBA — colonnes configurables' : 'Afriland, Ecobank, SGBC, UBA compatible — configurable columns'"></p>
+            </div>
+
+            <div class="glass-card rounded-2xl p-6 space-y-5">
+                <!-- File picker -->
+                <div>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2"
+                           x-text="lang==='FR' ? 'Fichier CSV (.csv ou .txt)' : 'CSV File (.csv or .txt)'"></label>
+                    <input type="file" accept=".csv,.txt" @change="onFileChange($event)"
+                           class="block text-xs text-slate-400 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-[10px] file:font-black file:uppercase file:tracking-wider file:cursor-pointer"
+                           style="file:background:rgba(255,255,255,0.09);file:color:rgb(226,232,240);file:border:1px solid rgba(255,255,255,0.15)">
+                    <p x-show="importFile" class="text-[10px] text-slate-400 mt-1.5" x-text="importFile?.name + ' — ' + Math.round((importFile?.size||0)/1024) + ' KB'"></p>
+                </div>
+
+                <!-- Column mapping -->
+                <div>
+                    <p class="text-[10px] font-black text-amber-400 uppercase tracking-widest mb-3"
+                       x-text="lang==='FR' ? 'Mapping des Colonnes (indice 0-basé)' : 'Column Mapping (0-based index)'"></p>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5"
+                                   x-text="lang==='FR' ? 'Colonne Date' : 'Date Column'"></label>
+                            <input type="number" x-model="importCols.date_col" min="0" class="glass-input" placeholder="0">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5"
+                                   x-text="lang==='FR' ? 'Colonne Référence' : 'Reference Column'"></label>
+                            <input type="number" x-model="importCols.reference_col" min="0" class="glass-input" placeholder="1">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5"
+                                   x-text="lang==='FR' ? 'Colonne Mémo' : 'Memo Column'"></label>
+                            <input type="number" x-model="importCols.memo_col" min="0" class="glass-input" placeholder="2">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5"
+                                   x-text="lang==='FR' ? 'Colonne Débit' : 'Debit Column'"></label>
+                            <input type="number" x-model="importCols.debit_col" min="0" class="glass-input" placeholder="3">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5"
+                                   x-text="lang==='FR' ? 'Colonne Crédit' : 'Credit Column'"></label>
+                            <input type="number" x-model="importCols.credit_col" min="0" class="glass-input" placeholder="4">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5"
+                                   x-text="lang==='FR' ? 'Lignes à ignorer (entête)' : 'Header rows to skip'"></label>
+                            <input type="number" x-model="importCols.skip_rows" min="0" max="10" class="glass-input" placeholder="1">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 mt-3">
+                        <div>
+                            <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5"
+                                   x-text="lang==='FR' ? 'Séparateur' : 'Delimiter'"></label>
+                            <select x-model="importCols.delimiter" class="glass-input">
+                                <option value=",">, (virgule)</option>
+                                <option value=";">; (point-virgule)</option>
+                                <option value="&#9;">⇥ (tabulation)</option>
+                                <option value="|">| (pipe)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Error / success -->
+                <div x-show="importError" class="px-4 py-3 rounded-xl text-xs font-bold"
+                     style="background:rgba(244,63,94,0.1);border:1px solid rgba(244,63,94,0.25);color:rgb(252,165,165)"
+                     x-text="importError"></div>
+
+                <!-- Result summary -->
+                <div x-show="importResult" x-cloak class="rounded-xl p-4 space-y-2 float-in"
+                     style="background:rgba(16,185,129,0.07);border:1px solid rgba(16,185,129,0.2)">
+                    <p class="text-xs font-black text-emerald-400 uppercase tracking-widest"
+                       x-text="lang==='FR' ? 'Import Terminé' : 'Import Complete'"></p>
+                    <div class="grid grid-cols-3 gap-3 text-center">
+                        <div>
+                            <div class="text-[9px] text-slate-500 uppercase tracking-widest font-black mb-1" x-text="lang==='FR' ? 'Lignes Traitées' : 'Rows Processed'"></div>
+                            <div class="font-mono font-black text-white" x-text="importResult?.total_rows"></div>
+                        </div>
+                        <div>
+                            <div class="text-[9px] text-slate-500 uppercase tracking-widest font-black mb-1" x-text="lang==='FR' ? 'Imputées' : 'Posted'"></div>
+                            <div class="font-mono font-black text-emerald-400" x-text="importResult?.posted_count"></div>
+                        </div>
+                        <div>
+                            <div class="text-[9px] text-slate-500 uppercase tracking-widest font-black mb-1" x-text="lang==='FR' ? 'Ignorées' : 'Skipped'"></div>
+                            <div class="font-mono font-black text-amber-400" x-text="importResult?.skipped_count"></div>
+                        </div>
+                    </div>
+                    <template x-if="importResult?.skipped?.length">
+                        <div class="mt-2 text-[10px] text-slate-500 max-h-24 overflow-y-auto space-y-0.5">
+                            <template x-for="s in importResult.skipped" :key="s">
+                                <div x-text="s"></div>
+                            </template>
+                        </div>
+                    </template>
+                </div>
+
+                <button @click="runImport()" :disabled="importLoading || !importFile"
+                        class="glass-btn-amber px-6 py-2.5 rounded-xl text-xs uppercase tracking-widest flex items-center gap-2.5 disabled:opacity-40">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                    <span x-show="!importLoading" x-text="lang==='FR' ? 'Lancer l\'Import' : 'Run Import'"></span>
+                    <span x-show="importLoading" x-cloak class="flex items-center gap-2">
+                        <svg class="spin-pulse h-4 w-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/></svg>
+                        <span x-text="lang==='FR' ? 'Import en cours…' : 'Importing…'"></span>
+                    </span>
+                </button>
+            </div>
+
+            <!-- Format guide -->
+            <div class="glass-card rounded-2xl p-5">
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3"
+                   x-text="lang==='FR' ? 'Exemple de Format CSV Attendu' : 'Expected CSV Format Example'"></p>
+                <pre class="text-[10px] text-slate-400 font-mono leading-relaxed overflow-x-auto"
+                     style="background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.07);padding:0.75rem;border-radius:0.5rem">Date,Reference,Memo,Debit,Credit
+2026-01-15,VIR-001234,Paiement fournisseur SARL ABC,150000,
+2026-01-16,REC-005678,Encaissement client XYZ,,320000
+2026-01-17,VIR-001299,Salaires janvier 2026,850000,</pre>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!-- SUB-LEDGERS PAGE                                           -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <div x-show="page==='subledgers'" x-cloak class="p-6 space-y-5 float-in">
+            <div class="flex flex-wrap items-end justify-between gap-3">
+                <div>
+                    <h2 class="text-2xl font-black text-white uppercase tracking-wide"
+                        x-text="lang==='FR' ? 'Sous-Comptes Mobile Money & Caisse' : 'Mobile Money & Cash Sub-Ledgers'"></h2>
+                    <p class="text-xs text-slate-400 mt-1"
+                       x-text="lang==='FR' ? 'Comptes 571x — MTN MoMo, Orange Money, Caisses secondaires' : 'Accounts 571x — MTN MoMo, Orange Money, Cash registers'"></p>
+                </div>
+                <div class="flex gap-2 flex-wrap">
+                    <button @click="provisionSub('MTN')"
+                            class="glass-btn-dark px-3 py-1.5 rounded-xl text-[10px] uppercase tracking-widest"
+                            style="border-color:rgba(255,176,0,0.3);color:rgb(252,211,77)">+ MTN MoMo</button>
+                    <button @click="provisionSub('ORANGE')"
+                            class="glass-btn-dark px-3 py-1.5 rounded-xl text-[10px] uppercase tracking-widest"
+                            style="border-color:rgba(249,115,22,0.3);color:rgb(253,186,116)">+ Orange Money</button>
+                    <button @click="provisionSub('CASH')"
+                            class="glass-btn-dark px-3 py-1.5 rounded-xl text-[10px] uppercase tracking-widest"
+                            style="border-color:rgba(16,185,129,0.3);color:rgb(110,231,183)">+ Caisse</button>
+                </div>
+            </div>
+
+            <div x-show="subError" class="px-4 py-3 rounded-xl text-xs font-bold"
+                 style="background:rgba(244,63,94,0.1);border:1px solid rgba(244,63,94,0.25);color:rgb(252,165,165)"
+                 x-text="subError"></div>
+            <div x-show="subSuccess" class="px-4 py-3 rounded-xl text-xs font-bold float-in"
+                 style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);color:rgb(110,231,183)"
+                 x-text="subSuccess"></div>
+
+            <div class="glass rounded-2xl overflow-hidden">
+                <div class="px-5 py-3 border-b flex items-center justify-between"
+                     style="border-color:rgba(255,255,255,0.07);background:rgba(0,0,0,0.15)">
+                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest"
+                          x-text="lang==='FR' ? 'Comptes Auxiliaires Actifs' : 'Active Auxiliary Accounts'"></span>
+                    <span class="text-[10px] font-mono font-black px-2.5 py-0.5 rounded-full"
+                          style="background:rgba(99,102,241,0.15);color:rgb(165,180,252);border:1px solid rgba(99,102,241,0.3)"
+                          x-text="subAccounts.length + ' comptes'"></span>
+                </div>
+                <template x-if="subAccounts.length===0">
+                    <div class="py-14 text-center">
+                        <div class="flex flex-col items-center gap-3">
+                            <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl"
+                                 style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08)">📲</div>
+                            <div class="text-slate-500 text-[11px] font-black uppercase tracking-widest"
+                                 x-text="lang==='FR' ? 'Aucun sous-compte actif. Cliquez + pour en créer.' : 'No sub-ledgers yet. Click + to create one.'"></div>
+                        </div>
+                    </div>
+                </template>
+                <div class="divide-y" style="border-color:rgba(255,255,255,0.06)">
+                    <template x-for="acc in subAccounts" :key="acc.id">
+                        <div class="px-5 py-3.5 flex items-center justify-between glass-row">
+                            <div class="flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-xl flex items-center justify-center font-mono font-black text-[11px] flex-shrink-0"
+                                     :style="acc.code?.startsWith('5712')
+                                        ? 'background:rgba(255,176,0,0.12);border:1px solid rgba(255,176,0,0.25);color:rgb(252,211,77)'
+                                        : acc.code?.startsWith('5713')
+                                        ? 'background:rgba(249,115,22,0.12);border:1px solid rgba(249,115,22,0.25);color:rgb(253,186,116)'
+                                        : 'background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.25);color:rgb(110,231,183)'"
+                                     x-text="acc.code"></div>
+                                <div>
+                                    <div class="text-sm font-black text-white" x-text="acc.label"></div>
+                                    <div class="text-[10px] text-slate-500 font-medium">
+                                        <span x-text="acc.code?.startsWith('5712') ? 'MTN MoMo' : acc.code?.startsWith('5713') ? 'Orange Money' : 'Caisse'"></span>
+                                        · SYSCOHADA Classe 5
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-widest"
+                                  :style="acc.code?.startsWith('5712')
+                                    ? 'background:rgba(255,176,0,0.1);border:1px solid rgba(255,176,0,0.2);color:rgb(252,211,77)'
+                                    : acc.code?.startsWith('5713')
+                                    ? 'background:rgba(249,115,22,0.1);border:1px solid rgba(249,115,22,0.2);color:rgb(253,186,116)'
+                                    : 'background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);color:rgb(110,231,183)'"
+                                  x-text="acc.code?.startsWith('5712') ? 'MTN' : acc.code?.startsWith('5713') ? 'ORANGE' : 'CASH'"></span>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!-- OFFLINE SYNC STATUS PAGE                                   -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <div x-show="page==='sync'" x-cloak class="p-6 space-y-5 float-in">
+            <div class="flex flex-wrap items-end justify-between gap-3">
+                <div>
+                    <h2 class="text-2xl font-black text-white uppercase tracking-wide"
+                        x-text="lang==='FR' ? 'Synchronisation Hors Ligne' : 'Offline Sync'"></h2>
+                    <p class="text-xs text-slate-400 mt-1"
+                       x-text="lang==='FR' ? 'File d\'attente de synchronisation — écritures en attente d\'envoi' : 'Sync queue — entries pending upload'"></p>
+                </div>
+                <div class="flex gap-2">
+                    <button @click="loadSyncStatus()"
+                            class="glass-btn-dark px-4 py-1.5 rounded-xl text-[10px] uppercase tracking-widest"
+                            x-text="lang==='FR' ? '↺ Rafraîchir' : '↺ Refresh'"></button>
+                    <button @click="pushSync()" :disabled="syncPushing || !syncStatus?.pending_count"
+                            class="glass-btn-amber px-4 py-1.5 rounded-xl text-[10px] uppercase tracking-widest disabled:opacity-40"
+                            x-text="syncPushing ? '…' : (lang==='FR' ? '↑ Envoyer Maintenant' : '↑ Push Now')"></button>
+                </div>
+            </div>
+
+            <!-- Status cards -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div class="glass-card rounded-2xl p-4 text-center relative overflow-hidden"
+                     style="box-shadow:0 4px 24px rgba(0,0,0,0.45),0 0 24px rgba(245,158,11,0.12)">
+                    <div class="absolute -top-2 -right-2 w-12 h-12 rounded-full blur-2xl opacity-20"
+                         style="background:rgb(245,158,11)"></div>
+                    <div class="text-[9px] text-slate-500 font-black uppercase tracking-widest mb-2"
+                         x-text="lang==='FR' ? 'En Attente' : 'Pending'"></div>
+                    <div class="font-mono font-black text-amber-400 text-2xl" x-text="syncStatus?.pending_count ?? '—'"></div>
+                </div>
+                <div class="glass-card rounded-2xl p-4 text-center relative overflow-hidden"
+                     style="box-shadow:0 4px 24px rgba(0,0,0,0.45),0 0 24px rgba(16,185,129,0.12)">
+                    <div class="absolute -top-2 -right-2 w-12 h-12 rounded-full blur-2xl opacity-20"
+                         style="background:rgb(16,185,129)"></div>
+                    <div class="text-[9px] text-slate-500 font-black uppercase tracking-widest mb-2"
+                         x-text="lang==='FR' ? 'Synchronisées' : 'Synced'"></div>
+                    <div class="font-mono font-black text-emerald-400 text-2xl" x-text="syncStatus?.synced_count ?? '—'"></div>
+                </div>
+                <div class="glass-card rounded-2xl p-4 text-center relative overflow-hidden"
+                     style="box-shadow:0 4px 24px rgba(0,0,0,0.45),0 0 24px rgba(244,63,94,0.12)">
+                    <div class="absolute -top-2 -right-2 w-12 h-12 rounded-full blur-2xl opacity-20"
+                         style="background:rgb(244,63,94)"></div>
+                    <div class="text-[9px] text-slate-500 font-black uppercase tracking-widest mb-2"
+                         x-text="lang==='FR' ? 'Erreurs' : 'Errors'"></div>
+                    <div class="font-mono font-black text-rose-400 text-2xl" x-text="syncStatus?.error_count ?? '—'"></div>
+                </div>
+                <div class="glass-card rounded-2xl p-4 text-center">
+                    <div class="text-[9px] text-slate-500 font-black uppercase tracking-widest mb-2"
+                         x-text="lang==='FR' ? 'Dernière Sync' : 'Last Sync'"></div>
+                    <div class="font-mono font-black text-slate-300 text-xs leading-snug"
+                         x-text="syncStatus?.last_synced_at ?? (lang==='FR' ? 'Jamais' : 'Never')"></div>
+                </div>
+            </div>
+
+            <!-- Connection status banner -->
+            <div class="glass-card rounded-2xl p-4 flex items-center gap-4"
+                 :style="connStatus==='ONLINE'
+                    ? 'border-color:rgba(16,185,129,0.3);box-shadow:0 4px 20px rgba(16,185,129,0.1)'
+                    : 'border-color:rgba(245,158,11,0.3);box-shadow:0 4px 20px rgba(245,158,11,0.1)'">
+                <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 text-lg"
+                     :style="connStatus==='ONLINE'
+                        ? 'background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.3)'
+                        : 'background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3)'"
+                     x-text="connStatus==='ONLINE' ? '🌐' : '📴'"></div>
+                <div>
+                    <div class="text-sm font-black text-white"
+                         x-text="connStatus==='ONLINE'
+                            ? (lang==='FR' ? 'Connecté — Sync automatique active' : 'Connected — Auto-sync active')
+                            : (lang==='FR' ? 'Hors ligne — Les écritures sont stockées localement' : 'Offline — Entries stored locally')"></div>
+                    <div class="text-[10px] text-slate-400 mt-0.5"
+                         x-text="lang==='FR' ? 'La synchronisation reprend automatiquement au retour de la connexion.' : 'Sync resumes automatically when connection is restored.'"></div>
+                </div>
+            </div>
+
+            <!-- Pending items list -->
+            <div x-show="syncQueue.length > 0" class="glass rounded-2xl overflow-hidden">
+                <div class="px-5 py-3 border-b" style="border-color:rgba(255,255,255,0.07);background:rgba(0,0,0,0.15)">
+                    <span class="text-[10px] font-black text-amber-400 uppercase tracking-widest"
+                          x-text="lang==='FR' ? 'File d\'Attente de Synchronisation' : 'Sync Queue'"></span>
+                </div>
+                <div class="divide-y" style="border-color:rgba(255,255,255,0.06)">
+                    <template x-for="item in syncQueue" :key="item.id">
+                        <div class="px-5 py-3 flex items-center justify-between glass-row">
+                            <div>
+                                <div class="text-xs font-black text-white font-mono" x-text="item.reference_id ?? item.id"></div>
+                                <div class="text-[10px] text-slate-500 mt-0.5" x-text="item.memo ?? item.payload_type"></div>
+                            </div>
+                            <span class="text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider"
+                                  style="background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);color:rgb(252,211,77)"
+                                  x-text="lang==='FR' ? 'En attente' : 'Pending'"></span>
+                        </div>
+                    </template>
                 </div>
             </div>
         </div>
@@ -957,6 +1290,19 @@ function opesApp() {
         fiscalProvision: 0,
         today: new Date().toLocaleDateString('fr-CM', { weekday:'long', year:'numeric', month:'long', day:'numeric' }),
 
+        /* DGI export */
+        dgiExporting: false,
+
+        /* Subledgers */
+        subAccounts: [],
+        subError: '',
+        subSuccess: '',
+
+        /* Sync */
+        syncStatus: null,
+        syncQueue: [],
+        syncPushing: false,
+
         /* Team */
         teamMembers: [],
         teamShowInvite: false,
@@ -988,9 +1334,11 @@ function opesApp() {
             { page:'calculator', icon:'🧮', labelFr:'Calc. TVA',        labelEn:'VAT Calc' },
             { page:'journal',    icon:'📋', labelFr:'Journal',          labelEn:'Journal' },
             { page:'ledger',     icon:'📊', labelFr:'Grand Livre',      labelEn:'Ledger' },
-            { page:'team',       icon:'👥', labelFr:'Équipe',           labelEn:'Team' },
-            { page:'settings',   icon:'⚙️', labelFr:'Paramètres',       labelEn:'Settings' },
-            { page:null, href:'/dgi-monitor', icon:'📡', labelFr:'Suivi DGI',      labelEn:'DGI Monitor' },
+            { page:'team',        icon:'👥', labelFr:'Équipe',           labelEn:'Team' },
+            { page:'settings',    icon:'⚙️', labelFr:'Paramètres',       labelEn:'Settings' },
+            { page:'import',      icon:'📂', labelFr:'Import CSV',        labelEn:'CSV Import' },
+            { page:'sync',        icon:'🔄', labelFr:'Sync Hors Ligne',   labelEn:'Offline Sync' },
+            { page:null, href:'/dgi-monitor',   icon:'📡', labelFr:'Suivi DGI',    labelEn:'DGI Monitor' },
             { page:null, href:'/tax-dashboard', icon:'📈', labelFr:'Bilan Fiscal', labelEn:'Tax Monitor' },
         ],
 
@@ -1035,9 +1383,11 @@ function opesApp() {
         setPage(p) {
             this.page = p;
             history.replaceState(null,'','/app?page='+p);
-            if (p==='journal'  && !this.journalEntries.length) this.loadJournal();
-            if (p==='ledger'   && !this.ledgerAccounts.length) this.loadLedger();
-            if (p==='team'     && !this.teamMembers.length)    this.loadTeam();
+            if (p==='journal'    && !this.journalEntries.length) this.loadJournal();
+            if (p==='ledger'     && !this.ledgerAccounts.length) this.loadLedger();
+            if (p==='team'       && !this.teamMembers.length)    this.loadTeam();
+            if (p==='subledgers' && !this.subAccounts.length)    this.loadSubledgers();
+            if (p==='sync')                                       this.loadSyncStatus();
         },
 
         async loadJournal() {
@@ -1066,6 +1416,76 @@ function opesApp() {
                 balanced:     data.balanced     ?? true,
             };
             this.loading = false;
+        },
+
+        async exportDgiFiscalis() {
+            if (!this.company) return;
+            this.dgiExporting = true;
+            try {
+                const token = localStorage.getItem('opes_token');
+                const res = await fetch(`/api/v1/companies/${this.company.id}/exports/dgi-fiscalis`, {
+                    headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/json' },
+                });
+                if (!res.ok) throw new Error('Export failed');
+                const blob = await res.blob();
+                const ct = res.headers.get('Content-Type') || '';
+                const ext = ct.includes('csv') ? 'csv' : 'json';
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a'); a.href = url;
+                a.download = `DGI-Fiscalis-${this.company.niu ?? 'export'}-${new Date().toISOString().slice(0,10)}.${ext}`;
+                a.click(); URL.revokeObjectURL(url);
+            } catch(e) { alert(e.message); }
+            finally { this.dgiExporting = false; }
+        },
+
+        async downloadInvoice(txn) {
+            if (!this.company) return;
+            const token = localStorage.getItem('opes_token');
+            const res = await fetch(`/api/v1/companies/${this.company.id}/invoice/${txn.id}/download`, {
+                headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/pdf' },
+            });
+            if (!res.ok) { alert('Invoice PDF not available'); return; }
+            const blob = await res.blob();
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url;
+            a.download = `FACTURE-${txn.reference_id}.pdf`; a.click();
+            URL.revokeObjectURL(url);
+        },
+
+        async loadSubledgers() {
+            if (!this.company) return;
+            const data = await this.api(`companies/${this.company.id}/subledgers`);
+            this.subAccounts = Array.isArray(data) ? data : [];
+        },
+
+        async provisionSub(type) {
+            if (!this.company) return;
+            this.subError = ''; this.subSuccess = '';
+            try {
+                const data = await this.api(`companies/${this.company.id}/subledgers`, {
+                    method:'POST', body: JSON.stringify({ type }),
+                });
+                if (data.errors) throw new Error(Object.values(data.errors).flat().join(' '));
+                if (!data.account) throw new Error(data.message || 'Failed');
+                this.subSuccess = `${data.account.code} — ${data.account.label} créé ✔`;
+                await this.loadSubledgers();
+            } catch(e) { this.subError = e.message; }
+        },
+
+        async loadSyncStatus() {
+            const data = await this.api('sync/status');
+            this.syncStatus = data;
+            const q = await this.api('sync/pull');
+            this.syncQueue = Array.isArray(q) ? q : (q.data ?? []);
+        },
+
+        async pushSync() {
+            this.syncPushing = true;
+            try {
+                await this.api('sync/push', { method:'POST', body: JSON.stringify({}) });
+                await this.loadSyncStatus();
+            } catch(e) {}
+            finally { this.syncPushing = false; }
         },
 
         async loadTeam() {
@@ -1158,6 +1578,49 @@ function invoiceForm() {
                 this.invoiceError = e.message;
             } finally {
                 this.generating = false;
+            }
+        },
+    };
+}
+
+function bankImport() {
+    return {
+        importFile: null,
+        importLoading: false,
+        importError: '',
+        importResult: null,
+        importCols: { date_col:0, reference_col:1, memo_col:2, debit_col:3, credit_col:4, skip_rows:1, delimiter:',' },
+
+        onFileChange(e) {
+            this.importFile = e.target.files[0] || null;
+            this.importResult = null; this.importError = '';
+        },
+
+        async runImport() {
+            if (!this.importFile) return;
+            this.importLoading=true; this.importError=''; this.importResult=null;
+            try {
+                const token = localStorage.getItem('opes_token');
+                const me = await (await fetch('/api/v1/auth/me', {
+                    headers:{'Authorization':'Bearer '+token,'Accept':'application/json'}
+                })).json();
+                const companyId = me.company?.id;
+                if (!companyId) throw new Error('Company not found');
+                const fd = new FormData();
+                fd.append('csv_file', this.importFile);
+                Object.entries(this.importCols).forEach(([k,v]) => fd.append(k, v));
+                const res = await fetch(`/api/v1/companies/${companyId}/bank-statement/import`, {
+                    method:'POST',
+                    headers:{'Authorization':'Bearer '+token,'Accept':'application/json'},
+                    body: fd,
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || Object.values(data.errors??{}).flat().join(' | '));
+                this.importResult = data;
+            } catch(e) {
+                this.importError = e.message;
+            } finally {
+                this.importLoading = false;
             }
         },
     };
