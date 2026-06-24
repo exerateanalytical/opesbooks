@@ -27,7 +27,12 @@ class JournalPostingTest extends TestCase
             'tax_center' => 'CIME Douala I',
             'tax_regime' => 'REEL',
         ]);
-        $this->user = User::factory()->create(['company_id' => $this->company->id]);
+        $this->user = User::factory()->create(['company_id' => $this->company->id, 'role' => 'OWNER']);
+    }
+
+    private function token(): string
+    {
+        return $this->user->createToken('test')->plainTextToken;
     }
 
     public function test_balanced_entry_posts_successfully(): void
@@ -110,7 +115,7 @@ class JournalPostingTest extends TestCase
 
     public function test_manual_journal_requires_balance(): void
     {
-        $response = $this->postJson('/api/v1/journal/manual', [
+        $response = $this->withToken($this->token())->postJson('/api/v1/journal/manual', [
             'company_niu'     => 'P012345678901A',
             'posting_date'    => '2026-06-24',
             'reference_id'    => 'MAN-001',
