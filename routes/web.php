@@ -44,3 +44,4 @@ Route::get('/', function () {
 
 Route::get('/tax-dashboard', TaxDashboard::class)->name('tax.dashboard');
 Route::get('/dgi-monitor', DgiMonitor::class)->name('dgi.monitor');
+Route::get('/about', fn () => view('pages.about'))->name('about');

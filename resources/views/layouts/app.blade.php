@@ -247,6 +247,9 @@
                 <a href="/tax-dashboard" class="nav-link px-3.5 py-2 rounded-xl text-[11px] font-bold uppercase tracking-wider">
                     <span x-show="lang==='FR'">Fiscalité</span><span x-show="lang==='EN'" x-cloak>Tax</span>
                 </a>
+                <a href="/about" class="nav-link px-3.5 py-2 rounded-xl text-[11px] font-bold uppercase tracking-wider">
+                    <span x-show="lang==='FR'">À Propos</span><span x-show="lang==='EN'" x-cloak>About</span>
+                </a>
             </nav>
 
             <!-- Controls -->

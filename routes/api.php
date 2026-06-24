@@ -81,6 +81,11 @@ Route::prefix('v1')->name('v1.')->group(function () {
             Route::post('invoice/generate',          [InvoicePdfController::class, 'generate'])->name('invoice.generate');
             Route::get('invoice/{entry}/download',   [InvoicePdfController::class, 'download'])->name('invoice.download');
 
+            // Logo upload (OWNER only)
+            Route::post('logo', [CompanyController::class, 'uploadLogo'])
+                ->middleware(\App\Http\Middleware\RequireRole::class . ':OWNER')
+                ->name('logo.upload');
+
             // OWNER/ACCOUNTANT-only operations
             Route::middleware(\App\Http\Middleware\RequireRole::class . ':OWNER,ACCOUNTANT')
                 ->group(function () {

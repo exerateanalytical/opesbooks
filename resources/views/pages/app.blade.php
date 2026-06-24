@@ -212,6 +212,15 @@
                 <span x-text="lang==='FR' ? 'Calc. TVA' : 'VAT Calc'"></span>
             </button>
 
+            <button @click="setPage('team')" :class="page==='team' ? 'nav-item active' : 'nav-item'">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                <span x-text="lang==='FR' ? 'Équipe' : 'Team'"></span>
+            </button>
+            <button @click="setPage('settings')" :class="page==='settings' ? 'nav-item active' : 'nav-item'">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                <span x-text="lang==='FR' ? 'Paramètres' : 'Settings'"></span>
+            </button>
+
             <div class="my-2" style="height:1px;background:rgba(255,255,255,0.07)"></div>
 
             <a href="/tax-dashboard" class="nav-item">
@@ -221,6 +230,10 @@
             <a href="/dgi-monitor" class="nav-item">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.14 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"/></svg>
                 <span x-text="lang==='FR' ? 'Suivi DGI' : 'DGI Monitor'"></span>
+            </a>
+            <a href="/about" class="nav-item">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <span x-text="lang==='FR' ? 'À Propos' : 'About'"></span>
             </a>
         </nav>
 
@@ -668,6 +681,267 @@
             </div>
         </div>
 
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!-- TEAM MANAGEMENT PAGE                                       -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <div x-show="page==='team'" x-cloak class="p-6 space-y-5 float-in">
+            <div class="flex flex-wrap items-end justify-between gap-3">
+                <div>
+                    <h2 class="text-2xl font-black text-white uppercase tracking-wide"
+                        x-text="lang==='FR' ? 'Gestion de l\'Équipe' : 'Team Management'"></h2>
+                    <p class="text-xs text-slate-400 mt-1"
+                       x-text="lang==='FR' ? 'Invitez des comptables et agents de saisie' : 'Invite accountants and clerks'"></p>
+                </div>
+                <template x-if="user?.role === 'OWNER'">
+                    <button @click="teamShowInvite=!teamShowInvite"
+                            class="glass-btn-amber px-4 py-2 rounded-xl text-xs uppercase tracking-widest"
+                            x-text="lang==='FR' ? '+ Inviter un Membre' : '+ Invite Member'"></button>
+                </template>
+            </div>
+
+            <!-- Invite form -->
+            <div x-show="teamShowInvite" x-cloak class="glass-card rounded-2xl p-5 space-y-3 float-in">
+                <p class="text-[10px] font-black text-amber-400 uppercase tracking-widest"
+                   x-text="lang==='FR' ? 'Nouvel Utilisateur' : 'New User'"></p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5"
+                               x-text="lang==='FR' ? 'Nom complet' : 'Full Name'"></label>
+                        <input type="text" x-model="inviteForm.name" class="glass-input"
+                               :placeholder="lang==='FR' ? 'Jean Dupont' : 'John Smith'">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Email</label>
+                        <input type="email" x-model="inviteForm.email" class="glass-input" placeholder="jean@entreprise.cm">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Rôle</label>
+                        <select x-model="inviteForm.role" class="glass-input">
+                            <option value="ACCOUNTANT">ACCOUNTANT</option>
+                            <option value="CLERK">CLERK</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5"
+                               x-text="lang==='FR' ? 'Mot de passe' : 'Password'"></label>
+                        <input type="password" x-model="inviteForm.password" class="glass-input" placeholder="••••••••">
+                    </div>
+                </div>
+                <div x-show="teamError" class="px-4 py-2.5 rounded-xl text-xs font-bold"
+                     style="background:rgba(244,63,94,0.1);border:1px solid rgba(244,63,94,0.25);color:rgb(252,165,165)"
+                     x-text="teamError"></div>
+                <div x-show="teamSuccess" class="px-4 py-2.5 rounded-xl text-xs font-bold"
+                     style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);color:rgb(110,231,183)"
+                     x-text="teamSuccess"></div>
+                <div class="flex gap-2">
+                    <button @click="doInvite()" :disabled="teamLoading"
+                            class="glass-btn-amber px-5 py-2 rounded-xl text-xs uppercase tracking-widest disabled:opacity-40"
+                            x-text="teamLoading ? '…' : (lang==='FR' ? 'Envoyer Invitation' : 'Send Invite')"></button>
+                    <button @click="teamShowInvite=false" class="glass-btn-dark px-4 py-2 rounded-xl text-xs uppercase tracking-widest"
+                            x-text="lang==='FR' ? 'Annuler' : 'Cancel'"></button>
+                </div>
+            </div>
+
+            <!-- Members list -->
+            <div class="glass rounded-2xl overflow-hidden">
+                <div class="px-5 py-3 border-b flex items-center justify-between"
+                     style="border-color:rgba(255,255,255,0.07);background:rgba(0,0,0,0.15)">
+                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest"
+                          x-text="lang==='FR' ? 'Membres de l\'Entreprise' : 'Company Members'"></span>
+                    <span class="text-[10px] font-mono font-black px-2.5 py-0.5 rounded-full"
+                          style="background:rgba(245,158,11,0.15);color:rgb(252,211,77);border:1px solid rgba(245,158,11,0.3)"
+                          x-text="teamMembers.length + (lang==='FR' ? ' membres' : ' members')"></span>
+                </div>
+                <template x-if="teamMembers.length === 0">
+                    <div class="py-14 text-center">
+                        <div class="flex flex-col items-center gap-3">
+                            <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl"
+                                 style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08)">👥</div>
+                            <div class="text-slate-500 text-[11px] font-black uppercase tracking-widest"
+                                 x-text="lang==='FR' ? 'Aucun membre trouvé.' : 'No members found.'"></div>
+                        </div>
+                    </div>
+                </template>
+                <div class="divide-y" style="--tw-divide-opacity:1">
+                    <template x-for="member in teamMembers" :key="member.id">
+                        <div class="px-5 py-3.5 flex items-center justify-between glass-row">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-xl flex items-center justify-center text-xs font-black"
+                                     style="background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.2);color:rgb(252,211,77)"
+                                     x-text="(member.name ?? '?')[0].toUpperCase()"></div>
+                                <div>
+                                    <div class="text-sm font-black text-white" x-text="member.name"></div>
+                                    <div class="text-[10px] text-slate-500 font-medium" x-text="member.email"></div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-widest"
+                                      :style="member.role==='OWNER'
+                                        ? 'background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);color:rgb(252,211,77)'
+                                        : member.role==='ACCOUNTANT'
+                                        ? 'background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3);color:rgb(165,180,252)'
+                                        : 'background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);color:rgb(148,163,184)'"
+                                      x-text="member.role"></span>
+                                <span class="text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider"
+                                      :style="member.id===user?.id
+                                        ? 'background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);color:rgb(110,231,183)'
+                                        : 'display:none'"
+                                      x-text="lang==='FR' ? 'Vous' : 'You'"></span>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!-- SETTINGS PAGE                                              -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <div x-show="page==='settings'" x-cloak class="p-6 space-y-6 float-in" x-data="settingsForm()">
+            <div>
+                <h2 class="text-2xl font-black text-white uppercase tracking-wide"
+                    x-text="lang==='FR' ? 'Paramètres Entreprise' : 'Company Settings'"></h2>
+                <p class="text-xs text-slate-400 mt-1"
+                   x-text="lang==='FR' ? 'Profil fiscal, en-tête de facture, logo' : 'Tax profile, invoice letterhead, logo'"></p>
+            </div>
+
+            <!-- Logo upload -->
+            <div class="glass-card rounded-2xl p-6 space-y-4">
+                <p class="text-[10px] font-black text-amber-400 uppercase tracking-widest"
+                   x-text="lang==='FR' ? 'Logo & Identité Visuelle' : 'Logo & Visual Identity'"></p>
+                <div class="flex items-center gap-5">
+                    <!-- Logo preview -->
+                    <div class="w-20 h-20 rounded-2xl flex items-center justify-center overflow-hidden flex-shrink-0"
+                         style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12)">
+                        <template x-if="logoPreview || settingsData.logo_url">
+                            <img :src="logoPreview || settingsData.logo_url" class="w-full h-full object-contain p-1">
+                        </template>
+                        <template x-if="!logoPreview && !settingsData.logo_url">
+                            <span class="text-amber-400 font-black text-2xl tracking-widest"
+                                  x-text="(settingsData.name ?? 'OB').substring(0,2).toUpperCase()"></span>
+                        </template>
+                    </div>
+                    <div class="space-y-2 flex-1">
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest"
+                               x-text="lang==='FR' ? 'Logo Entreprise (PNG/JPG/SVG, max 2 Mo)' : 'Company Logo (PNG/JPG/SVG, max 2MB)'"></label>
+                        <input type="file" accept="image/*" @change="onLogoChange($event)"
+                               class="block text-xs text-slate-400 file:mr-3 file:py-1.5 file:px-4 file:rounded-xl file:border-0 file:text-[10px] file:font-black file:uppercase file:tracking-wider file:cursor-pointer"
+                               style="file:background:rgba(245,158,11,0.15);file:color:rgb(252,211,77);file:border:1px solid rgba(245,158,11,0.3)">
+                        <button x-show="logoFile" @click="uploadLogo()"
+                                :disabled="logoUploading"
+                                class="glass-btn-amber px-4 py-1.5 rounded-xl text-[10px] uppercase tracking-widest disabled:opacity-40"
+                                x-text="logoUploading ? '…' : (lang==='FR' ? 'Enregistrer le Logo' : 'Save Logo')"></button>
+                        <p x-show="logoMsg" class="text-[10px] font-bold text-emerald-400" x-text="logoMsg"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fiscal profile -->
+            <div class="glass-card rounded-2xl p-6 space-y-4">
+                <p class="text-[10px] font-black text-amber-400 uppercase tracking-widest"
+                   x-text="lang==='FR' ? 'Profil Fiscal DGI' : 'DGI Tax Profile'"></p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5"
+                               x-text="lang==='FR' ? 'Raison Sociale' : 'Company Name'"></label>
+                        <input type="text" x-model="settingsData.name" class="glass-input">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">NIU</label>
+                        <input type="text" x-model="settingsData.niu" class="glass-input" placeholder="M08200001A">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">RCCM</label>
+                        <input type="text" x-model="settingsData.rccm" class="glass-input" placeholder="RC/DLA/2020/B/01234">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5"
+                               x-text="lang==='FR' ? 'Régime Fiscal' : 'Tax Regime'"></label>
+                        <select x-model="settingsData.tax_regime" class="glass-input">
+                            <option value="REEL">RÉEL</option>
+                            <option value="SIMPLIFIE">SIMPLIFIÉ</option>
+                            <option value="LIBERATOIRE">LIBÉRATOIRE</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5"
+                               x-text="lang==='FR' ? 'Centre des Impôts' : 'Tax Center'"></label>
+                        <input type="text" x-model="settingsData.tax_center" class="glass-input" placeholder="DGI Douala Akwa">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5"
+                               x-text="lang==='FR' ? 'Téléphone' : 'Phone'"></label>
+                        <input type="text" x-model="settingsData.phone" class="glass-input" placeholder="+237 6XX XXX XXX">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Email</label>
+                        <input type="email" x-model="settingsData.email" class="glass-input">
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5"
+                               x-text="lang==='FR' ? 'Adresse Siège Social' : 'Registered Address'"></label>
+                        <input type="text" x-model="settingsData.address" class="glass-input">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Letterhead / Invoice config -->
+            <div class="glass-card rounded-2xl p-6 space-y-4">
+                <p class="text-[10px] font-black text-amber-400 uppercase tracking-widest"
+                   x-text="lang==='FR' ? 'En-Tête de Facture' : 'Invoice Letterhead'"></p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5"
+                               x-text="lang==='FR' ? 'Slogan / Tagline' : 'Tagline'"></label>
+                        <input type="text" x-model="settingsData.letterhead_tagline" class="glass-input"
+                               :placeholder="lang==='FR' ? 'Votre partenaire de confiance' : 'Your trusted partner'">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Site Web</label>
+                        <input type="text" x-model="settingsData.letterhead_website" class="glass-input" placeholder="www.votreentreprise.cm">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5"
+                               x-text="lang==='FR' ? 'Banque Domiciliataire' : 'Bank'"></label>
+                        <input type="text" x-model="settingsData.bank_name" class="glass-input" placeholder="Afriland First Bank">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5"
+                               x-text="lang==='FR' ? 'N° Compte' : 'Account No.'"></label>
+                        <input type="text" x-model="settingsData.bank_account" class="glass-input" placeholder="001 000 12345 67">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">RIB</label>
+                        <input type="text" x-model="settingsData.bank_rib" class="glass-input" placeholder="10005 00001 00123456789 12">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5"
+                           x-text="lang==='FR' ? 'Note de Pied de Facture' : 'Invoice Footer Note'"></label>
+                    <input type="text" x-model="settingsData.invoice_footer_note" class="glass-input"
+                           :placeholder="lang==='FR' ? 'Paiement à 30 jours. En cas de retard, pénalité de 1,5%/mois.' : 'Payment due in 30 days. Late penalty: 1.5%/month.'">
+                </div>
+            </div>
+
+            <!-- Save -->
+            <div x-show="settingsError" class="px-4 py-3 rounded-xl text-sm font-bold"
+                 style="background:rgba(244,63,94,0.1);border:1px solid rgba(244,63,94,0.25);color:rgb(252,165,165)"
+                 x-text="settingsError"></div>
+            <div x-show="settingsSuccess" class="px-4 py-3 rounded-xl text-sm font-bold"
+                 style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);color:rgb(110,231,183)"
+                 x-text="settingsSuccess"></div>
+
+            <div class="flex items-center gap-3">
+                <button @click="saveSettings()" :disabled="settingsSaving"
+                        class="glass-btn-amber px-6 py-2.5 rounded-xl text-xs uppercase tracking-widest disabled:opacity-40"
+                        x-text="settingsSaving ? '…' : (lang==='FR' ? 'Enregistrer les Modifications' : 'Save Changes')"></button>
+                <a href="/about" class="glass-btn-dark px-5 py-2.5 rounded-xl text-xs uppercase tracking-widest"
+                   x-text="lang==='FR' ? 'À Propos d\'Opes Books' : 'About Opes Books'"></a>
+            </div>
+        </div>
+
     </main>
 </div>
 
@@ -682,6 +956,14 @@ function opesApp() {
         company: null,
         fiscalProvision: 0,
         today: new Date().toLocaleDateString('fr-CM', { weekday:'long', year:'numeric', month:'long', day:'numeric' }),
+
+        /* Team */
+        teamMembers: [],
+        teamShowInvite: false,
+        teamLoading: false,
+        teamError: '',
+        teamSuccess: '',
+        inviteForm: { name:'', email:'', role:'ACCOUNTANT', password:'' },
 
         /* Journal */
         journalEntries: [],
@@ -706,6 +988,10 @@ function opesApp() {
             { page:'calculator', icon:'🧮', labelFr:'Calc. TVA',        labelEn:'VAT Calc' },
             { page:'journal',    icon:'📋', labelFr:'Journal',          labelEn:'Journal' },
             { page:'ledger',     icon:'📊', labelFr:'Grand Livre',      labelEn:'Ledger' },
+            { page:'team',       icon:'👥', labelFr:'Équipe',           labelEn:'Team' },
+            { page:'settings',   icon:'⚙️', labelFr:'Paramètres',       labelEn:'Settings' },
+            { page:null, href:'/dgi-monitor', icon:'📡', labelFr:'Suivi DGI',      labelEn:'DGI Monitor' },
+            { page:null, href:'/tax-dashboard', icon:'📈', labelFr:'Bilan Fiscal', labelEn:'Tax Monitor' },
         ],
 
         async init() {
@@ -718,8 +1004,10 @@ function opesApp() {
             await this.loadMe();
             this.loading = false;
             /* Auto-load data for initial page */
-            if (this.page==='journal') this.loadJournal();
-            if (this.page==='ledger')  this.loadLedger();
+            if (this.page==='journal')  this.loadJournal();
+            if (this.page==='ledger')   this.loadLedger();
+            if (this.page==='team')     this.loadTeam();
+            if (this.page==='settings') {} // data comes from loadMe()
         },
 
         async api(path, opts={}) {
@@ -747,8 +1035,9 @@ function opesApp() {
         setPage(p) {
             this.page = p;
             history.replaceState(null,'','/app?page='+p);
-            if (p==='journal' && !this.journalEntries.length) this.loadJournal();
-            if (p==='ledger'  && !this.ledgerAccounts.length) this.loadLedger();
+            if (p==='journal'  && !this.journalEntries.length) this.loadJournal();
+            if (p==='ledger'   && !this.ledgerAccounts.length) this.loadLedger();
+            if (p==='team'     && !this.teamMembers.length)    this.loadTeam();
         },
 
         async loadJournal() {
@@ -777,6 +1066,31 @@ function opesApp() {
                 balanced:     data.balanced     ?? true,
             };
             this.loading = false;
+        },
+
+        async loadTeam() {
+            const data = await this.api('auth/users');
+            this.teamMembers = Array.isArray(data) ? data : (data.data ?? []);
+        },
+
+        async doInvite() {
+            this.teamLoading=true; this.teamError=''; this.teamSuccess='';
+            try {
+                const data = await this.api('auth/users', {
+                    method:'POST',
+                    body: JSON.stringify(this.inviteForm),
+                });
+                if (data.errors) throw new Error(Object.values(data.errors).flat().join(' | '));
+                if (!data.user) throw new Error(data.message || 'Invite failed');
+                this.teamSuccess = this.lang==='FR' ? `${data.user.name} ajouté(e) avec succès.` : `${data.user.name} added successfully.`;
+                this.inviteForm = { name:'', email:'', role:'ACCOUNTANT', password:'' };
+                this.teamShowInvite = false;
+                await this.loadTeam();
+            } catch(e) {
+                this.teamError = e.message;
+            } finally {
+                this.teamLoading = false;
+            }
         },
 
         toggleLang() {
@@ -844,6 +1158,87 @@ function invoiceForm() {
                 this.invoiceError = e.message;
             } finally {
                 this.generating = false;
+            }
+        },
+    };
+}
+
+function settingsForm() {
+    return {
+        settingsData: {},
+        settingsSaving: false,
+        settingsError: '',
+        settingsSuccess: '',
+        logoFile: null,
+        logoPreview: null,
+        logoUploading: false,
+        logoMsg: '',
+
+        async init() {
+            // Pull current company data from parent scope
+            const token = localStorage.getItem('opes_token');
+            const res = await fetch('/api/v1/auth/me', {
+                headers:{'Authorization':'Bearer '+token,'Accept':'application/json'}
+            });
+            const data = await res.json();
+            this.settingsData = { ...(data.company ?? {}) };
+        },
+
+        onLogoChange(e) {
+            this.logoFile = e.target.files[0] || null;
+            if (this.logoFile) {
+                const reader = new FileReader();
+                reader.onload = ev => { this.logoPreview = ev.target.result; };
+                reader.readAsDataURL(this.logoFile);
+            }
+        },
+
+        async uploadLogo() {
+            if (!this.logoFile || !this.settingsData.id) return;
+            this.logoUploading = true; this.logoMsg = '';
+            try {
+                const token = localStorage.getItem('opes_token');
+                const fd = new FormData();
+                fd.append('logo', this.logoFile);
+                const res = await fetch(`/api/v1/companies/${this.settingsData.id}/logo`, {
+                    method:'POST',
+                    headers:{'Authorization':'Bearer '+token,'Accept':'application/json'},
+                    body: fd,
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || 'Upload failed');
+                this.settingsData.logo_url = data.logo_url;
+                this.logoMsg = 'Logo enregistré ✔';
+                this.logoFile = null;
+            } catch(e) {
+                this.settingsError = e.message;
+            } finally {
+                this.logoUploading = false;
+            }
+        },
+
+        async saveSettings() {
+            if (!this.settingsData.id) return;
+            this.settingsSaving=true; this.settingsError=''; this.settingsSuccess='';
+            try {
+                const token = localStorage.getItem('opes_token');
+                const payload = { ...this.settingsData };
+                delete payload.logo_path; delete payload.logo_url;
+                delete payload.id; delete payload.created_at; delete payload.updated_at; delete payload.deleted_at;
+                const res = await fetch(`/api/v1/companies/${this.settingsData.id}`, {
+                    method:'PUT',
+                    headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json','Accept':'application/json'},
+                    body: JSON.stringify(payload),
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || Object.values(data.errors??{}).flat().join(' | '));
+                this.settingsSuccess = document.documentElement.lang==='fr'
+                    ? 'Paramètres enregistrés avec succès ✔'
+                    : 'Settings saved successfully ✔';
+            } catch(e) {
+                this.settingsError = e.message;
+            } finally {
+                this.settingsSaving = false;
             }
         },
     };

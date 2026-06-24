@@ -156,6 +156,9 @@
                 <a href="/tax-dashboard" class="nav-link px-3.5 py-2 rounded-xl font-bold uppercase tracking-wider text-[11px]">
                     <span x-show="lang==='FR'">Fiscalité</span><span x-show="lang==='EN'" x-cloak>Tax</span>
                 </a>
+                <a href="/about" class="nav-link px-3.5 py-2 rounded-xl font-bold uppercase tracking-wider text-[11px]">
+                    <span x-show="lang==='FR'">À Propos</span><span x-show="lang==='EN'" x-cloak>About</span>
+                </a>
             </nav>
 
             <div class="flex items-center gap-2 flex-shrink-0">

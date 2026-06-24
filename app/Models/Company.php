@@ -23,6 +23,13 @@ class Company extends Model
         'phone',
         'email',
         'address',
+        'logo_path',
+        'letterhead_tagline',
+        'letterhead_website',
+        'bank_name',
+        'bank_account',
+        'bank_rib',
+        'invoice_footer_note',
     ];
 
     protected $casts = [
