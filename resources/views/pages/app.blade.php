@@ -232,6 +232,14 @@
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                 <span x-text="lang==='FR' ? 'Paramètres' : 'Settings'"></span>
             </button>
+            <button @click="setPage('subscription')" :class="page==='subscription' ? 'nav-item active' : 'nav-item'">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                <span x-text="lang==='FR' ? 'Abonnement' : 'Subscription'"></span>
+            </button>
+            <button @click="setPage('profile')" :class="page==='profile' ? 'nav-item active' : 'nav-item'">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                <span x-text="lang==='FR' ? 'Mon Profil' : 'My Profile'"></span>
+            </button>
 
             <div class="my-2" style="height:1px;background:rgba(255,255,255,0.07)"></div>
 
@@ -1275,6 +1283,196 @@
             </div>
         </div>
 
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!-- SUBSCRIPTION PAGE                                          -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <div x-show="page==='subscription'" x-cloak class="p-6 space-y-6 float-in" x-data="subscriptionPanel()">
+
+            <div class="flex items-end justify-between">
+                <div>
+                    <h2 class="text-2xl font-black text-white uppercase tracking-wide"
+                        x-text="lang==='FR' ? 'Abonnement' : 'Subscription'"></h2>
+                    <p class="text-xs text-slate-400 mt-1"
+                       x-text="lang==='FR' ? 'Gérez votre plan et votre facturation.' : 'Manage your plan and billing.'"></p>
+                </div>
+                <!-- Current status chip -->
+                <div x-show="subStatus" class="text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-xl"
+                     :style="subStatus?.status==='ACTIVE'
+                        ? 'background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.3);color:rgb(110,231,183)'
+                        : 'background:rgba(244,63,94,0.12);border:1px solid rgba(244,63,94,0.3);color:rgb(252,165,165)'"
+                     x-text="subStatus?.status ?? ''"></div>
+            </div>
+
+            <!-- Current plan info -->
+            <div x-show="subStatus" class="glass-card rounded-2xl p-5 space-y-2">
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest"
+                   x-text="lang==='FR' ? 'Plan Actuel' : 'Current Plan'"></p>
+                <div class="flex items-center justify-between flex-wrap gap-2">
+                    <span class="text-lg font-black text-amber-400" x-text="subStatus?.plan ?? '—'"></span>
+                    <div class="text-xs text-slate-400">
+                        <span x-show="subStatus?.expires_at">
+                            <span x-text="lang==='FR' ? 'Expire le ' : 'Expires '"></span>
+                            <span class="text-white font-bold" x-text="subStatus?.expires_at ? new Date(subStatus.expires_at).toLocaleDateString('fr-CM') : ''"></span>
+                        </span>
+                    </div>
+                </div>
+                <div x-show="subStatus?.days_remaining !== undefined" class="text-xs text-slate-400">
+                    <span x-text="lang==='FR' ? 'Jours restants : ' : 'Days remaining: '"></span>
+                    <span class="font-bold text-white" x-text="subStatus?.days_remaining ?? '—'"></span>
+                </div>
+            </div>
+
+            <!-- Plan cards -->
+            <div>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3"
+                   x-text="lang==='FR' ? 'Choisir un Plan' : 'Choose a Plan'"></p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <template x-for="plan in subPlans" :key="plan.id">
+                        <div @click="selectedPlan = plan.id"
+                             class="glass-card rounded-2xl p-5 cursor-pointer transition-all"
+                             :style="selectedPlan===plan.id
+                                ? 'border-color:rgba(245,158,11,0.5);box-shadow:0 0 24px rgba(245,158,11,0.18)'
+                                : ''">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-[10px] font-black text-amber-400 uppercase tracking-widest" x-text="plan.name"></span>
+                                <div x-show="selectedPlan===plan.id" class="w-4 h-4 rounded-full flex items-center justify-center"
+                                     style="background:rgb(245,158,11)">
+                                    <svg class="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                                </div>
+                            </div>
+                            <div class="text-2xl font-black text-white mb-1">
+                                <span x-text="Number(plan.price).toLocaleString('fr-CM')"></span>
+                                <span class="text-sm text-slate-400"> XAF/mois</span>
+                            </div>
+                            <ul class="space-y-1 mt-3">
+                                <template x-for="feat in plan.features" :key="feat">
+                                    <li class="text-xs text-slate-300 flex items-center gap-1.5">
+                                        <span class="text-emerald-400 text-[10px]">✓</span>
+                                        <span x-text="feat"></span>
+                                    </li>
+                                </template>
+                            </ul>
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+            <!-- Billing phone -->
+            <div class="glass-card rounded-2xl p-5 space-y-4">
+                <p class="text-[10px] font-black text-amber-400 uppercase tracking-widest"
+                   x-text="lang==='FR' ? 'Paiement Mobile Money' : 'Mobile Money Payment'"></p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5"
+                               x-text="lang==='FR' ? 'Numéro de Téléphone' : 'Phone Number'"></label>
+                        <input type="tel" x-model="subPhone" class="glass-input"
+                               :placeholder="lang==='FR' ? '6XXXXXXXX (MTN / Orange)' : '6XXXXXXXX (MTN / Orange)'">
+                    </div>
+                    <div class="flex items-end">
+                        <button @click="initiateSubscription()" :disabled="subLoading || !selectedPlan || !subPhone"
+                                class="w-full glass-btn-amber py-2.5 rounded-xl text-xs uppercase tracking-widest disabled:opacity-40"
+                                x-text="subLoading ? '…' : (lang==='FR' ? 'Payer Maintenant' : 'Pay Now')"></button>
+                    </div>
+                </div>
+                <div x-show="subError" class="px-4 py-3 rounded-xl text-sm font-bold"
+                     style="background:rgba(244,63,94,0.1);border:1px solid rgba(244,63,94,0.25);color:rgb(252,165,165)"
+                     x-text="subError"></div>
+                <div x-show="subSuccess" class="px-4 py-3 rounded-xl text-sm font-bold"
+                     style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);color:rgb(110,231,183)"
+                     x-text="subSuccess"></div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!-- PROFILE PAGE                                               -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <div x-show="page==='profile'" x-cloak class="p-6 space-y-6 float-in" x-data="profilePanel()">
+
+            <div>
+                <h2 class="text-2xl font-black text-white uppercase tracking-wide"
+                    x-text="lang==='FR' ? 'Mon Profil' : 'My Profile'"></h2>
+                <p class="text-xs text-slate-400 mt-1"
+                   x-text="lang==='FR' ? 'Gérez vos informations personnelles et votre mot de passe.' : 'Manage your personal info and password.'"></p>
+            </div>
+
+            <!-- Profile info card -->
+            <div class="glass-card rounded-2xl p-6 space-y-4">
+                <p class="text-[10px] font-black text-amber-400 uppercase tracking-widest"
+                   x-text="lang==='FR' ? 'Informations Personnelles' : 'Personal Information'"></p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5"
+                               x-text="lang==='FR' ? 'Nom Complet' : 'Full Name'"></label>
+                        <input type="text" x-model="profileForm.name" class="glass-input"
+                               :placeholder="lang==='FR' ? 'Votre nom complet' : 'Your full name'">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5"
+                               x-text="lang==='FR' ? 'Adresse Email' : 'Email Address'"></label>
+                        <input type="email" x-model="profileForm.email" class="glass-input" placeholder="email@exemple.cm">
+                    </div>
+                </div>
+
+                <!-- Role badge (read-only) -->
+                <div class="flex items-center gap-2">
+                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest"
+                          x-text="lang==='FR' ? 'Rôle :' : 'Role:'"></span>
+                    <span class="text-[10px] font-black px-2.5 py-1 rounded-lg"
+                          style="background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);color:rgb(252,211,77)"
+                          x-text="profileForm.role ?? '—'"></span>
+                </div>
+
+                <div x-show="profileError" class="px-4 py-3 rounded-xl text-sm font-bold"
+                     style="background:rgba(244,63,94,0.1);border:1px solid rgba(244,63,94,0.25);color:rgb(252,165,165)"
+                     x-text="profileError"></div>
+                <div x-show="profileSuccess" class="px-4 py-3 rounded-xl text-sm font-bold"
+                     style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);color:rgb(110,231,183)"
+                     x-text="profileSuccess"></div>
+
+                <button @click="saveProfile()" :disabled="profileSaving"
+                        class="glass-btn-amber px-6 py-2.5 rounded-xl text-xs uppercase tracking-widest disabled:opacity-40"
+                        x-text="profileSaving ? '…' : (lang==='FR' ? 'Enregistrer le Profil' : 'Save Profile')"></button>
+            </div>
+
+            <!-- Password change card -->
+            <div class="glass-card rounded-2xl p-6 space-y-4">
+                <p class="text-[10px] font-black text-amber-400 uppercase tracking-widest"
+                   x-text="lang==='FR' ? 'Changer le Mot de Passe' : 'Change Password'"></p>
+
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5"
+                               x-text="lang==='FR' ? 'Mot de Passe Actuel' : 'Current Password'"></label>
+                        <input type="password" x-model="pwdForm.current_password" class="glass-input" placeholder="••••••••">
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5"
+                                   x-text="lang==='FR' ? 'Nouveau Mot de Passe' : 'New Password'"></label>
+                            <input type="password" x-model="pwdForm.password" class="glass-input" placeholder="••••••••">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5"
+                                   x-text="lang==='FR' ? 'Confirmer' : 'Confirm'"></label>
+                            <input type="password" x-model="pwdForm.password_confirmation" class="glass-input" placeholder="••••••••">
+                        </div>
+                    </div>
+                </div>
+
+                <div x-show="pwdError" class="px-4 py-3 rounded-xl text-sm font-bold"
+                     style="background:rgba(244,63,94,0.1);border:1px solid rgba(244,63,94,0.25);color:rgb(252,165,165)"
+                     x-text="pwdError"></div>
+                <div x-show="pwdSuccess" class="px-4 py-3 rounded-xl text-sm font-bold"
+                     style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);color:rgb(110,231,183)"
+                     x-text="pwdSuccess"></div>
+
+                <button @click="changePassword()" :disabled="pwdSaving"
+                        class="glass-btn-dark px-6 py-2.5 rounded-xl text-xs uppercase tracking-widest disabled:opacity-40"
+                        x-text="pwdSaving ? '…' : (lang==='FR' ? 'Changer le Mot de Passe' : 'Change Password')"></button>
+            </div>
+        </div>
+
     </main>
 </div>
 
@@ -1741,6 +1939,136 @@ function settingsForm() {
                 this.settingsError = e.message;
             } finally {
                 this.settingsSaving = false;
+            }
+        },
+    };
+}
+
+function subscriptionPanel() {
+    return {
+        subStatus: null,
+        subLoading: false,
+        subError: '',
+        subSuccess: '',
+        selectedPlan: 'GROWTH',
+        subPhone: '',
+        subPlans: [
+            { id:'STARTER',    name:'Starter',    price:5000,  features:['1 utilisateur','100 factures/mois','Export DGI','Support email'] },
+            { id:'GROWTH',     name:'Growth',     price:15000, features:['5 utilisateurs','Factures illimitées','DGI Live-Link','Import CSV','Support prioritaire'] },
+            { id:'ENTERPRISE', name:'Enterprise', price:45000, features:['Utilisateurs illimités','Tout inclus','API dédiée','Account manager dédié'] },
+        ],
+
+        async init() {
+            const token = localStorage.getItem('opes_token');
+            const me = await (await fetch('/api/v1/auth/me', {headers:{'Authorization':'Bearer '+token,'Accept':'application/json'}})).json();
+            const companyId = me.company?.id;
+            if (!companyId) return;
+            try {
+                const res = await fetch(`/api/v1/companies/${companyId}/subscriptions/status`, {
+                    headers:{'Authorization':'Bearer '+token,'Accept':'application/json'}
+                });
+                if (res.ok) this.subStatus = await res.json();
+            } catch(e) {}
+        },
+
+        async initiateSubscription() {
+            if (!this.selectedPlan || !this.subPhone) return;
+            this.subLoading=true; this.subError=''; this.subSuccess='';
+            try {
+                const token = localStorage.getItem('opes_token');
+                const me = await (await fetch('/api/v1/auth/me', {headers:{'Authorization':'Bearer '+token,'Accept':'application/json'}})).json();
+                const companyId = me.company?.id;
+                if (!companyId) throw new Error('Company not found');
+                const res = await fetch(`/api/v1/companies/${companyId}/subscriptions/initiate`, {
+                    method:'POST',
+                    headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json','Accept':'application/json'},
+                    body: JSON.stringify({ plan: this.selectedPlan, phone: this.subPhone }),
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || Object.values(data.errors??{}).flat().join(' | '));
+                this.subSuccess = data.message || 'Demande de paiement envoyée. Confirmez sur votre téléphone.';
+                // Re-fetch status after a short delay
+                setTimeout(async () => {
+                    const s = await fetch(`/api/v1/companies/${companyId}/subscriptions/status`, {
+                        headers:{'Authorization':'Bearer '+token,'Accept':'application/json'}
+                    });
+                    if (s.ok) this.subStatus = await s.json();
+                }, 4000);
+            } catch(e) {
+                this.subError = e.message;
+            } finally {
+                this.subLoading = false;
+            }
+        },
+    };
+}
+
+function profilePanel() {
+    return {
+        profileForm: { name:'', email:'', role:'' },
+        profileSaving: false,
+        profileError: '',
+        profileSuccess: '',
+        pwdForm: { current_password:'', password:'', password_confirmation:'' },
+        pwdSaving: false,
+        pwdError: '',
+        pwdSuccess: '',
+
+        async init() {
+            const token = localStorage.getItem('opes_token');
+            const res = await fetch('/api/v1/auth/me', {headers:{'Authorization':'Bearer '+token,'Accept':'application/json'}});
+            const data = await res.json();
+            this.profileForm.name  = data.user?.name  ?? '';
+            this.profileForm.email = data.user?.email ?? '';
+            this.profileForm.role  = data.user?.role  ?? '';
+        },
+
+        async saveProfile() {
+            this.profileSaving=true; this.profileError=''; this.profileSuccess='';
+            try {
+                const token = localStorage.getItem('opes_token');
+                const res = await fetch('/api/v1/auth/profile', {
+                    method:'PUT',
+                    headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json','Accept':'application/json'},
+                    body: JSON.stringify({ name: this.profileForm.name, email: this.profileForm.email }),
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || Object.values(data.errors??{}).flat().join(' | '));
+                this.profileSuccess = document.documentElement.lang==='fr'
+                    ? 'Profil mis à jour avec succès ✔'
+                    : 'Profile updated successfully ✔';
+                // Update local storage
+                const stored = JSON.parse(localStorage.getItem('opes_user') || '{}');
+                stored.name  = this.profileForm.name;
+                stored.email = this.profileForm.email;
+                localStorage.setItem('opes_user', JSON.stringify(stored));
+            } catch(e) {
+                this.profileError = e.message;
+            } finally {
+                this.profileSaving = false;
+            }
+        },
+
+        async changePassword() {
+            if (!this.pwdForm.current_password || !this.pwdForm.password) return;
+            this.pwdSaving=true; this.pwdError=''; this.pwdSuccess='';
+            try {
+                const token = localStorage.getItem('opes_token');
+                const res = await fetch('/api/v1/auth/password', {
+                    method:'PUT',
+                    headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json','Accept':'application/json'},
+                    body: JSON.stringify(this.pwdForm),
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || Object.values(data.errors??{}).flat().join(' | '));
+                this.pwdSuccess = document.documentElement.lang==='fr'
+                    ? 'Mot de passe changé avec succès ✔'
+                    : 'Password changed successfully ✔';
+                this.pwdForm = { current_password:'', password:'', password_confirmation:'' };
+            } catch(e) {
+                this.pwdError = e.message;
+            } finally {
+                this.pwdSaving = false;
             }
         },
     };
