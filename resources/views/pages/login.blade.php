@@ -126,6 +126,34 @@
                      style="background:rgba(244,63,94,0.12);border:1px solid rgba(244,63,94,0.28);color:rgb(252,165,165)"
                      x-text="error"></div>
 
+                {{-- Demo login shortcuts --}}
+                <div x-show="tab === 'login'" class="mb-4">
+                    <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2 text-center">
+                        <span x-show="lang === 'FR'">Accès Démo Rapide</span>
+                        <span x-show="lang === 'EN'" x-cloak>Quick Demo Access</span>
+                    </p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button type="button"
+                                @click="loginForm.email='owner@demo.cm'; loginForm.password='demo1234'"
+                                class="px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider text-left transition-all"
+                                style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2)">
+                            <div class="text-amber-400">Owner</div>
+                            <div class="text-slate-400 font-medium normal-case tracking-normal mt-0.5">owner@demo.cm</div>
+                        </button>
+                        <button type="button"
+                                @click="loginForm.email='accountant@demo.cm'; loginForm.password='demo1234'"
+                                class="px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider text-left transition-all"
+                                style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2)">
+                            <div class="text-emerald-400">Accountant</div>
+                            <div class="text-slate-400 font-medium normal-case tracking-normal mt-0.5">accountant@demo.cm</div>
+                        </button>
+                    </div>
+                    <p class="text-[10px] text-slate-600 text-center mt-1.5">
+                        <span x-show="lang === 'FR'">Mot de passe démo : <span class="text-slate-500 font-mono">demo1234</span></span>
+                        <span x-show="lang === 'EN'" x-cloak>Demo password: <span class="text-slate-500 font-mono">demo1234</span></span>
+                    </p>
+                </div>
+
                 {{-- LOGIN FORM --}}
                 <form x-show="tab === 'login'" @submit.prevent="doLogin" class="space-y-4">
                     <div>
