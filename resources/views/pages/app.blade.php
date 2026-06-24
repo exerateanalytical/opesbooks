@@ -304,6 +304,22 @@
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 10V7"/></svg>
                 <span x-text="lang==='FR' ? 'Stocks' : 'Inventory'"></span>
             </button>
+            <button @click="setPage('quotations')" :class="page==='quotations' ? 'nav-item active' : 'nav-item'">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <span x-text="lang==='FR' ? 'Devis' : 'Quotations'"></span>
+            </button>
+            <button @click="setPage('purchase-orders')" :class="page==='purchase-orders' ? 'nav-item active' : 'nav-item'">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                <span x-text="lang==='FR' ? 'Bons de Cmd.' : 'Purchase Orders'"></span>
+            </button>
+            <button @click="setPage('credit-notes')" :class="page==='credit-notes' ? 'nav-item active' : 'nav-item'">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
+                <span x-text="lang==='FR' ? 'Avoirs' : 'Credit Notes'"></span>
+            </button>
+            <button @click="setPage('patente')" :class="page==='patente' ? 'nav-item active' : 'nav-item'">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/></svg>
+                <span x-text="lang==='FR' ? 'Patente' : 'Patente Tax'"></span>
+            </button>
 
             <div class="my-2" style="height:1px;background:rgba(255,255,255,0.07)"></div>
 
@@ -2578,6 +2594,233 @@
         </div>
 
         <!-- ══════════════════════════════════════════════════════════════ -->
+        <!-- QUOTATIONS / DEVIS PAGE                                       -->
+        <!-- ══════════════════════════════════════════════════════════════ -->
+        <div x-show="page==='quotations'" x-cloak class="p-6 space-y-5 float-in" x-data="quotationsPanel()">
+            <div class="flex items-center justify-between">
+                <h2 class="text-lg font-bold" x-text="lang==='FR' ? 'Devis Clients / Pro-Forma' : 'Customer Quotations'"></h2>
+                <button @click="showForm=!showForm" class="btn-primary text-xs px-4 py-2">+ <span x-text="lang==='FR' ? 'Nouveau Devis' : 'New Quotation'"></span></button>
+            </div>
+            <div x-show="showForm" class="glass-card rounded-2xl p-5 space-y-3">
+                <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                    <div><label class="text-xs opacity-60" x-text="lang==='FR' ? 'Client' : 'Customer'"></label>
+                        <select x-model="form.customer_id" class="w-full mt-1 input-field text-sm">
+                            <option value="" x-text="lang==='FR' ? '— Choisir —' : '— Select —'"></option>
+                            <template x-for="c in customers" :key="c.id"><option :value="c.id" x-text="c.name"></option></template>
+                        </select></div>
+                    <div><label class="text-xs opacity-60">Date</label><input x-model="form.quotation_date" type="date" class="w-full mt-1 input-field text-sm"></div>
+                    <div><label class="text-xs opacity-60" x-text="lang==='FR' ? 'Valable jusqu\'au' : 'Valid until'"></label><input x-model="form.valid_until" type="date" class="w-full mt-1 input-field text-sm"></div>
+                    <div><label class="text-xs opacity-60" x-text="lang==='FR' ? 'Notes' : 'Notes'"></label><input x-model="form.notes" class="w-full mt-1 input-field text-sm"></div>
+                </div>
+                <div class="space-y-2">
+                    <p class="text-xs opacity-60 font-semibold" x-text="lang==='FR' ? 'Lignes' : 'Lines'"></p>
+                    <template x-for="(line, i) in form.lines" :key="i">
+                        <div class="flex gap-2 items-center">
+                            <input x-model="line.description" :placeholder="lang==='FR' ? 'Description' : 'Description'" class="flex-1 input-field text-xs">
+                            <input x-model.number="line.quantity" type="number" min="0.001" step="0.001" placeholder="Qté" class="w-20 input-field text-xs">
+                            <input x-model.number="line.unit_price_ht" type="number" min="0" placeholder="PU HT" class="w-28 input-field text-xs">
+                            <button @click="form.lines.splice(i,1)" class="text-red-400 text-xs px-2">✕</button>
+                        </div>
+                    </template>
+                    <button @click="form.lines.push({description:'',quantity:1,unit_price_ht:0})" class="text-xs text-sky-400 hover:text-sky-300">+ <span x-text="lang==='FR' ? 'Ajouter ligne' : 'Add line'"></span></button>
+                </div>
+                <div x-show="formError" class="text-red-400 text-xs" x-text="formError"></div>
+                <div class="flex gap-2">
+                    <button @click="submitQuotation()" :disabled="saving" class="btn-primary text-sm px-5 py-2" x-text="saving ? '...' : (lang==='FR' ? 'Enregistrer' : 'Save')"></button>
+                    <button @click="showForm=false" class="text-xs opacity-60 hover:opacity-100 px-4 py-2" x-text="lang==='FR' ? 'Annuler' : 'Cancel'"></button>
+                </div>
+            </div>
+            <div class="glass-card rounded-2xl overflow-hidden">
+                <table class="w-full text-sm">
+                    <thead><tr style="background:rgba(15,23,42,0.9)">
+                        <th class="text-left px-4 py-3 opacity-60 text-xs" x-text="lang==='FR' ? 'N° Devis' : 'Ref.'"></th>
+                        <th class="text-left px-4 py-3 opacity-60 text-xs" x-text="lang==='FR' ? 'Client' : 'Customer'"></th>
+                        <th class="text-left px-4 py-3 opacity-60 text-xs">Date</th>
+                        <th class="text-right px-4 py-3 opacity-60 text-xs">TTC</th>
+                        <th class="text-left px-4 py-3 opacity-60 text-xs">Statut</th>
+                        <th class="text-center px-4 py-3 opacity-60 text-xs">Actions</th>
+                    </tr></thead>
+                    <tbody>
+                        <template x-for="q in quotations" :key="q.id">
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.04)" class="hover:bg-white/5">
+                                <td class="px-4 py-2 font-mono text-sky-300 text-xs" x-text="q.quotation_number"></td>
+                                <td class="px-4 py-2 text-xs" x-text="q.customer?.name ?? '—'"></td>
+                                <td class="px-4 py-2 text-xs opacity-70" x-text="q.quotation_date"></td>
+                                <td class="px-4 py-2 text-right text-xs" x-text="Number(q.amount_ttc).toLocaleString('fr-CM') + ' XAF'"></td>
+                                <td class="px-4 py-2 text-xs">
+                                    <span :class="{'text-emerald-400':q.status==='ACCEPTED','text-amber-400':q.status==='SENT','text-rose-400':q.status==='REJECTED','text-sky-400':q.status==='CONVERTED','opacity-50':q.status==='DRAFT'}" x-text="q.status"></span>
+                                </td>
+                                <td class="px-4 py-2 text-center text-xs">
+                                    <button x-show="q.status==='ACCEPTED'" @click="convertQuotation(q)" class="text-emerald-400 hover:underline text-xs mr-2" x-text="lang==='FR' ? 'Facturer' : 'Invoice'"></button>
+                                    <button x-show="q.status==='DRAFT'" @click="markSent(q)" class="text-amber-400 hover:underline text-xs" x-text="lang==='FR' ? 'Marquer Envoyé' : 'Mark Sent'"></button>
+                                </td>
+                            </tr>
+                        </template>
+                        <tr x-show="quotations.length===0"><td colspan="6" class="text-center py-6 opacity-40 text-xs" x-text="lang==='FR' ? 'Aucun devis.' : 'No quotations.'"></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════════════ -->
+        <!-- PURCHASE ORDERS PAGE                                          -->
+        <!-- ══════════════════════════════════════════════════════════════ -->
+        <div x-show="page==='purchase-orders'" x-cloak class="p-6 space-y-5 float-in" x-data="purchaseOrdersPanel()">
+            <div class="flex items-center justify-between">
+                <h2 class="text-lg font-bold" x-text="lang==='FR' ? 'Bons de Commande Fournisseurs' : 'Purchase Orders'"></h2>
+                <button @click="showForm=!showForm" class="btn-primary text-xs px-4 py-2">+ <span x-text="lang==='FR' ? 'Nouveau BC' : 'New PO'"></span></button>
+            </div>
+            <div x-show="showForm" class="glass-card rounded-2xl p-5 space-y-3">
+                <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                    <div><label class="text-xs opacity-60" x-text="lang==='FR' ? 'Fournisseur' : 'Supplier'"></label>
+                        <select x-model="form.supplier_id" class="w-full mt-1 input-field text-sm">
+                            <option value="" x-text="lang==='FR' ? '— Choisir —' : '— Select —'"></option>
+                            <template x-for="s in suppliers" :key="s.id"><option :value="s.id" x-text="s.name"></option></template>
+                        </select></div>
+                    <div><label class="text-xs opacity-60" x-text="lang==='FR' ? 'Date commande' : 'Order date'"></label><input x-model="form.order_date" type="date" class="w-full mt-1 input-field text-sm"></div>
+                    <div><label class="text-xs opacity-60" x-text="lang==='FR' ? 'Livraison prévue' : 'Expected delivery'"></label><input x-model="form.expected_delivery_date" type="date" class="w-full mt-1 input-field text-sm"></div>
+                    <div class="col-span-2"><label class="text-xs opacity-60">Notes</label><input x-model="form.notes" class="w-full mt-1 input-field text-sm"></div>
+                </div>
+                <div class="space-y-2">
+                    <p class="text-xs opacity-60 font-semibold" x-text="lang==='FR' ? 'Lignes' : 'Lines'"></p>
+                    <template x-for="(line, i) in form.lines" :key="i">
+                        <div class="flex gap-2 items-center">
+                            <input x-model="line.description" :placeholder="lang==='FR' ? 'Description' : 'Description'" class="flex-1 input-field text-xs">
+                            <input x-model.number="line.quantity" type="number" min="0.001" step="0.001" placeholder="Qté" class="w-20 input-field text-xs">
+                            <input x-model.number="line.unit_price_ht" type="number" min="0" placeholder="PU HT" class="w-28 input-field text-xs">
+                            <button @click="form.lines.splice(i,1)" class="text-red-400 text-xs px-2">✕</button>
+                        </div>
+                    </template>
+                    <button @click="form.lines.push({description:'',quantity:1,unit_price_ht:0})" class="text-xs text-sky-400 hover:text-sky-300">+ <span x-text="lang==='FR' ? 'Ajouter ligne' : 'Add line'"></span></button>
+                </div>
+                <div x-show="poError" class="text-red-400 text-xs" x-text="poError"></div>
+                <div class="flex gap-2">
+                    <button @click="submitPO()" :disabled="saving" class="btn-primary text-sm px-5 py-2" x-text="saving ? '...' : (lang==='FR' ? 'Enregistrer' : 'Save')"></button>
+                    <button @click="showForm=false" class="text-xs opacity-60 hover:opacity-100 px-4 py-2" x-text="lang==='FR' ? 'Annuler' : 'Cancel'"></button>
+                </div>
+            </div>
+            <div class="glass-card rounded-2xl overflow-hidden">
+                <table class="w-full text-sm">
+                    <thead><tr style="background:rgba(15,23,42,0.9)">
+                        <th class="text-left px-4 py-3 opacity-60 text-xs">N° BC</th>
+                        <th class="text-left px-4 py-3 opacity-60 text-xs" x-text="lang==='FR' ? 'Fournisseur' : 'Supplier'"></th>
+                        <th class="text-left px-4 py-3 opacity-60 text-xs">Date</th>
+                        <th class="text-right px-4 py-3 opacity-60 text-xs">TTC</th>
+                        <th class="text-left px-4 py-3 opacity-60 text-xs">Statut</th>
+                    </tr></thead>
+                    <tbody>
+                        <template x-for="po in orders" :key="po.id">
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.04)" class="hover:bg-white/5">
+                                <td class="px-4 py-2 font-mono text-sky-300 text-xs" x-text="po.po_number"></td>
+                                <td class="px-4 py-2 text-xs" x-text="po.supplier?.name ?? '—'"></td>
+                                <td class="px-4 py-2 text-xs opacity-70" x-text="po.order_date"></td>
+                                <td class="px-4 py-2 text-right text-xs" x-text="Number(po.amount_ttc).toLocaleString('fr-CM') + ' XAF'"></td>
+                                <td class="px-4 py-2 text-xs">
+                                    <span :class="{'text-emerald-400':po.status==='RECEIVED','text-amber-400':po.status==='PARTIAL'||po.status==='SENT','text-rose-400':po.status==='CANCELLED','opacity-50':po.status==='DRAFT'}" x-text="po.status"></span>
+                                </td>
+                            </tr>
+                        </template>
+                        <tr x-show="orders.length===0"><td colspan="5" class="text-center py-6 opacity-40 text-xs" x-text="lang==='FR' ? 'Aucun bon de commande.' : 'No purchase orders.'"></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════════════ -->
+        <!-- CREDIT NOTES / AVOIRS PAGE                                    -->
+        <!-- ══════════════════════════════════════════════════════════════ -->
+        <div x-show="page==='credit-notes'" x-cloak class="p-6 space-y-5 float-in" x-data="creditNotesPanel()">
+            <h2 class="text-lg font-bold" x-text="lang==='FR' ? 'Avoirs (Notes de Crédit)' : 'Credit Notes'"></h2>
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <!-- Customer credit note -->
+                <div class="glass-card rounded-2xl p-5 space-y-3">
+                    <h3 class="text-sm font-semibold" x-text="lang==='FR' ? 'Avoir Client' : 'Customer Credit Note'"></h3>
+                    <div class="space-y-2">
+                        <select x-model="cnForm.customer_id" class="w-full input-field text-sm">
+                            <option value="" x-text="lang==='FR' ? '— Client —' : '— Customer —'"></option>
+                            <template x-for="c in customers" :key="c.id"><option :value="c.id" x-text="c.name"></option></template>
+                        </select>
+                        <input x-model="cnForm.credit_note_date" type="date" class="w-full input-field text-sm">
+                        <input x-model.number="cnForm.amount_ht" type="number" min="0" :placeholder="lang==='FR' ? 'Montant HT à annuler (XAF)' : 'Amount HT to reverse (XAF)'" class="w-full input-field text-sm">
+                        <textarea x-model="cnForm.reason" :placeholder="lang==='FR' ? 'Motif de l\'avoir' : 'Reason'" class="w-full input-field text-sm" rows="2"></textarea>
+                    </div>
+                    <div x-show="cnError" class="text-red-400 text-xs" x-text="cnError"></div>
+                    <button @click="submitCustomerCN()" :disabled="cnSaving" class="btn-primary text-sm px-5 py-2 w-full" x-text="cnSaving ? '...' : (lang==='FR' ? 'Émettre l\'avoir' : 'Issue Credit Note')"></button>
+                    <div x-show="cnSuccess" class="text-emerald-400 text-xs" x-text="cnSuccess"></div>
+                </div>
+                <!-- Supplier credit note -->
+                <div class="glass-card rounded-2xl p-5 space-y-3">
+                    <h3 class="text-sm font-semibold" x-text="lang==='FR' ? 'Avoir Fournisseur' : 'Supplier Credit Note'"></h3>
+                    <div class="space-y-2">
+                        <select x-model="snForm.supplier_id" class="w-full input-field text-sm">
+                            <option value="" x-text="lang==='FR' ? '— Fournisseur —' : '— Supplier —'"></option>
+                            <template x-for="s in suppliers" :key="s.id"><option :value="s.id" x-text="s.name"></option></template>
+                        </select>
+                        <input x-model="snForm.credit_note_date" type="date" class="w-full input-field text-sm">
+                        <input x-model.number="snForm.amount_ht" type="number" min="0" :placeholder="lang==='FR' ? 'Montant HT (XAF)' : 'Amount HT (XAF)'" class="w-full input-field text-sm">
+                        <textarea x-model="snForm.reason" :placeholder="lang==='FR' ? 'Motif' : 'Reason'" class="w-full input-field text-sm" rows="2"></textarea>
+                    </div>
+                    <div x-show="snError" class="text-red-400 text-xs" x-text="snError"></div>
+                    <button @click="submitSupplierCN()" :disabled="snSaving" class="btn-primary text-sm px-5 py-2 w-full" x-text="snSaving ? '...' : (lang==='FR' ? 'Enregistrer l\'avoir' : 'Record Credit Note')"></button>
+                    <div x-show="snSuccess" class="text-emerald-400 text-xs" x-text="snSuccess"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════════════ -->
+        <!-- PATENTE PAGE                                                   -->
+        <!-- ══════════════════════════════════════════════════════════════ -->
+        <div x-show="page==='patente'" x-cloak class="p-6 space-y-5 float-in" x-data="patentePanel()">
+            <div class="flex items-center justify-between">
+                <h2 class="text-lg font-bold" x-text="lang==='FR' ? 'Patente & Taxe d\'Affaires' : 'Business Licence Tax'"></h2>
+                <button @click="showForm=!showForm" class="btn-primary text-xs px-4 py-2">+ <span x-text="lang==='FR' ? 'Nouvelle Patente' : 'New Record'"></span></button>
+            </div>
+            <div x-show="showForm" class="glass-card rounded-2xl p-5 space-y-3">
+                <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                    <div><label class="text-xs opacity-60" x-text="lang==='FR' ? 'Exercice' : 'Tax year'"></label><input x-model.number="form.tax_year" type="number" min="2020" max="2099" class="w-full mt-1 input-field text-sm" :placeholder="new Date().getFullYear()"></div>
+                    <div><label class="text-xs opacity-60" x-text="lang==='FR' ? 'N° Patente' : 'Patente no.'"></label><input x-model="form.patente_number" class="w-full mt-1 input-field text-sm"></div>
+                    <div><label class="text-xs opacity-60" x-text="lang==='FR' ? 'Montant dû (XAF)' : 'Amount due (XAF)'"></label><input x-model.number="form.amount_due_xaf" type="number" min="0" class="w-full mt-1 input-field text-sm"></div>
+                    <div><label class="text-xs opacity-60" x-text="lang==='FR' ? 'Échéance' : 'Due date'"></label><input x-model="form.due_date" type="date" class="w-full mt-1 input-field text-sm"></div>
+                    <div><label class="text-xs opacity-60">Notes</label><input x-model="form.notes" class="w-full mt-1 input-field text-sm"></div>
+                </div>
+                <div x-show="formError" class="text-red-400 text-xs" x-text="formError"></div>
+                <div class="flex gap-2">
+                    <button @click="submitPatente()" :disabled="saving" class="btn-primary text-sm px-5 py-2" x-text="saving ? '...' : (lang==='FR' ? 'Enregistrer' : 'Save')"></button>
+                    <button @click="showForm=false" class="text-xs opacity-60 hover:opacity-100 px-4 py-2">Annuler</button>
+                </div>
+            </div>
+            <div class="glass-card rounded-2xl overflow-hidden">
+                <table class="w-full text-sm">
+                    <thead><tr style="background:rgba(15,23,42,0.9)">
+                        <th class="text-left px-4 py-3 opacity-60 text-xs" x-text="lang==='FR' ? 'Exercice' : 'Year'"></th>
+                        <th class="text-left px-4 py-3 opacity-60 text-xs">N° Patente</th>
+                        <th class="text-right px-4 py-3 opacity-60 text-xs" x-text="lang==='FR' ? 'Montant Dû' : 'Due'"></th>
+                        <th class="text-right px-4 py-3 opacity-60 text-xs" x-text="lang==='FR' ? 'Payé' : 'Paid'"></th>
+                        <th class="text-left px-4 py-3 opacity-60 text-xs">Statut</th>
+                        <th class="text-center px-4 py-3 opacity-60 text-xs">Actions</th>
+                    </tr></thead>
+                    <tbody>
+                        <template x-for="p in records" :key="p.id">
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.04)" class="hover:bg-white/5">
+                                <td class="px-4 py-2 font-semibold" x-text="p.tax_year"></td>
+                                <td class="px-4 py-2 text-xs font-mono opacity-70" x-text="p.patente_number ?? '—'"></td>
+                                <td class="px-4 py-2 text-right text-xs" x-text="Number(p.amount_due_xaf).toLocaleString('fr-CM') + ' XAF'"></td>
+                                <td class="px-4 py-2 text-right text-xs text-emerald-400" x-text="Number(p.amount_paid_xaf).toLocaleString('fr-CM') + ' XAF'"></td>
+                                <td class="px-4 py-2 text-xs">
+                                    <span :class="{'text-emerald-400':p.status==='PAID','text-rose-400':p.status==='OVERDUE','text-amber-400':p.status==='PENDING'}" x-text="p.status"></span>
+                                </td>
+                                <td class="px-4 py-2 text-center">
+                                    <button x-show="p.status!=='PAID'" @click="payPatente(p)" class="text-amber-400 hover:underline text-xs" x-text="lang==='FR' ? 'Payer' : 'Pay'"></button>
+                                </td>
+                            </tr>
+                        </template>
+                        <tr x-show="records.length===0"><td colspan="6" class="text-center py-6 opacity-40 text-xs" x-text="lang==='FR' ? 'Aucun enregistrement.' : 'No records.'"></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════════════ -->
         <!-- STOCK / INVENTORY PAGE                                        -->
         <!-- ══════════════════════════════════════════════════════════════ -->
         <div x-show="page==='stock'" x-cloak class="p-6 space-y-5 float-in" x-data="stockPanel()">
@@ -4034,6 +4277,144 @@ function chartOfAccountsPanel() {
                 this.form={code:'',label:'',class_digit:''};
             } else { this.formError = d.message ?? JSON.stringify(d.errors); }
             this.submitting=false;
+        },
+    };
+}
+
+function quotationsPanel() {
+    return {
+        _cid: null, quotations: [], customers: [], showForm: false, saving: false, formError: '',
+        form: { customer_id:'', quotation_date: new Date().toISOString().slice(0,10), valid_until:'', notes:'', lines:[{description:'',quantity:1,unit_price_ht:0}] },
+        async init() {
+            const token = localStorage.getItem('opes_token');
+            const me = await fetch('/api/v1/auth/me',{headers:{Authorization:'Bearer '+token}}).then(r=>r.json());
+            this._cid = me.company?.id;
+            const [q, c] = await Promise.all([
+                fetch(`/api/v1/companies/${this._cid}/quotations`,{headers:{Authorization:'Bearer '+token}}).then(r=>r.json()),
+                fetch(`/api/v1/companies/${this._cid}/customers`,{headers:{Authorization:'Bearer '+token}}).then(r=>r.json()),
+            ]);
+            this.quotations = q.data ?? q;
+            this.customers  = c.data ?? c;
+        },
+        async submitQuotation() {
+            this.saving=true; this.formError='';
+            const token = localStorage.getItem('opes_token');
+            const r = await fetch(`/api/v1/companies/${this._cid}/quotations`,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify(this.form)});
+            const d = await r.json();
+            if(r.ok) { this.quotations.unshift(d); this.showForm=false; this.form={customer_id:'',quotation_date:new Date().toISOString().slice(0,10),valid_until:'',notes:'',lines:[{description:'',quantity:1,unit_price_ht:0}]}; }
+            else { this.formError = d.message ?? JSON.stringify(d.errors ?? d); }
+            this.saving=false;
+        },
+        async markSent(q) {
+            const token = localStorage.getItem('opes_token');
+            const r = await fetch(`/api/v1/companies/${this._cid}/quotations/${q.id}/status`,{method:'PUT',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({status:'SENT'})});
+            if(r.ok) { const d=await r.json(); const i=this.quotations.findIndex(x=>x.id===q.id); if(i>-1) this.quotations[i]=d; }
+        },
+        async convertQuotation(q) {
+            const invDate = prompt(this.lang==='FR'?'Date de facture (YYYY-MM-DD):':'Invoice date (YYYY-MM-DD):', new Date().toISOString().slice(0,10));
+            if(!invDate) return;
+            const dueDate = prompt(this.lang==='FR'?'Échéance (YYYY-MM-DD):':'Due date (YYYY-MM-DD):', new Date(Date.now()+30*86400000).toISOString().slice(0,10));
+            if(!dueDate) return;
+            const token = localStorage.getItem('opes_token');
+            const r = await fetch(`/api/v1/companies/${this._cid}/quotations/${q.id}/convert`,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({invoice_date:invDate,due_date:dueDate})});
+            if(r.ok) { const d=await r.json(); const i=this.quotations.findIndex(x=>x.id===q.id); if(i>-1) this.quotations[i]=d.quotation; alert('Facture '+d.invoice.invoice_number+' créée.'); }
+        },
+    };
+}
+
+function purchaseOrdersPanel() {
+    return {
+        _cid: null, orders: [], suppliers: [], showForm: false, saving: false, poError: '',
+        form: { supplier_id:'', order_date: new Date().toISOString().slice(0,10), expected_delivery_date:'', notes:'', lines:[{description:'',quantity:1,unit_price_ht:0}] },
+        async init() {
+            const token = localStorage.getItem('opes_token');
+            const me = await fetch('/api/v1/auth/me',{headers:{Authorization:'Bearer '+token}}).then(r=>r.json());
+            this._cid = me.company?.id;
+            const [po, s] = await Promise.all([
+                fetch(`/api/v1/companies/${this._cid}/purchase-orders`,{headers:{Authorization:'Bearer '+token}}).then(r=>r.json()),
+                fetch(`/api/v1/companies/${this._cid}/suppliers`,{headers:{Authorization:'Bearer '+token}}).then(r=>r.json()),
+            ]);
+            this.orders    = po.data ?? po;
+            this.suppliers = s.data ?? s;
+        },
+        async submitPO() {
+            this.saving=true; this.poError='';
+            const token = localStorage.getItem('opes_token');
+            const r = await fetch(`/api/v1/companies/${this._cid}/purchase-orders`,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify(this.form)});
+            const d = await r.json();
+            if(r.ok) { this.orders.unshift(d); this.showForm=false; this.form={supplier_id:'',order_date:new Date().toISOString().slice(0,10),expected_delivery_date:'',notes:'',lines:[{description:'',quantity:1,unit_price_ht:0}]}; }
+            else { this.poError = d.message ?? JSON.stringify(d.errors ?? d); }
+            this.saving=false;
+        },
+    };
+}
+
+function creditNotesPanel() {
+    return {
+        _cid: null, customers: [], suppliers: [],
+        cnForm: { customer_id:'', credit_note_date: new Date().toISOString().slice(0,10), amount_ht:0, reason:'' },
+        snForm: { supplier_id:'', credit_note_date: new Date().toISOString().slice(0,10), amount_ht:0, reason:'' },
+        cnSaving: false, snSaving: false, cnError:'', snError:'', cnSuccess:'', snSuccess:'',
+        async init() {
+            const token = localStorage.getItem('opes_token');
+            const me = await fetch('/api/v1/auth/me',{headers:{Authorization:'Bearer '+token}}).then(r=>r.json());
+            this._cid = me.company?.id;
+            const [c, s] = await Promise.all([
+                fetch(`/api/v1/companies/${this._cid}/customers`,{headers:{Authorization:'Bearer '+token}}).then(r=>r.json()),
+                fetch(`/api/v1/companies/${this._cid}/suppliers`,{headers:{Authorization:'Bearer '+token}}).then(r=>r.json()),
+            ]);
+            this.customers = c.data ?? c;
+            this.suppliers = s.data ?? s;
+        },
+        async submitCustomerCN() {
+            this.cnSaving=true; this.cnError=''; this.cnSuccess='';
+            const token = localStorage.getItem('opes_token');
+            const r = await fetch(`/api/v1/companies/${this._cid}/customers/${this.cnForm.customer_id}/credit-notes`,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify(this.cnForm)});
+            const d = await r.json();
+            if(r.ok) { this.cnSuccess = 'Avoir '+d.credit_note_number+' créé.'; this.cnForm={customer_id:'',credit_note_date:new Date().toISOString().slice(0,10),amount_ht:0,reason:''}; }
+            else { this.cnError = d.message ?? JSON.stringify(d.errors ?? d); }
+            this.cnSaving=false;
+        },
+        async submitSupplierCN() {
+            this.snSaving=true; this.snError=''; this.snSuccess='';
+            const token = localStorage.getItem('opes_token');
+            const r = await fetch(`/api/v1/companies/${this._cid}/suppliers/${this.snForm.supplier_id}/credit-notes`,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify(this.snForm)});
+            const d = await r.json();
+            if(r.ok) { this.snSuccess = 'Avoir '+d.credit_note_number+' enregistré.'; this.snForm={supplier_id:'',credit_note_date:new Date().toISOString().slice(0,10),amount_ht:0,reason:''}; }
+            else { this.snError = d.message ?? JSON.stringify(d.errors ?? d); }
+            this.snSaving=false;
+        },
+    };
+}
+
+function patentePanel() {
+    return {
+        _cid: null, records: [], showForm: false, saving: false, formError: '',
+        form: { tax_year: new Date().getFullYear(), patente_number:'', amount_due_xaf:0, due_date:'', notes:'' },
+        async init() {
+            const token = localStorage.getItem('opes_token');
+            const me = await fetch('/api/v1/auth/me',{headers:{Authorization:'Bearer '+token}}).then(r=>r.json());
+            this._cid = me.company?.id;
+            const d = await fetch(`/api/v1/companies/${this._cid}/patente`,{headers:{Authorization:'Bearer '+token}}).then(r=>r.json());
+            this.records = d;
+        },
+        async submitPatente() {
+            this.saving=true; this.formError='';
+            const token = localStorage.getItem('opes_token');
+            const r = await fetch(`/api/v1/companies/${this._cid}/patente`,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify(this.form)});
+            const d = await r.json();
+            if(r.ok) { this.records.unshift(d); this.showForm=false; this.form={tax_year:new Date().getFullYear(),patente_number:'',amount_due_xaf:0,due_date:'',notes:''}; }
+            else { this.formError = d.message ?? JSON.stringify(d.errors ?? d); }
+            this.saving=false;
+        },
+        async payPatente(p) {
+            const amount  = prompt(this.lang==='FR'?'Montant à payer (XAF):':'Amount to pay (XAF):');
+            if(!amount || isNaN(amount)) return;
+            const date    = prompt(this.lang==='FR'?'Date de paiement (YYYY-MM-DD):':'Payment date (YYYY-MM-DD):', new Date().toISOString().slice(0,10));
+            if(!date) return;
+            const token = localStorage.getItem('opes_token');
+            const r = await fetch(`/api/v1/companies/${this._cid}/patente/${p.id}/pay`,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({amount_paid_xaf:Number(amount),paid_date:date})});
+            if(r.ok) { const d=await r.json(); const i=this.records.findIndex(x=>x.id===p.id); if(i>-1) this.records[i]=d; }
         },
     };
 }

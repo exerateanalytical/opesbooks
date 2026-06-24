@@ -21,10 +21,19 @@ use App\Http\Controllers\Api\V1\InvoiceVerificationController;
 use App\Http\Controllers\Api\V1\PayrollController;
 use App\Http\Controllers\Api\V1\ProfileController;
 use App\Http\Controllers\Api\V1\RecurringTransactionController;
+use App\Http\Controllers\Api\V1\CnpsBordereauController;
+use App\Http\Controllers\Api\V1\CustomerCreditNoteController;
+use App\Http\Controllers\Api\V1\CustomerQuotationController;
+use App\Http\Controllers\Api\V1\MailDeliveryController;
+use App\Http\Controllers\Api\V1\PasswordResetController;
+use App\Http\Controllers\Api\V1\PatenteController;
+use App\Http\Controllers\Api\V1\PurchaseOrderController;
 use App\Http\Controllers\Api\V1\StatementController;
 use App\Http\Controllers\Api\V1\StockMovementController;
 use App\Http\Controllers\Api\V1\SupplierController;
+use App\Http\Controllers\Api\V1\SupplierCreditNoteController;
 use App\Http\Controllers\Api\V1\SupplierInvoiceController;
+use App\Http\Controllers\Api\V1\WithholdingCertificateController;
 use App\Jobs\SyncInvoiceToDgiPortalJob;
 use App\Http\Controllers\Api\V1\LedgerController;
 use App\Http\Controllers\Api\V1\ManualJournalController;
@@ -37,10 +46,12 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->name('v1.')->group(function () {
 
-    // ── Auth (public) ────────────────────────────────────────────────────────
-    Route::prefix('auth')->name('auth.')->group(function () {
-        Route::post('register', [AuthController::class, 'register'])->name('register');
-        Route::post('login',    [AuthController::class, 'login'])->name('login');
+    // ── Auth (public) — rate-limited ────────────────────────────────────────
+    Route::prefix('auth')->name('auth.')->middleware('throttle:api-auth')->group(function () {
+        Route::post('register',         [AuthController::class,       'register'])->name('register');
+        Route::post('login',            [AuthController::class,       'login'])->name('login');
+        Route::post('forgot-password',  [PasswordResetController::class, 'sendLink'])->name('forgot-password');
+        Route::post('reset-password',   [PasswordResetController::class, 'reset'])->name('reset-password');
     });
 
     // ── Tax calculator utility (stateless, public) ───────────────────────────
@@ -262,9 +273,62 @@ Route::prefix('v1')->name('v1.')->group(function () {
                 Route::put('accounts/{account}', [ChartOfAccountsController::class, 'update'])->name('accounts.update');
             });
 
-            // Customer & supplier statement PDFs
-            Route::get('customers/{customer}/statement', [StatementController::class, 'customerStatement'])->name('customers.statement');
-            Route::get('suppliers/{supplier}/statement', [StatementController::class, 'supplierStatement'])->name('suppliers.statement');
+            // Customer & supplier statement PDFs (export-rate-limited)
+            Route::middleware('throttle:api-export')->group(function () {
+                Route::get('customers/{customer}/statement',  [StatementController::class, 'customerStatement'])->name('customers.statement');
+                Route::get('suppliers/{supplier}/statement',  [StatementController::class, 'supplierStatement'])->name('suppliers.statement');
+                Route::get('suppliers/{supplier}/withholding-certificate', [WithholdingCertificateController::class, 'generate'])->name('suppliers.withholding-cert');
+                Route::post('payroll/cnps-bordereau', [CnpsBordereauController::class, 'generate'])->name('payroll.cnps-bordereau');
+            });
+
+            // Customer credit notes
+            Route::get('customers/{customer}/credit-notes',        [CustomerCreditNoteController::class, 'index'])->name('customers.credit-notes.index');
+            Route::get('customers/{customer}/credit-notes/{creditNote}', [CustomerCreditNoteController::class, 'show'])->name('customers.credit-notes.show');
+            Route::middleware(\App\Http\Middleware\RequireRole::class . ':OWNER,ACCOUNTANT')->group(function () {
+                Route::post('customers/{customer}/credit-notes',   [CustomerCreditNoteController::class, 'store'])->name('customers.credit-notes.store');
+            });
+
+            // Supplier credit notes
+            Route::get('suppliers/{supplier}/credit-notes',        [SupplierCreditNoteController::class, 'index'])->name('suppliers.credit-notes.index');
+            Route::get('suppliers/{supplier}/credit-notes/{creditNote}', [SupplierCreditNoteController::class, 'show'])->name('suppliers.credit-notes.show');
+            Route::middleware(\App\Http\Middleware\RequireRole::class . ':OWNER,ACCOUNTANT')->group(function () {
+                Route::post('suppliers/{supplier}/credit-notes',   [SupplierCreditNoteController::class, 'store'])->name('suppliers.credit-notes.store');
+            });
+
+            // Customer quotations / devis
+            Route::get('quotations',                            [CustomerQuotationController::class, 'index'])->name('quotations.index');
+            Route::get('quotations/{quotation}',                [CustomerQuotationController::class, 'show'])->name('quotations.show');
+            Route::middleware(\App\Http\Middleware\RequireRole::class . ':OWNER,ACCOUNTANT')->group(function () {
+                Route::post('quotations',                       [CustomerQuotationController::class, 'store'])->name('quotations.store');
+                Route::put('quotations/{quotation}/status',     [CustomerQuotationController::class, 'updateStatus'])->name('quotations.status');
+                Route::post('quotations/{quotation}/convert',   [CustomerQuotationController::class, 'convert'])->name('quotations.convert');
+                Route::delete('quotations/{quotation}',         [CustomerQuotationController::class, 'destroy'])->name('quotations.destroy');
+            });
+
+            // Purchase orders / bons de commande
+            Route::get('purchase-orders',                       [PurchaseOrderController::class, 'index'])->name('purchase-orders.index');
+            Route::get('purchase-orders/{purchaseOrder}',       [PurchaseOrderController::class, 'show'])->name('purchase-orders.show');
+            Route::middleware(\App\Http\Middleware\RequireRole::class . ':OWNER,ACCOUNTANT')->group(function () {
+                Route::post('purchase-orders',                  [PurchaseOrderController::class, 'store'])->name('purchase-orders.store');
+                Route::put('purchase-orders/{purchaseOrder}/status',   [PurchaseOrderController::class, 'updateStatus'])->name('purchase-orders.status');
+                Route::post('purchase-orders/{purchaseOrder}/receive',  [PurchaseOrderController::class, 'receive'])->name('purchase-orders.receive');
+                Route::delete('purchase-orders/{purchaseOrder}',        [PurchaseOrderController::class, 'destroy'])->name('purchase-orders.destroy');
+            });
+
+            // Patente (local business tax)
+            Route::get('patente',                               [PatenteController::class, 'index'])->name('patente.index');
+            Route::middleware(\App\Http\Middleware\RequireRole::class . ':OWNER,ACCOUNTANT')->group(function () {
+                Route::post('patente',                          [PatenteController::class, 'store'])->name('patente.store');
+                Route::post('patente/{patenteRecord}/pay',      [PatenteController::class, 'pay'])->name('patente.pay');
+                Route::delete('patente/{patenteRecord}',        [PatenteController::class, 'destroy'])->name('patente.destroy');
+            });
+
+            // Email delivery (throttle export)
+            Route::middleware(['throttle:api-export', \App\Http\Middleware\RequireRole::class . ':OWNER,ACCOUNTANT'])->group(function () {
+                Route::post('mail/invoice/{invoice}',                      [MailDeliveryController::class, 'sendInvoice'])->name('mail.invoice');
+                Route::post('mail/customer-statement/{customer}',          [MailDeliveryController::class, 'sendCustomerStatement'])->name('mail.customer-statement');
+                Route::post('mail/supplier-statement/{supplier}',          [MailDeliveryController::class, 'sendSupplierStatement'])->name('mail.supplier-statement');
+            });
 
             // Stock / inventory movements
             Route::get('stock',                            [StockMovementController::class, 'index'])->name('stock.index');

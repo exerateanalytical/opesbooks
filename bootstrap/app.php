@@ -4,6 +4,8 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Support\Facades\RateLimiter;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -25,4 +27,23 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*'),
         );
-    })->create();
+    })
+    ->booted(function () {
+        // Auth endpoints: 10 attempts / minute per IP
+        RateLimiter::for('api-auth', fn (Request $req) =>
+            Limit::perMinute(10)->by($req->ip())
+        );
+
+        // General API: 120 requests / minute per authenticated user (or IP)
+        RateLimiter::for('api', fn (Request $req) =>
+            $req->user()
+                ? Limit::perMinute(120)->by($req->user()->id)
+                : Limit::perMinute(30)->by($req->ip())
+        );
+
+        // PDF/export endpoints: 20 / minute (heavy)
+        RateLimiter::for('api-export', fn (Request $req) =>
+            Limit::perMinute(20)->by($req->user()?->id ?? $req->ip())
+        );
+    })
+    ->create();
