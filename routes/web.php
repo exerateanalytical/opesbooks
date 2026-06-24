@@ -1,5 +1,6 @@
 <?php
 
+use App\Livewire\DgiMonitor;
 use App\Livewire\TaxDashboard;
 use Illuminate\Support\Facades\Route;
 
@@ -42,3 +43,4 @@ Route::get('/', function () {
 });
 
 Route::get('/tax-dashboard', TaxDashboard::class)->name('tax.dashboard');
+Route::get('/dgi-monitor', DgiMonitor::class)->name('dgi.monitor');

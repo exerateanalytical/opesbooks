@@ -21,10 +21,15 @@ class JournalEntry extends Model
         'transaction_status',
         'source_pipeline',
         'memo',
+        'dgi_validation_token',
+        'dgi_validated_at',
+        'dgi_sync_status',
+        'dgi_error_payload',
     ];
 
     protected $casts = [
-        'posting_date' => 'date',
+        'posting_date'    => 'date',
+        'dgi_validated_at' => 'datetime',
     ];
 
     public function company()

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\BankStatementController;
+use App\Jobs\SyncInvoiceToDgiPortalJob;
 use App\Http\Controllers\Api\V1\CompanyController;
 use App\Http\Controllers\Api\V1\DgiFiscalisExportController;
 use App\Http\Controllers\Api\V1\InvoicePdfController;
@@ -87,6 +88,12 @@ Route::prefix('v1')->name('v1.')->group(function () {
                 // DGI Fiscalis export
                 Route::get('exports/dgi-fiscalis', [DgiFiscalisExportController::class, 'export'])
                     ->name('exports.dgi-fiscalis');
+
+                // DGI Live-Link: force re-sync of a specific journal entry
+                Route::post('journal/{id}/dgi-sync', function (\Illuminate\Http\Request $request, int $id) {
+                    SyncInvoiceToDgiPortalJob::dispatch($id);
+                    return response()->json(['status' => 'queued', 'message' => 'DGI sync job dispatched.'], 202);
+                })->name('journal.dgi-sync');
 
                 // Bank statement CSV import
                 Route::post('bank-statement/import', [BankStatementController::class, 'import'])
