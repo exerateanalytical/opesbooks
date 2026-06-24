@@ -146,8 +146,8 @@
                 <a href="/"            class="nav-link px-3.5 py-2 rounded-xl font-bold uppercase tracking-wider text-[11px]">
                     <span x-show="lang==='FR'">Tableau de Bord</span><span x-show="lang==='EN'" x-cloak>Dashboard</span>
                 </a>
-                <a href="#"            class="nav-link px-3.5 py-2 rounded-xl font-bold uppercase tracking-wider text-[11px]">Transactions</a>
-                <a href="#"            class="nav-link px-3.5 py-2 rounded-xl font-bold uppercase tracking-wider text-[11px]">
+                <a href="/app?page=journal" class="nav-link px-3.5 py-2 rounded-xl font-bold uppercase tracking-wider text-[11px]">Transactions</a>
+                <a href="/app?page=ledger" class="nav-link px-3.5 py-2 rounded-xl font-bold uppercase tracking-wider text-[11px]">
                     <span x-show="lang==='FR'">Grand Livre</span><span x-show="lang==='EN'" x-cloak>Ledger</span>
                 </a>
                 <a href="/dgi-monitor" class="nav-link px-3.5 py-2 rounded-xl font-bold uppercase tracking-wider text-[11px]">
