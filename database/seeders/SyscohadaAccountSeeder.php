@@ -16,7 +16,8 @@ class SyscohadaAccountSeeder extends Seeder
         $accounts = [
             // CLASS 1 — CAPITAUX PROPRES
             ['code' => '101000', 'label' => 'Capital Social (Company share capital)', 'class_digit' => 1],
-            ['code' => '121000', 'label' => 'Report à nouveau créditeur (Retained earnings)', 'class_digit' => 1],
+            ['code' => '121000', 'label' => 'Report à nouveau créditeur (Retained earnings — profit carry-forward)', 'class_digit' => 1],
+            ['code' => '129000', 'label' => 'Report à nouveau débiteur (Accumulated losses carry-forward)', 'class_digit' => 1],
             ['code' => '131000', 'label' => "Résultat net de l'exercice (Net profit/loss of the fiscal year)", 'class_digit' => 1],
             ['code' => '161000', 'label' => "Emprunts d'une durée supérieure à 1 an (Long-term bank loans)", 'class_digit' => 1],
 

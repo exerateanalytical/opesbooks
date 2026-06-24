@@ -30,7 +30,7 @@ class SupplierInvoiceController extends Controller
             'invoice_number'    => 'required|string|max:100',
             'supplier_ref'      => 'nullable|string|max:100',
             'invoice_date'      => 'required|date',
-            'due_date'          => 'nullable|date',
+            'due_date'          => 'required|date',
             'amount_ht'         => 'required|numeric|min:0',
             'tva_amount'        => 'required|numeric|min:0',
             'cac_amount'        => 'nullable|numeric|min:0',
@@ -51,6 +51,7 @@ class SupplierInvoiceController extends Controller
             'tva_amount'     => $data['tva_amount'],
             'cac_amount'     => $data['cac_amount'] ?? 0,
             'amount_ttc'     => $amountTtc,
+            'net_payable'    => $amountTtc,
             'status'         => 'DRAFT',
             'notes'          => $data['notes'] ?? null,
         ]);

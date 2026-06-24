@@ -292,6 +292,14 @@
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                 <span x-text="lang==='FR' ? 'Journal d\'Audit' : 'Audit Log'"></span>
             </button>
+            <button @click="setPage('fiscal-year')" :class="page==='fiscal-year' ? 'nav-item active' : 'nav-item'">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                <span x-text="lang==='FR' ? 'Clôture Exercice' : 'Fiscal Year'"></span>
+            </button>
+            <button @click="setPage('accounts')" :class="page==='accounts' ? 'nav-item active' : 'nav-item'">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+                <span x-text="lang==='FR' ? 'Plan Comptable' : 'Chart of Accounts'"></span>
+            </button>
 
             <div class="my-2" style="height:1px;background:rgba(255,255,255,0.07)"></div>
 
@@ -2467,6 +2475,104 @@
             </div>
         </div>
 
+        <!-- ══════════════════════════════════════════════════════════════ -->
+        <!-- FISCAL YEAR CLOSE / OPENING BALANCES PAGE                    -->
+        <!-- ══════════════════════════════════════════════════════════════ -->
+        <div x-show="page==='fiscal-year'" x-cloak class="p-6 space-y-5 float-in" x-data="fiscalYearPanel()">
+            <h2 class="text-lg font-bold" x-text="lang==='FR' ? 'Gestion des Exercices Comptables' : 'Fiscal Year Management'"></h2>
+
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <!-- Fiscal Year Close -->
+                <div class="glass-card rounded-2xl p-5 space-y-3">
+                    <h3 class="font-bold text-sm text-yellow-300" x-text="lang==='FR' ? 'Clôture de l\'exercice' : 'Close Fiscal Year'"></h3>
+                    <p class="text-xs opacity-50" x-text="lang==='FR' ? 'Passe le résultat net au report à nouveau (131000 → 121000 ou 129000). Action irréversible.' : 'Carries net profit/loss to retained earnings. Irreversible action.'"></p>
+                    <input x-model.number="closeYear" type="number" :placeholder="lang==='FR' ? 'Exercice à clôturer' : 'Fiscal year to close'" class="input" />
+                    <div x-show="closeMsg" class="text-xs px-3 py-2 rounded-xl" :class="closeError ? 'text-red-400' : 'text-emerald-400'" x-text="closeMsg"></div>
+                    <button @click="closeFiscalYear()" :disabled="closing" class="btn-primary text-xs w-full py-2" style="background:rgba(251,191,36,0.15);border-color:rgba(251,191,36,0.4);">
+                        <span x-show="!closing" x-text="lang==='FR' ? 'Clôturer l\'exercice' : 'Close Fiscal Year'"></span>
+                        <span x-show="closing">...</span>
+                    </button>
+                </div>
+
+                <!-- Opening Balances -->
+                <div class="glass-card rounded-2xl p-5 space-y-3">
+                    <h3 class="font-bold text-sm text-sky-300" x-text="lang==='FR' ? 'Soldes d\'ouverture' : 'Opening Balances'"></h3>
+                    <p class="text-xs opacity-50" x-text="lang==='FR' ? 'Importez les soldes de départ lors du passage de votre ancien système. L\'écriture doit être équilibrée.' : 'Import starting balances when migrating from a previous system. Entry must balance.'"></p>
+                    <input x-model.number="obYear" type="number" :placeholder="lang==='FR' ? 'Exercice' : 'Fiscal year'" class="input" />
+                    <textarea x-model="obJson" rows="5" class="input font-mono text-xs" :placeholder="lang==='FR' ? 'JSON: [{&quot;account_code&quot;:&quot;521100&quot;,&quot;debit&quot;:1000000,&quot;credit&quot;:0},...]' : 'JSON array of {account_code, debit, credit}'"></textarea>
+                    <div x-show="obMsg" class="text-xs px-3 py-2 rounded-xl" :class="obError ? 'text-red-400' : 'text-emerald-400'" x-text="obMsg"></div>
+                    <button @click="importOpeningBalances()" :disabled="obLoading" class="btn-primary text-xs w-full py-2">
+                        <span x-show="!obLoading" x-text="lang==='FR' ? 'Importer Soldes d\'Ouverture' : 'Import Opening Balances'"></span>
+                        <span x-show="obLoading">...</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- CSV Exports -->
+            <div class="glass-card rounded-2xl p-5 space-y-3">
+                <h3 class="font-bold text-sm" x-text="lang==='FR' ? 'Exports CSV / Excel' : 'CSV / Excel Exports'"></h3>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="space-y-2">
+                        <label class="text-xs opacity-50" x-text="lang==='FR' ? 'Période (du — au)' : 'Period (from — to)'"></label>
+                        <input x-model="exportFrom" type="date" class="input text-xs" />
+                        <input x-model="exportTo" type="date" class="input text-xs" />
+                    </div>
+                    <div class="space-y-2 flex flex-col justify-end">
+                        <button @click="downloadCsv('trial-balance-csv')" class="btn-secondary text-xs py-1.5" x-text="lang==='FR' ? 'Balance Générale CSV' : 'Trial Balance CSV'"></button>
+                        <button @click="downloadCsv('journal-csv')" class="btn-secondary text-xs py-1.5" x-text="lang==='FR' ? 'Journal CSV' : 'Journal CSV'"></button>
+                        <button @click="downloadCsv('aged-receivables-csv')" class="btn-secondary text-xs py-1.5" x-text="lang==='FR' ? 'Créances CSV' : 'Receivables CSV'"></button>
+                        <button @click="downloadCsv('aged-payables-csv')" class="btn-secondary text-xs py-1.5" x-text="lang==='FR' ? 'Dettes CSV' : 'Payables CSV'"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════════════ -->
+        <!-- CHART OF ACCOUNTS PAGE                                        -->
+        <!-- ══════════════════════════════════════════════════════════════ -->
+        <div x-show="page==='accounts'" x-cloak class="p-6 space-y-5 float-in" x-data="chartOfAccountsPanel()">
+            <div class="flex items-center justify-between">
+                <h2 class="text-lg font-bold" x-text="lang==='FR' ? 'Plan Comptable SYSCOHADA' : 'Chart of Accounts'"></h2>
+                <button @click="showForm=!showForm" class="btn-primary text-xs px-4 py-2">+ <span x-text="lang==='FR' ? 'Nouveau Compte' : 'New Account'"></span></button>
+            </div>
+
+            <div x-show="showForm" x-cloak class="glass-card rounded-2xl p-5 space-y-3 float-in">
+                <div class="grid grid-cols-3 gap-3">
+                    <input x-model="form.code" :placeholder="lang==='FR' ? 'Code (ex: 621200)' : 'Code (e.g. 621200)'" class="input" maxlength="10" />
+                    <input x-model.number="form.class_digit" type="number" min="1" max="9" :placeholder="lang==='FR' ? 'Classe (1-9)' : 'Class (1-9)'" class="input" />
+                    <input x-model="form.label" :placeholder="lang==='FR' ? 'Intitulé du compte' : 'Account label'" class="input col-span-3" />
+                </div>
+                <div x-show="formError" class="text-red-400 text-xs" x-text="formError"></div>
+                <button @click="addAccount()" :disabled="submitting" class="btn-primary text-xs w-full py-2">
+                    <span x-show="!submitting" x-text="lang==='FR' ? 'Créer' : 'Create'"></span>
+                    <span x-show="submitting">...</span>
+                </button>
+            </div>
+
+            <input x-model="search" :placeholder="lang==='FR' ? 'Rechercher par code ou intitulé...' : 'Search by code or label...'" class="input w-full text-sm" />
+
+            <div class="glass rounded-2xl overflow-hidden" style="max-height:60vh;overflow-y:auto">
+                <table class="w-full text-xs">
+                    <thead class="sticky top-0" style="background:rgba(15,23,42,0.95)"><tr style="border-bottom:1px solid rgba(255,255,255,0.07)">
+                        <th class="text-left px-4 py-2.5 opacity-50" x-text="lang==='FR' ? 'Code' : 'Code'"></th>
+                        <th class="text-left px-4 py-2.5 opacity-50" x-text="lang==='FR' ? 'Intitulé' : 'Label'"></th>
+                        <th class="text-center px-4 py-2.5 opacity-50" x-text="lang==='FR' ? 'Cl.' : 'Cl.'"></th>
+                    </tr></thead>
+                    <tbody>
+                        <template x-for="a in filtered" :key="a.id">
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.03)" class="hover:bg-white/5">
+                                <td class="px-4 py-1.5 font-mono text-sky-300" x-text="a.code"></td>
+                                <td class="px-4 py-1.5 opacity-80" x-text="a.label"></td>
+                                <td class="px-4 py-1.5 text-center opacity-50" x-text="a.class_digit"></td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+                <div x-show="filtered.length===0" class="text-center py-6 opacity-40 text-sm" x-text="lang==='FR' ? 'Aucun compte trouvé.' : 'No accounts found.'"></div>
+            </div>
+            <p class="text-xs opacity-40" x-text="filtered.length + ' ' + (lang==='FR' ? 'compte(s) affiché(s)' : 'account(s) shown') + ' / ' + accounts.length + ' total'"></p>
+        </div>
+
     </main>
 </div>
 
@@ -3701,6 +3807,98 @@ function auditLogPanel() {
             const d = await fetch(`/api/v1/companies/${this._cid}/audit-log`,{headers:{Authorization:'Bearer '+token}}).then(r=>r.json());
             this.logs = d.data ?? d;
             this.loading=false;
+        },
+    };
+}
+
+function fiscalYearPanel() {
+    return {
+        _cid: null,
+        closeYear: new Date().getFullYear()-1, closing: false, closeMsg: '', closeError: false,
+        obYear: new Date().getFullYear(), obJson: '', obLoading: false, obMsg: '', obError: false,
+        exportFrom: new Date().getFullYear() + '-01-01',
+        exportTo: new Date().getFullYear() + '-12-31',
+        async init() {
+            const token = localStorage.getItem('opes_token');
+            const me = await fetch('/api/v1/auth/me',{headers:{Authorization:'Bearer '+token,Accept:'application/json'}}).then(r=>r.json());
+            this._cid = me.company?.id;
+        },
+        async closeFiscalYear() {
+            if (!confirm(`Clôturer l'exercice ${this.closeYear} ? Cette opération est irréversible.`)) return;
+            this.closing=true; this.closeMsg=''; this.closeError=false;
+            const token = localStorage.getItem('opes_token');
+            const r = await fetch(`/api/v1/companies/${this._cid}/fiscal-year/close`, {
+                method:'POST', headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},
+                body: JSON.stringify({fiscal_year: this.closeYear})
+            });
+            const d = await r.json();
+            this.closeMsg = d.message ?? (r.ok ? 'Clôturé avec succès.' : 'Erreur.');
+            this.closeError = !r.ok;
+            this.closing=false;
+        },
+        async importOpeningBalances() {
+            this.obLoading=true; this.obMsg=''; this.obError=false;
+            let balances;
+            try { balances = JSON.parse(this.obJson); } catch(e) { this.obMsg='JSON invalide.'; this.obError=true; this.obLoading=false; return; }
+            const token = localStorage.getItem('opes_token');
+            const r = await fetch(`/api/v1/companies/${this._cid}/fiscal-year/opening-balances`, {
+                method:'POST', headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},
+                body: JSON.stringify({fiscal_year: this.obYear, balances})
+            });
+            const d = await r.json();
+            this.obMsg = d.message ?? (r.ok ? 'Importé.' : JSON.stringify(d));
+            this.obError = !r.ok;
+            this.obLoading=false;
+        },
+        downloadCsv(endpoint) {
+            const token = localStorage.getItem('opes_token');
+            const url = `/api/v1/companies/${this._cid}/exports/${endpoint}?from=${this.exportFrom}&to=${this.exportTo}`;
+            // Fetch with auth and trigger download
+            fetch(url, {headers:{Authorization:'Bearer '+token}})
+                .then(r => r.blob())
+                .then(blob => {
+                    const a = document.createElement('a');
+                    a.href = URL.createObjectURL(blob);
+                    a.download = endpoint + '.csv';
+                    a.click();
+                });
+        },
+    };
+}
+
+function chartOfAccountsPanel() {
+    return {
+        _cid: null, accounts: [], search: '', loading: true,
+        showForm: false, submitting: false, formError: '',
+        form: { code:'', label:'', class_digit:'' },
+        get filtered() {
+            const q = this.search.toLowerCase();
+            if (!q) return this.accounts;
+            return this.accounts.filter(a => a.code.includes(q) || a.label.toLowerCase().includes(q));
+        },
+        async init() {
+            const token = localStorage.getItem('opes_token');
+            const me = await fetch('/api/v1/auth/me',{headers:{Authorization:'Bearer '+token,Accept:'application/json'}}).then(r=>r.json());
+            this._cid = me.company?.id; if(!this._cid) return;
+            const d = await fetch(`/api/v1/companies/${this._cid}/accounts`,{headers:{Authorization:'Bearer '+token}}).then(r=>r.json());
+            this.accounts = Array.isArray(d) ? d : (d.data ?? []);
+            this.loading = false;
+        },
+        async addAccount() {
+            this.submitting=true; this.formError='';
+            const token = localStorage.getItem('opes_token');
+            const r = await fetch(`/api/v1/companies/${this._cid}/accounts`, {
+                method:'POST', headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},
+                body: JSON.stringify(this.form)
+            });
+            const d = await r.json();
+            if(r.ok) {
+                this.accounts.push(d);
+                this.accounts.sort((a,b) => a.code.localeCompare(b.code));
+                this.showForm=false;
+                this.form={code:'',label:'',class_digit:''};
+            } else { this.formError = d.message ?? JSON.stringify(d.errors); }
+            this.submitting=false;
         },
     };
 }

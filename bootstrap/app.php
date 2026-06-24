@@ -17,6 +17,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'role'                 => \App\Http\Middleware\RequireRole::class,
             'active_subscription'  => \App\Http\Middleware\RequireActiveSubscription::class,
         ]);
+
+        // Log all mutating API requests to audit_logs
+        $middleware->appendToGroup('api', \App\Http\Middleware\AuditActivity::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

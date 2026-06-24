@@ -3,6 +3,9 @@
 use App\Http\Controllers\Api\V1\AttachmentController;
 use App\Http\Controllers\Api\V1\AuditLogController;
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\ChartOfAccountsController;
+use App\Http\Controllers\Api\V1\ExportController;
+use App\Http\Controllers\Api\V1\FiscalYearController;
 use App\Http\Controllers\Api\V1\BankReconciliationController;
 use App\Http\Controllers\Api\V1\BankStatementController;
 use App\Http\Controllers\Api\V1\BudgetController;
@@ -243,6 +246,27 @@ Route::prefix('v1')->name('v1.')->group(function () {
             Route::get('audit-log', [AuditLogController::class, 'index'])
                 ->middleware(\App\Http\Middleware\RequireRole::class . ':OWNER')
                 ->name('audit-log.index');
+
+            // Fiscal year operations (OWNER only)
+            Route::middleware(\App\Http\Middleware\RequireRole::class . ':OWNER')->group(function () {
+                Route::post('fiscal-year/close',            [FiscalYearController::class, 'close'])->name('fiscal-year.close');
+                Route::post('fiscal-year/opening-balances', [FiscalYearController::class, 'importOpeningBalances'])->name('fiscal-year.opening-balances');
+            });
+
+            // Chart of accounts
+            Route::get('accounts', [ChartOfAccountsController::class, 'index'])->name('accounts.index');
+            Route::middleware(\App\Http\Middleware\RequireRole::class . ':OWNER,ACCOUNTANT')->group(function () {
+                Route::post('accounts',        [ChartOfAccountsController::class, 'store'])->name('accounts.store');
+                Route::put('accounts/{account}', [ChartOfAccountsController::class, 'update'])->name('accounts.update');
+            });
+
+            // CSV exports (all authenticated roles)
+            Route::prefix('exports')->name('exports.')->group(function () {
+                Route::get('trial-balance-csv',    [ExportController::class, 'trialBalanceCsv'])->name('trial-balance-csv');
+                Route::get('journal-csv',          [ExportController::class, 'journalCsv'])->name('journal-csv');
+                Route::get('aged-receivables-csv', [ExportController::class, 'agedReceivablesCsv'])->name('aged-receivables-csv');
+                Route::get('aged-payables-csv',    [ExportController::class, 'agedPayablesCsv'])->name('aged-payables-csv');
+            });
         });
     });
 });
