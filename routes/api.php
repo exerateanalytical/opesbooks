@@ -128,6 +128,7 @@ Route::prefix('v1')->name('v1.')->group(function () {
                     Route::get('balance-sheet',     [FinancialReportController::class, 'balanceSheet'])->name('balance-sheet');
                     Route::get('cash-flow',         [FinancialReportController::class, 'cashFlow'])->name('cash-flow');
                     Route::get('aged-receivables',  [FinancialReportController::class, 'agedReceivables'])->name('aged-receivables');
+                    Route::get('aged-payables',     [FinancialReportController::class, 'agedPayables'])->name('aged-payables');
                 });
 
                 // Recurring transactions

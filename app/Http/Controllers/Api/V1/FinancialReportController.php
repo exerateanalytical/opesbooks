@@ -34,4 +34,9 @@ class FinancialReportController extends Controller
     {
         return response()->json($this->svc->agedReceivables($company));
     }
+
+    public function agedPayables(Company $company): JsonResponse
+    {
+        return response()->json($this->svc->agedPayables($company));
+    }
 }

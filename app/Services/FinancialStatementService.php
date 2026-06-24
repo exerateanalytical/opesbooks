@@ -78,11 +78,56 @@ class FinancialStatementService
     }
 
     /**
-     * Aged payables stub (based on supplier reference in journal memo).
+     * Aged payables: queries journal lines on account 401xxx (Fournisseurs)
+     * grouped by posting date bucket to approximate overdue payables.
      */
     public function agedPayables(Company $company): array
     {
-        return $this->agedAnalysis($company->id, 'customer_invoices', 'customer_id', 'customers', true);
+        $rows = DB::select("
+            SELECT
+                sa.code,
+                sa.label,
+                je.posting_date,
+                je.memo,
+                SUM(jl.credit - jl.debit) AS balance,
+                CAST(julianday('now') - julianday(je.posting_date) AS INTEGER) AS days_old
+            FROM journal_lines jl
+            JOIN journal_entries je ON jl.journal_entry_id = je.id
+            JOIN syscohada_accounts sa ON jl.syscohada_account_id = sa.id
+            WHERE je.company_id = ?
+              AND sa.code LIKE '401%'
+              AND je.deleted_at IS NULL
+            GROUP BY je.id, sa.code, sa.label
+            HAVING balance > 0
+            ORDER BY je.posting_date ASC
+        ", [$company->id]);
+
+        $buckets = ['current' => 0, '1_30' => 0, '31_60' => 0, '61_90' => 0, 'over_90' => 0];
+        $invoices = [];
+        foreach ($rows as $r) {
+            $days = (int)$r->days_old;
+            $bucket = match(true) {
+                $days <= 0  => 'current',
+                $days <= 30 => '1_30',
+                $days <= 60 => '31_60',
+                $days <= 90 => '61_90',
+                default     => 'over_90',
+            };
+            $buckets[$bucket] += (float)$r->balance;
+            $invoices[] = [
+                'customer' => ['name' => $r->code.' '.$r->label],
+                'invoice_number' => $r->code,
+                'amount_ttc' => round((float)$r->balance, 2),
+                'due_date' => $r->posting_date,
+                'days_overdue' => $days,
+                'memo' => $r->memo,
+            ];
+        }
+
+        return array_merge(
+            array_map(fn($v) => round($v, 2), $buckets),
+            ['invoices' => $invoices, 'grand_total' => round(array_sum($buckets), 2)]
+        );
     }
 
     // ── Private helpers ───────────────────────────────────────────────────────
@@ -180,11 +225,12 @@ class FinancialStatementService
         return ['items' => $items, 'total' => round($total, 2)];
     }
 
-    private function agedAnalysis(int $companyId, string $table, string $fk, string $joinTable, bool $invert = false): array
+    private function agedAnalysis(int $companyId, string $table, string $fk, string $joinTable): array
     {
         $rows = DB::select("
             SELECT
-                c.name,
+                c.name                  AS customer_name,
+                ci.id,
                 ci.invoice_number,
                 ci.invoice_date,
                 ci.due_date,
@@ -199,7 +245,8 @@ class FinancialStatementService
             ORDER BY ci.due_date ASC
         ", [$companyId]);
 
-        $buckets = ['current' => [], '1_30' => [], '31_60' => [], '61_90' => [], 'over_90' => []];
+        $buckets = ['current' => 0, '1_30' => 0, '31_60' => 0, '61_90' => 0, 'over_90' => 0];
+        $invoices = [];
         foreach ($rows as $r) {
             $days = (int)$r->days_overdue;
             $bucket = match(true) {
@@ -209,13 +256,15 @@ class FinancialStatementService
                 $days <= 90 => '61_90',
                 default     => 'over_90',
             };
-            $buckets[$bucket][] = (array)$r;
+            $buckets[$bucket] += (float)$r->amount_ttc;
+            $inv = (array)$r;
+            $inv['customer'] = ['name' => $r->customer_name];
+            $invoices[] = $inv;
         }
 
-        return [
-            'buckets' => $buckets,
-            'totals'  => collect($buckets)->map(fn($b) => round(collect($b)->sum('amount_ttc'), 2)),
-            'grand_total' => round(collect($rows)->sum('amount_ttc'), 2),
-        ];
+        return array_merge(
+            array_map(fn($v) => round($v, 2), $buckets),
+            ['invoices' => $invoices, 'grand_total' => round(array_sum($buckets), 2)]
+        );
     }
 }

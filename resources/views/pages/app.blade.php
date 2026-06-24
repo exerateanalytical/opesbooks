@@ -243,6 +243,10 @@
 
             <div class="my-1" style="height:1px;background:rgba(255,255,255,0.07)"></div>
 
+            <button @click="setPage('customer-invoices')" :class="page==='customer-invoices' ? 'nav-item active' : 'nav-item'">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <span x-text="lang==='FR' ? 'Fact. Clients' : 'Cust. Invoices'"></span>
+            </button>
             <button @click="setPage('customers')" :class="page==='customers' ? 'nav-item active' : 'nav-item'">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                 <span x-text="lang==='FR' ? 'Clients' : 'Customers'"></span>
@@ -422,12 +426,14 @@
                                 <th class="py-3 px-5 whitespace-nowrap" x-text="lang==='FR' ? 'Source' : 'Source'"></th>
                                 <th class="py-3 px-5 whitespace-nowrap text-center" x-text="lang==='FR' ? 'Statut' : 'Status'"></th>
                                 <th class="py-3 px-5 whitespace-nowrap text-center">PDF</th>
+                                <th class="py-3 px-5 whitespace-nowrap text-center">DGI</th>
+                                <th class="py-3 px-5 whitespace-nowrap text-center" x-text="lang==='FR' ? 'P.J.' : 'Attach.'"></th>
                             </tr>
                         </thead>
                         <tbody class="text-xs font-medium">
                             <template x-if="journalEntries.length === 0">
                                 <tr>
-                                    <td colspan="6" class="py-14 text-center">
+                                    <td colspan="8" class="py-14 text-center">
                                         <div class="flex flex-col items-center gap-3">
                                             <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl"
                                                  style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08)">📋</div>
@@ -462,6 +468,20 @@
                                                 style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.25);color:rgb(252,211,77)"
                                                 x-text="lang==='FR' ? '↓ PDF' : '↓ PDF'"></button>
                                     </td>
+                                    <td class="py-3 px-5 text-center whitespace-nowrap">
+                                        <button @click="forceDgiSync(txn)"
+                                                class="text-[9px] font-black px-2.5 py-1 rounded-lg uppercase tracking-wider transition-all active:scale-95"
+                                                :class="txn.dgi_sync_status==='SYNCED' ? 'opacity-40' : ''"
+                                                style="background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.25);color:rgb(165,180,252)"
+                                                :title="txn.dgi_sync_status??'NOT_SYNCED'"
+                                                x-text="txn.dgi_sync_status==='SYNCED' ? '✔ DGI' : '⟳ DGI'"></button>
+                                    </td>
+                                    <td class="py-3 px-5 text-center whitespace-nowrap">
+                                        <button @click="openAttachments(txn)"
+                                                class="text-[9px] font-black px-2.5 py-1 rounded-lg uppercase tracking-wider transition-all active:scale-95"
+                                                style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);color:rgb(110,231,183)"
+                                                x-text="'📎 '+(txn._attachCount??'…')"></button>
+                                    </td>
                                 </tr>
                             </template>
                         </tbody>
@@ -481,6 +501,39 @@
                                 class="glass-btn-amber px-3 py-1 rounded-lg text-[10px] uppercase tracking-wider disabled:opacity-30"
                                 x-text="lang==='FR'?'Suiv. →':'Next →'"></button>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Attachments modal (shown over journal page) -->
+        <div x-show="attachModal.open" x-cloak
+             class="fixed inset-0 z-50 flex items-center justify-center p-4"
+             style="background:rgba(0,0,0,0.7);backdrop-filter:blur(4px)">
+            <div class="glass-card rounded-2xl p-6 w-full max-w-lg space-y-4" @click.stop>
+                <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-sm" x-text="(lang==='FR'?'Pièces jointes — ':'Attachments — ')+attachModal.ref"></h3>
+                    <button @click="attachModal.open=false" class="opacity-50 hover:opacity-100 text-lg leading-none">✕</button>
+                </div>
+                <div class="space-y-2 max-h-56 overflow-y-auto">
+                    <template x-if="attachModal.files.length===0">
+                        <p class="text-xs opacity-40 text-center py-4" x-text="lang==='FR'?'Aucune pièce jointe.':'No attachments.'"></p>
+                    </template>
+                    <template x-for="f in attachModal.files" :key="f.id">
+                        <div class="flex items-center justify-between glass-card px-3 py-2 rounded-xl text-xs">
+                            <a :href="f.file_url" target="_blank" class="text-amber-400 hover:underline truncate max-w-xs" x-text="f.original_name??f.file_path"></a>
+                            <button @click="deleteAttachment(f)" class="ml-3 opacity-50 hover:opacity-100 text-red-400 text-xs">✕</button>
+                        </div>
+                    </template>
+                </div>
+                <div class="border-t pt-4" style="border-color:rgba(255,255,255,0.07)">
+                    <label class="block text-xs opacity-60 mb-2" x-text="lang==='FR'?'Ajouter une pièce jointe':'Add attachment'"></label>
+                    <input type="file" @change="attachFile=$event.target.files[0]"
+                           accept=".pdf,.jpg,.jpeg,.png,.webp,.xlsx,.csv,.doc,.docx"
+                           class="glass-input w-full px-3 py-2 rounded-xl text-xs mb-2">
+                    <div x-show="attachError" class="text-xs text-red-400 mb-2" x-text="attachError"></div>
+                    <button @click="uploadAttachment()"
+                            class="glass-btn-dark px-5 py-2 rounded-xl text-xs uppercase tracking-widest"
+                            x-text="attachUploading ? '…' : (lang==='FR'?'Téléverser':'Upload')"></button>
                 </div>
             </div>
         </div>
@@ -1496,6 +1549,92 @@
             </div>
         </div>
 
+        <!-- ── Customer Invoices ─────────────────────────────────────────────── -->
+        <div x-show="page==='customer-invoices'" x-cloak class="p-6 space-y-5 float-in" x-data="customerInvoicesPanel()">
+            <div class="flex items-center justify-between flex-wrap gap-3">
+                <h2 class="text-xl font-bold tracking-tight" x-text="lang==='FR' ? 'Factures Clients' : 'Customer Invoices'"></h2>
+                <button @click="showForm=!showForm" class="glass-btn-dark px-4 py-2 rounded-xl text-xs uppercase tracking-widest"
+                    x-text="showForm ? (lang==='FR'?'Annuler':'Cancel') : (lang==='FR'?'+ Nouvelle Facture':'+ New Invoice')"></button>
+            </div>
+
+            <div x-show="showForm" class="glass-card p-5 rounded-2xl space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div><label class="block text-xs opacity-60 mb-1" x-text="lang==='FR'?'Client *':'Customer *'"></label>
+                        <select x-model="form.customer_id" class="glass-input w-full px-3 py-2 rounded-xl text-sm">
+                            <option value="" x-text="lang==='FR'?'— Choisir —':'— Select —'"></option>
+                            <template x-for="c in customers" :key="c.id">
+                                <option :value="c.id" x-text="c.name"></option>
+                            </template>
+                        </select></div>
+                    <div><label class="block text-xs opacity-60 mb-1" x-text="lang==='FR'?'Date facture *':'Invoice date *'"></label>
+                        <input x-model="form.invoice_date" type="date" class="glass-input w-full px-3 py-2 rounded-xl text-sm"></div>
+                    <div><label class="block text-xs opacity-60 mb-1" x-text="lang==='FR'?'Date échéance *':'Due date *'"></label>
+                        <input x-model="form.due_date" type="date" class="glass-input w-full px-3 py-2 rounded-xl text-sm"></div>
+                    <div><label class="block text-xs opacity-60 mb-1" x-text="lang==='FR'?'Montant HT (XAF) *':'Amount HT (XAF) *'"></label>
+                        <input x-model="form.amount_ht" type="number" min="0" class="glass-input w-full px-3 py-2 rounded-xl text-sm" @input="calcTtc()"></div>
+                    <div class="col-span-2 grid grid-cols-3 gap-3 text-xs opacity-70">
+                        <div class="glass-card px-3 py-2 rounded-xl"><span x-text="lang==='FR'?'TVA 17.5%:':'VAT 17.5%:'"></span> <strong x-text="fmtXaf(ttcPreview.tva)"></strong></div>
+                        <div class="glass-card px-3 py-2 rounded-xl"><span x-text="lang==='FR'?'CAC 1.75%:':'CAC 1.75%:'"></span> <strong x-text="fmtXaf(ttcPreview.cac)"></strong></div>
+                        <div class="glass-card px-3 py-2 rounded-xl"><span x-text="lang==='FR'?'TTC:':'TTC:'"></span> <strong class="text-amber-400" x-text="fmtXaf(ttcPreview.ttc)"></strong></div>
+                    </div>
+                    <div class="col-span-2"><label class="block text-xs opacity-60 mb-1">Notes</label>
+                        <input x-model="form.notes" type="text" class="glass-input w-full px-3 py-2 rounded-xl text-sm"></div>
+                </div>
+                <div x-show="formError" class="px-4 py-2 rounded-xl text-sm" style="background:rgba(244,63,94,0.1);color:rgb(252,165,165)" x-text="formError"></div>
+                <button @click="save()" class="glass-btn-dark px-6 py-2.5 rounded-xl text-xs uppercase tracking-widest"
+                    x-text="saving ? '…' : (lang==='FR'?'Enregistrer':'Save')"></button>
+            </div>
+
+            <div class="glass-card rounded-2xl overflow-hidden">
+                <table class="w-full text-sm">
+                    <thead><tr style="background:rgba(255,255,255,0.04);border-bottom:1px solid rgba(255,255,255,0.07)">
+                        <th class="text-left px-4 py-3 text-xs uppercase tracking-widest opacity-50" x-text="lang==='FR'?'N° Facture':'Invoice #'"></th>
+                        <th class="text-left px-4 py-3 text-xs uppercase tracking-widest opacity-50" x-text="lang==='FR'?'Client':'Customer'"></th>
+                        <th class="text-right px-4 py-3 text-xs uppercase tracking-widest opacity-50">TTC</th>
+                        <th class="text-left px-4 py-3 text-xs uppercase tracking-widest opacity-50" x-text="lang==='FR'?'Éch.':'Due'"></th>
+                        <th class="text-center px-4 py-3 text-xs uppercase tracking-widest opacity-50">Statut</th>
+                        <th class="text-center px-4 py-3 text-xs uppercase tracking-widest opacity-50" x-text="lang==='FR'?'Actions':'Actions'"></th>
+                    </tr></thead>
+                    <tbody>
+                        <template x-if="invoices.length===0">
+                            <tr><td colspan="6" class="text-center py-10 opacity-40 text-sm" x-text="lang==='FR'?'Aucune facture.':'No invoices yet.'"></td></tr>
+                        </template>
+                        <template x-for="inv in invoices" :key="inv.id">
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.04)" class="hover:bg-white/5 transition-colors">
+                                <td class="px-4 py-3 font-mono text-amber-400 text-xs" x-text="inv.invoice_number"></td>
+                                <td class="px-4 py-3 font-medium" x-text="inv.customer?.name??'—'"></td>
+                                <td class="px-4 py-3 text-right font-bold" x-text="fmtXaf(inv.amount_ttc)"></td>
+                                <td class="px-4 py-3 opacity-70 text-xs" x-text="inv.due_date"></td>
+                                <td class="px-4 py-3 text-center">
+                                    <span class="px-2 py-0.5 rounded-full text-xs font-bold"
+                                        :class="{
+                                            'bg-emerald-900/50 text-emerald-300': inv.status==='PAID',
+                                            'bg-amber-900/50 text-amber-300': inv.status==='SENT',
+                                            'bg-slate-800 text-slate-400': inv.status==='DRAFT',
+                                            'bg-red-900/50 text-red-300': inv.status==='OVERDUE'||inv.status==='CANCELLED',
+                                            'bg-indigo-900/50 text-indigo-300': inv.status==='CREDIT_NOTE',
+                                        }" x-text="inv.status"></span>
+                                </td>
+                                <td class="px-4 py-3 text-center">
+                                    <div class="flex gap-1 justify-center flex-wrap">
+                                        <button x-show="inv.status==='DRAFT'" @click="markSent(inv)"
+                                            class="px-2 py-1 rounded-lg text-xs" style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);color:rgb(252,211,77)"
+                                            x-text="lang==='FR'?'Envoyer':'Send'"></button>
+                                        <button x-show="inv.status==='SENT'||inv.status==='OVERDUE'" @click="markPaid(inv)"
+                                            class="px-2 py-1 rounded-lg text-xs" style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);color:rgb(110,231,183)"
+                                            x-text="lang==='FR'?'Payée':'Mark Paid'"></button>
+                                        <button x-show="inv.status==='PAID'||inv.status==='SENT'" @click="creditNote(inv)"
+                                            class="px-2 py-1 rounded-lg text-xs" style="background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.2);color:rgb(165,180,252)"
+                                            x-text="lang==='FR'?'Avoir':'Credit Note'"></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
         <!-- ── Customers ─────────────────────────────────────────────────────── -->
         <div x-show="page==='customers'" x-cloak class="p-6 space-y-5 float-in" x-data="customersPanel()">
             <div class="flex items-center justify-between">
@@ -1615,6 +1754,7 @@
                     <button @click="tab='bs'" :class="tab==='bs' ? 'glass-btn-dark' : 'glass-btn'" class="px-4 py-2 rounded-xl text-xs uppercase tracking-widest" x-text="lang==='FR' ? 'Bilan' : 'Balance Sheet'"></button>
                     <button @click="tab='cf'" :class="tab==='cf' ? 'glass-btn-dark' : 'glass-btn'" class="px-4 py-2 rounded-xl text-xs uppercase tracking-widest" x-text="lang==='FR' ? 'Trésorerie' : 'Cash Flow'"></button>
                     <button @click="tab='ar'" :class="tab==='ar' ? 'glass-btn-dark' : 'glass-btn'" class="px-4 py-2 rounded-xl text-xs uppercase tracking-widest" x-text="lang==='FR' ? 'Créances' : 'Aged Rec.'"></button>
+                    <button @click="tab='ap'" :class="tab==='ap' ? 'glass-btn-dark' : 'glass-btn'" class="px-4 py-2 rounded-xl text-xs uppercase tracking-widest" x-text="lang==='FR' ? 'Dettes' : 'Aged Pay.'"></button>
                 </div>
             </div>
 
@@ -1631,7 +1771,7 @@
                     <input x-model="asOf" type="date" class="glass-input px-3 py-2 rounded-xl text-sm"></div>
                 <button @click="load()" class="glass-btn-dark px-5 py-2 rounded-xl text-xs uppercase tracking-widest" x-text="loading ? '…' : (lang==='FR' ? 'Générer' : 'Generate')"></button>
             </div>
-            <div x-show="tab==='ar'">
+            <div x-show="tab==='ar'||tab==='ap'">
                 <button @click="load()" class="glass-btn-dark px-5 py-2 rounded-xl text-xs uppercase tracking-widest" x-text="loading ? '…' : (lang==='FR' ? 'Actualiser' : 'Refresh')"></button>
             </div>
 
@@ -1736,8 +1876,8 @@
                 </div>
             </div>
 
-            <!-- Aged Receivables -->
-            <div x-show="tab==='ar' && result" class="glass-card p-5 rounded-2xl space-y-4">
+            <!-- Aged Receivables / Aged Payables shared layout -->
+            <div x-show="(tab==='ar'||tab==='ap') && result" class="glass-card p-5 rounded-2xl space-y-4">
                 <div class="grid grid-cols-5 gap-3 text-center">
                     <div class="glass-card p-3 rounded-xl">
                         <div class="text-xs opacity-50 mb-1" x-text="lang==='FR' ? 'Courant' : 'Current'"></div>
@@ -2272,6 +2412,67 @@ function opesApp() {
             if (v===null||v===undefined) return '— XAF';
             return Number(v).toLocaleString('fr-CM', { minimumFractionDigits:0, maximumFractionDigits:0 }) + ' XAF';
         },
+
+        // ── Attachments ──────────────────────────────────────────────
+        attachModal: { open:false, entryId:null, ref:'', files:[] },
+        attachFile: null,
+        attachUploading: false,
+        attachError: '',
+
+        async openAttachments(txn) {
+            this.attachModal = { open:true, entryId:txn.id, ref:txn.reference_id, files:[] };
+            this.attachError = '';
+            await this.loadAttachments(txn.id);
+        },
+        async loadAttachments(entryId) {
+            const token = localStorage.getItem('opes_token');
+            const res = await fetch(`/api/v1/companies/${this.company.id}/journal/${entryId}/attachments`,{
+                headers:{'Authorization':'Bearer '+token,'Accept':'application/json'}
+            });
+            const data = await res.json();
+            this.attachModal.files = Array.isArray(data) ? data : (data.data ?? []);
+            // update badge on journal row
+            const txn = this.journalEntries.find(t => t.id===entryId);
+            if (txn) txn._attachCount = this.attachModal.files.length;
+        },
+        async uploadAttachment() {
+            if (!this.attachFile) return;
+            this.attachUploading=true; this.attachError='';
+            try {
+                const token = localStorage.getItem('opes_token');
+                const fd = new FormData();
+                fd.append('file', this.attachFile);
+                const res = await fetch(`/api/v1/companies/${this.company.id}/journal/${this.attachModal.entryId}/attachments`,{
+                    method:'POST',
+                    headers:{'Authorization':'Bearer '+token,'Accept':'application/json'},
+                    body: fd,
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || Object.values(data.errors??{}).flat().join(' | '));
+                this.attachFile = null;
+                await this.loadAttachments(this.attachModal.entryId);
+            } catch(e) { this.attachError = e.message; }
+            finally { this.attachUploading = false; }
+        },
+        async deleteAttachment(f) {
+            const token = localStorage.getItem('opes_token');
+            await fetch(`/api/v1/companies/${this.company.id}/journal/${this.attachModal.entryId}/attachments/${f.id}`,{
+                method:'DELETE',
+                headers:{'Authorization':'Bearer '+token,'Accept':'application/json'}
+            });
+            await this.loadAttachments(this.attachModal.entryId);
+        },
+
+        // ── DGI Force Sync ───────────────────────────────────────────
+        async forceDgiSync(txn) {
+            if (!this.company) return;
+            const token = localStorage.getItem('opes_token');
+            await fetch(`/api/v1/companies/${this.company.id}/journal/${txn.id}/dgi-sync`,{
+                method:'POST',
+                headers:{'Authorization':'Bearer '+token,'Accept':'application/json'}
+            });
+            txn.dgi_sync_status = 'PENDING';
+        },
     };
 }
 
@@ -2585,6 +2786,81 @@ function profilePanel() {
     };
 }
 
+function customerInvoicesPanel() {
+    return {
+        invoices: [],
+        customers: [],
+        showForm: false,
+        saving: false,
+        formError: '',
+        ttcPreview: { tva:0, cac:0, ttc:0 },
+        form: { customer_id:'', invoice_date:'', due_date:'', amount_ht:'', notes:'' },
+        _cid: null,
+
+        async init() {
+            const token = localStorage.getItem('opes_token');
+            const me = await (await fetch('/api/v1/auth/me',{headers:{'Authorization':'Bearer '+token,'Accept':'application/json'}})).json();
+            this._cid = me.company?.id;
+            await Promise.all([this.load(), this.loadCustomers()]);
+        },
+        async load() {
+            if (!this._cid) return;
+            const token = localStorage.getItem('opes_token');
+            const res = await fetch(`/api/v1/companies/${this._cid}/customer-invoices`,{headers:{'Authorization':'Bearer '+token,'Accept':'application/json'}});
+            const data = await res.json();
+            this.invoices = Array.isArray(data) ? data : (data.data ?? []);
+        },
+        async loadCustomers() {
+            if (!this._cid) return;
+            const token = localStorage.getItem('opes_token');
+            const res = await fetch(`/api/v1/companies/${this._cid}/customers`,{headers:{'Authorization':'Bearer '+token,'Accept':'application/json'}});
+            const data = await res.json();
+            this.customers = Array.isArray(data) ? data : (data.data ?? []);
+        },
+        calcTtc() {
+            const ht = Number(this.form.amount_ht) || 0;
+            const tva = Math.round(ht * 0.175);
+            const cac = Math.round(ht * 0.0175);
+            this.ttcPreview = { tva, cac, ttc: ht + tva + cac };
+        },
+        async save() {
+            this.saving=true; this.formError='';
+            try {
+                const token = localStorage.getItem('opes_token');
+                const res = await fetch(`/api/v1/companies/${this._cid}/customer-invoices`,{
+                    method:'POST',
+                    headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json','Accept':'application/json'},
+                    body: JSON.stringify({...this.form, amount_ht: Number(this.form.amount_ht)}),
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || Object.values(data.errors??{}).flat().join(' | '));
+                this.form = { customer_id:'', invoice_date:'', due_date:'', amount_ht:'', notes:'' };
+                this.ttcPreview = { tva:0, cac:0, ttc:0 };
+                this.showForm = false;
+                await this.load();
+            } catch(e) { this.formError = e.message; }
+            finally { this.saving = false; }
+        },
+        async markSent(inv) {
+            const token = localStorage.getItem('opes_token');
+            await fetch(`/api/v1/companies/${this._cid}/customer-invoices/${inv.id}/send`,{method:'POST',headers:{'Authorization':'Bearer '+token,'Accept':'application/json'}});
+            await this.load();
+        },
+        async markPaid(inv) {
+            const token = localStorage.getItem('opes_token');
+            await fetch(`/api/v1/companies/${this._cid}/customer-invoices/${inv.id}/pay`,{method:'POST',headers:{'Authorization':'Bearer '+token,'Accept':'application/json'}});
+            await this.load();
+        },
+        async creditNote(inv) {
+            if (!confirm(document.documentElement.lang==='fr'?'Créer un avoir pour cette facture ?':'Create a credit note for this invoice?')) return;
+            const token = localStorage.getItem('opes_token');
+            await fetch(`/api/v1/companies/${this._cid}/customer-invoices/${inv.id}/credit-note`,{method:'POST',headers:{'Authorization':'Bearer '+token,'Accept':'application/json'}});
+            await this.load();
+        },
+        fmtXaf(v) { if (v===null||v===undefined) return '—'; return Number(v).toLocaleString('fr-CM',{minimumFractionDigits:0})+' XAF'; },
+    };
+}
+
 function customersPanel() {
     return {
         customers: [],
@@ -2695,6 +2971,7 @@ function reportsPanel() {
                 if (this.tab==='bs')  url = `/api/v1/companies/${this._cid}/reports/balance-sheet?as_of=${this.asOf}`;
                 if (this.tab==='cf')  url = `/api/v1/companies/${this._cid}/reports/cash-flow?from=${this.from}&to=${this.to}`;
                 if (this.tab==='ar')  url = `/api/v1/companies/${this._cid}/reports/aged-receivables`;
+                if (this.tab==='ap')  url = `/api/v1/companies/${this._cid}/reports/aged-payables`;
                 const res = await fetch(url,{headers:{'Authorization':'Bearer '+token,'Accept':'application/json'}});
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.message || 'Erreur');
