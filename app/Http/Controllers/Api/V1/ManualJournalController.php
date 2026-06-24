@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Models\Company;
-use App\Services\CameroonTaxEngine;
 use App\Services\JournalPostingService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -19,14 +18,17 @@ class ManualJournalController extends Controller
      * POST /api/v1/journal/manual
      *
      * Accepts a fully structured manual journal entry with explicit debit/credit lines.
+     * Supports both STANDARD and ADJUSTMENT posting types.
+     * ADJUSTMENT entries are immutable once posted (un-deletable, un-reversible).
      */
     public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
             'company_niu'      => 'required|string',
             'posting_date'     => 'required|date_format:Y-m-d',
+            'posting_type'     => ['sometimes', Rule::in(['STANDARD', 'ADJUSTMENT'])],
             'reference_id'     => 'required|string|max:100|unique:journal_entries,reference_id',
-            'source_pipeline'  => ['required', Rule::in(['MANUAL_CASH', 'MANUAL_BANK', 'MANUAL_INVOICE'])],
+            'source_pipeline'  => ['required', Rule::in(['MANUAL_CASH', 'MANUAL_BANK', 'MANUAL_INVOICE', 'MANUAL_ENTRY'])],
             'memo'             => 'required|string|max:500',
             'lines'            => 'required|array|min:2',
             'lines.*.account_code' => 'required|string|exists:syscohada_accounts,code',
@@ -51,12 +53,13 @@ class ManualJournalController extends Controller
         ], $data['lines']);
 
         $entry = $this->poster->post([
-            'company_id'      => $company->id,
-            'posting_date'    => $data['posting_date'],
-            'reference_id'    => $data['reference_id'],
-            'source_pipeline' => $data['source_pipeline'],
-            'memo'            => $data['memo'],
-            'status'          => 'POSTED',
+            'company_id'         => $company->id,
+            'posting_date'       => $data['posting_date'],
+            'posting_type'       => $data['posting_type'] ?? 'STANDARD',
+            'reference_id'       => $data['reference_id'],
+            'source_pipeline'    => $data['source_pipeline'],
+            'transaction_status' => 'SUCCESSFUL',
+            'memo'               => $data['memo'],
         ], $lines);
 
         return response()->json([

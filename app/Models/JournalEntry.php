@@ -13,11 +13,14 @@ class JournalEntry extends Model
 
     protected $fillable = [
         'company_id',
+        'user_id',
         'posting_date',
+        'posting_type',
         'reference_id',
+        'invoice_crypto_hash',
+        'transaction_status',
         'source_pipeline',
         'memo',
-        'status',
     ];
 
     protected $casts = [
@@ -27,6 +30,11 @@ class JournalEntry extends Model
     public function company()
     {
         return $this->belongsTo(Company::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function lines()
@@ -40,5 +48,11 @@ class JournalEntry extends Model
         $totalCredit = BigDecimal::of((string) $this->lines->sum('credit'));
 
         return $totalDebit->isEqualTo($totalCredit);
+    }
+
+    /** ADJUSTMENT entries are immutable — they may not be deleted or reversed after posting. */
+    public function isDeletable(): bool
+    {
+        return $this->posting_type !== 'ADJUSTMENT';
     }
 }

@@ -3,20 +3,24 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Models\Company;
-use App\Services\MomoIngestionService;
+use App\Jobs\ProcessTelecomPayload;
+use App\Models\RawPayloadQueue;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Validation\ValidationException;
 
 class TelecomCallbackController extends Controller
 {
-    public function __construct(private MomoIngestionService $ingestion) {}
-
+    /**
+     * POST /api/v1/ingest/telecom/callback
+     *
+     * Immediately acknowledges receipt (HTTP 202) and queues the payload
+     * for asynchronous processing on a background worker thread.
+     * This prevents server bottleneck under high-velocity MoMo transaction bursts.
+     */
     public function handle(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'company_niu'    => 'required|string',
+            'company_niu'    => 'required|string|max:30',
             'operator'       => 'required|in:MTN,ORANGE',
             'transaction_id' => 'required|string|max:100',
             'amount'         => 'required|numeric|min:1',
@@ -24,25 +28,30 @@ class TelecomCallbackController extends Controller
             'date'           => 'nullable|date_format:Y-m-d',
         ]);
 
-        $company = Company::where('niu', $data['company_niu'])->firstOrFail();
-
-        if (! $company->hasValidFiscalProfile()) {
-            throw ValidationException::withMessages([
-                'company_niu' => ['Company fiscal profile is incomplete (NIU, RCCM, or Tax Center missing).'],
-            ]);
+        // Idempotency guard — duplicate transaction IDs are silently acknowledged
+        if (RawPayloadQueue::where('transaction_id', $data['transaction_id'])->exists()) {
+            return response()->json([
+                'status'  => 'DUPLICATE',
+                'message' => 'Transaction already received and queued.',
+            ], 202);
         }
 
-        $entry = $this->ingestion->ingest($company, [
+        $raw = RawPayloadQueue::create([
             'operator'       => $data['operator'],
-            'amount'         => (string) $data['amount'],
             'transaction_id' => $data['transaction_id'],
+            'company_niu'    => $data['company_niu'],
+            'amount'         => (string) $data['amount'],
             'message'        => $data['message'],
-            'date'           => $data['date'] ?? now()->toDateString(),
+            'txn_date'       => $data['date'] ?? now()->toDateString(),
+            'status'         => 'QUEUED',
         ]);
 
+        ProcessTelecomPayload::dispatch($raw->id);
+
         return response()->json([
-            'message'       => 'Transaction ingested and posted to ledger.',
-            'journal_entry' => $entry,
-        ], 201);
+            'status'   => 'QUEUED',
+            'queue_id' => $raw->id,
+            'message'  => 'Payload received and queued for processing.',
+        ], 202);
     }
 }
