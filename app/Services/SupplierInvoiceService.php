@@ -34,9 +34,9 @@ class SupplierInvoiceService
         $tvaAmount = (float) $invoice->tva_amount;
 
         // Prorata VAT split
-        $prorataSplit = $this->prorata->split($company, (string) $tvaAmount);
-        $recoverableVat    = (float) $prorataSplit['recoverable'];
-        $nonRecoverableVat = (float) $prorataSplit['non_recoverable'];
+        $prorataSplit = $this->prorata->splitInputVat($company, (string) $tvaAmount);
+        $recoverableVat    = (float) $prorataSplit['recoverable_vat'];
+        $nonRecoverableVat = (float) $prorataSplit['non_recoverable_vat'];
 
         // Withholding line (DGE/CIME only)
         $withholdingLine = $this->router->buildWithholdingLine($company, (string) $amountHt);

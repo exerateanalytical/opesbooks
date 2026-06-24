@@ -24,7 +24,7 @@ return new class extends Migration {
         // ── Expand journal_entries ───────────────────────────────────────────
         Schema::table('journal_entries', function (Blueprint $table) {
             $table->foreignId('user_id')->nullable()->after('company_id')->constrained()->onDelete('set null');
-            $table->enum('posting_type', ['STANDARD', 'ADJUSTMENT'])->default('STANDARD')->after('memo');
+            $table->enum('posting_type', ['STANDARD', 'ADJUSTMENT', 'OPENING', 'REVERSAL'])->default('STANDARD')->after('memo');
             $table->string('invoice_crypto_hash', 64)->nullable()->after('posting_type');
             $table->enum('transaction_status', ['PENDING', 'SUCCESSFUL', 'FAILED', 'REVERSED'])->default('SUCCESSFUL')->after('invoice_crypto_hash');
         });

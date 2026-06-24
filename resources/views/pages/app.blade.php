@@ -300,6 +300,10 @@
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
                 <span x-text="lang==='FR' ? 'Plan Comptable' : 'Chart of Accounts'"></span>
             </button>
+            <button @click="setPage('stock')" :class="page==='stock' ? 'nav-item active' : 'nav-item'">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 10V7"/></svg>
+                <span x-text="lang==='FR' ? 'Stocks' : 'Inventory'"></span>
+            </button>
 
             <div class="my-2" style="height:1px;background:rgba(255,255,255,0.07)"></div>
 
@@ -2573,6 +2577,137 @@
             <p class="text-xs opacity-40" x-text="filtered.length + ' ' + (lang==='FR' ? 'compte(s) affiché(s)' : 'account(s) shown') + ' / ' + accounts.length + ' total'"></p>
         </div>
 
+        <!-- ══════════════════════════════════════════════════════════════ -->
+        <!-- STOCK / INVENTORY PAGE                                        -->
+        <!-- ══════════════════════════════════════════════════════════════ -->
+        <div x-show="page==='stock'" x-cloak class="p-6 space-y-5 float-in" x-data="stockPanel()">
+            <div class="flex items-center justify-between">
+                <h2 class="text-lg font-bold" x-text="lang==='FR' ? 'Gestion des Stocks' : 'Inventory Management'"></h2>
+                <button @click="showForm=!showForm" class="btn-primary text-xs px-4 py-2">+ <span x-text="lang==='FR' ? 'Mouvement' : 'Movement'"></span></button>
+            </div>
+
+            <!-- New movement form -->
+            <div x-show="showForm" class="glass-card rounded-2xl p-5 space-y-3">
+                <h3 class="text-sm font-semibold opacity-70" x-text="lang==='FR' ? 'Enregistrer un mouvement de stock' : 'Record stock movement'"></h3>
+                <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                    <div>
+                        <label class="text-xs opacity-60" x-text="lang==='FR' ? 'Code Produit' : 'Product Code'"></label>
+                        <input x-model="form.product_code" class="w-full mt-1 input-field text-sm" placeholder="ex: PROD-001">
+                    </div>
+                    <div>
+                        <label class="text-xs opacity-60" x-text="lang==='FR' ? 'Désignation' : 'Product Name'"></label>
+                        <input x-model="form.product_name" class="w-full mt-1 input-field text-sm">
+                    </div>
+                    <div>
+                        <label class="text-xs opacity-60" x-text="lang==='FR' ? 'Compte Stock (Cl.3)' : 'Stock Account (Cl.3)'"></label>
+                        <input x-model="form.account_code" class="w-full mt-1 input-field text-sm font-mono" placeholder="310000">
+                    </div>
+                    <div>
+                        <label class="text-xs opacity-60" x-text="lang==='FR' ? 'Type de Mouvement' : 'Movement Type'"></label>
+                        <select x-model="form.movement_type" class="w-full mt-1 input-field text-sm">
+                            <option value="IN" x-text="lang==='FR' ? 'Entrée (IN)' : 'In'"></option>
+                            <option value="OUT" x-text="lang==='FR' ? 'Sortie (OUT)' : 'Out'"></option>
+                            <option value="ADJUSTMENT" x-text="lang==='FR' ? 'Ajustement' : 'Adjustment'"></option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs opacity-60" x-text="lang==='FR' ? 'Quantité' : 'Quantity'"></label>
+                        <input x-model.number="form.quantity" type="number" step="0.001" min="0" class="w-full mt-1 input-field text-sm">
+                    </div>
+                    <div>
+                        <label class="text-xs opacity-60" x-text="lang==='FR' ? 'Coût Unitaire (XAF)' : 'Unit Cost (XAF)'"></label>
+                        <input x-model.number="form.unit_cost_xaf" type="number" min="0" class="w-full mt-1 input-field text-sm">
+                    </div>
+                    <div>
+                        <label class="text-xs opacity-60" x-text="lang==='FR' ? 'Date' : 'Date'"></label>
+                        <input x-model="form.movement_date" type="date" class="w-full mt-1 input-field text-sm">
+                    </div>
+                    <div>
+                        <label class="text-xs opacity-60" x-text="lang==='FR' ? 'Référence' : 'Reference'"></label>
+                        <input x-model="form.reference" class="w-full mt-1 input-field text-sm">
+                    </div>
+                    <div class="flex items-end pb-1 gap-2">
+                        <label class="flex items-center gap-1 text-xs cursor-pointer">
+                            <input type="checkbox" x-model="form.post_to_gl" class="accent-amber-400">
+                            <span x-text="lang==='FR' ? 'Passer en GL' : 'Post to GL'"></span>
+                        </label>
+                    </div>
+                </div>
+                <div x-show="formError" class="text-red-400 text-xs" x-text="formError"></div>
+                <div class="flex gap-2">
+                    <button @click="submitMovement()" :disabled="saving" class="btn-primary text-sm px-5 py-2" x-text="saving ? '...' : (lang==='FR' ? 'Enregistrer' : 'Save')"></button>
+                    <button @click="showForm=false" class="text-xs opacity-60 hover:opacity-100 px-4 py-2" x-text="lang==='FR' ? 'Annuler' : 'Cancel'"></button>
+                </div>
+            </div>
+
+            <!-- Valuation summary -->
+            <div class="glass-card rounded-2xl p-5">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-sm font-semibold opacity-70" x-text="lang==='FR' ? 'Valorisation du Stock' : 'Stock Valuation'"></h3>
+                    <span class="text-base font-bold text-amber-400" x-text="totalValue.toLocaleString('fr-CM') + ' XAF'"></span>
+                </div>
+                <div style="overflow-x:auto">
+                    <table class="w-full text-sm">
+                        <thead><tr style="border-bottom:1px solid rgba(255,255,255,0.07)">
+                            <th class="text-left px-3 py-2 opacity-50" x-text="lang==='FR' ? 'Code' : 'Code'"></th>
+                            <th class="text-left px-3 py-2 opacity-50" x-text="lang==='FR' ? 'Désignation' : 'Product'"></th>
+                            <th class="text-left px-3 py-2 opacity-50" x-text="lang==='FR' ? 'Compte' : 'Account'"></th>
+                            <th class="text-right px-3 py-2 opacity-50" x-text="lang==='FR' ? 'Qté en stock' : 'Qty in stock'"></th>
+                            <th class="text-right px-3 py-2 opacity-50" x-text="lang==='FR' ? 'Valeur XAF' : 'Value XAF'"></th>
+                        </tr></thead>
+                        <tbody>
+                            <template x-for="item in valuation" :key="item.product_code">
+                                <tr style="border-bottom:1px solid rgba(255,255,255,0.03)" class="hover:bg-white/5 cursor-pointer" @click="loadLedger(item.product_code)">
+                                    <td class="px-3 py-1.5 font-mono text-sky-300" x-text="item.product_code"></td>
+                                    <td class="px-3 py-1.5" x-text="item.product_name"></td>
+                                    <td class="px-3 py-1.5 font-mono opacity-60" x-text="item.account_code"></td>
+                                    <td class="px-3 py-1.5 text-right" x-text="Number(item.qty_in_stock).toLocaleString('fr-CM')"></td>
+                                    <td class="px-3 py-1.5 text-right font-semibold" x-text="Number(item.stock_value).toLocaleString('fr-CM') + ' XAF'"></td>
+                                </tr>
+                            </template>
+                            <tr x-show="valuation.length===0"><td colspan="5" class="text-center py-6 opacity-40 text-xs" x-text="lang==='FR' ? 'Aucun stock enregistré.' : 'No stock recorded.'"></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Stock card (ledger) for selected product -->
+            <div x-show="ledger" class="glass-card rounded-2xl p-5 space-y-3">
+                <h3 class="text-sm font-semibold" x-text="(lang==='FR' ? 'Fiche de Stock — ' : 'Stock Card — ') + (ledger?.product_name ?? '')"></h3>
+                <div class="flex gap-4 text-xs opacity-70">
+                    <span x-text="(lang==='FR' ? 'Qté : ' : 'Qty: ') + ledger?.current_qty"></span>
+                    <span x-text="(lang==='FR' ? 'CMUP : ' : 'Avg cost: ') + Number(ledger?.avg_cost_xaf).toLocaleString('fr-CM') + ' XAF'"></span>
+                    <span x-text="(lang==='FR' ? 'Valeur : ' : 'Value: ') + Number(ledger?.stock_value).toLocaleString('fr-CM') + ' XAF'"></span>
+                </div>
+                <div style="overflow-x:auto">
+                    <table class="w-full text-xs">
+                        <thead><tr style="border-bottom:1px solid rgba(255,255,255,0.07)">
+                            <th class="text-left px-3 py-2 opacity-50">Date</th>
+                            <th class="text-left px-3 py-2 opacity-50">Type</th>
+                            <th class="text-left px-3 py-2 opacity-50">Réf.</th>
+                            <th class="text-right px-3 py-2 opacity-50">Qté</th>
+                            <th class="text-right px-3 py-2 opacity-50">PU XAF</th>
+                            <th class="text-right px-3 py-2 opacity-50">Stock</th>
+                            <th class="text-right px-3 py-2 opacity-50">CMUP</th>
+                        </tr></thead>
+                        <tbody>
+                            <template x-for="m in ledger.movements" :key="m.id">
+                                <tr style="border-bottom:1px solid rgba(255,255,255,0.03)">
+                                    <td class="px-3 py-1" x-text="m.movement_date"></td>
+                                    <td class="px-3 py-1" :class="m.movement_type==='IN' ? 'text-emerald-400' : m.movement_type==='OUT' ? 'text-rose-400' : 'text-amber-400'" x-text="m.movement_type"></td>
+                                    <td class="px-3 py-1 opacity-60" x-text="m.reference ?? '—'"></td>
+                                    <td class="px-3 py-1 text-right" x-text="Number(m.quantity).toLocaleString('fr-CM')"></td>
+                                    <td class="px-3 py-1 text-right" x-text="Number(m.unit_cost_xaf).toLocaleString('fr-CM')"></td>
+                                    <td class="px-3 py-1 text-right font-mono" x-text="Number(m.balance_qty).toLocaleString('fr-CM')"></td>
+                                    <td class="px-3 py-1 text-right" x-text="Number(m.avg_cost_xaf).toLocaleString('fr-CM')"></td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
     </main>
 </div>
 
@@ -3899,6 +4034,55 @@ function chartOfAccountsPanel() {
                 this.form={code:'',label:'',class_digit:''};
             } else { this.formError = d.message ?? JSON.stringify(d.errors); }
             this.submitting=false;
+        },
+    };
+}
+
+function stockPanel() {
+    return {
+        _cid: null,
+        valuation: [],
+        totalValue: 0,
+        ledger: null,
+        showForm: false,
+        saving: false,
+        formError: '',
+        form: { product_code:'', product_name:'', account_code:'310000', movement_type:'IN', quantity:1, unit_cost_xaf:0, movement_date: new Date().toISOString().slice(0,10), reference:'', post_to_gl:true },
+
+        async init() {
+            const token = localStorage.getItem('opes_token');
+            const me = await fetch('/api/v1/auth/me', {headers:{Authorization:'Bearer '+token}}).then(r=>r.json());
+            this._cid = me.company?.id;
+            await this.loadValuation();
+        },
+
+        async loadValuation() {
+            const token = localStorage.getItem('opes_token');
+            const d = await fetch(`/api/v1/companies/${this._cid}/stock/valuation`, {headers:{Authorization:'Bearer '+token}}).then(r=>r.json());
+            this.valuation   = d.items ?? [];
+            this.totalValue  = d.total_value_xaf ?? 0;
+        },
+
+        async loadLedger(code) {
+            const token = localStorage.getItem('opes_token');
+            this.ledger = await fetch(`/api/v1/companies/${this._cid}/stock/ledger?product_code=${encodeURIComponent(code)}`, {headers:{Authorization:'Bearer '+token}}).then(r=>r.json());
+        },
+
+        async submitMovement() {
+            this.saving=true; this.formError='';
+            const token = localStorage.getItem('opes_token');
+            const r = await fetch(`/api/v1/companies/${this._cid}/stock`, {
+                method:'POST', headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},
+                body: JSON.stringify(this.form)
+            });
+            const d = await r.json();
+            if(r.ok) {
+                this.showForm=false;
+                this.form={ product_code:'', product_name:'', account_code:'310000', movement_type:'IN', quantity:1, unit_cost_xaf:0, movement_date:new Date().toISOString().slice(0,10), reference:'', post_to_gl:true };
+                await this.loadValuation();
+                if(this.ledger) await this.loadLedger(d.product_code);
+            } else { this.formError = d.message ?? JSON.stringify(d.errors ?? d); }
+            this.saving=false;
         },
     };
 }

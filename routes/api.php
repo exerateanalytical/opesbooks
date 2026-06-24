@@ -21,6 +21,8 @@ use App\Http\Controllers\Api\V1\InvoiceVerificationController;
 use App\Http\Controllers\Api\V1\PayrollController;
 use App\Http\Controllers\Api\V1\ProfileController;
 use App\Http\Controllers\Api\V1\RecurringTransactionController;
+use App\Http\Controllers\Api\V1\StatementController;
+use App\Http\Controllers\Api\V1\StockMovementController;
 use App\Http\Controllers\Api\V1\SupplierController;
 use App\Http\Controllers\Api\V1\SupplierInvoiceController;
 use App\Jobs\SyncInvoiceToDgiPortalJob;
@@ -258,6 +260,18 @@ Route::prefix('v1')->name('v1.')->group(function () {
             Route::middleware(\App\Http\Middleware\RequireRole::class . ':OWNER,ACCOUNTANT')->group(function () {
                 Route::post('accounts',        [ChartOfAccountsController::class, 'store'])->name('accounts.store');
                 Route::put('accounts/{account}', [ChartOfAccountsController::class, 'update'])->name('accounts.update');
+            });
+
+            // Customer & supplier statement PDFs
+            Route::get('customers/{customer}/statement', [StatementController::class, 'customerStatement'])->name('customers.statement');
+            Route::get('suppliers/{supplier}/statement', [StatementController::class, 'supplierStatement'])->name('suppliers.statement');
+
+            // Stock / inventory movements
+            Route::get('stock',                            [StockMovementController::class, 'index'])->name('stock.index');
+            Route::get('stock/ledger',                     [StockMovementController::class, 'ledger'])->name('stock.ledger');
+            Route::get('stock/valuation',                  [StockMovementController::class, 'valuation'])->name('stock.valuation');
+            Route::middleware(\App\Http\Middleware\RequireRole::class . ':OWNER,ACCOUNTANT')->group(function () {
+                Route::post('stock',                       [StockMovementController::class, 'store'])->name('stock.store');
             });
 
             // CSV exports (all authenticated roles)
