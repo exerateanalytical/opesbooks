@@ -79,15 +79,29 @@
     {{-- ── Header ─────────────────────────────────────────────────────────────── --}}
     <div class="header">
         <div>
-            <div class="brand-name">OPES<span>BOOKS</span></div>
-            <div class="brand-meta">opesbooks.cm | Opesware SARL</div>
-            <div class="brand-meta" style="margin-top:6px; font-weight:700; color:#0f172a;">
+            @if($company->logo_path && \Storage::disk('public')->exists($company->logo_path))
+                <img src="{{ storage_path('app/public/' . $company->logo_path) }}"
+                     alt="{{ $company->name }}" style="max-height:56px;max-width:160px;object-fit:contain;margin-bottom:6px;display:block;">
+            @else
+                <div class="brand-name">OPES<span>BOOKS</span></div>
+                <div class="brand-meta">opesbooks.cm | Opesware SARL</div>
+            @endif
+            <div class="brand-meta" style="margin-top:4px; font-weight:900; color:#0f172a; font-size:10pt;">
                 {{ $company->name }}
             </div>
+            @if($company->letterhead_tagline)
+                <div class="brand-meta" style="font-style:italic;color:#64748b;">{{ $company->letterhead_tagline }}</div>
+            @endif
             <div class="brand-meta">NIU: {{ $company->niu }} | RCCM: {{ $company->rccm }}</div>
             <div class="brand-meta">{{ $company->tax_center }} · {{ $company->tax_regime }}</div>
             @if($company->address)
                 <div class="brand-meta">{{ $company->address }}</div>
+            @endif
+            @if($company->phone)
+                <div class="brand-meta">{{ $company->phone }}@if($company->email) · {{ $company->email }}@endif</div>
+            @endif
+            @if($company->letterhead_website)
+                <div class="brand-meta">{{ $company->letterhead_website }}</div>
             @endif
         </div>
         <div class="invoice-label">
@@ -207,6 +221,25 @@
             <p>{{ $lang === 'FR' ? 'Vérification DGI' : 'DGI Verify' }}</p>
         </div>
     </div>
+
+    {{-- ── Bank details ───────────────────────────────────────────────────────── --}}
+    @if($company->bank_name || $company->bank_account)
+    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:8px 12px;margin-bottom:12px;font-size:7.5pt;color:#475569;">
+        <span style="font-weight:900;text-transform:uppercase;letter-spacing:0.5px;color:#64748b;font-size:6.5pt;">
+            {{ $lang==='FR' ? 'Domiciliation Bancaire' : 'Bank Details' }} :
+        </span>
+        @if($company->bank_name) {{ $company->bank_name }} @endif
+        @if($company->bank_account) · N° {{ $company->bank_account }} @endif
+        @if($company->bank_rib) · RIB: {{ $company->bank_rib }} @endif
+    </div>
+    @endif
+
+    {{-- ── Custom footer note ─────────────────────────────────────────────────── --}}
+    @if($company->invoice_footer_note)
+    <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:4px;padding:6px 10px;margin-bottom:10px;font-size:7pt;color:#78350f;">
+        {{ $company->invoice_footer_note }}
+    </div>
+    @endif
 
     {{-- ── Legal footer ───────────────────────────────────────────────────────── --}}
     <div class="legal-footer">

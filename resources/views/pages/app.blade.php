@@ -1372,7 +1372,30 @@ function opesApp() {
             const data = await this.api('auth/me');
             this.user    = data.user;
             this.company = data.company;
-            if (this.company) this.buildKpis();
+            if (this.company) {
+                this.buildKpis();
+                // Refresh KPI totals from trial balance
+                this.loadDashboardKpis();
+            }
+        },
+
+        async loadDashboardKpis() {
+            if (!this.company) return;
+            try {
+                const now = new Date();
+                const from = `${now.getFullYear()}-01-01`;
+                const to   = now.toISOString().slice(0,10);
+                const data = await this.api(`companies/${this.company.id}/trial-balance?from=${from}&to=${to}`);
+                const accounts = data.accounts ?? [];
+                const find = (code) => accounts.find(a => a.code === code);
+                const credit = (code) => parseFloat(find(code)?.total_credit ?? 0);
+                const debit6 = accounts.filter(a => a.code?.startsWith('6')).reduce((s,a) => s + parseFloat(a.total_debit ?? 0), 0);
+                this.kpiStats[0].value = credit('701100');
+                this.kpiStats[1].value = credit('443100');
+                this.kpiStats[2].value = credit('448600');
+                this.kpiStats[3].value = debit6;
+                this.fiscalProvision = credit('443100') + credit('448600');
+            } catch(e) {}
         },
 
         buildKpis() {
@@ -1473,16 +1496,29 @@ function opesApp() {
         },
 
         async loadSyncStatus() {
-            const data = await this.api('sync/status');
+            if (!this.company) return;
+            const niu = this.company.niu;
+            const data = await this.api(`sync/status?company_niu=${encodeURIComponent(niu)}`);
             this.syncStatus = data;
-            const q = await this.api('sync/pull');
-            this.syncQueue = Array.isArray(q) ? q : (q.data ?? []);
+            // Pull queue: entries pending upload (last 30 days)
+            const since = new Date(Date.now() - 30*24*60*60*1000).toISOString();
+            const q = await this.api(`sync/pull?company_niu=${encodeURIComponent(niu)}&since=${encodeURIComponent(since)}`);
+            this.syncQueue = Array.isArray(q) ? q : (q.data ?? q.entries ?? []);
         },
 
         async pushSync() {
+            if (!this.company) return;
             this.syncPushing = true;
             try {
-                await this.api('sync/push', { method:'POST', body: JSON.stringify({}) });
+                await this.api('sync/push', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        client_id: 'web-spa',
+                        company_niu: this.company.niu,
+                        synced_at: new Date().toISOString(),
+                        journal_entries: [],
+                    }),
+                });
                 await this.loadSyncStatus();
             } catch(e) {}
             finally { this.syncPushing = false; }
@@ -1659,11 +1695,12 @@ function settingsForm() {
         async uploadLogo() {
             if (!this.logoFile || !this.settingsData.id) return;
             this.logoUploading = true; this.logoMsg = '';
+            const companyId = this.settingsData.id;
             try {
                 const token = localStorage.getItem('opes_token');
                 const fd = new FormData();
                 fd.append('logo', this.logoFile);
-                const res = await fetch(`/api/v1/companies/${this.settingsData.id}/logo`, {
+                const res = await fetch(`/api/v1/companies/${companyId}/logo`, {
                     method:'POST',
                     headers:{'Authorization':'Bearer '+token,'Accept':'application/json'},
                     body: fd,
@@ -1683,12 +1720,14 @@ function settingsForm() {
         async saveSettings() {
             if (!this.settingsData.id) return;
             this.settingsSaving=true; this.settingsError=''; this.settingsSuccess='';
+            const companyId = this.settingsData.id;
             try {
                 const token = localStorage.getItem('opes_token');
                 const payload = { ...this.settingsData };
                 delete payload.logo_path; delete payload.logo_url;
                 delete payload.id; delete payload.created_at; delete payload.updated_at; delete payload.deleted_at;
-                const res = await fetch(`/api/v1/companies/${this.settingsData.id}`, {
+                delete payload.vat_prorata_coefficient; delete payload.subscription_status;
+                const res = await fetch(`/api/v1/companies/${companyId}`, {
                     method:'PUT',
                     headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json','Accept':'application/json'},
                     body: JSON.stringify(payload),

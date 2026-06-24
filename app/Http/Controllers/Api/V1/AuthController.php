@@ -112,9 +112,14 @@ class AuthController extends Controller
         $user    = $request->user()->load('company');
         $company = $user->company;
 
+        $companyData = $company ? $company->toArray() : null;
+        if ($company && $company->logo_path) {
+            $companyData['logo_url'] = \Storage::url($company->logo_path);
+        }
+
         return response()->json([
             'user'           => $this->userPayload($user),
-            'company'        => $company,
+            'company'        => $companyData,
             'fiscal_modules' => $company
                 ? app(\App\Services\FiscalGeographyRouter::class)->getActiveFiscalModules($company)
                 : null,
@@ -160,7 +165,7 @@ class AuthController extends Controller
             ->get()
             ->map(fn ($u) => $this->userPayload($u));
 
-        return response()->json(['users' => $users]);
+        return response()->json($users);
     }
 
     // -------------------------------------------------------------------------
