@@ -1,61 +1,67 @@
-{{--
-  Intent Selector — "Micro-Merchant Guardrail" UX Component
-  Natural language transaction capture abstracted away from SYSCOHADA complexity.
-  Clerks pick an intent → system auto-maps double-entry journal lines.
-  Bilingual FR/EN labels throughout.
---}}
-
 @props(['companyNiu' => '', 'csrfToken' => ''])
 
-<div x-data="intentSelector()" class="w-full bg-white rounded-xl border-2 border-slate-200 shadow-md overflow-hidden font-sans">
+<div x-data="intentSelector()"
+     class="w-full rounded-2xl overflow-hidden relative glass-shimmer"
+     style="background:rgba(255,255,255,0.055);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);border:1px solid rgba(255,255,255,0.13);box-shadow:0 8px 40px rgba(0,0,0,0.5),0 1px 0 rgba(255,255,255,0.12) inset;">
 
     {{-- Header --}}
-    <div class="bg-slate-900 px-4 py-3 border-b-2 border-slate-700 flex items-center space-x-3">
-        <div class="p-2 bg-indigo-500 rounded text-white font-black text-xs tracking-wider">SAISIE</div>
+    <div class="px-5 py-4 border-b flex items-center gap-3"
+         style="border-color:rgba(255,255,255,0.08);background:rgba(255,255,255,0.04)">
+        <div class="w-9 h-9 rounded-xl flex items-center justify-center text-xs font-black text-white"
+             style="background:linear-gradient(135deg,rgba(99,102,241,0.8),rgba(79,70,229,0.9));box-shadow:0 4px 14px rgba(99,102,241,0.35)">
+            +
+        </div>
         <div>
-            <h2 class="text-sm font-black text-white uppercase tracking-wide">Nouvelle Transaction</h2>
-            <p class="text-[10px] text-slate-400 font-medium">Que s'est-il passé ? / What happened? — Choisissez une action ci-dessous</p>
+            <h2 class="text-sm font-black text-white uppercase tracking-wide leading-none">Nouvelle Transaction</h2>
+            <p class="text-[10px] text-slate-400 font-medium mt-0.5">Choisissez une opération ci-dessous</p>
         </div>
     </div>
 
     {{-- Intent Grid --}}
     <div x-show="!selectedIntent" class="p-4">
-        <p class="text-xs font-black text-slate-600 uppercase tracking-widest mb-3">
-            Sélectionner l'opération / Select Operation:
-        </p>
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+        <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-3 px-1">Sélectionner l'opération :</p>
+        <div class="grid grid-cols-2 gap-2.5">
 
             <template x-for="intent in intents" :key="intent.id">
                 <button
                     @click="selectIntent(intent)"
-                    class="flex flex-col items-center justify-center p-4 rounded-xl border-2 border-slate-200 hover:border-slate-400 hover:bg-slate-50 transition-all text-center active:scale-95 transform group"
-                    :class="intent.highlight ? 'border-emerald-200 hover:border-emerald-400 hover:bg-emerald-50' : ''"
+                    class="relative flex flex-col items-center justify-center p-3.5 rounded-xl text-center transition-all duration-200 active:scale-95 transform group overflow-hidden"
+                    :class="intent.highlight
+                        ? 'hover:border-emerald-400/40'
+                        : 'hover:border-white/20'"
+                    style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);transition:all 0.2s ease"
+                    @mouseenter="$el.style.background='rgba(255,255,255,0.10)';$el.style.borderColor='rgba(255,255,255,0.18)'"
+                    @mouseleave="$el.style.background='rgba(255,255,255,0.05)';$el.style.borderColor='rgba(255,255,255,0.09)'"
                 >
-                    <span class="text-2xl mb-1.5" x-text="intent.icon"></span>
-                    <span class="text-[11px] font-black text-slate-900 uppercase tracking-wide leading-tight" x-text="intent.labelFr"></span>
-                    <span class="text-[10px] font-medium text-slate-500 leading-tight mt-0.5" x-text="intent.labelEn"></span>
+                    <span class="text-2xl mb-2 leading-none" x-text="intent.icon"></span>
+                    <span class="text-[10px] font-black text-slate-200 uppercase tracking-wide leading-tight" x-text="intent.labelFr"></span>
+                    <span class="text-[9px] font-medium text-slate-500 leading-tight mt-0.5" x-text="intent.labelEn"></span>
                 </button>
             </template>
 
         </div>
     </div>
 
-    {{-- Transaction Form (shown after intent selected) --}}
-    <div x-show="selectedIntent" x-cloak class="p-4">
+    {{-- Transaction Form --}}
+    <div x-show="selectedIntent" x-cloak class="p-5 float-in">
 
-        {{-- Selected Intent Chip --}}
-        <div class="flex items-center gap-2 mb-4">
-            <button @click="selectedIntent = null" class="text-[11px] font-black text-slate-500 hover:text-slate-900 uppercase tracking-wider">← Retour / Back</button>
-            <div class="bg-slate-900 text-white font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider flex items-center gap-1.5">
+        {{-- Back + Selected chip --}}
+        <div class="flex items-center gap-2 mb-5">
+            <button @click="selectedIntent = null"
+                    class="text-[10px] font-black text-slate-400 hover:text-white uppercase tracking-wider transition-colors flex items-center gap-1">
+                ← Retour
+            </button>
+            <div class="flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider text-white"
+                 style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.16)">
                 <span x-text="selectedIntent?.icon"></span>
                 <span x-text="selectedIntent?.labelFr"></span>
             </div>
         </div>
 
-        {{-- Amount Input --}}
+        {{-- Amount --}}
         <div class="mb-4">
-            <label class="block text-[11px] font-black text-slate-700 uppercase tracking-wider mb-1.5">
-                Montant TTC (XAF) / Amount TTC (XAF) <span class="text-red-600">*</span>
+            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">
+                Montant TTC (XAF) <span class="text-rose-400">*</span>
             </label>
             <div class="relative">
                 <input
@@ -64,87 +70,91 @@
                     @input="computeTax()"
                     placeholder="0"
                     min="1"
-                    class="w-full border-2 border-slate-300 focus:border-slate-900 focus:outline-none rounded-lg px-4 py-3 font-mono font-black text-slate-950 text-lg bg-white transition-colors"
+                    class="glass-input w-full rounded-xl px-4 py-3 font-mono font-black text-white text-xl"
                 >
-                <span class="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-black text-slate-400">XAF</span>
+                <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-black text-slate-500">XAF</span>
             </div>
 
-            {{-- Live Tax Breakdown --}}
-            <div x-show="taxBreakdown" x-cloak class="mt-2 bg-slate-50 border border-slate-200 rounded-lg p-3 text-[11px] font-mono">
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                    <div class="text-center">
-                        <div class="text-slate-500 font-bold">Base HT</div>
-                        <div class="font-black text-slate-950" x-text="formatXaf(taxBreakdown?.amount_ht)"></div>
+            {{-- Tax breakdown --}}
+            <div x-show="taxBreakdown" x-cloak
+                 class="mt-2.5 rounded-xl p-3 float-in"
+                 style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08)">
+                <div class="grid grid-cols-4 gap-2 text-[10px] font-mono text-center">
+                    <div>
+                        <div class="text-slate-500 font-bold mb-0.5">Base HT</div>
+                        <div class="font-black text-white" x-text="formatXaf(taxBreakdown?.amount_ht)"></div>
                     </div>
-                    <div class="text-center">
-                        <div class="text-slate-500 font-bold">TVA 17.5%</div>
-                        <div class="font-black text-blue-700" x-text="formatXaf(taxBreakdown?.base_vat)"></div>
+                    <div>
+                        <div class="text-slate-500 font-bold mb-0.5">TVA 17.5%</div>
+                        <div class="font-black text-indigo-400" x-text="formatXaf(taxBreakdown?.base_vat)"></div>
                     </div>
-                    <div class="text-center">
-                        <div class="text-slate-500 font-bold">CAC 10%</div>
-                        <div class="font-black text-indigo-700" x-text="formatXaf(taxBreakdown?.cac)"></div>
+                    <div>
+                        <div class="text-slate-500 font-bold mb-0.5">CAC 10%</div>
+                        <div class="font-black text-purple-400" x-text="formatXaf(taxBreakdown?.cac)"></div>
                     </div>
-                    <div class="text-center">
-                        <div class="text-slate-500 font-bold">Total TTC</div>
-                        <div class="font-black text-emerald-700" x-text="formatXaf(taxBreakdown?.amount_ttc)"></div>
+                    <div>
+                        <div class="text-slate-500 font-bold mb-0.5">TTC</div>
+                        <div class="font-black text-emerald-400" x-text="formatXaf(taxBreakdown?.amount_ttc)"></div>
                     </div>
                 </div>
             </div>
         </div>
 
-        {{-- Description --}}
+        {{-- Note --}}
         <div class="mb-4">
-            <label class="block text-[11px] font-black text-slate-700 uppercase tracking-wider mb-1.5">
-                Description / Note (optionnel)
+            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">
+                Note (optionnel)
             </label>
             <input
                 type="text"
                 x-model="form.memo"
-                placeholder="Ex: Vente à client Marché Central, stand B14..."
-                class="w-full border-2 border-slate-300 focus:border-slate-900 focus:outline-none rounded-lg px-4 py-2.5 font-medium text-slate-950 text-sm bg-white transition-colors"
+                placeholder="Ex: Vente marché central, stand B14..."
+                class="glass-input w-full rounded-xl px-4 py-2.5 text-sm text-white font-medium"
             >
         </div>
 
-        {{-- Auto-mapped SYSCOHADA Preview --}}
-        <div x-show="selectedIntent" class="mb-4 bg-slate-900 rounded-lg p-3">
-            <div class="text-[10px] font-black text-slate-400 uppercase tracking-wider mb-2">
-                Mappage Comptable Automatique / Auto SYSCOHADA Mapping:
+        {{-- SYSCOHADA mapping preview --}}
+        <div x-show="selectedIntent" class="mb-4 rounded-xl p-3"
+             style="background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.07)">
+            <div class="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-2">
+                Mappage SYSCOHADA Automatique
             </div>
-            <div class="flex flex-col gap-1.5">
+            <div class="space-y-1">
                 <template x-for="line in selectedIntent?.journalLines ?? []" :key="line.account">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-2">
-                            <span class="text-[10px] font-black px-2 py-0.5 rounded"
-                                  :class="line.type === 'debit' ? 'bg-slate-700 text-white' : 'bg-slate-600 text-slate-200'"
-                                  x-text="line.type === 'debit' ? 'D' : 'C'"></span>
-                            <span class="font-mono text-[11px] font-bold text-white" x-text="line.account"></span>
-                            <span class="text-[10px] text-slate-400" x-text="line.label"></span>
-                        </div>
+                    <div class="flex items-center gap-2.5">
+                        <span class="text-[9px] font-black px-1.5 py-0.5 rounded-md min-w-[18px] text-center"
+                              :class="line.type === 'debit'
+                                ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30'
+                                : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'"
+                              x-text="line.type === 'debit' ? 'D' : 'C'"></span>
+                        <span class="font-mono text-[10px] font-bold text-amber-400" x-text="line.account"></span>
+                        <span class="text-[10px] text-slate-400" x-text="line.label"></span>
                     </div>
                 </template>
             </div>
         </div>
 
-        {{-- Validation Error Display --}}
-        <div x-show="errors.length" x-cloak class="mb-4 bg-red-50 border-2 border-red-200 rounded-lg p-3">
+        {{-- Errors --}}
+        <div x-show="errors.length" x-cloak class="mb-4 rounded-xl p-3"
+             style="background:rgba(244,63,94,0.08);border:1px solid rgba(244,63,94,0.25)">
             <template x-for="error in errors" :key="error">
-                <p class="text-[11px] font-bold text-red-800" x-text="'⚠ ' + error"></p>
+                <p class="text-[11px] font-bold text-rose-400" x-text="'⚠ ' + error"></p>
             </template>
         </div>
 
-        {{-- Submit Button --}}
+        {{-- Submit --}}
         <button
             @click="submitTransaction()"
             :disabled="submitting || !form.amount"
-            class="w-full bg-slate-900 hover:bg-slate-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-black py-3 px-6 rounded-xl text-sm uppercase tracking-wider transition-all transform active:scale-[0.99]"
+            class="w-full glass-btn text-slate-950 font-black py-3 px-6 rounded-xl text-[11px] uppercase tracking-widest disabled:opacity-40 disabled:cursor-not-allowed"
         >
-            <span x-show="!submitting">Enregistrer la Transaction / Save Transaction</span>
+            <span x-show="!submitting">Enregistrer la Transaction</span>
             <span x-show="submitting" x-cloak class="flex items-center justify-center gap-2">
-                <svg class="spin-slow h-4 w-4" fill="none" viewBox="0 0 24 24">
+                <svg class="spin-pulse h-4 w-4" fill="none" viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
                 </svg>
-                Enregistrement... / Saving...
+                Enregistrement…
             </span>
         </button>
 
@@ -163,11 +173,8 @@ function intentSelector() {
 
         intents: [
             {
-                id: 'sell_goods',
-                icon: '🛒',
-                labelFr: 'J\'ai vendu des marchandises',
-                labelEn: 'I sold goods',
-                highlight: true,
+                id: 'sell_goods', icon: '🛒',
+                labelFr: 'Vente de marchandises', labelEn: 'Sold goods', highlight: true,
                 journalLines: [
                     { type: 'debit',  account: '571100', label: 'Caisse principale' },
                     { type: 'credit', account: '701100', label: 'Ventes Cameroun' },
@@ -176,11 +183,8 @@ function intentSelector() {
                 ],
             },
             {
-                id: 'momo_receipt',
-                icon: '📱',
-                labelFr: 'Paiement Mobile Money reçu',
-                labelEn: 'MoMo payment received',
-                highlight: true,
+                id: 'momo_receipt', icon: '📱',
+                labelFr: 'Mobile Money reçu', labelEn: 'MoMo received', highlight: true,
                 journalLines: [
                     { type: 'debit',  account: '571200', label: 'MTN MoMo Wallet' },
                     { type: 'credit', account: '701100', label: 'Ventes Cameroun' },
@@ -189,30 +193,24 @@ function intentSelector() {
                 ],
             },
             {
-                id: 'pay_eneo',
-                icon: '💡',
-                labelFr: 'J\'ai payé l\'Eneo (Électricité)',
-                labelEn: 'I paid Eneo (Electricity)',
+                id: 'pay_eneo', icon: '💡',
+                labelFr: 'Facture Eneo payée', labelEn: 'Paid Eneo',
                 journalLines: [
                     { type: 'debit',  account: '605100', label: 'Charges Électricité' },
                     { type: 'credit', account: '571100', label: 'Caisse principale' },
                 ],
             },
             {
-                id: 'pay_camwater',
-                icon: '💧',
-                labelFr: 'J\'ai payé Camwater (Eau)',
-                labelEn: 'I paid Camwater (Water)',
+                id: 'pay_camwater', icon: '💧',
+                labelFr: 'Facture Camwater', labelEn: 'Paid Camwater',
                 journalLines: [
                     { type: 'debit',  account: '605200', label: 'Charges Eau' },
                     { type: 'credit', account: '571100', label: 'Caisse principale' },
                 ],
             },
             {
-                id: 'pay_salary',
-                icon: '👥',
-                labelFr: 'J\'ai payé les salaires',
-                labelEn: 'I paid employee salaries',
+                id: 'pay_salary', icon: '👥',
+                labelFr: 'Salaires payés', labelEn: 'Paid salaries',
                 journalLines: [
                     { type: 'debit',  account: '661100', label: 'Salaires bruts' },
                     { type: 'credit', account: '422000', label: 'Personnel - Rém. dues' },
@@ -220,31 +218,25 @@ function intentSelector() {
                 ],
             },
             {
-                id: 'buy_stock',
-                icon: '📦',
-                labelFr: 'J\'ai acheté des marchandises',
-                labelEn: 'I purchased goods/stock',
+                id: 'buy_stock', icon: '📦',
+                labelFr: 'Achat marchandises', labelEn: 'Purchased goods',
                 journalLines: [
                     { type: 'debit',  account: '601100', label: 'Achats marchandises' },
-                    { type: 'debit',  account: '445200', label: 'TVA Récupérable achats' },
+                    { type: 'debit',  account: '445200', label: 'TVA Récupérable' },
                     { type: 'credit', account: '401100', label: 'Fournisseurs' },
                 ],
             },
             {
-                id: 'pay_transport',
-                icon: '🚕',
-                labelFr: 'J\'ai payé le transport',
-                labelEn: 'I paid for transport',
+                id: 'pay_transport', icon: '🚕',
+                labelFr: 'Transport payé', labelEn: 'Paid transport',
                 journalLines: [
                     { type: 'debit',  account: '618100', label: 'Déplacements pro.' },
                     { type: 'credit', account: '571100', label: 'Caisse principale' },
                 ],
             },
             {
-                id: 'pay_marketing',
-                icon: '📢',
-                labelFr: 'J\'ai payé de la publicité',
-                labelEn: 'I paid for marketing',
+                id: 'pay_marketing', icon: '📢',
+                labelFr: 'Publicité payée', labelEn: 'Paid marketing',
                 journalLines: [
                     { type: 'debit',  account: '624100', label: 'Publicité & marketing' },
                     { type: 'credit', account: '571100', label: 'Caisse principale' },
@@ -260,8 +252,8 @@ function intentSelector() {
         },
 
         formatXaf(value) {
-            if (!value) return '0 XAF';
-            return new Intl.NumberFormat('fr-CM').format(parseFloat(value)) + ' XAF';
+            if (!value) return '0';
+            return new Intl.NumberFormat('fr-CM').format(parseFloat(value));
         },
 
         async computeTax() {
@@ -282,13 +274,12 @@ function intentSelector() {
         async submitTransaction() {
             this.errors = [];
             if (!this.form.amount || parseFloat(this.form.amount) <= 0) {
-                this.errors.push('Montant requis et doit être supérieur à 0 / Amount required and must be > 0');
+                this.errors.push('Montant requis et doit être supérieur à 0');
                 return;
             }
             this.submitting = true;
             try {
-                const companyNiu = '{{ $companyNiu }}';
-                const payload    = this.buildPayload(companyNiu);
+                const payload = this.buildPayload('{{ $companyNiu }}');
                 const res = await fetch('/api/v1/journal/manual', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ $csrfToken }}' },
@@ -303,8 +294,8 @@ function intentSelector() {
                     const errs = data.errors ?? {};
                     this.errors = Object.values(errs).flat();
                 }
-            } catch (e) {
-                this.errors = ['Erreur réseau / Network error. Réessayer / Please retry.'];
+            } catch {
+                this.errors = ['Erreur réseau. Veuillez réessayer.'];
             } finally {
                 this.submitting = false;
             }
@@ -313,28 +304,16 @@ function intentSelector() {
         buildPayload(companyNiu) {
             const tax    = this.taxBreakdown ?? {};
             const amount = parseFloat(this.form.amount);
-            const ht     = parseFloat(tax.amount_ht ?? 0);
-            const vat    = parseFloat(tax.base_vat  ?? 0);
-            const cac    = parseFloat(tax.cac       ?? 0);
-
-            const refId = 'MANUAL-' + Date.now();
-
-            // Build lines from the selected intent's journal mapping
-            // The actual amounts are resolved server-side for full precision;
-            // here we pass the intent context so the server can validate.
-            const lines = this.selectedIntent.journalLines.map(l => ({
+            const lines  = this.selectedIntent.journalLines.map(l => ({
                 account_code: l.account,
-                // Simplified line split — server tax engine handles precision.
-                // For this UI we pass HT+VAT+CAC per applicable account.
                 debit:  l.type === 'debit'  ? amount : 0,
                 credit: l.type === 'credit' ? amount : 0,
                 description: l.label,
             }));
-
             return {
                 company_niu:     companyNiu,
                 posting_date:    new Date().toISOString().split('T')[0],
-                reference_id:    refId,
+                reference_id:    'MANUAL-' + Date.now(),
                 source_pipeline: 'MANUAL_CASH',
                 memo:            this.form.memo || this.selectedIntent.labelFr,
                 lines,

@@ -8,57 +8,251 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
-            theme: { extend: { colors: {
-                'opes-navy':  '#0A192F',
-                'opes-amber': '#F59E0B',
-                'opes-green': '#10B981',
-            }}}
+            theme: { extend: {
+                colors: {
+                    'opes-navy':  '#0A192F',
+                    'opes-amber': '#F59E0B',
+                    'opes-green': '#10B981',
+                },
+                backdropBlur: {
+                    'xs': '2px',
+                    '4xl': '72px',
+                }
+            }}
         }
     </script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
-        [x-cloak]  { display: none !important; }
-        @keyframes heartbeat  { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.2);opacity:.75} }
+        [x-cloak] { display: none !important; }
+
+        /* ── Liquid Glass System ─────────────────────────────────────── */
+        :root {
+            --glass-white:     rgba(255,255,255,0.07);
+            --glass-white-mid: rgba(255,255,255,0.12);
+            --glass-white-hi:  rgba(255,255,255,0.18);
+            --glass-border:    rgba(255,255,255,0.14);
+            --glass-border-hi: rgba(255,255,255,0.28);
+            --glass-shadow:    0 8px 40px rgba(0,0,0,0.55), 0 2px 8px rgba(0,0,0,0.35);
+            --glass-inset:     inset 0 1px 0 rgba(255,255,255,0.18), inset 0 -1px 0 rgba(0,0,0,0.15);
+            --glass-glow-amber: 0 0 40px rgba(245,158,11,0.18);
+            --glass-glow-green: 0 0 40px rgba(16,185,129,0.18);
+        }
+
+        * { box-sizing: border-box; }
+
+        html, body { height: 100%; margin: 0; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+            background: radial-gradient(ellipse 120% 80% at 20% -5%, #1a2d4f 0%, #0a192f 35%, #050d1a 65%, #0f0a1e 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: #e2e8f0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Ambient light orbs */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            background:
+                radial-gradient(ellipse 60% 40% at 10% 15%, rgba(245,158,11,0.07) 0%, transparent 60%),
+                radial-gradient(ellipse 50% 35% at 90% 80%, rgba(16,185,129,0.06) 0%, transparent 55%),
+                radial-gradient(ellipse 40% 30% at 50% 50%, rgba(99,102,241,0.04) 0%, transparent 60%);
+        }
+
+        /* Glass panel */
+        .glass {
+            background: var(--glass-white);
+            backdrop-filter: blur(28px) saturate(180%) brightness(1.05);
+            -webkit-backdrop-filter: blur(28px) saturate(180%) brightness(1.05);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow), var(--glass-inset);
+        }
+
+        .glass-mid {
+            background: var(--glass-white-mid);
+            backdrop-filter: blur(20px) saturate(160%);
+            -webkit-backdrop-filter: blur(20px) saturate(160%);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow), var(--glass-inset);
+        }
+
+        .glass-hi {
+            background: var(--glass-white-hi);
+            backdrop-filter: blur(32px) saturate(200%) brightness(1.08);
+            -webkit-backdrop-filter: blur(32px) saturate(200%) brightness(1.08);
+            border: 1px solid var(--glass-border-hi);
+            box-shadow: var(--glass-shadow), var(--glass-inset), 0 0 0 0.5px rgba(255,255,255,0.06) inset;
+        }
+
+        /* Glass nav header */
+        .glass-nav {
+            background: rgba(10,25,47,0.72);
+            backdrop-filter: blur(40px) saturate(200%) brightness(1.1);
+            -webkit-backdrop-filter: blur(40px) saturate(200%) brightness(1.1);
+            border-bottom: 1px solid rgba(255,255,255,0.10);
+            box-shadow: 0 1px 0 rgba(255,255,255,0.06), 0 4px 32px rgba(0,0,0,0.5);
+        }
+
+        /* Glass card — floating surface */
+        .glass-card {
+            background: linear-gradient(145deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.04) 100%);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border: 1px solid rgba(255,255,255,0.14);
+            border-top-color: rgba(255,255,255,0.24);
+            box-shadow:
+                0 4px 24px rgba(0,0,0,0.45),
+                0 1px 0 rgba(255,255,255,0.12) inset,
+                0 -1px 0 rgba(0,0,0,0.12) inset;
+            transition: box-shadow 0.25s ease, border-color 0.25s ease, transform 0.2s ease;
+        }
+        .glass-card:hover {
+            border-color: rgba(255,255,255,0.22);
+            box-shadow:
+                0 8px 40px rgba(0,0,0,0.55),
+                0 1px 0 rgba(255,255,255,0.16) inset,
+                0 -1px 0 rgba(0,0,0,0.12) inset;
+        }
+
+        /* Glass input */
+        .glass-input {
+            background: rgba(255,255,255,0.06);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.14);
+            color: #f1f5f9;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .glass-input::placeholder { color: rgba(148,163,184,0.6); }
+        .glass-input:focus {
+            outline: none;
+            border-color: rgba(245,158,11,0.6);
+            box-shadow: 0 0 0 3px rgba(245,158,11,0.12), 0 0 20px rgba(245,158,11,0.08);
+        }
+
+        /* Glass button — primary */
+        .glass-btn {
+            background: linear-gradient(135deg, rgba(245,158,11,0.9) 0%, rgba(217,119,6,0.9) 100%);
+            border: 1px solid rgba(245,158,11,0.5);
+            box-shadow: 0 4px 16px rgba(245,158,11,0.25), 0 1px 0 rgba(255,255,255,0.2) inset;
+            transition: all 0.2s ease;
+        }
+        .glass-btn:hover {
+            background: linear-gradient(135deg, rgba(251,191,36,0.95) 0%, rgba(245,158,11,0.95) 100%);
+            box-shadow: 0 6px 24px rgba(245,158,11,0.35), 0 1px 0 rgba(255,255,255,0.25) inset;
+        }
+        .glass-btn:active { transform: scale(0.98); }
+
+        /* Glass button — dark/navy */
+        .glass-btn-dark {
+            background: linear-gradient(135deg, rgba(30,58,100,0.85) 0%, rgba(15,30,58,0.9) 100%);
+            border: 1px solid rgba(255,255,255,0.14);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.4), 0 1px 0 rgba(255,255,255,0.1) inset;
+            transition: all 0.2s ease;
+        }
+        .glass-btn-dark:hover {
+            background: linear-gradient(135deg, rgba(45,75,130,0.9) 0%, rgba(25,50,90,0.95) 100%);
+            border-color: rgba(255,255,255,0.2);
+            box-shadow: 0 6px 24px rgba(0,0,0,0.5), 0 1px 0 rgba(255,255,255,0.14) inset;
+        }
+        .glass-btn-dark:active { transform: scale(0.98); }
+
+        /* Shimmer highlight line at top of panels */
+        .glass-shimmer::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.35) 30%, rgba(255,255,255,0.5) 50%, rgba(255,255,255,0.35) 70%, transparent 100%);
+            border-radius: inherit;
+        }
+
+        /* Nav link */
+        .nav-link {
+            color: rgba(148,163,184,0.9);
+            transition: color 0.2s, background 0.2s;
+        }
+        .nav-link:hover {
+            color: #fff;
+            background: rgba(255,255,255,0.08);
+        }
+        .nav-link.active {
+            color: #fff;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.14);
+        }
+
+        /* Status badge pill */
+        .glass-pill {
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 9999px;
+        }
+
+        /* Animations */
+        @keyframes heartbeat  { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.25);opacity:.7} }
         @keyframes spin-frame { to{transform:rotate(360deg)} }
-        .heartbeat  { animation: heartbeat  1.4s ease-in-out infinite; }
+        @keyframes float-in   { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes shimmer    { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
+
+        .heartbeat  { animation: heartbeat  1.6s ease-in-out infinite; }
         .spin-pulse { animation: spin-frame 1.2s linear infinite; }
+        .float-in   { animation: float-in 0.35s cubic-bezier(0.34,1.56,0.64,1) both; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(255,255,255,0.03); }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 99px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
     </style>
 </head>
-<body class="h-full font-sans antialiased text-slate-950" style="background-color:#f8fafc">
+<body class="h-full antialiased relative">
 
-    <!-- GLOBAL VIEWPORT HEADER -->
-    <header style="background-color:#0A192F" class="border-b-2 border-slate-700/60 sticky top-0 z-50 shadow-md">
-        <div class="max-w-screen-2xl mx-auto px-4 h-14 flex items-center justify-between gap-3">
+    <!-- GLASS NAV HEADER -->
+    <header class="glass-nav sticky top-0 z-50">
+        <div class="max-w-screen-2xl mx-auto px-5 h-15 py-0 flex items-center justify-between gap-4" style="height:56px">
 
             <!-- Brand -->
-            <div class="flex items-center gap-3 flex-shrink-0">
-                <div class="bg-amber-500 text-slate-950 font-black text-xs px-2.5 py-1 rounded tracking-widest uppercase">OB</div>
-                <div class="leading-none">
-                    <span class="text-white font-black text-sm tracking-widest uppercase">OPES BOOKS</span>
-                    <span class="hidden sm:block text-slate-400 text-[10px] font-medium mt-0.5">Comptabilité SYSCOHADA • DGI Cameroun</span>
+            <a href="/" class="flex items-center gap-3 flex-shrink-0 group">
+                <div class="relative">
+                    <div class="w-9 h-9 rounded-xl glass-card flex items-center justify-center group-hover:scale-105 transition-transform">
+                        <span class="text-amber-400 font-black text-xs tracking-widest">OB</span>
+                    </div>
                 </div>
-            </div>
+                <div class="leading-none">
+                    <span class="text-white font-black text-sm tracking-widest uppercase">OPES<span class="text-amber-400">BOOKS</span></span>
+                    <span class="hidden sm:block text-slate-500 text-[9px] font-semibold mt-0.5 uppercase tracking-widest">SYSCOHADA • DGI Cameroun</span>
+                </div>
+            </a>
 
             <!-- Nav -->
             <nav class="hidden md:flex items-center gap-0.5 text-[11px] font-black uppercase tracking-wider flex-1 justify-center">
-                <a href="/" class="text-slate-400 hover:text-white hover:bg-white/10 px-3 py-1.5 rounded transition-colors">
+                <a href="/" class="nav-link px-3.5 py-2 rounded-xl text-[11px] font-bold uppercase tracking-wider">
                     <span x-show="lang==='FR'">Tableau de Bord</span><span x-show="lang==='EN'" x-cloak>Dashboard</span>
                 </a>
-                <a href="#" class="text-slate-400 hover:text-white hover:bg-white/10 px-3 py-1.5 rounded transition-colors">
+                <a href="#" class="nav-link px-3.5 py-2 rounded-xl text-[11px] font-bold uppercase tracking-wider">
                     <span x-show="lang==='FR'">Transactions</span><span x-show="lang==='EN'" x-cloak>Transactions</span>
                 </a>
-                <a href="#" class="text-slate-400 hover:text-white hover:bg-white/10 px-3 py-1.5 rounded transition-colors">
+                <a href="#" class="nav-link px-3.5 py-2 rounded-xl text-[11px] font-bold uppercase tracking-wider">
                     <span x-show="lang==='FR'">Grand Livre</span><span x-show="lang==='EN'" x-cloak>Ledger</span>
                 </a>
-                <a href="#" class="text-slate-400 hover:text-white hover:bg-white/10 px-3 py-1.5 rounded transition-colors">
-                    <span x-show="lang==='FR'">Déclarations DGI</span><span x-show="lang==='EN'" x-cloak>DGI Exports</span>
+                <a href="/dgi-monitor" class="nav-link px-3.5 py-2 rounded-xl text-[11px] font-bold uppercase tracking-wider">
+                    <span x-show="lang==='FR'">Suivi DGI</span><span x-show="lang==='EN'" x-cloak>DGI Monitor</span>
+                </a>
+                <a href="/tax-dashboard" class="nav-link px-3.5 py-2 rounded-xl text-[11px] font-bold uppercase tracking-wider">
+                    <span x-show="lang==='FR'">Fiscalité</span><span x-show="lang==='EN'" x-cloak>Tax</span>
                 </a>
             </nav>
 
-            <!-- Lang toggle + Connectivity -->
+            <!-- Controls -->
             <div class="flex items-center gap-2 flex-shrink-0">
                 <button @click="lang = lang==='FR' ? 'EN' : 'FR'"
-                        class="text-[10px] font-black border-2 border-slate-600 text-slate-300 hover:border-amber-500 hover:text-amber-400 px-2 py-1 rounded transition-colors uppercase tracking-widest w-10">
+                        class="glass-card text-[10px] font-black text-slate-300 hover:text-white px-3 py-1.5 rounded-lg transition-all uppercase tracking-widest w-10 text-center">
                     <span x-text="lang==='FR' ? 'EN' : 'FR'"></span>
                 </button>
                 <x-connectivity-badge />
@@ -68,7 +262,7 @@
     </header>
 
     <!-- MAIN CONTENT -->
-    <main class="max-w-screen-2xl mx-auto px-4 py-5">
+    <main class="relative z-10 max-w-screen-2xl mx-auto px-5 py-6">
         {{ $slot }}
     </main>
 
