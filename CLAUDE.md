@@ -40,12 +40,18 @@ routes/
 
 ```bash
 cp .env.example .env
+# Fill in APP_KEY, DB creds, DGI_API_KEY, payment aggregator keys
 composer install
 php artisan key:generate
 php artisan migrate
 php artisan storage:link        # creates public/storage symlink for logos
 php artisan serve
+
+# In a second terminal — required for DGI sync and telecom jobs:
+php artisan queue:work --queue=default --tries=3
 ```
+
+`FILESYSTEM_DISK` must be `public` (set in `.env.example`). Logo uploads and URLs will 404 if left as `local`.
 
 ## API auth
 
