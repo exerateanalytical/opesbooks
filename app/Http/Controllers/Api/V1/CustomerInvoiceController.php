@@ -46,7 +46,22 @@ class CustomerInvoiceController extends Controller
             'notes'         => 'nullable|string|max:1000',
         ]);
 
-        $taxed = $this->tax->fromHt($data['amount_ht']);
+        // Credit limit enforcement
+        $customer = Customer::findOrFail($data['customer_id']);
+        if ($customer->credit_limit > 0) {
+            $outstanding = CustomerInvoice::where('customer_id', $customer->id)
+                ->whereIn('status', ['SENT', 'OVERDUE'])
+                ->sum('amount_ttc');
+            $taxed = $this->tax->fromHt($data['amount_ht']);
+            if (($outstanding + $taxed['ttc']) > $customer->credit_limit) {
+                return response()->json([
+                    'message' => "Credit limit exceeded. Outstanding: {$outstanding} XAF, Limit: {$customer->credit_limit} XAF.",
+                ], 422);
+            }
+        } else {
+            $taxed = $this->tax->fromHt($data['amount_ht']);
+        }
+
         $invoice = CustomerInvoice::create([
             'company_id'     => $company->id,
             'customer_id'    => $data['customer_id'],

@@ -1,19 +1,25 @@
 <?php
 
 use App\Http\Controllers\Api\V1\AttachmentController;
+use App\Http\Controllers\Api\V1\AuditLogController;
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\BankReconciliationController;
 use App\Http\Controllers\Api\V1\BankStatementController;
+use App\Http\Controllers\Api\V1\BudgetController;
 use App\Http\Controllers\Api\V1\CompanyController;
 use App\Http\Controllers\Api\V1\CustomerController;
 use App\Http\Controllers\Api\V1\CustomerInvoiceController;
 use App\Http\Controllers\Api\V1\DgiFiscalisExportController;
+use App\Http\Controllers\Api\V1\DsfExportController;
 use App\Http\Controllers\Api\V1\FinancialReportController;
+use App\Http\Controllers\Api\V1\FixedAssetController;
 use App\Http\Controllers\Api\V1\InvoicePdfController;
 use App\Http\Controllers\Api\V1\InvoiceVerificationController;
 use App\Http\Controllers\Api\V1\PayrollController;
 use App\Http\Controllers\Api\V1\ProfileController;
 use App\Http\Controllers\Api\V1\RecurringTransactionController;
 use App\Http\Controllers\Api\V1\SupplierController;
+use App\Http\Controllers\Api\V1\SupplierInvoiceController;
 use App\Jobs\SyncInvoiceToDgiPortalJob;
 use App\Http\Controllers\Api\V1\LedgerController;
 use App\Http\Controllers\Api\V1\ManualJournalController;
@@ -190,6 +196,53 @@ Route::prefix('v1')->name('v1.')->group(function () {
             Route::post('subledgers', [SubledgerController::class, 'provision'])
                 ->middleware(\App\Http\Middleware\RequireRole::class . ':OWNER,ACCOUNTANT')
                 ->name('subledgers.provision');
+
+            // Supplier invoices (OWNER/ACCOUNTANT)
+            Route::get('supplier-invoices',                          [SupplierInvoiceController::class, 'index'])->name('supplier-invoices.index');
+            Route::get('supplier-invoices/{invoice}',                [SupplierInvoiceController::class, 'show'])->name('supplier-invoices.show');
+            Route::middleware(\App\Http\Middleware\RequireRole::class . ':OWNER,ACCOUNTANT')->group(function () {
+                Route::post('supplier-invoices',                     [SupplierInvoiceController::class, 'store'])->name('supplier-invoices.store');
+                Route::post('supplier-invoices/{invoice}/pay',       [SupplierInvoiceController::class, 'pay'])->name('supplier-invoices.pay');
+                Route::delete('supplier-invoices/{invoice}',         [SupplierInvoiceController::class, 'destroy'])->name('supplier-invoices.destroy');
+            });
+
+            // Fixed assets (OWNER/ACCOUNTANT)
+            Route::get('fixed-assets',                               [FixedAssetController::class, 'index'])->name('fixed-assets.index');
+            Route::get('fixed-assets/{asset}',                       [FixedAssetController::class, 'show'])->name('fixed-assets.show');
+            Route::middleware(\App\Http\Middleware\RequireRole::class . ':OWNER,ACCOUNTANT')->group(function () {
+                Route::post('fixed-assets',                          [FixedAssetController::class, 'store'])->name('fixed-assets.store');
+                Route::post('fixed-assets/run-depreciation',         [FixedAssetController::class, 'runDepreciation'])->name('fixed-assets.run-depreciation');
+                Route::post('fixed-assets/{asset}/dispose',          [FixedAssetController::class, 'dispose'])->name('fixed-assets.dispose');
+            });
+
+            // Bank reconciliation (OWNER/ACCOUNTANT)
+            Route::get('reconciliation',                                          [BankReconciliationController::class, 'index'])->name('reconciliation.index');
+            Route::middleware(\App\Http\Middleware\RequireRole::class . ':OWNER,ACCOUNTANT')->group(function () {
+                Route::post('reconciliation',                                     [BankReconciliationController::class, 'store'])->name('reconciliation.store');
+                Route::get('reconciliation/{session}',                            [BankReconciliationController::class, 'show'])->name('reconciliation.show');
+                Route::post('reconciliation/{session}/lines/{line}/match',        [BankReconciliationController::class, 'matchLine'])->name('reconciliation.match');
+                Route::post('reconciliation/{session}/close',                     [BankReconciliationController::class, 'close'])->name('reconciliation.close');
+            });
+
+            // Budgets (OWNER/ACCOUNTANT)
+            Route::get('budgets',                                    [BudgetController::class, 'index'])->name('budgets.index');
+            Route::get('budgets/{budget}',                           [BudgetController::class, 'show'])->name('budgets.show');
+            Route::get('budgets/{budget}/variance',                  [BudgetController::class, 'variance'])->name('budgets.variance');
+            Route::middleware(\App\Http\Middleware\RequireRole::class . ':OWNER,ACCOUNTANT')->group(function () {
+                Route::post('budgets',                               [BudgetController::class, 'store'])->name('budgets.store');
+                Route::delete('budgets/{budget}',                    [BudgetController::class, 'destroy'])->name('budgets.destroy');
+            });
+
+            // DSF / fiscal exports (OWNER/ACCOUNTANT)
+            Route::middleware(\App\Http\Middleware\RequireRole::class . ':OWNER,ACCOUNTANT')->group(function () {
+                Route::post('exports/dsf',        [DsfExportController::class, 'generate'])->name('exports.dsf');
+                Route::post('exports/tva-monthly',[DsfExportController::class, 'monthlyTva'])->name('exports.tva-monthly');
+            });
+
+            // Audit log (OWNER only)
+            Route::get('audit-log', [AuditLogController::class, 'index'])
+                ->middleware(\App\Http\Middleware\RequireRole::class . ':OWNER')
+                ->name('audit-log.index');
         });
     });
 });

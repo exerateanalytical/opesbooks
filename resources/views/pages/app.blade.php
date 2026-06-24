@@ -268,6 +268,31 @@
                 <span x-text="lang==='FR' ? 'Paie' : 'Payroll'"></span>
             </button>
 
+            <button @click="setPage('supplier-invoices')" :class="page==='supplier-invoices' ? 'nav-item active' : 'nav-item'">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <span x-text="lang==='FR' ? 'Fact. Fournisseurs' : 'Supplier Invoices'"></span>
+            </button>
+            <button @click="setPage('fixed-assets')" :class="page==='fixed-assets' ? 'nav-item active' : 'nav-item'">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                <span x-text="lang==='FR' ? 'Immobilisations' : 'Fixed Assets'"></span>
+            </button>
+            <button @click="setPage('reconciliation')" :class="page==='reconciliation' ? 'nav-item active' : 'nav-item'">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+                <span x-text="lang==='FR' ? 'Rapprochement' : 'Reconciliation'"></span>
+            </button>
+            <button @click="setPage('budget')" :class="page==='budget' ? 'nav-item active' : 'nav-item'">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/></svg>
+                <span x-text="lang==='FR' ? 'Budget' : 'Budget'"></span>
+            </button>
+            <button @click="setPage('dsf-export')" :class="page==='dsf-export' ? 'nav-item active' : 'nav-item'">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <span x-text="lang==='FR' ? 'DSF / TVA D10' : 'DSF / TVA D10'"></span>
+            </button>
+            <button @click="setPage('audit-log')" :class="page==='audit-log' ? 'nav-item active' : 'nav-item'">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                <span x-text="lang==='FR' ? 'Journal d\'Audit' : 'Audit Log'"></span>
+            </button>
+
             <div class="my-2" style="height:1px;background:rgba(255,255,255,0.07)"></div>
 
             <a href="/tax-dashboard" class="nav-item">
@@ -2124,6 +2149,324 @@
             </div>
         </div>
 
+        <!-- ══════════════════════════════════════════════════════════════ -->
+        <!-- SUPPLIER INVOICES PAGE                                        -->
+        <!-- ══════════════════════════════════════════════════════════════ -->
+        <div x-show="page==='supplier-invoices'" x-cloak class="p-6 space-y-5 float-in" x-data="supplierInvoicesPanel()">
+            <div class="flex items-center justify-between">
+                <h2 class="text-lg font-bold" x-text="lang==='FR' ? 'Factures Fournisseurs' : 'Supplier Invoices'"></h2>
+                <button @click="showForm=!showForm" class="btn-primary text-xs px-4 py-2">
+                    + <span x-text="lang==='FR' ? 'Nouvelle Facture' : 'New Invoice'"></span>
+                </button>
+            </div>
+
+            <div x-show="showForm" x-cloak class="glass-card rounded-2xl p-5 space-y-3 float-in">
+                <h3 class="text-sm font-semibold opacity-70" x-text="lang==='FR' ? 'Nouvelle Facture Fournisseur' : 'New Supplier Invoice'"></h3>
+                <div class="grid grid-cols-2 gap-3">
+                    <select x-model="form.supplier_id" class="input col-span-2">
+                        <option value="">-- <span x-text="lang==='FR' ? 'Sélectionner Fournisseur' : 'Select Supplier'"></span> --</option>
+                        <template x-for="s in suppliers" :key="s.id">
+                            <option :value="s.id" x-text="s.name"></option>
+                        </template>
+                    </select>
+                    <input x-model="form.invoice_number" :placeholder="lang==='FR' ? 'Nº Facture' : 'Invoice #'" class="input" />
+                    <input x-model="form.supplier_ref" :placeholder="lang==='FR' ? 'Réf. Fournisseur' : 'Supplier Ref'" class="input" />
+                    <input x-model="form.invoice_date" type="date" class="input" />
+                    <input x-model="form.due_date" type="date" class="input" />
+                    <input x-model.number="form.amount_ht" type="number" :placeholder="lang==='FR' ? 'Montant HT' : 'Amount HT'" class="input" @input="calcTva()" />
+                    <input x-model.number="form.tva_amount" type="number" :placeholder="'TVA (17.5%)'" class="input" />
+                    <input x-model="form.expense_account" :placeholder="lang==='FR' ? 'Compte charge (ex: 601100)' : 'Expense account (e.g. 601100)'" class="input" />
+                    <input x-model="form.notes" :placeholder="lang==='FR' ? 'Notes' : 'Notes'" class="input" />
+                </div>
+                <div x-show="formError" class="text-red-400 text-xs px-2 py-1" x-text="formError"></div>
+                <button @click="submitInvoice()" :disabled="submitting" class="btn-primary text-xs px-4 py-2 w-full">
+                    <span x-show="!submitting" x-text="lang==='FR' ? 'Enregistrer' : 'Save'"></span>
+                    <span x-show="submitting">...</span>
+                </button>
+            </div>
+
+            <div x-show="loading" class="text-center opacity-50 py-6">...</div>
+            <div x-show="!loading" class="glass rounded-2xl overflow-hidden">
+                <table class="w-full text-xs">
+                    <thead><tr style="border-bottom:1px solid rgba(255,255,255,0.07)">
+                        <th class="text-left px-4 py-2.5 opacity-50" x-text="lang==='FR' ? 'Fournisseur' : 'Supplier'"></th>
+                        <th class="text-left px-4 py-2.5 opacity-50">Nº</th>
+                        <th class="text-right px-4 py-2.5 opacity-50">HT</th>
+                        <th class="text-right px-4 py-2.5 opacity-50">TTC</th>
+                        <th class="text-center px-4 py-2.5 opacity-50">Statut</th>
+                        <th class="text-center px-4 py-2.5 opacity-50"></th>
+                    </tr></thead>
+                    <tbody>
+                        <template x-for="inv in invoices" :key="inv.id">
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.04)" class="hover:bg-white/5">
+                                <td class="px-4 py-2.5 font-medium" x-text="inv.supplier?.name ?? '—'"></td>
+                                <td class="px-4 py-2.5 opacity-70" x-text="inv.invoice_number"></td>
+                                <td class="px-4 py-2.5 text-right opacity-70" x-text="fmtXaf(inv.amount_ht)"></td>
+                                <td class="px-4 py-2.5 text-right font-bold" x-text="fmtXaf(inv.amount_ttc)"></td>
+                                <td class="px-4 py-2.5 text-center">
+                                    <span :class="inv.status==='PAID'?'text-emerald-400':inv.status==='OVERDUE'?'text-red-400':'text-yellow-400'" x-text="inv.status"></span>
+                                </td>
+                                <td class="px-4 py-2.5 text-center">
+                                    <button x-show="inv.status!=='PAID'" @click="payInvoice(inv)" class="text-emerald-400 hover:text-emerald-300 text-xs underline" x-text="lang==='FR' ? 'Payer' : 'Pay'"></button>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+                <div x-show="invoices.length===0" class="text-center py-8 opacity-40 text-sm" x-text="lang==='FR' ? 'Aucune facture fournisseur.' : 'No supplier invoices.'"></div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════════════ -->
+        <!-- FIXED ASSETS PAGE                                             -->
+        <!-- ══════════════════════════════════════════════════════════════ -->
+        <div x-show="page==='fixed-assets'" x-cloak class="p-6 space-y-5 float-in" x-data="fixedAssetsPanel()">
+            <div class="flex items-center justify-between">
+                <h2 class="text-lg font-bold" x-text="lang==='FR' ? 'Registre des Immobilisations' : 'Fixed Asset Register'"></h2>
+                <div class="flex gap-2">
+                    <button @click="runDepreciation()" class="btn-secondary text-xs px-3 py-2" x-text="lang==='FR' ? 'Amortir ce mois' : 'Run Depreciation'"></button>
+                    <button @click="showForm=!showForm" class="btn-primary text-xs px-4 py-2">+ <span x-text="lang==='FR' ? 'Ajouter' : 'Add'"></span></button>
+                </div>
+            </div>
+
+            <div x-show="showForm" x-cloak class="glass-card rounded-2xl p-5 space-y-3 float-in">
+                <div class="grid grid-cols-2 gap-3">
+                    <input x-model="form.name" :placeholder="lang==='FR' ? 'Désignation' : 'Asset Name'" class="input col-span-2" />
+                    <select x-model="form.category" class="input">
+                        <option value="">-- Catégorie --</option>
+                        <option value="BUILDING">Bâtiment</option>
+                        <option value="MACHINERY">Matériel Industriel</option>
+                        <option value="VEHICLE">Véhicule</option>
+                        <option value="FURNITURE">Mobilier</option>
+                        <option value="IT_EQUIPMENT">Informatique</option>
+                        <option value="OTHER">Autre</option>
+                    </select>
+                    <input x-model="form.syscohada_account_code" placeholder="Compte SYSCOHADA (ex: 244100)" class="input" />
+                    <input x-model="form.acquisition_date" type="date" class="input" />
+                    <input x-model.number="form.acquisition_cost" type="number" :placeholder="lang==='FR' ? 'Coût d\'acquisition' : 'Acquisition Cost'" class="input" />
+                    <input x-model.number="form.useful_life_months" type="number" :placeholder="lang==='FR' ? 'Durée (mois)' : 'Useful Life (months)'" class="input" />
+                    <input x-model.number="form.residual_value" type="number" :placeholder="lang==='FR' ? 'Valeur résiduelle' : 'Residual Value'" class="input" />
+                    <input x-model="form.credit_account" :placeholder="lang==='FR' ? 'Compte créditeur (401100 ou 521100)' : 'Credit account'" class="input col-span-2" />
+                </div>
+                <div x-show="formError" class="text-red-400 text-xs px-2 py-1" x-text="formError"></div>
+                <button @click="addAsset()" :disabled="submitting" class="btn-primary text-xs w-full py-2">
+                    <span x-show="!submitting" x-text="lang==='FR' ? 'Enregistrer' : 'Save'"></span>
+                    <span x-show="submitting">...</span>
+                </button>
+            </div>
+
+            <div x-show="depMsg" class="text-emerald-400 text-xs glass-card px-4 py-2 rounded-xl" x-text="depMsg"></div>
+
+            <div x-show="!loading" class="glass rounded-2xl overflow-hidden">
+                <table class="w-full text-xs">
+                    <thead><tr style="border-bottom:1px solid rgba(255,255,255,0.07)">
+                        <th class="text-left px-4 py-2.5 opacity-50" x-text="lang==='FR' ? 'Immobilisation' : 'Asset'"></th>
+                        <th class="text-left px-4 py-2.5 opacity-50" x-text="lang==='FR' ? 'Catégorie' : 'Category'"></th>
+                        <th class="text-right px-4 py-2.5 opacity-50" x-text="lang==='FR' ? 'Coût' : 'Cost'"></th>
+                        <th class="text-right px-4 py-2.5 opacity-50" x-text="lang==='FR' ? 'Amort. Cumulés' : 'Acc. Depreciation'"></th>
+                        <th class="text-right px-4 py-2.5 opacity-50" x-text="lang==='FR' ? 'Val. Nette' : 'Book Value'"></th>
+                        <th class="text-center px-4 py-2.5 opacity-50"></th>
+                    </tr></thead>
+                    <tbody>
+                        <template x-for="a in assets" :key="a.id">
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.04)" class="hover:bg-white/5">
+                                <td class="px-4 py-2.5 font-medium" x-text="a.name"></td>
+                                <td class="px-4 py-2.5 opacity-70" x-text="a.category"></td>
+                                <td class="px-4 py-2.5 text-right opacity-70" x-text="fmtXaf(a.acquisition_cost)"></td>
+                                <td class="px-4 py-2.5 text-right text-red-400" x-text="fmtXaf(a.accumulated_depreciation)"></td>
+                                <td class="px-4 py-2.5 text-right font-bold text-emerald-400" x-text="fmtXaf(a.book_value)"></td>
+                                <td class="px-4 py-2.5 text-center">
+                                    <button x-show="a.is_active" @click="disposeAsset(a)" class="text-red-400 hover:text-red-300 text-xs underline" x-text="lang==='FR' ? 'Céder' : 'Dispose'"></button>
+                                    <span x-show="!a.is_active" class="opacity-40 text-xs">Cédé</span>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+                <div x-show="assets.length===0" class="text-center py-8 opacity-40 text-sm" x-text="lang==='FR' ? 'Aucune immobilisation enregistrée.' : 'No assets registered.'"></div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════════════ -->
+        <!-- BANK RECONCILIATION PAGE                                      -->
+        <!-- ══════════════════════════════════════════════════════════════ -->
+        <div x-show="page==='reconciliation'" x-cloak class="p-6 space-y-5 float-in" x-data="reconciliationPanel()">
+            <div class="flex items-center justify-between">
+                <h2 class="text-lg font-bold" x-text="lang==='FR' ? 'Rapprochement Bancaire' : 'Bank Reconciliation'"></h2>
+                <button @click="showForm=!showForm" class="btn-primary text-xs px-4 py-2">+ <span x-text="lang==='FR' ? 'Nouveau Rapprochement' : 'New Session'"></span></button>
+            </div>
+
+            <div x-show="showForm" x-cloak class="glass-card rounded-2xl p-5 space-y-3 float-in">
+                <div class="grid grid-cols-2 gap-3">
+                    <input x-model="form.bank_account_code" value="521100" :placeholder="lang==='FR' ? 'Compte bancaire (521100)' : 'Bank account code'" class="input" />
+                    <input x-model="form.statement_date" type="date" class="input" />
+                    <input x-model.number="form.statement_balance" type="number" :placeholder="lang==='FR' ? 'Solde relevé' : 'Statement balance'" class="input col-span-2" />
+                </div>
+                <p class="text-xs opacity-50" x-text="lang==='FR' ? 'Importez vos lignes de relevé bancaire via l\'onglet Import, puis lancez le rapprochement.' : 'Import your bank statement lines via the Import tab, then start the reconciliation.'"></p>
+                <button @click="submitSession()" :disabled="submitting" class="btn-primary text-xs w-full py-2">
+                    <span x-show="!submitting" x-text="lang==='FR' ? 'Créer Session' : 'Create Session'"></span>
+                    <span x-show="submitting">...</span>
+                </button>
+            </div>
+
+            <div class="glass rounded-2xl overflow-hidden">
+                <template x-for="s in sessions" :key="s.id">
+                    <div class="px-4 py-3 flex items-center justify-between" style="border-bottom:1px solid rgba(255,255,255,0.05)">
+                        <div>
+                            <div class="text-sm font-medium" x-text="s.bank_account_code + ' — ' + s.statement_date"></div>
+                            <div class="text-xs opacity-50 mt-0.5" x-text="fmtXaf(s.statement_balance) + ' | Diff: ' + fmtXaf(s.difference)"></div>
+                        </div>
+                        <span :class="s.is_reconciled ? 'text-emerald-400' : 'text-yellow-400'" x-text="s.is_reconciled ? '✔ Réconcilié' : 'En cours'"></span>
+                    </div>
+                </template>
+                <div x-show="sessions.length===0" class="text-center py-8 opacity-40 text-sm" x-text="lang==='FR' ? 'Aucune session de rapprochement.' : 'No reconciliation sessions.'"></div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════════════ -->
+        <!-- BUDGET PAGE                                                    -->
+        <!-- ══════════════════════════════════════════════════════════════ -->
+        <div x-show="page==='budget'" x-cloak class="p-6 space-y-5 float-in" x-data="budgetPanel()">
+            <div class="flex items-center justify-between">
+                <h2 class="text-lg font-bold" x-text="lang==='FR' ? 'Budget & Forecast' : 'Budget & Forecast'"></h2>
+                <button @click="showForm=!showForm" class="btn-primary text-xs px-4 py-2">+ <span x-text="lang==='FR' ? 'Nouveau Budget' : 'New Budget'"></span></button>
+            </div>
+
+            <div x-show="showForm" x-cloak class="glass-card rounded-2xl p-5 space-y-3 float-in">
+                <div class="grid grid-cols-2 gap-3">
+                    <input x-model="form.name" :placeholder="lang==='FR' ? 'Nom du budget' : 'Budget name'" class="input col-span-2" />
+                    <input x-model.number="form.fiscal_year" type="number" :placeholder="lang==='FR' ? 'Exercice (ex: 2026)' : 'Fiscal year'" class="input" />
+                </div>
+                <p class="text-xs opacity-50" x-text="lang==='FR' ? 'Après création, ajoutez les lignes via l\'API ou importez-les depuis un tableur.' : 'After creation, add lines via API or import from a spreadsheet.'"></p>
+                <button @click="createBudget()" :disabled="submitting" class="btn-primary text-xs w-full py-2">
+                    <span x-show="!submitting" x-text="lang==='FR' ? 'Créer' : 'Create'"></span>
+                    <span x-show="submitting">...</span>
+                </button>
+            </div>
+
+            <div x-show="selectedBudget" x-cloak class="glass-card rounded-2xl p-5 space-y-4 float-in">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-sm" x-text="selectedBudget?.name + ' — ' + selectedBudget?.fiscal_year"></h3>
+                    <button @click="selectedBudget=null" class="text-xs opacity-50">✕</button>
+                </div>
+                <div x-show="variance" class="overflow-x-auto">
+                    <table class="w-full text-xs">
+                        <thead><tr style="border-bottom:1px solid rgba(255,255,255,0.07)">
+                            <th class="text-left px-3 py-1.5 opacity-50" x-text="lang==='FR' ? 'Compte' : 'Account'"></th>
+                            <th class="text-right px-3 py-1.5 opacity-50" x-text="lang==='FR' ? 'Budgété' : 'Budgeted'"></th>
+                            <th class="text-right px-3 py-1.5 opacity-50" x-text="lang==='FR' ? 'Réel' : 'Actual'"></th>
+                            <th class="text-right px-3 py-1.5 opacity-50">Écart</th>
+                            <th class="text-right px-3 py-1.5 opacity-50">%</th>
+                        </tr></thead>
+                        <tbody>
+                            <template x-for="l in variance?.lines ?? []" :key="l.account_code">
+                                <tr style="border-bottom:1px solid rgba(255,255,255,0.04)">
+                                    <td class="px-3 py-1.5 font-mono" x-text="l.account_code"></td>
+                                    <td class="px-3 py-1.5 text-right opacity-70" x-text="fmtXaf(l.total_budgeted)"></td>
+                                    <td class="px-3 py-1.5 text-right opacity-70" x-text="fmtXaf(l.total_actual)"></td>
+                                    <td class="px-3 py-1.5 text-right" :class="l.total_variance>=0?'text-emerald-400':'text-red-400'" x-text="fmtXaf(l.total_variance)"></td>
+                                    <td class="px-3 py-1.5 text-right" :class="l.total_pct>=0?'text-emerald-400':'text-red-400'" x-text="l.total_pct !== null ? l.total_pct + '%' : '—'"></td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="glass rounded-2xl overflow-hidden">
+                <template x-for="b in budgets" :key="b.id">
+                    <div class="px-4 py-3 flex items-center justify-between cursor-pointer hover:bg-white/5" @click="loadVariance(b)" style="border-bottom:1px solid rgba(255,255,255,0.05)">
+                        <div>
+                            <div class="text-sm font-medium" x-text="b.name"></div>
+                            <div class="text-xs opacity-50 mt-0.5" x-text="b.fiscal_year + ' — ' + b.status"></div>
+                        </div>
+                        <svg class="w-4 h-4 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </div>
+                </template>
+                <div x-show="budgets.length===0" class="text-center py-8 opacity-40 text-sm" x-text="lang==='FR' ? 'Aucun budget créé.' : 'No budgets yet.'"></div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════════════ -->
+        <!-- DSF / TVA D10 EXPORT PAGE                                     -->
+        <!-- ══════════════════════════════════════════════════════════════ -->
+        <div x-show="page==='dsf-export'" x-cloak class="p-6 space-y-5 float-in" x-data="dsfExportPanel()">
+            <h2 class="text-lg font-bold" x-text="lang==='FR' ? 'Exports Fiscaux DSF & TVA D10' : 'DSF & TVA D10 Fiscal Exports'"></h2>
+
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <!-- DSF Annual -->
+                <div class="glass-card rounded-2xl p-5 space-y-3">
+                    <h3 class="font-bold text-sm" x-text="lang==='FR' ? 'DSF — Liasse Fiscale Annuelle' : 'DSF — Annual Tax Return'"></h3>
+                    <p class="text-xs opacity-50" x-text="lang==='FR' ? 'Génère les tableaux 1 à 5 de la DSF pour le DGI Cameroun.' : 'Generates DSF tables 1–5 for Cameroon DGI filing.'"></p>
+                    <input x-model.number="dsfYear" type="number" :placeholder="lang==='FR' ? 'Exercice (ex: 2025)' : 'Fiscal Year'" class="input" />
+                    <button @click="generateDsf()" :disabled="dsfLoading" class="btn-primary text-xs w-full py-2">
+                        <span x-show="!dsfLoading" x-text="lang==='FR' ? 'Générer DSF' : 'Generate DSF'"></span>
+                        <span x-show="dsfLoading">...</span>
+                    </button>
+                    <div x-show="dsfData" class="text-xs opacity-70">
+                        <p x-text="lang==='FR' ? 'CA HT: ' : 'Revenue: '" class="inline"></p>
+                        <span class="text-emerald-400 font-bold" x-text="fmtXaf(dsfData?.table_1_compte_resultat?.chiffre_affaires_ht)"></span>
+                        <p class="mt-1" x-text="lang==='FR' ? 'Résultat Net: ' : 'Net Profit: '" ></p>
+                        <span class="text-emerald-400 font-bold" x-text="fmtXaf(dsfData?.table_1_compte_resultat?.resultat_net)"></span>
+                        <button @click="downloadDsf()" class="mt-2 text-sky-400 underline block" x-text="lang==='FR' ? 'Télécharger JSON' : 'Download JSON'"></button>
+                    </div>
+                </div>
+
+                <!-- TVA Monthly D10 -->
+                <div class="glass-card rounded-2xl p-5 space-y-3">
+                    <h3 class="font-bold text-sm">TVA D10 — <span x-text="lang==='FR' ? 'Déclaration Mensuelle' : 'Monthly Return'"></span></h3>
+                    <p class="text-xs opacity-50" x-text="lang==='FR' ? 'Calcule la TVA nette due + CAC pour un mois donné.' : 'Calculates net TVA due + CAC for a given month.'"></p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <input x-model.number="tvaMonth" type="number" min="1" max="12" :placeholder="lang==='FR' ? 'Mois' : 'Month'" class="input" />
+                        <input x-model.number="tvaYear" type="number" :placeholder="lang==='FR' ? 'Année' : 'Year'" class="input" />
+                    </div>
+                    <button @click="generateTva()" :disabled="tvaLoading" class="btn-primary text-xs w-full py-2">
+                        <span x-show="!tvaLoading" x-text="lang==='FR' ? 'Calculer TVA D10' : 'Calculate TVA D10'"></span>
+                        <span x-show="tvaLoading">...</span>
+                    </button>
+                    <div x-show="tvaData" class="text-xs space-y-1">
+                        <div class="flex justify-between"><span class="opacity-50">TVA Collectée</span><span class="text-yellow-400 font-bold" x-text="fmtXaf(tvaData?.tva_collectee)"></span></div>
+                        <div class="flex justify-between"><span class="opacity-50">TVA Déductible</span><span class="text-emerald-400 font-bold" x-text="fmtXaf(tvaData?.tva_deductible)"></span></div>
+                        <div class="flex justify-between border-t pt-1" style="border-color:rgba(255,255,255,0.1)"><span class="font-bold" x-text="lang==='FR' ? 'TVA Nette Due' : 'Net TVA Due'"></span><span class="text-red-400 font-bold" x-text="fmtXaf(tvaData?.tva_nette_due)"></span></div>
+                        <div class="flex justify-between"><span class="opacity-50">CAC (10% TVA)</span><span class="text-red-400" x-text="fmtXaf(tvaData?.cac_net_du)"></span></div>
+                        <div class="flex justify-between bg-white/5 rounded-lg px-2 py-1 mt-1"><span class="font-bold">Total à Payer</span><span class="text-red-400 font-bold text-sm" x-text="fmtXaf(tvaData?.total_a_payer)"></span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════════════ -->
+        <!-- AUDIT LOG PAGE                                                -->
+        <!-- ══════════════════════════════════════════════════════════════ -->
+        <div x-show="page==='audit-log'" x-cloak class="p-6 space-y-5 float-in" x-data="auditLogPanel()">
+            <div class="flex items-center justify-between">
+                <h2 class="text-lg font-bold" x-text="lang==='FR' ? 'Journal d\'Audit' : 'Audit Log'"></h2>
+                <button @click="load()" class="btn-secondary text-xs px-3 py-2" x-text="lang==='FR' ? 'Actualiser' : 'Refresh'"></button>
+            </div>
+            <div class="glass rounded-2xl overflow-hidden">
+                <table class="w-full text-xs">
+                    <thead><tr style="border-bottom:1px solid rgba(255,255,255,0.07)">
+                        <th class="text-left px-4 py-2.5 opacity-50" x-text="lang==='FR' ? 'Date' : 'Date'"></th>
+                        <th class="text-left px-4 py-2.5 opacity-50" x-text="lang==='FR' ? 'Utilisateur' : 'User'"></th>
+                        <th class="text-left px-4 py-2.5 opacity-50" x-text="lang==='FR' ? 'Action' : 'Action'"></th>
+                        <th class="text-left px-4 py-2.5 opacity-50">IP</th>
+                    </tr></thead>
+                    <tbody>
+                        <template x-for="log in logs" :key="log.id">
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.04)" class="hover:bg-white/5">
+                                <td class="px-4 py-2 opacity-60 whitespace-nowrap" x-text="log.created_at?.substring(0,19).replace('T',' ')"></td>
+                                <td class="px-4 py-2 font-medium" x-text="log.user?.name ?? '—'"></td>
+                                <td class="px-4 py-2 font-mono text-sky-300" x-text="log.action"></td>
+                                <td class="px-4 py-2 opacity-50" x-text="log.ip_address ?? '—'"></td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+                <div x-show="logs.length===0 && !loading" class="text-center py-8 opacity-40 text-sm" x-text="lang==='FR' ? 'Aucune activité enregistrée.' : 'No audit activity recorded.'"></div>
+                <div x-show="loading" class="text-center py-8 opacity-40 text-sm">...</div>
+            </div>
+        </div>
+
     </main>
 </div>
 
@@ -3144,6 +3487,220 @@ function vatCalc() {
         fmtXaf(v) {
             if (v===null||v===undefined) return '—';
             return Number(v).toLocaleString('fr-CM', { minimumFractionDigits:2 }) + ' XAF';
+        },
+    };
+}
+
+function supplierInvoicesPanel() {
+    return {
+        invoices: [], suppliers: [], loading: true, _cid: null,
+        showForm: false, submitting: false, formError: '',
+        form: { supplier_id:'', invoice_number:'', supplier_ref:'', invoice_date:'', due_date:'', amount_ht:0, tva_amount:0, expense_account:'601100', notes:'' },
+        fmtXaf(v) { if(v===null||v===undefined)return'—'; return Number(v).toLocaleString('fr-CM',{minimumFractionDigits:2})+' XAF'; },
+        async init() {
+            const token = localStorage.getItem('opes_token');
+            const me = await fetch('/api/v1/auth/me',{headers:{Authorization:'Bearer '+token,Accept:'application/json'}}).then(r=>r.json());
+            this._cid = me.company?.id; if(!this._cid) return;
+            const [inv, sup] = await Promise.all([
+                fetch(`/api/v1/companies/${this._cid}/supplier-invoices`,{headers:{Authorization:'Bearer '+token}}).then(r=>r.json()),
+                fetch(`/api/v1/companies/${this._cid}/suppliers`,{headers:{Authorization:'Bearer '+token}}).then(r=>r.json()),
+            ]);
+            this.invoices = inv.data ?? inv;
+            this.suppliers = sup.data ?? sup;
+            this.loading = false;
+        },
+        calcTva() { this.form.tva_amount = Math.round(this.form.amount_ht * 0.175); },
+        async submitInvoice() {
+            this.submitting = true; this.formError = '';
+            const token = localStorage.getItem('opes_token');
+            const r = await fetch(`/api/v1/companies/${this._cid}/supplier-invoices`, {
+                method:'POST', headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},
+                body: JSON.stringify(this.form)
+            });
+            const d = await r.json();
+            if (r.ok) { this.invoices.unshift(d); this.showForm=false; this.form={supplier_id:'',invoice_number:'',supplier_ref:'',invoice_date:'',due_date:'',amount_ht:0,tva_amount:0,expense_account:'601100',notes:''}; }
+            else { this.formError = d.message ?? JSON.stringify(d.errors); }
+            this.submitting = false;
+        },
+        async payInvoice(inv) {
+            const acct = prompt('Payment account code (e.g. 521100):'); if(!acct) return;
+            const ref = prompt('Payment reference:'); if(!ref) return;
+            const token = localStorage.getItem('opes_token');
+            const r = await fetch(`/api/v1/companies/${this._cid}/supplier-invoices/${inv.id}/pay`, {
+                method:'POST', headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},
+                body: JSON.stringify({payment_account:acct, payment_ref:ref})
+            });
+            if (r.ok) { const d = await r.json(); Object.assign(inv, d); }
+        },
+    };
+}
+
+function fixedAssetsPanel() {
+    return {
+        assets: [], loading: true, _cid: null,
+        showForm: false, submitting: false, formError: '', depMsg: '',
+        form: { name:'', category:'', syscohada_account_code:'', acquisition_date:'', acquisition_cost:0, useful_life_months:60, residual_value:0, credit_account:'401100' },
+        fmtXaf(v) { if(v===null||v===undefined)return'—'; return Number(v).toLocaleString('fr-CM',{minimumFractionDigits:2})+' XAF'; },
+        async init() {
+            const token = localStorage.getItem('opes_token');
+            const me = await fetch('/api/v1/auth/me',{headers:{Authorization:'Bearer '+token,Accept:'application/json'}}).then(r=>r.json());
+            this._cid = me.company?.id; if(!this._cid) return;
+            const d = await fetch(`/api/v1/companies/${this._cid}/fixed-assets`,{headers:{Authorization:'Bearer '+token}}).then(r=>r.json());
+            this.assets = Array.isArray(d) ? d : (d.data ?? []);
+            this.loading = false;
+        },
+        async addAsset() {
+            this.submitting=true; this.formError='';
+            const token = localStorage.getItem('opes_token');
+            const r = await fetch(`/api/v1/companies/${this._cid}/fixed-assets`, {
+                method:'POST', headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},
+                body: JSON.stringify(this.form)
+            });
+            const d = await r.json();
+            if(r.ok) { this.assets.unshift(d); this.showForm=false; }
+            else { this.formError = d.message ?? JSON.stringify(d.errors); }
+            this.submitting=false;
+        },
+        async runDepreciation() {
+            const token = localStorage.getItem('opes_token');
+            const now = new Date();
+            const r = await fetch(`/api/v1/companies/${this._cid}/fixed-assets/run-depreciation`, {
+                method:'POST', headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},
+                body: JSON.stringify({month: now.getMonth()+1, year: now.getFullYear()})
+            });
+            const d = await r.json();
+            this.depMsg = `${d.processed} immobilisation(s) amortie(s) pour ${d.period}.`;
+            await this.init();
+        },
+        async disposeAsset(asset) {
+            const proceeds = parseFloat(prompt('Proceeds from disposal (0 if none):')); if(isNaN(proceeds)) return;
+            const acct = prompt('Receipt account (e.g. 521100):'); if(!acct) return;
+            const token = localStorage.getItem('opes_token');
+            const r = await fetch(`/api/v1/companies/${this._cid}/fixed-assets/${asset.id}/dispose`, {
+                method:'POST', headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},
+                body: JSON.stringify({proceeds, receipt_account: acct})
+            });
+            if(r.ok) { await this.init(); }
+        },
+    };
+}
+
+function reconciliationPanel() {
+    return {
+        sessions: [], loading: true, _cid: null, showForm: false, submitting: false,
+        form: { bank_account_code:'521100', statement_date:'', statement_balance:0 },
+        fmtXaf(v) { if(v===null||v===undefined)return'—'; return Number(v).toLocaleString('fr-CM',{minimumFractionDigits:2})+' XAF'; },
+        async init() {
+            const token = localStorage.getItem('opes_token');
+            const me = await fetch('/api/v1/auth/me',{headers:{Authorization:'Bearer '+token,Accept:'application/json'}}).then(r=>r.json());
+            this._cid = me.company?.id; if(!this._cid) return;
+            const d = await fetch(`/api/v1/companies/${this._cid}/reconciliation`,{headers:{Authorization:'Bearer '+token}}).then(r=>r.json());
+            this.sessions = d.data ?? d;
+            this.loading = false;
+        },
+        async submitSession() {
+            this.submitting=true;
+            const token = localStorage.getItem('opes_token');
+            const r = await fetch(`/api/v1/companies/${this._cid}/reconciliation`, {
+                method:'POST', headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},
+                body: JSON.stringify({...this.form, lines:[]})
+            });
+            const d = await r.json();
+            if(r.ok) { this.sessions.unshift(d); this.showForm=false; }
+            this.submitting=false;
+        },
+    };
+}
+
+function budgetPanel() {
+    return {
+        budgets: [], loading: true, _cid: null, showForm: false, submitting: false,
+        selectedBudget: null, variance: null,
+        form: { name:'', fiscal_year: new Date().getFullYear() },
+        fmtXaf(v) { if(v===null||v===undefined)return'—'; return Number(v).toLocaleString('fr-CM',{minimumFractionDigits:2})+' XAF'; },
+        async init() {
+            const token = localStorage.getItem('opes_token');
+            const me = await fetch('/api/v1/auth/me',{headers:{Authorization:'Bearer '+token,Accept:'application/json'}}).then(r=>r.json());
+            this._cid = me.company?.id; if(!this._cid) return;
+            const d = await fetch(`/api/v1/companies/${this._cid}/budgets`,{headers:{Authorization:'Bearer '+token}}).then(r=>r.json());
+            this.budgets = d.data ?? d;
+            this.loading = false;
+        },
+        async createBudget() {
+            this.submitting=true;
+            const token = localStorage.getItem('opes_token');
+            const r = await fetch(`/api/v1/companies/${this._cid}/budgets`, {
+                method:'POST', headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},
+                body: JSON.stringify({...this.form, lines:[]})
+            });
+            const d = await r.json();
+            if(r.ok) { this.budgets.unshift(d); this.showForm=false; }
+            this.submitting=false;
+        },
+        async loadVariance(budget) {
+            this.selectedBudget = budget; this.variance = null;
+            const token = localStorage.getItem('opes_token');
+            const d = await fetch(`/api/v1/companies/${this._cid}/budgets/${budget.id}/variance`,{headers:{Authorization:'Bearer '+token}}).then(r=>r.json());
+            this.variance = d;
+        },
+    };
+}
+
+function dsfExportPanel() {
+    return {
+        _cid: null,
+        dsfYear: new Date().getFullYear()-1, dsfLoading: false, dsfData: null,
+        tvaMonth: new Date().getMonth()+1, tvaYear: new Date().getFullYear(), tvaLoading: false, tvaData: null,
+        fmtXaf(v) { if(v===null||v===undefined)return'—'; return Number(v).toLocaleString('fr-CM',{minimumFractionDigits:2})+' XAF'; },
+        async init() {
+            const token = localStorage.getItem('opes_token');
+            const me = await fetch('/api/v1/auth/me',{headers:{Authorization:'Bearer '+token,Accept:'application/json'}}).then(r=>r.json());
+            this._cid = me.company?.id;
+        },
+        async generateDsf() {
+            this.dsfLoading=true; this.dsfData=null;
+            const token = localStorage.getItem('opes_token');
+            const r = await fetch(`/api/v1/companies/${this._cid}/exports/dsf`, {
+                method:'POST', headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},
+                body: JSON.stringify({fiscal_year: this.dsfYear})
+            });
+            this.dsfData = await r.json();
+            this.dsfLoading=false;
+        },
+        downloadDsf() {
+            const blob = new Blob([JSON.stringify(this.dsfData, null, 2)], {type:'application/json'});
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+            a.download = `DSF_${this.dsfYear}.json`; a.click();
+        },
+        async generateTva() {
+            this.tvaLoading=true; this.tvaData=null;
+            const token = localStorage.getItem('opes_token');
+            const r = await fetch(`/api/v1/companies/${this._cid}/exports/tva-monthly`, {
+                method:'POST', headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},
+                body: JSON.stringify({month: this.tvaMonth, year: this.tvaYear})
+            });
+            this.tvaData = await r.json();
+            this.tvaLoading=false;
+        },
+    };
+}
+
+function auditLogPanel() {
+    return {
+        logs: [], loading: true, _cid: null,
+        async init() {
+            const token = localStorage.getItem('opes_token');
+            const me = await fetch('/api/v1/auth/me',{headers:{Authorization:'Bearer '+token,Accept:'application/json'}}).then(r=>r.json());
+            this._cid = me.company?.id;
+            await this.load();
+        },
+        async load() {
+            this.loading=true;
+            if(!this._cid) return;
+            const token = localStorage.getItem('opes_token');
+            const d = await fetch(`/api/v1/companies/${this._cid}/audit-log`,{headers:{Authorization:'Bearer '+token}}).then(r=>r.json());
+            this.logs = d.data ?? d;
+            this.loading=false;
         },
     };
 }

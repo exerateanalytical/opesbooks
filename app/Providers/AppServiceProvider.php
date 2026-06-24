@@ -10,7 +10,11 @@ use App\Services\JournalPostingService;
 use App\Services\MomoIngestionService;
 use App\Services\OfflineSyncService;
 use App\Services\ProrataVatService;
+use App\Services\BudgetService;
+use App\Services\DsfExportService;
+use App\Services\FixedAssetService;
 use App\Services\RecurringTransactionService;
+use App\Services\SupplierInvoiceService;
 use App\Services\TelecomReversalService;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
@@ -42,6 +46,25 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->singleton(CnpsIrppService::class);
         $this->app->singleton(FinancialStatementService::class);
+
+        $this->app->singleton(SupplierInvoiceService::class, function ($app) {
+            return new SupplierInvoiceService(
+                $app->make(JournalPostingService::class),
+                $app->make(FiscalGeographyRouter::class),
+                $app->make(CameroonTaxEngine::class),
+                $app->make(ProrataVatService::class),
+            );
+        });
+
+        $this->app->singleton(FixedAssetService::class, function ($app) {
+            return new FixedAssetService($app->make(JournalPostingService::class));
+        });
+
+        $this->app->singleton(DsfExportService::class, function ($app) {
+            return new DsfExportService($app->make(FinancialStatementService::class));
+        });
+
+        $this->app->singleton(BudgetService::class);
     }
 
     public function boot(): void

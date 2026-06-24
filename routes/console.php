@@ -1,5 +1,6 @@
 <?php
 
+use App\Services\FixedAssetService;
 use App\Services\RecurringTransactionService;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
@@ -12,3 +13,9 @@ Artisan::command('inspire', function () {
 Schedule::call(function () {
     app(RecurringTransactionService::class)->processDue();
 })->dailyAt('06:00')->name('recurring-transactions')->withoutOverlapping();
+
+// Run monthly depreciation on the 1st of every month at 03:00
+Schedule::call(function () {
+    $now = now();
+    app(FixedAssetService::class)->runMonthlyDepreciation($now->month, $now->year);
+})->monthlyOn(1, '03:00')->name('monthly-depreciation')->withoutOverlapping();

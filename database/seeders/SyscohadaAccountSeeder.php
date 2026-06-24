@@ -75,6 +75,13 @@ class SyscohadaAccountSeeder extends Seeder
         }
 
         $moreAccounts = [
+            // CLASS 2 — AMORTISSEMENTS CUMULÉS
+            ['code' => '281310', 'label' => 'Amortissements cumulés — Bâtiments (Accumulated depreciation: buildings)', 'class_digit' => 2],
+            ['code' => '284110', 'label' => 'Amortissements cumulés — Matériel industriel (Accumulated depreciation: machinery)', 'class_digit' => 2],
+            ['code' => '284410', 'label' => 'Amortissements cumulés — Matériel automobile (Accumulated depreciation: vehicles)', 'class_digit' => 2],
+            ['code' => '285010', 'label' => 'Amortissements cumulés — Matériel de bureau (Accumulated depreciation: office furniture)', 'class_digit' => 2],
+            ['code' => '285110', 'label' => 'Amortissements cumulés — Matériel informatique (Accumulated depreciation: IT equipment)', 'class_digit' => 2],
+
             // CLASS 6 — CHARGES
             ['code' => '601100', 'label' => 'Achats de marchandises (Purchase of resale stock)', 'class_digit' => 6],
             ['code' => '602100', 'label' => 'Achats de matières premières (Purchase of raw manufacturing stock)', 'class_digit' => 6],
@@ -87,10 +94,13 @@ class SyscohadaAccountSeeder extends Seeder
             ['code' => '632400', 'label' => 'Honoraires comptables (External accountant audit fees)', 'class_digit' => 6],
             ['code' => '661100', 'label' => 'Charges de personnel - Salaires bruts (Base gross employee salaries)', 'class_digit' => 6],
             ['code' => '664000', 'label' => 'Charges sociales - Part patronale CNPS (Employer CNPS contributions)', 'class_digit' => 6],
+            ['code' => '681200', 'label' => 'Dotations aux amortissements des immobilisations corporelles (Depreciation charge)', 'class_digit' => 6],
+            ['code' => '654100', 'label' => 'Pertes sur cessions d\'immobilisations (Loss on disposal of fixed assets)', 'class_digit' => 6],
 
             // CLASS 7 — PRODUITS
             ['code' => '701100', 'label' => 'Ventes de marchandises au Cameroun (Local product sales)', 'class_digit' => 7],
             ['code' => '706000', 'label' => 'Prestations de services (Local service delivery billings)', 'class_digit' => 7],
+            ['code' => '754100', 'label' => 'Produits sur cessions d\'immobilisations (Gain on disposal of fixed assets)', 'class_digit' => 7],
         ];
 
         $all = array_merge($accounts, $moreAccounts);
