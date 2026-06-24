@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\ProfileController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\BankStatementController;
 use App\Jobs\SyncInvoiceToDgiPortalJob;
@@ -46,6 +47,8 @@ Route::prefix('v1')->name('v1.')->group(function () {
         Route::prefix('auth')->name('auth.')->group(function () {
             Route::post('logout',    [AuthController::class, 'logout'])->name('logout');
             Route::get('me',         [AuthController::class, 'me'])->name('me');
+            Route::put('profile',    [ProfileController::class, 'update'])->name('profile.update');
+            Route::put('password',   [ProfileController::class, 'changePassword'])->name('password.change');
             Route::get('users',      [AuthController::class, 'team'])->name('team');
             Route::post('users',     [AuthController::class, 'invite'])
                 ->middleware(\App\Http\Middleware\RequireRole::class . ':OWNER')

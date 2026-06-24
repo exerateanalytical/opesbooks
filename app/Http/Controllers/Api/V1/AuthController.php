@@ -86,10 +86,17 @@ class AuthController extends Controller
         $user->tokens()->delete();
         $token = $user->createToken('opes-api')->plainTextToken;
 
+        $company = $user->company;
+        $companyData = $company ? $company->toArray() : null;
+        if ($company?->logo_path) {
+            $companyData['logo_url'] = \Storage::url($company->logo_path);
+        }
+
         return response()->json([
             'message' => 'Login successful.',
             'token'   => $token,
             'user'    => $this->userPayload($user),
+            'company' => $companyData,
         ]);
     }
 
