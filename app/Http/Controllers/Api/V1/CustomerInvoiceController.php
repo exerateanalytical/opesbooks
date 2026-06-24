@@ -7,13 +7,17 @@ use App\Models\Company;
 use App\Models\Customer;
 use App\Models\CustomerInvoice;
 use App\Services\CameroonTaxEngine;
+use App\Services\JournalPostingService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class CustomerInvoiceController extends Controller
 {
-    public function __construct(private CameroonTaxEngine $tax) {}
+    public function __construct(
+        private CameroonTaxEngine $tax,
+        private JournalPostingService $poster,
+    ) {}
 
     public function index(Request $request, Company $company): JsonResponse
     {
@@ -81,9 +85,30 @@ class CustomerInvoiceController extends Controller
         abort_if($invoice->company_id !== $company->id, 404);
         abort_if($invoice->status !== 'PAID', 422, 'Credit notes can only be issued on PAID invoices.');
 
+        // Post reversal journal entry:
+        // Dr 411100 (Clients)  — reverse receivable
+        // Cr 701100 (Ventes)   — reverse revenue (HT)
+        // Cr 443100 (TVA)      — reverse output VAT
+        // Cr 448600 (CAC)      — reverse CAC
+        // Signs are inverted from original invoice posting
+        $entry = $this->poster->post([
+            'company_id'      => $company->id,
+            'posting_date'    => now()->toDateString(),
+            'reference_id'    => 'CN-' . $invoice->invoice_number,
+            'source_pipeline' => 'MANUAL_BANK',
+            'memo'            => "Avoir sur facture {$invoice->invoice_number}",
+            'posting_type'    => 'STANDARD',
+        ], [
+            ['account_code' => '701100', 'debit' => $invoice->amount_ht,  'credit' => 0],
+            ['account_code' => '443100', 'debit' => $invoice->tva_amount, 'credit' => 0],
+            ['account_code' => '448600', 'debit' => $invoice->cac_amount, 'credit' => 0],
+            ['account_code' => '411100', 'debit' => 0, 'credit' => $invoice->amount_ttc],
+        ]);
+
         $cn = CustomerInvoice::create([
             'company_id'        => $company->id,
             'customer_id'       => $invoice->customer_id,
+            'journal_entry_id'  => $entry->id,
             'invoice_number'    => 'CN-' . $invoice->invoice_number,
             'invoice_date'      => now()->toDateString(),
             'due_date'          => now()->toDateString(),

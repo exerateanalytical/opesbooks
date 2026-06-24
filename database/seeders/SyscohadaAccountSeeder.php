@@ -38,13 +38,16 @@ class SyscohadaAccountSeeder extends Seeder
             ['code' => '401200', 'label' => "Fournisseurs d'exploitation - Régime Réel", 'class_digit' => 4],
             ['code' => '401300', 'label' => "Fournisseurs d'exploitation - Régime Simplifié", 'class_digit' => 4],
             ['code' => '411100', 'label' => 'Clients (Standard operating customers)', 'class_digit' => 4],
-            ['code' => '422000', 'label' => 'Personnel - Rémunérations dues (Employee salaries payable)', 'class_digit' => 4],
+            ['code' => '421100', 'label' => 'Personnel - Rémunérations dues (Net salary payable to employees)', 'class_digit' => 4],
+            ['code' => '422000', 'label' => 'Personnel - Rémunérations dues (Employee salaries payable — general)', 'class_digit' => 4],
+            ['code' => '431000', 'label' => 'CNPS — Part salariale et patronale (Employee + employer social contributions payable)', 'class_digit' => 4],
             ['code' => '441100', 'label' => 'État, Impôt sur le bénéfice (DGI Corporate Income Tax payable)', 'class_digit' => 4],
             ['code' => '442100', 'label' => "État, Acompte d'Impôt sur le Revenu (Monthly Minimum Tax Installment)", 'class_digit' => 4],
             ['code' => '443100', 'label' => 'État, TVA Facturée (Output VAT - Collected on client sales)', 'class_digit' => 4],
             ['code' => '445100', 'label' => 'État, TVA Récupérable sur immobilisations (Recoverable VAT on fixed assets)', 'class_digit' => 4],
             ['code' => '445200', 'label' => 'État, TVA Récupérable sur achats (Recoverable VAT on supplier inventory)', 'class_digit' => 4],
             ['code' => '445400', 'label' => 'État, TVA Récupérable sur services (Recoverable VAT on utilities and services)', 'class_digit' => 4],
+            ['code' => '447000', 'label' => 'État, IRPP et CAC/IRPP à reverser (IRPP + CAC sur salaires)', 'class_digit' => 4],
             ['code' => '447100', 'label' => 'État, Impôts et taxes directs retenus à la source (IRPP and withholding deductions)', 'class_digit' => 4],
             ['code' => '448600', 'label' => 'État, Centimes Additionnels Communaux (CAC Surcharge liabilities)', 'class_digit' => 4],
 
@@ -83,6 +86,7 @@ class SyscohadaAccountSeeder extends Seeder
             ['code' => '624100', 'label' => 'Publicité et marketing (Marketing campaigns, printing flyers, billboard fees)', 'class_digit' => 6],
             ['code' => '632400', 'label' => 'Honoraires comptables (External accountant audit fees)', 'class_digit' => 6],
             ['code' => '661100', 'label' => 'Charges de personnel - Salaires bruts (Base gross employee salaries)', 'class_digit' => 6],
+            ['code' => '664000', 'label' => 'Charges sociales - Part patronale CNPS (Employer CNPS contributions)', 'class_digit' => 6],
 
             // CLASS 7 — PRODUITS
             ['code' => '701100', 'label' => 'Ventes de marchandises au Cameroun (Local product sales)', 'class_digit' => 7],

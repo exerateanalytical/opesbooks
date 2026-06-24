@@ -72,7 +72,7 @@ class CnpsIrppService
         $tax = 0.0;
         foreach (self::IRPP_BRACKETS as $bracket) {
             if ($annualIncome <= $bracket['min']) break;
-            $taxable = min($annualIncome, $bracket['max']) - $bracket['min'] + 1;
+            $taxable = min($annualIncome, $bracket['max']) - $bracket['min'];
             $tax += $taxable * $bracket['rate'];
         }
         return round($tax, 0);
