@@ -17,6 +17,13 @@ return new class extends Migration {
             $table->string('phone')->nullable();
             $table->string('email')->nullable();
             $table->string('address')->nullable();
+            $table->string('logo_path', 500)->nullable();
+            $table->string('letterhead_tagline', 255)->nullable();
+            $table->string('letterhead_website', 255)->nullable();
+            $table->string('bank_name', 255)->nullable();
+            $table->string('bank_account', 100)->nullable();
+            $table->string('bank_rib', 100)->nullable();
+            $table->string('invoice_footer_note', 500)->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
