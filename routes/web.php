@@ -1,5 +1,6 @@
 <?php
 
+use App\Livewire\TaxDashboard;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -38,3 +39,5 @@ Route::get('/', function () {
 
     return view('pages.dashboard', compact('company', 'stats', 'recentTransactions', 'unresolvedCount', 'pagination'));
 });
+
+Route::get('/tax-dashboard', TaxDashboard::class)->name('tax.dashboard');
