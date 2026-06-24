@@ -47,6 +47,11 @@ class JournalEntry extends Model
         return $this->hasMany(JournalLine::class);
     }
 
+    public function attachments()
+    {
+        return $this->hasMany(JournalEntryAttachment::class);
+    }
+
     public function isBalanced(): bool
     {
         $totalDebit  = BigDecimal::of((string) $this->lines->sum('debit'));

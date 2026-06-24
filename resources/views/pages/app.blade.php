@@ -241,6 +241,29 @@
                 <span x-text="lang==='FR' ? 'Mon Profil' : 'My Profile'"></span>
             </button>
 
+            <div class="my-1" style="height:1px;background:rgba(255,255,255,0.07)"></div>
+
+            <button @click="setPage('customers')" :class="page==='customers' ? 'nav-item active' : 'nav-item'">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                <span x-text="lang==='FR' ? 'Clients' : 'Customers'"></span>
+            </button>
+            <button @click="setPage('suppliers')" :class="page==='suppliers' ? 'nav-item active' : 'nav-item'">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"/></svg>
+                <span x-text="lang==='FR' ? 'Fournisseurs' : 'Suppliers'"></span>
+            </button>
+            <button @click="setPage('reports')" :class="page==='reports' ? 'nav-item active' : 'nav-item'">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <span x-text="lang==='FR' ? 'Rapports' : 'Reports'"></span>
+            </button>
+            <button @click="setPage('recurring')" :class="page==='recurring' ? 'nav-item active' : 'nav-item'">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                <span x-text="lang==='FR' ? 'Récurrents' : 'Recurring'"></span>
+            </button>
+            <button @click="setPage('payroll')" :class="page==='payroll' ? 'nav-item active' : 'nav-item'">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                <span x-text="lang==='FR' ? 'Paie' : 'Payroll'"></span>
+            </button>
+
             <div class="my-2" style="height:1px;background:rgba(255,255,255,0.07)"></div>
 
             <a href="/tax-dashboard" class="nav-item">
@@ -1473,6 +1496,494 @@
             </div>
         </div>
 
+        <!-- ── Customers ─────────────────────────────────────────────────────── -->
+        <div x-show="page==='customers'" x-cloak class="p-6 space-y-5 float-in" x-data="customersPanel()">
+            <div class="flex items-center justify-between">
+                <h2 class="text-xl font-bold tracking-tight" x-text="lang==='FR' ? 'Clients' : 'Customers'"></h2>
+                <button @click="showForm=!showForm" class="glass-btn-dark px-4 py-2 rounded-xl text-xs uppercase tracking-widest"
+                    x-text="showForm ? (lang==='FR' ? 'Annuler' : 'Cancel') : (lang==='FR' ? '+ Nouveau Client' : '+ New Customer')"></button>
+            </div>
+
+            <div x-show="showForm" class="glass-card p-5 rounded-2xl space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div><label class="block text-xs opacity-60 mb-1" x-text="lang==='FR' ? 'Nom *' : 'Name *'"></label>
+                        <input x-model="form.name" type="text" class="glass-input w-full px-3 py-2 rounded-xl text-sm"></div>
+                    <div><label class="block text-xs opacity-60 mb-1">NIU</label>
+                        <input x-model="form.niu" type="text" class="glass-input w-full px-3 py-2 rounded-xl text-sm"></div>
+                    <div><label class="block text-xs opacity-60 mb-1">Email</label>
+                        <input x-model="form.email" type="email" class="glass-input w-full px-3 py-2 rounded-xl text-sm"></div>
+                    <div><label class="block text-xs opacity-60 mb-1" x-text="lang==='FR' ? 'Téléphone' : 'Phone'"></label>
+                        <input x-model="form.phone" type="text" class="glass-input w-full px-3 py-2 rounded-xl text-sm"></div>
+                    <div><label class="block text-xs opacity-60 mb-1" x-text="lang==='FR' ? 'Délai paiement (jours)' : 'Payment terms (days)'"></label>
+                        <input x-model="form.payment_terms_days" type="number" class="glass-input w-full px-3 py-2 rounded-xl text-sm" value="30"></div>
+                    <div><label class="block text-xs opacity-60 mb-1" x-text="lang==='FR' ? 'Plafond crédit (XAF)' : 'Credit limit (XAF)'"></label>
+                        <input x-model="form.credit_limit_xaf" type="number" class="glass-input w-full px-3 py-2 rounded-xl text-sm"></div>
+                    <div class="col-span-2"><label class="block text-xs opacity-60 mb-1" x-text="lang==='FR' ? 'Adresse' : 'Address'"></label>
+                        <input x-model="form.address" type="text" class="glass-input w-full px-3 py-2 rounded-xl text-sm"></div>
+                </div>
+                <div x-show="formError" class="px-4 py-2 rounded-xl text-sm" style="background:rgba(244,63,94,0.1);color:rgb(252,165,165)" x-text="formError"></div>
+                <button @click="save()" class="glass-btn-dark px-6 py-2.5 rounded-xl text-xs uppercase tracking-widest"
+                    x-text="saving ? '…' : (lang==='FR' ? 'Enregistrer' : 'Save')"></button>
+            </div>
+
+            <div class="glass-card rounded-2xl overflow-hidden">
+                <table class="w-full text-sm">
+                    <thead><tr style="background:rgba(255,255,255,0.04);border-bottom:1px solid rgba(255,255,255,0.07)">
+                        <th class="text-left px-4 py-3 text-xs uppercase tracking-widest opacity-50" x-text="lang==='FR' ? 'Nom' : 'Name'"></th>
+                        <th class="text-left px-4 py-3 text-xs uppercase tracking-widest opacity-50">NIU</th>
+                        <th class="text-left px-4 py-3 text-xs uppercase tracking-widest opacity-50">Email</th>
+                        <th class="text-right px-4 py-3 text-xs uppercase tracking-widest opacity-50" x-text="lang==='FR' ? 'Délai (j)' : 'Terms (d)'"></th>
+                        <th class="text-right px-4 py-3 text-xs uppercase tracking-widest opacity-50" x-text="lang==='FR' ? 'Plafond' : 'Limit'"></th>
+                    </tr></thead>
+                    <tbody>
+                        <template x-if="customers.length===0">
+                            <tr><td colspan="5" class="text-center py-10 opacity-40 text-sm" x-text="lang==='FR' ? 'Aucun client enregistré.' : 'No customers yet.'"></td></tr>
+                        </template>
+                        <template x-for="c in customers" :key="c.id">
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.04)" class="hover:bg-white/5 transition-colors">
+                                <td class="px-4 py-3 font-medium" x-text="c.name"></td>
+                                <td class="px-4 py-3 opacity-70" x-text="c.niu||'—'"></td>
+                                <td class="px-4 py-3 opacity-70" x-text="c.email||'—'"></td>
+                                <td class="px-4 py-3 text-right opacity-70" x-text="c.payment_terms_days||'30'"></td>
+                                <td class="px-4 py-3 text-right opacity-70" x-text="c.credit_limit_xaf ? fmtXaf(c.credit_limit_xaf) : '—'"></td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ── Suppliers ──────────────────────────────────────────────────────── -->
+        <div x-show="page==='suppliers'" x-cloak class="p-6 space-y-5 float-in" x-data="suppliersPanel()">
+            <div class="flex items-center justify-between">
+                <h2 class="text-xl font-bold tracking-tight" x-text="lang==='FR' ? 'Fournisseurs' : 'Suppliers'"></h2>
+                <button @click="showForm=!showForm" class="glass-btn-dark px-4 py-2 rounded-xl text-xs uppercase tracking-widest"
+                    x-text="showForm ? (lang==='FR' ? 'Annuler' : 'Cancel') : (lang==='FR' ? '+ Nouveau Fournisseur' : '+ New Supplier')"></button>
+            </div>
+
+            <div x-show="showForm" class="glass-card p-5 rounded-2xl space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div><label class="block text-xs opacity-60 mb-1" x-text="lang==='FR' ? 'Nom *' : 'Name *'"></label>
+                        <input x-model="form.name" type="text" class="glass-input w-full px-3 py-2 rounded-xl text-sm"></div>
+                    <div><label class="block text-xs opacity-60 mb-1">NIU</label>
+                        <input x-model="form.niu" type="text" class="glass-input w-full px-3 py-2 rounded-xl text-sm"></div>
+                    <div><label class="block text-xs opacity-60 mb-1">Email</label>
+                        <input x-model="form.email" type="email" class="glass-input w-full px-3 py-2 rounded-xl text-sm"></div>
+                    <div><label class="block text-xs opacity-60 mb-1" x-text="lang==='FR' ? 'Téléphone' : 'Phone'"></label>
+                        <input x-model="form.phone" type="text" class="glass-input w-full px-3 py-2 rounded-xl text-sm"></div>
+                    <div><label class="block text-xs opacity-60 mb-1" x-text="lang==='FR' ? 'Délai paiement (jours)' : 'Payment terms (days)'"></label>
+                        <input x-model="form.payment_terms_days" type="number" class="glass-input w-full px-3 py-2 rounded-xl text-sm" value="30"></div>
+                    <div class="col-span-2"><label class="block text-xs opacity-60 mb-1" x-text="lang==='FR' ? 'Adresse' : 'Address'"></label>
+                        <input x-model="form.address" type="text" class="glass-input w-full px-3 py-2 rounded-xl text-sm"></div>
+                </div>
+                <div x-show="formError" class="px-4 py-2 rounded-xl text-sm" style="background:rgba(244,63,94,0.1);color:rgb(252,165,165)" x-text="formError"></div>
+                <button @click="save()" class="glass-btn-dark px-6 py-2.5 rounded-xl text-xs uppercase tracking-widest"
+                    x-text="saving ? '…' : (lang==='FR' ? 'Enregistrer' : 'Save')"></button>
+            </div>
+
+            <div class="glass-card rounded-2xl overflow-hidden">
+                <table class="w-full text-sm">
+                    <thead><tr style="background:rgba(255,255,255,0.04);border-bottom:1px solid rgba(255,255,255,0.07)">
+                        <th class="text-left px-4 py-3 text-xs uppercase tracking-widest opacity-50" x-text="lang==='FR' ? 'Nom' : 'Name'"></th>
+                        <th class="text-left px-4 py-3 text-xs uppercase tracking-widest opacity-50">NIU</th>
+                        <th class="text-left px-4 py-3 text-xs uppercase tracking-widest opacity-50">Email</th>
+                        <th class="text-left px-4 py-3 text-xs uppercase tracking-widest opacity-50" x-text="lang==='FR' ? 'Téléphone' : 'Phone'"></th>
+                    </tr></thead>
+                    <tbody>
+                        <template x-if="suppliers.length===0">
+                            <tr><td colspan="4" class="text-center py-10 opacity-40 text-sm" x-text="lang==='FR' ? 'Aucun fournisseur enregistré.' : 'No suppliers yet.'"></td></tr>
+                        </template>
+                        <template x-for="s in suppliers" :key="s.id">
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.04)" class="hover:bg-white/5 transition-colors">
+                                <td class="px-4 py-3 font-medium" x-text="s.name"></td>
+                                <td class="px-4 py-3 opacity-70" x-text="s.niu||'—'"></td>
+                                <td class="px-4 py-3 opacity-70" x-text="s.email||'—'"></td>
+                                <td class="px-4 py-3 opacity-70" x-text="s.phone||'—'"></td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ── Financial Reports ──────────────────────────────────────────────── -->
+        <div x-show="page==='reports'" x-cloak class="p-6 space-y-5 float-in" x-data="reportsPanel()">
+            <div class="flex items-center justify-between flex-wrap gap-3">
+                <h2 class="text-xl font-bold tracking-tight" x-text="lang==='FR' ? 'Rapports Financiers' : 'Financial Reports'"></h2>
+                <div class="flex gap-2 flex-wrap">
+                    <button @click="tab='pl'" :class="tab==='pl' ? 'glass-btn-dark' : 'glass-btn'" class="px-4 py-2 rounded-xl text-xs uppercase tracking-widest">P&L</button>
+                    <button @click="tab='bs'" :class="tab==='bs' ? 'glass-btn-dark' : 'glass-btn'" class="px-4 py-2 rounded-xl text-xs uppercase tracking-widest" x-text="lang==='FR' ? 'Bilan' : 'Balance Sheet'"></button>
+                    <button @click="tab='cf'" :class="tab==='cf' ? 'glass-btn-dark' : 'glass-btn'" class="px-4 py-2 rounded-xl text-xs uppercase tracking-widest" x-text="lang==='FR' ? 'Trésorerie' : 'Cash Flow'"></button>
+                    <button @click="tab='ar'" :class="tab==='ar' ? 'glass-btn-dark' : 'glass-btn'" class="px-4 py-2 rounded-xl text-xs uppercase tracking-widest" x-text="lang==='FR' ? 'Créances' : 'Aged Rec.'"></button>
+                </div>
+            </div>
+
+            <!-- Date range for P&L / Cash Flow -->
+            <div x-show="tab==='pl'||tab==='cf'" class="flex gap-3 items-end flex-wrap">
+                <div><label class="block text-xs opacity-60 mb-1" x-text="lang==='FR' ? 'Du' : 'From'"></label>
+                    <input x-model="from" type="date" class="glass-input px-3 py-2 rounded-xl text-sm"></div>
+                <div><label class="block text-xs opacity-60 mb-1" x-text="lang==='FR' ? 'Au' : 'To'"></label>
+                    <input x-model="to" type="date" class="glass-input px-3 py-2 rounded-xl text-sm"></div>
+                <button @click="load()" class="glass-btn-dark px-5 py-2 rounded-xl text-xs uppercase tracking-widest" x-text="loading ? '…' : (lang==='FR' ? 'Générer' : 'Generate')"></button>
+            </div>
+            <div x-show="tab==='bs'" class="flex gap-3 items-end flex-wrap">
+                <div><label class="block text-xs opacity-60 mb-1" x-text="lang==='FR' ? 'Au' : 'As of'"></label>
+                    <input x-model="asOf" type="date" class="glass-input px-3 py-2 rounded-xl text-sm"></div>
+                <button @click="load()" class="glass-btn-dark px-5 py-2 rounded-xl text-xs uppercase tracking-widest" x-text="loading ? '…' : (lang==='FR' ? 'Générer' : 'Generate')"></button>
+            </div>
+            <div x-show="tab==='ar'">
+                <button @click="load()" class="glass-btn-dark px-5 py-2 rounded-xl text-xs uppercase tracking-widest" x-text="loading ? '…' : (lang==='FR' ? 'Actualiser' : 'Refresh')"></button>
+            </div>
+
+            <div x-show="error" class="px-4 py-2 rounded-xl text-sm" style="background:rgba(244,63,94,0.1);color:rgb(252,165,165)" x-text="error"></div>
+
+            <!-- P&L -->
+            <div x-show="tab==='pl' && result" class="glass-card p-5 rounded-2xl space-y-4">
+                <div class="grid grid-cols-3 gap-4 text-center">
+                    <div class="glass-card p-4 rounded-xl">
+                        <div class="text-xs opacity-50 mb-1" x-text="lang==='FR' ? 'Chiffre d\'Affaires' : 'Revenue'"></div>
+                        <div class="text-lg font-bold text-emerald-400" x-text="fmtXaf(result?.revenue)"></div>
+                    </div>
+                    <div class="glass-card p-4 rounded-xl">
+                        <div class="text-xs opacity-50 mb-1" x-text="lang==='FR' ? 'Charges' : 'Expenses'"></div>
+                        <div class="text-lg font-bold text-red-400" x-text="fmtXaf(result?.expenses)"></div>
+                    </div>
+                    <div class="glass-card p-4 rounded-xl">
+                        <div class="text-xs opacity-50 mb-1" x-text="lang==='FR' ? 'Résultat Net' : 'Net Profit'"></div>
+                        <div class="text-lg font-bold" :class="(result?.net_profit??0)>=0 ? 'text-emerald-400' : 'text-red-400'" x-text="fmtXaf(result?.net_profit)"></div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-6">
+                    <div>
+                        <div class="text-xs uppercase tracking-widest opacity-50 mb-2" x-text="lang==='FR' ? 'Produits (Classe 7)' : 'Income (Class 7)'"></div>
+                        <template x-for="row in (result?.revenue_lines??[])" :key="row.code">
+                            <div class="flex justify-between py-1 border-b border-white/5 text-sm">
+                                <span x-text="row.code+' '+row.label" class="opacity-70"></span>
+                                <span class="text-emerald-400" x-text="fmtXaf(row.net)"></span>
+                            </div>
+                        </template>
+                    </div>
+                    <div>
+                        <div class="text-xs uppercase tracking-widest opacity-50 mb-2" x-text="lang==='FR' ? 'Charges (Classe 6)' : 'Expenses (Class 6)'"></div>
+                        <template x-for="row in (result?.expense_lines??[])" :key="row.code">
+                            <div class="flex justify-between py-1 border-b border-white/5 text-sm">
+                                <span x-text="row.code+' '+row.label" class="opacity-70"></span>
+                                <span class="text-red-400" x-text="fmtXaf(row.net)"></span>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Balance Sheet -->
+            <div x-show="tab==='bs' && result" class="glass-card p-5 rounded-2xl space-y-4">
+                <div class="grid grid-cols-3 gap-4 text-center mb-2">
+                    <div class="glass-card p-4 rounded-xl">
+                        <div class="text-xs opacity-50 mb-1" x-text="lang==='FR' ? 'Total Actif' : 'Total Assets'"></div>
+                        <div class="text-lg font-bold text-amber-400" x-text="fmtXaf(result?.total_assets)"></div>
+                    </div>
+                    <div class="glass-card p-4 rounded-xl">
+                        <div class="text-xs opacity-50 mb-1" x-text="lang==='FR' ? 'Total Passif' : 'Total Liabilities'"></div>
+                        <div class="text-lg font-bold text-red-400" x-text="fmtXaf(result?.total_liabilities)"></div>
+                    </div>
+                    <div class="glass-card p-4 rounded-xl">
+                        <div class="text-xs opacity-50 mb-1" x-text="lang==='FR' ? 'Capitaux Propres' : 'Equity'"></div>
+                        <div class="text-lg font-bold text-emerald-400" x-text="fmtXaf(result?.equity)"></div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-6">
+                    <div>
+                        <div class="text-xs uppercase tracking-widest opacity-50 mb-2" x-text="lang==='FR' ? 'Actif' : 'Assets'"></div>
+                        <template x-for="row in (result?.assets??[])" :key="row.code">
+                            <div class="flex justify-between py-1 border-b border-white/5 text-sm">
+                                <span x-text="row.code+' '+row.label" class="opacity-70"></span>
+                                <span x-text="fmtXaf(row.balance)"></span>
+                            </div>
+                        </template>
+                    </div>
+                    <div>
+                        <div class="text-xs uppercase tracking-widest opacity-50 mb-2" x-text="lang==='FR' ? 'Passif' : 'Liabilities'"></div>
+                        <template x-for="row in (result?.liabilities??[])" :key="row.code">
+                            <div class="flex justify-between py-1 border-b border-white/5 text-sm">
+                                <span x-text="row.code+' '+row.label" class="opacity-70"></span>
+                                <span x-text="fmtXaf(row.balance)"></span>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cash Flow -->
+            <div x-show="tab==='cf' && result" class="glass-card p-5 rounded-2xl space-y-3">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="glass-card p-4 rounded-xl">
+                        <div class="text-xs opacity-50 mb-1" x-text="lang==='FR' ? 'Flux d\'exploitation' : 'Operating Cash Flow'"></div>
+                        <div class="text-lg font-bold" :class="(result?.operating??0)>=0 ? 'text-emerald-400' : 'text-red-400'" x-text="fmtXaf(result?.operating)"></div>
+                    </div>
+                    <div class="glass-card p-4 rounded-xl">
+                        <div class="text-xs opacity-50 mb-1" x-text="lang==='FR' ? 'Trésorerie nette' : 'Net Cash'"></div>
+                        <div class="text-lg font-bold" :class="(result?.net_cash??0)>=0 ? 'text-emerald-400' : 'text-red-400'" x-text="fmtXaf(result?.net_cash)"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="text-xs uppercase tracking-widest opacity-50 mb-2" x-text="lang==='FR' ? 'Détail Comptes 5xx' : 'Class 5 Detail'"></div>
+                    <template x-for="row in (result?.treasury_lines??[])" :key="row.code">
+                        <div class="flex justify-between py-1 border-b border-white/5 text-sm">
+                            <span x-text="row.code+' '+row.label" class="opacity-70"></span>
+                            <span :class="(row.balance??0)>=0 ? 'text-emerald-400' : 'text-red-400'" x-text="fmtXaf(row.balance)"></span>
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+            <!-- Aged Receivables -->
+            <div x-show="tab==='ar' && result" class="glass-card p-5 rounded-2xl space-y-4">
+                <div class="grid grid-cols-5 gap-3 text-center">
+                    <div class="glass-card p-3 rounded-xl">
+                        <div class="text-xs opacity-50 mb-1" x-text="lang==='FR' ? 'Courant' : 'Current'"></div>
+                        <div class="text-base font-bold text-emerald-400" x-text="fmtXaf(result?.current)"></div>
+                    </div>
+                    <div class="glass-card p-3 rounded-xl">
+                        <div class="text-xs opacity-50 mb-1">1–30j</div>
+                        <div class="text-base font-bold text-amber-400" x-text="fmtXaf(result?.['1_30'])"></div>
+                    </div>
+                    <div class="glass-card p-3 rounded-xl">
+                        <div class="text-xs opacity-50 mb-1">31–60j</div>
+                        <div class="text-base font-bold text-orange-400" x-text="fmtXaf(result?.['31_60'])"></div>
+                    </div>
+                    <div class="glass-card p-3 rounded-xl">
+                        <div class="text-xs opacity-50 mb-1">61–90j</div>
+                        <div class="text-base font-bold text-red-400" x-text="fmtXaf(result?.['61_90'])"></div>
+                    </div>
+                    <div class="glass-card p-3 rounded-xl">
+                        <div class="text-xs opacity-50 mb-1" x-text="lang==='FR' ? '+90j' : '>90d'"></div>
+                        <div class="text-base font-bold text-red-600" x-text="fmtXaf(result?.over_90)"></div>
+                    </div>
+                </div>
+                <table class="w-full text-sm mt-2">
+                    <thead><tr style="border-bottom:1px solid rgba(255,255,255,0.07)">
+                        <th class="text-left px-3 py-2 text-xs opacity-50" x-text="lang==='FR' ? 'Client' : 'Customer'"></th>
+                        <th class="text-left px-3 py-2 text-xs opacity-50" x-text="lang==='FR' ? 'Facture' : 'Invoice'"></th>
+                        <th class="text-right px-3 py-2 text-xs opacity-50" x-text="lang==='FR' ? 'Montant TTC' : 'Amount TTC'"></th>
+                        <th class="text-right px-3 py-2 text-xs opacity-50" x-text="lang==='FR' ? 'Éch.' : 'Due'"></th>
+                        <th class="text-right px-3 py-2 text-xs opacity-50" x-text="lang==='FR' ? 'Retard (j)' : 'Overdue (d)'"></th>
+                    </tr></thead>
+                    <tbody>
+                        <template x-for="inv in (result?.invoices??[])" :key="inv.id">
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.04)" class="hover:bg-white/5">
+                                <td class="px-3 py-2 font-medium" x-text="inv.customer?.name??'—'"></td>
+                                <td class="px-3 py-2 opacity-70" x-text="inv.invoice_number"></td>
+                                <td class="px-3 py-2 text-right" x-text="fmtXaf(inv.amount_ttc)"></td>
+                                <td class="px-3 py-2 text-right opacity-70" x-text="inv.due_date"></td>
+                                <td class="px-3 py-2 text-right" :class="(inv.days_overdue??0)>30?'text-red-400':'text-amber-400'" x-text="inv.days_overdue??0"></td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ── Recurring Transactions ─────────────────────────────────────────── -->
+        <div x-show="page==='recurring'" x-cloak class="p-6 space-y-5 float-in" x-data="recurringPanel()">
+            <div class="flex items-center justify-between">
+                <h2 class="text-xl font-bold tracking-tight" x-text="lang==='FR' ? 'Transactions Récurrentes' : 'Recurring Transactions'"></h2>
+                <div class="flex gap-2">
+                    <button @click="runAll()" class="glass-btn px-4 py-2 rounded-xl text-xs uppercase tracking-widest"
+                        x-text="running ? '…' : (lang==='FR' ? '▶ Exécuter maintenant' : '▶ Run Now')"></button>
+                    <button @click="showForm=!showForm" class="glass-btn-dark px-4 py-2 rounded-xl text-xs uppercase tracking-widest"
+                        x-text="showForm ? (lang==='FR' ? 'Annuler' : 'Cancel') : '+ Nouveau'"></button>
+                </div>
+            </div>
+
+            <div x-show="runMsg" class="px-4 py-2 rounded-xl text-sm" style="background:rgba(16,185,129,0.1);color:rgb(110,231,183)" x-text="runMsg"></div>
+
+            <div x-show="showForm" class="glass-card p-5 rounded-2xl space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div><label class="block text-xs opacity-60 mb-1" x-text="lang==='FR' ? 'Nom *' : 'Name *'"></label>
+                        <input x-model="form.name" type="text" class="glass-input w-full px-3 py-2 rounded-xl text-sm"></div>
+                    <div><label class="block text-xs opacity-60 mb-1" x-text="lang==='FR' ? 'Fréquence *' : 'Frequency *'"></label>
+                        <select x-model="form.frequency" class="glass-input w-full px-3 py-2 rounded-xl text-sm">
+                            <option value="DAILY" x-text="lang==='FR' ? 'Quotidien' : 'Daily'"></option>
+                            <option value="WEEKLY" x-text="lang==='FR' ? 'Hebdomadaire' : 'Weekly'"></option>
+                            <option value="MONTHLY" selected x-text="lang==='FR' ? 'Mensuel' : 'Monthly'"></option>
+                            <option value="QUARTERLY" x-text="lang==='FR' ? 'Trimestriel' : 'Quarterly'"></option>
+                            <option value="YEARLY" x-text="lang==='FR' ? 'Annuel' : 'Yearly'"></option>
+                        </select></div>
+                    <div><label class="block text-xs opacity-60 mb-1" x-text="lang==='FR' ? 'Montant (XAF) *' : 'Amount (XAF) *'"></label>
+                        <input x-model="form.amount_xaf" type="number" class="glass-input w-full px-3 py-2 rounded-xl text-sm"></div>
+                    <div><label class="block text-xs opacity-60 mb-1" x-text="lang==='FR' ? 'Prochaine exécution *' : 'Next run date *'"></label>
+                        <input x-model="form.next_run_date" type="date" class="glass-input w-full px-3 py-2 rounded-xl text-sm"></div>
+                    <div><label class="block text-xs opacity-60 mb-1" x-text="lang==='FR' ? 'Compte Débit (code) *' : 'Debit Account (code) *'"></label>
+                        <input x-model="form.debit_account" type="text" placeholder="ex: 601000" class="glass-input w-full px-3 py-2 rounded-xl text-sm"></div>
+                    <div><label class="block text-xs opacity-60 mb-1" x-text="lang==='FR' ? 'Compte Crédit (code) *' : 'Credit Account (code) *'"></label>
+                        <input x-model="form.credit_account" type="text" placeholder="ex: 521000" class="glass-input w-full px-3 py-2 rounded-xl text-sm"></div>
+                    <div class="col-span-2"><label class="block text-xs opacity-60 mb-1">Mémo</label>
+                        <input x-model="form.memo" type="text" class="glass-input w-full px-3 py-2 rounded-xl text-sm"></div>
+                    <div><label class="block text-xs opacity-60 mb-1" x-text="lang==='FR' ? 'Date de fin (optionnel)' : 'End date (optional)'"></label>
+                        <input x-model="form.end_date" type="date" class="glass-input w-full px-3 py-2 rounded-xl text-sm"></div>
+                </div>
+                <div x-show="formError" class="px-4 py-2 rounded-xl text-sm" style="background:rgba(244,63,94,0.1);color:rgb(252,165,165)" x-text="formError"></div>
+                <button @click="save()" class="glass-btn-dark px-6 py-2.5 rounded-xl text-xs uppercase tracking-widest"
+                    x-text="saving ? '…' : (lang==='FR' ? 'Enregistrer' : 'Save')"></button>
+            </div>
+
+            <div class="glass-card rounded-2xl overflow-hidden">
+                <table class="w-full text-sm">
+                    <thead><tr style="background:rgba(255,255,255,0.04);border-bottom:1px solid rgba(255,255,255,0.07)">
+                        <th class="text-left px-4 py-3 text-xs uppercase tracking-widest opacity-50" x-text="lang==='FR' ? 'Nom' : 'Name'"></th>
+                        <th class="text-left px-4 py-3 text-xs uppercase tracking-widest opacity-50" x-text="lang==='FR' ? 'Fréquence' : 'Frequency'"></th>
+                        <th class="text-right px-4 py-3 text-xs uppercase tracking-widest opacity-50" x-text="lang==='FR' ? 'Montant' : 'Amount'"></th>
+                        <th class="text-left px-4 py-3 text-xs uppercase tracking-widest opacity-50" x-text="lang==='FR' ? 'Prochain' : 'Next Run'"></th>
+                        <th class="text-center px-4 py-3 text-xs uppercase tracking-widest opacity-50" x-text="lang==='FR' ? 'Actif' : 'Active'"></th>
+                    </tr></thead>
+                    <tbody>
+                        <template x-if="items.length===0">
+                            <tr><td colspan="5" class="text-center py-10 opacity-40 text-sm" x-text="lang==='FR' ? 'Aucune transaction récurrente.' : 'No recurring transactions.'"></td></tr>
+                        </template>
+                        <template x-for="rt in items" :key="rt.id">
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.04)" class="hover:bg-white/5 transition-colors">
+                                <td class="px-4 py-3 font-medium" x-text="rt.name"></td>
+                                <td class="px-4 py-3 opacity-70 text-xs" x-text="rt.frequency"></td>
+                                <td class="px-4 py-3 text-right" x-text="fmtXaf(rt.amount_xaf)"></td>
+                                <td class="px-4 py-3 opacity-70" x-text="rt.next_run_date"></td>
+                                <td class="px-4 py-3 text-center">
+                                    <span :class="rt.is_active ? 'text-emerald-400' : 'text-red-400'" x-text="rt.is_active ? '●' : '○'"></span>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ── Payroll ─────────────────────────────────────────────────────────── -->
+        <div x-show="page==='payroll'" x-cloak class="p-6 space-y-5 float-in" x-data="payrollPanel()">
+            <div class="flex items-center justify-between flex-wrap gap-3">
+                <h2 class="text-xl font-bold tracking-tight" x-text="lang==='FR' ? 'Gestion de la Paie' : 'Payroll'"></h2>
+                <div class="flex gap-2">
+                    <button @click="tab='employees'" :class="tab==='employees' ? 'glass-btn-dark' : 'glass-btn'" class="px-4 py-2 rounded-xl text-xs uppercase tracking-widest" x-text="lang==='FR' ? 'Employés' : 'Employees'"></button>
+                    <button @click="tab='periods'" :class="tab==='periods' ? 'glass-btn-dark' : 'glass-btn'" class="px-4 py-2 rounded-xl text-xs uppercase tracking-widest" x-text="lang==='FR' ? 'Périodes' : 'Pay Periods'"></button>
+                </div>
+            </div>
+
+            <!-- Employees Tab -->
+            <div x-show="tab==='employees'" class="space-y-4">
+                <div class="flex justify-end">
+                    <button @click="showEmpForm=!showEmpForm" class="glass-btn-dark px-4 py-2 rounded-xl text-xs uppercase tracking-widest"
+                        x-text="showEmpForm ? (lang==='FR' ? 'Annuler' : 'Cancel') : (lang==='FR' ? '+ Nouvel Employé' : '+ New Employee')"></button>
+                </div>
+                <div x-show="showEmpForm" class="glass-card p-5 rounded-2xl space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div><label class="block text-xs opacity-60 mb-1" x-text="lang==='FR' ? 'Nom *' : 'Name *'"></label>
+                            <input x-model="empForm.name" type="text" class="glass-input w-full px-3 py-2 rounded-xl text-sm"></div>
+                        <div><label class="block text-xs opacity-60 mb-1" x-text="lang==='FR' ? 'Poste' : 'Position'"></label>
+                            <input x-model="empForm.position" type="text" class="glass-input w-full px-3 py-2 rounded-xl text-sm"></div>
+                        <div><label class="block text-xs opacity-60 mb-1" x-text="lang==='FR' ? 'Salaire brut (XAF) *' : 'Gross Salary (XAF) *'"></label>
+                            <input x-model="empForm.gross_salary_xaf" type="number" min="36270" class="glass-input w-full px-3 py-2 rounded-xl text-sm"></div>
+                        <div><label class="block text-xs opacity-60 mb-1" x-text="lang==='FR' ? 'Date d\'embauche *' : 'Hire Date *'"></label>
+                            <input x-model="empForm.hire_date" type="date" class="glass-input w-full px-3 py-2 rounded-xl text-sm"></div>
+                        <div><label class="block text-xs opacity-60 mb-1" x-text="lang==='FR' ? 'N° CNPS' : 'CNPS No.'"></label>
+                            <input x-model="empForm.cnps_number" type="text" class="glass-input w-full px-3 py-2 rounded-xl text-sm"></div>
+                    </div>
+                    <div x-show="empError" class="px-4 py-2 rounded-xl text-sm" style="background:rgba(244,63,94,0.1);color:rgb(252,165,165)" x-text="empError"></div>
+                    <button @click="saveEmployee()" class="glass-btn-dark px-6 py-2.5 rounded-xl text-xs uppercase tracking-widest"
+                        x-text="empSaving ? '…' : (lang==='FR' ? 'Enregistrer' : 'Save')"></button>
+                </div>
+                <div class="glass-card rounded-2xl overflow-hidden">
+                    <table class="w-full text-sm">
+                        <thead><tr style="background:rgba(255,255,255,0.04);border-bottom:1px solid rgba(255,255,255,0.07)">
+                            <th class="text-left px-4 py-3 text-xs uppercase tracking-widest opacity-50" x-text="lang==='FR' ? 'Nom' : 'Name'"></th>
+                            <th class="text-left px-4 py-3 text-xs uppercase tracking-widest opacity-50" x-text="lang==='FR' ? 'Poste' : 'Position'"></th>
+                            <th class="text-right px-4 py-3 text-xs uppercase tracking-widest opacity-50" x-text="lang==='FR' ? 'Salaire Brut' : 'Gross Salary'"></th>
+                            <th class="text-left px-4 py-3 text-xs uppercase tracking-widest opacity-50" x-text="lang==='FR' ? 'Embauché le' : 'Hired'"></th>
+                            <th class="text-left px-4 py-3 text-xs uppercase tracking-widest opacity-50" x-text="lang==='FR' ? 'N° CNPS' : 'CNPS No.'"></th>
+                        </tr></thead>
+                        <tbody>
+                            <template x-if="employees.length===0">
+                                <tr><td colspan="5" class="text-center py-10 opacity-40 text-sm" x-text="lang==='FR' ? 'Aucun employé enregistré.' : 'No employees yet.'"></td></tr>
+                            </template>
+                            <template x-for="e in employees" :key="e.id">
+                                <tr style="border-bottom:1px solid rgba(255,255,255,0.04)" class="hover:bg-white/5 transition-colors">
+                                    <td class="px-4 py-3 font-medium" x-text="e.name"></td>
+                                    <td class="px-4 py-3 opacity-70" x-text="e.position||'—'"></td>
+                                    <td class="px-4 py-3 text-right" x-text="fmtXaf(e.gross_salary_xaf)"></td>
+                                    <td class="px-4 py-3 opacity-70" x-text="e.hire_date"></td>
+                                    <td class="px-4 py-3 opacity-70" x-text="e.cnps_number||'—'"></td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Pay Periods Tab -->
+            <div x-show="tab==='periods'" class="space-y-4">
+                <div class="flex gap-3 items-end flex-wrap">
+                    <div><label class="block text-xs opacity-60 mb-1" x-text="lang==='FR' ? 'Mois' : 'Month'"></label>
+                        <select x-model="periodForm.period_month" class="glass-input px-3 py-2 rounded-xl text-sm">
+                            <template x-for="m in 12" :key="m">
+                                <option :value="m" x-text="m"></option>
+                            </template>
+                        </select></div>
+                    <div><label class="block text-xs opacity-60 mb-1" x-text="lang==='FR' ? 'Année' : 'Year'"></label>
+                        <input x-model="periodForm.period_year" type="number" min="2020" class="glass-input px-3 py-2 rounded-xl text-sm" style="width:90px"></div>
+                    <button @click="calculatePeriod()" class="glass-btn-dark px-5 py-2 rounded-xl text-xs uppercase tracking-widest"
+                        x-text="periodCalc ? '…' : (lang==='FR' ? 'Calculer la Paie' : 'Calculate Payroll')"></button>
+                </div>
+                <div x-show="periodError" class="px-4 py-2 rounded-xl text-sm" style="background:rgba(244,63,94,0.1);color:rgb(252,165,165)" x-text="periodError"></div>
+                <div x-show="periods.length===0" class="glass-card p-8 rounded-2xl text-center opacity-40 text-sm" x-text="lang==='FR' ? 'Aucune période de paie.' : 'No pay periods yet.'"></div>
+                <template x-for="p in periods" :key="p.id">
+                    <div class="glass-card p-5 rounded-2xl space-y-3">
+                        <div class="flex items-center justify-between">
+                            <div class="font-bold" x-text="(lang==='FR'?'Paie ':'Payroll ')+p.period_month+'/'+p.period_year"></div>
+                            <div class="flex items-center gap-3">
+                                <span class="px-3 py-1 rounded-full text-xs font-bold" :class="p.status==='POSTED'?'bg-emerald-900/50 text-emerald-300':'bg-amber-900/50 text-amber-300'" x-text="p.status"></span>
+                                <button x-show="p.status==='DRAFT'" @click="postPeriod(p)"
+                                    class="glass-btn-dark px-4 py-1.5 rounded-xl text-xs uppercase tracking-widest"
+                                    x-text="lang==='FR' ? 'Comptabiliser' : 'Post to Journal'"></button>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-3 gap-3 text-sm">
+                            <div class="text-center glass-card p-3 rounded-xl">
+                                <div class="text-xs opacity-50 mb-1" x-text="lang==='FR' ? 'Masse Brute' : 'Gross Total'"></div>
+                                <div class="font-bold text-amber-400" x-text="fmtXaf(p.total_gross)"></div>
+                            </div>
+                            <div class="text-center glass-card p-3 rounded-xl">
+                                <div class="text-xs opacity-50 mb-1" x-text="lang==='FR' ? 'Net à Payer' : 'Net to Pay'"></div>
+                                <div class="font-bold text-emerald-400" x-text="fmtXaf(p.total_net)"></div>
+                            </div>
+                            <div class="text-center glass-card p-3 rounded-xl">
+                                <div class="text-xs opacity-50 mb-1" x-text="lang==='FR' ? 'Charges Sociales' : 'Social Charges'"></div>
+                                <div class="font-bold text-red-400" x-text="fmtXaf((p.total_cnps_employee??0)+(p.total_cnps_employer??0)+(p.total_irpp??0)+(p.total_cac_irpp??0))"></div>
+                            </div>
+                        </div>
+                        <div x-show="p.lines && p.lines.length">
+                            <table class="w-full text-xs mt-2">
+                                <thead><tr style="border-bottom:1px solid rgba(255,255,255,0.07)">
+                                    <th class="text-left px-3 py-1.5 opacity-50" x-text="lang==='FR' ? 'Employé' : 'Employee'"></th>
+                                    <th class="text-right px-3 py-1.5 opacity-50" x-text="lang==='FR' ? 'Brut' : 'Gross'"></th>
+                                    <th class="text-right px-3 py-1.5 opacity-50">CNPS Sal.</th>
+                                    <th class="text-right px-3 py-1.5 opacity-50">IRPP+CAC</th>
+                                    <th class="text-right px-3 py-1.5 opacity-50" x-text="lang==='FR' ? 'Net' : 'Net'"></th>
+                                </tr></thead>
+                                <tbody>
+                                    <template x-for="l in p.lines" :key="l.id">
+                                        <tr style="border-bottom:1px solid rgba(255,255,255,0.04)">
+                                            <td class="px-3 py-1.5 font-medium" x-text="l.employee?.name??'—'"></td>
+                                            <td class="px-3 py-1.5 text-right opacity-70" x-text="fmtXaf(l.gross_salary)"></td>
+                                            <td class="px-3 py-1.5 text-right text-red-400" x-text="fmtXaf(l.cnps_employee)"></td>
+                                            <td class="px-3 py-1.5 text-right text-red-400" x-text="fmtXaf((l.irpp??0)+(l.cac_irpp??0))"></td>
+                                            <td class="px-3 py-1.5 text-right text-emerald-400 font-bold" x-text="fmtXaf(l.net_salary)"></td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+
     </main>
 </div>
 
@@ -2071,6 +2582,268 @@ function profilePanel() {
                 this.pwdSaving = false;
             }
         },
+    };
+}
+
+function customersPanel() {
+    return {
+        customers: [],
+        showForm: false,
+        saving: false,
+        formError: '',
+        form: { name:'', niu:'', email:'', phone:'', address:'', payment_terms_days:30, credit_limit_xaf:'' },
+
+        async init() {
+            const token = localStorage.getItem('opes_token');
+            const me = await (await fetch('/api/v1/auth/me',{headers:{'Authorization':'Bearer '+token,'Accept':'application/json'}})).json();
+            this._cid = me.company?.id;
+            await this.load();
+        },
+        async load() {
+            if (!this._cid) return;
+            const token = localStorage.getItem('opes_token');
+            const res = await fetch(`/api/v1/companies/${this._cid}/customers`,{headers:{'Authorization':'Bearer '+token,'Accept':'application/json'}});
+            const data = await res.json();
+            this.customers = Array.isArray(data) ? data : (data.data ?? []);
+        },
+        async save() {
+            this.saving=true; this.formError='';
+            try {
+                const token = localStorage.getItem('opes_token');
+                const res = await fetch(`/api/v1/companies/${this._cid}/customers`,{
+                    method:'POST',
+                    headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json','Accept':'application/json'},
+                    body: JSON.stringify(this.form),
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || Object.values(data.errors??{}).flat().join(' | '));
+                this.form = { name:'',niu:'',email:'',phone:'',address:'',payment_terms_days:30,credit_limit_xaf:'' };
+                this.showForm = false;
+                await this.load();
+            } catch(e) { this.formError = e.message; }
+            finally { this.saving = false; }
+        },
+        fmtXaf(v) { return Number(v).toLocaleString('fr-CM',{minimumFractionDigits:0})+' XAF'; },
+    };
+}
+
+function suppliersPanel() {
+    return {
+        suppliers: [],
+        showForm: false,
+        saving: false,
+        formError: '',
+        form: { name:'', niu:'', email:'', phone:'', address:'', payment_terms_days:30 },
+
+        async init() {
+            const token = localStorage.getItem('opes_token');
+            const me = await (await fetch('/api/v1/auth/me',{headers:{'Authorization':'Bearer '+token,'Accept':'application/json'}})).json();
+            this._cid = me.company?.id;
+            await this.load();
+        },
+        async load() {
+            if (!this._cid) return;
+            const token = localStorage.getItem('opes_token');
+            const res = await fetch(`/api/v1/companies/${this._cid}/suppliers`,{headers:{'Authorization':'Bearer '+token,'Accept':'application/json'}});
+            const data = await res.json();
+            this.suppliers = Array.isArray(data) ? data : (data.data ?? []);
+        },
+        async save() {
+            this.saving=true; this.formError='';
+            try {
+                const token = localStorage.getItem('opes_token');
+                const res = await fetch(`/api/v1/companies/${this._cid}/suppliers`,{
+                    method:'POST',
+                    headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json','Accept':'application/json'},
+                    body: JSON.stringify(this.form),
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || Object.values(data.errors??{}).flat().join(' | '));
+                this.form = { name:'',niu:'',email:'',phone:'',address:'',payment_terms_days:30 };
+                this.showForm = false;
+                await this.load();
+            } catch(e) { this.formError = e.message; }
+            finally { this.saving = false; }
+        },
+        fmtXaf(v) { return Number(v).toLocaleString('fr-CM',{minimumFractionDigits:0})+' XAF'; },
+    };
+}
+
+function reportsPanel() {
+    return {
+        tab: 'pl',
+        from: new Date().getFullYear()+'-01-01',
+        to: new Date().toISOString().slice(0,10),
+        asOf: new Date().toISOString().slice(0,10),
+        loading: false,
+        result: null,
+        error: '',
+        _cid: null,
+
+        async init() {
+            const token = localStorage.getItem('opes_token');
+            const me = await (await fetch('/api/v1/auth/me',{headers:{'Authorization':'Bearer '+token,'Accept':'application/json'}})).json();
+            this._cid = me.company?.id;
+        },
+        async load() {
+            if (!this._cid) return;
+            this.loading=true; this.error=''; this.result=null;
+            try {
+                const token = localStorage.getItem('opes_token');
+                let url;
+                if (this.tab==='pl')  url = `/api/v1/companies/${this._cid}/reports/pl?from=${this.from}&to=${this.to}`;
+                if (this.tab==='bs')  url = `/api/v1/companies/${this._cid}/reports/balance-sheet?as_of=${this.asOf}`;
+                if (this.tab==='cf')  url = `/api/v1/companies/${this._cid}/reports/cash-flow?from=${this.from}&to=${this.to}`;
+                if (this.tab==='ar')  url = `/api/v1/companies/${this._cid}/reports/aged-receivables`;
+                const res = await fetch(url,{headers:{'Authorization':'Bearer '+token,'Accept':'application/json'}});
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || 'Erreur');
+                this.result = data;
+            } catch(e) { this.error = e.message; }
+            finally { this.loading = false; }
+        },
+        fmtXaf(v) { if (v===null||v===undefined) return '— XAF'; return Number(v).toLocaleString('fr-CM',{minimumFractionDigits:0})+' XAF'; },
+    };
+}
+
+function recurringPanel() {
+    return {
+        items: [],
+        showForm: false,
+        saving: false,
+        running: false,
+        formError: '',
+        runMsg: '',
+        form: { name:'', frequency:'MONTHLY', amount_xaf:'', next_run_date:'', debit_account:'', credit_account:'', memo:'', end_date:'' },
+        _cid: null,
+
+        async init() {
+            const token = localStorage.getItem('opes_token');
+            const me = await (await fetch('/api/v1/auth/me',{headers:{'Authorization':'Bearer '+token,'Accept':'application/json'}})).json();
+            this._cid = me.company?.id;
+            await this.load();
+        },
+        async load() {
+            if (!this._cid) return;
+            const token = localStorage.getItem('opes_token');
+            const res = await fetch(`/api/v1/companies/${this._cid}/recurring`,{headers:{'Authorization':'Bearer '+token,'Accept':'application/json'}});
+            const data = await res.json();
+            this.items = Array.isArray(data) ? data : (data.data ?? []);
+        },
+        async save() {
+            this.saving=true; this.formError='';
+            try {
+                const token = localStorage.getItem('opes_token');
+                const res = await fetch(`/api/v1/companies/${this._cid}/recurring`,{
+                    method:'POST',
+                    headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json','Accept':'application/json'},
+                    body: JSON.stringify({...this.form, amount_xaf: Number(this.form.amount_xaf)}),
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || Object.values(data.errors??{}).flat().join(' | '));
+                this.form = { name:'',frequency:'MONTHLY',amount_xaf:'',next_run_date:'',debit_account:'',credit_account:'',memo:'',end_date:'' };
+                this.showForm = false;
+                await this.load();
+            } catch(e) { this.formError = e.message; }
+            finally { this.saving = false; }
+        },
+        async runAll() {
+            this.running=true; this.runMsg='';
+            try {
+                const token = localStorage.getItem('opes_token');
+                const res = await fetch(`/api/v1/companies/${this._cid}/recurring/run-now`,{
+                    method:'POST',
+                    headers:{'Authorization':'Bearer '+token,'Accept':'application/json'},
+                });
+                const data = await res.json();
+                this.runMsg = data.message || (document.documentElement.lang==='fr'?'Transactions exécutées.':'Transactions processed.');
+                await this.load();
+            } catch(e) {}
+            finally { this.running = false; }
+        },
+        fmtXaf(v) { return Number(v).toLocaleString('fr-CM',{minimumFractionDigits:0})+' XAF'; },
+    };
+}
+
+function payrollPanel() {
+    return {
+        tab: 'employees',
+        employees: [],
+        periods: [],
+        showEmpForm: false,
+        empSaving: false,
+        empError: '',
+        empForm: { name:'', position:'', gross_salary_xaf:'', hire_date:'', cnps_number:'' },
+        periodForm: { period_month: new Date().getMonth()+1, period_year: new Date().getFullYear() },
+        periodCalc: false,
+        periodError: '',
+        _cid: null,
+
+        async init() {
+            const token = localStorage.getItem('opes_token');
+            const me = await (await fetch('/api/v1/auth/me',{headers:{'Authorization':'Bearer '+token,'Accept':'application/json'}})).json();
+            this._cid = me.company?.id;
+            await this.loadEmployees();
+            await this.loadPeriods();
+        },
+        async loadEmployees() {
+            if (!this._cid) return;
+            const token = localStorage.getItem('opes_token');
+            const res = await fetch(`/api/v1/companies/${this._cid}/payroll/employees`,{headers:{'Authorization':'Bearer '+token,'Accept':'application/json'}});
+            const data = await res.json();
+            this.employees = Array.isArray(data) ? data : (data.data ?? []);
+        },
+        async saveEmployee() {
+            this.empSaving=true; this.empError='';
+            try {
+                const token = localStorage.getItem('opes_token');
+                const res = await fetch(`/api/v1/companies/${this._cid}/payroll/employees`,{
+                    method:'POST',
+                    headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json','Accept':'application/json'},
+                    body: JSON.stringify({...this.empForm, gross_salary_xaf: Number(this.empForm.gross_salary_xaf)}),
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || Object.values(data.errors??{}).flat().join(' | '));
+                this.empForm = { name:'',position:'',gross_salary_xaf:'',hire_date:'',cnps_number:'' };
+                this.showEmpForm = false;
+                await this.loadEmployees();
+            } catch(e) { this.empError = e.message; }
+            finally { this.empSaving = false; }
+        },
+        async loadPeriods() {
+            if (!this._cid) return;
+            const token = localStorage.getItem('opes_token');
+            const res = await fetch(`/api/v1/companies/${this._cid}/payroll/periods`,{headers:{'Authorization':'Bearer '+token,'Accept':'application/json'}});
+            const data = await res.json();
+            this.periods = Array.isArray(data) ? data : (data.data ?? []);
+        },
+        async calculatePeriod() {
+            this.periodCalc=true; this.periodError='';
+            try {
+                const token = localStorage.getItem('opes_token');
+                const res = await fetch(`/api/v1/companies/${this._cid}/payroll/periods`,{
+                    method:'POST',
+                    headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json','Accept':'application/json'},
+                    body: JSON.stringify({ period_month: Number(this.periodForm.period_month), period_year: Number(this.periodForm.period_year) }),
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || Object.values(data.errors??{}).flat().join(' | '));
+                await this.loadPeriods();
+            } catch(e) { this.periodError = e.message; }
+            finally { this.periodCalc = false; }
+        },
+        async postPeriod(period) {
+            try {
+                const token = localStorage.getItem('opes_token');
+                const res = await fetch(`/api/v1/companies/${this._cid}/payroll/periods/${period.id}/post`,{
+                    method:'POST',
+                    headers:{'Authorization':'Bearer '+token,'Accept':'application/json'},
+                });
+                if (!res.ok) { const d=await res.json(); throw new Error(d.message||'Post failed'); }
+                await this.loadPeriods();
+            } catch(e) { this.periodError = e.message; }
+        },
+        fmtXaf(v) { if (v===null||v===undefined) return '—'; return Number(v).toLocaleString('fr-CM',{minimumFractionDigits:0})+' XAF'; },
     };
 }
 

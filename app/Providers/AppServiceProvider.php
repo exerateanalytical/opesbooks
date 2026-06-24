@@ -3,11 +3,14 @@
 namespace App\Providers;
 
 use App\Services\CameroonTaxEngine;
+use App\Services\CnpsIrppService;
+use App\Services\FinancialStatementService;
 use App\Services\FiscalGeographyRouter;
 use App\Services\JournalPostingService;
 use App\Services\MomoIngestionService;
 use App\Services\OfflineSyncService;
 use App\Services\ProrataVatService;
+use App\Services\RecurringTransactionService;
 use App\Services\TelecomReversalService;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
@@ -32,6 +35,13 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(TelecomReversalService::class, function ($app) {
             return new TelecomReversalService($app->make(JournalPostingService::class));
         });
+
+        $this->app->singleton(RecurringTransactionService::class, function ($app) {
+            return new RecurringTransactionService($app->make(JournalPostingService::class));
+        });
+
+        $this->app->singleton(CnpsIrppService::class);
+        $this->app->singleton(FinancialStatementService::class);
     }
 
     public function boot(): void
