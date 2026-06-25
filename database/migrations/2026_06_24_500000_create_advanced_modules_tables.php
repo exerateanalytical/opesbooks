@@ -64,7 +64,7 @@ return new class extends Migration
             $table->decimal('amount', 15, 2);
             $table->foreignId('journal_entry_id')->nullable()->constrained()->nullOnDelete();
             $table->timestamps();
-            $table->unique(['fixed_asset_id', 'period_month', 'period_year']);
+            $table->unique(['fixed_asset_id', 'period_month', 'period_year'], 'depr_asset_period_unique');
         });
 
         // ── Bank Reconciliation ───────────────────────────────────────────────

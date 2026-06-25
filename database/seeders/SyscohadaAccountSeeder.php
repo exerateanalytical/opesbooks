@@ -4,13 +4,18 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Carbon\Carbon;
 
 class SyscohadaAccountSeeder extends Seeder
 {
     public function run(): void
     {
+        // FK-safe reset: MySQL refuses TRUNCATE on a table referenced by a
+        // foreign key (journal_lines), so disable checks around it.
+        Schema::disableForeignKeyConstraints();
         DB::table('syscohada_accounts')->truncate();
+        Schema::enableForeignKeyConstraints();
 
         $now      = Carbon::now();
         $accounts = [
