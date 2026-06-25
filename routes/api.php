@@ -92,6 +92,17 @@ Route::prefix('v1')->name('v1.')->group(function () {
     Route::middleware(['auth:sanctum', \App\Http\Middleware\RequireActiveSubscription::class])
         ->group(function () {
 
+        // CRM (sales pipeline)
+        Route::prefix('crm')->name('crm.')->group(function () {
+            Route::get('leads',                 [\App\Http\Controllers\Api\V1\CrmController::class, 'leads'])->name('leads');
+            Route::post('leads',                [\App\Http\Controllers\Api\V1\CrmController::class, 'storeLead'])->name('leads.store');
+            Route::put('leads/{lead}',          [\App\Http\Controllers\Api\V1\CrmController::class, 'updateLead'])->name('leads.update');
+            Route::patch('leads/{lead}/stage',  [\App\Http\Controllers\Api\V1\CrmController::class, 'updateStage'])->name('leads.stage');
+            Route::post('leads/{lead}/activities', [\App\Http\Controllers\Api\V1\CrmController::class, 'storeActivity'])->name('leads.activities');
+            Route::get('activities',            [\App\Http\Controllers\Api\V1\CrmController::class, 'activities'])->name('activities');
+            Route::get('stats',                 [\App\Http\Controllers\Api\V1\CrmController::class, 'stats'])->name('stats');
+        });
+
         // Auth utilities
         Route::prefix('auth')->name('auth.')->group(function () {
             Route::post('logout',    [AuthController::class, 'logout'])->name('logout');

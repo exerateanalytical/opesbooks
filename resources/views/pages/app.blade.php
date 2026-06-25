@@ -415,6 +415,10 @@
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                 <span x-text="lang==='FR' ? 'Clients' : 'Customers'"></span>
             </button>
+            <button @click="setPage('crm')" :class="page==='crm' ? 'nav-item active' : 'nav-item'">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><polyline points="16 7 22 7 22 13" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg>
+                <span>CRM</span>
+            </button>
             <button @click="setPage('suppliers')" :class="page==='suppliers' ? 'nav-item active' : 'nav-item'" x-show="user?.role === 'OWNER' || user?.role === 'ACCOUNTANT'">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"/></svg>
                 <span x-text="lang==='FR' ? 'Fournisseurs' : 'Suppliers'"></span>
@@ -3510,6 +3514,203 @@
             </div>
         </div>
 
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!-- CRM PAGE                                                   -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <div x-show="page==='crm'" x-cloak class="p-6 space-y-5 float-in" x-data="crmPanel()" x-init="init()">
+
+            <!-- Header + view tabs -->
+            <div class="flex flex-wrap items-end justify-between gap-3">
+                <div>
+                    <h2 class="text-2xl font-black text-white uppercase tracking-wide">CRM</h2>
+                    <p class="text-xs text-slate-400 mt-1" x-text="lang==='FR' ? 'Pipeline commercial — du lead à la facture' : 'Sales pipeline — lead to invoice'"></p>
+                </div>
+                <button @click="openAdd()" class="glass-btn-amber px-4 py-2 rounded-xl text-xs uppercase tracking-widest flex items-center gap-2">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    <span x-text="lang==='FR' ? 'Ajouter un Lead' : 'Add Lead'"></span>
+                </button>
+            </div>
+
+            <!-- KPI stats -->
+            <div class="grid grid-cols-2 xl:grid-cols-4 gap-4">
+                <div class="glass-card rounded-2xl p-4">
+                    <div class="text-[10px] font-black uppercase tracking-widest text-slate-500" x-text="lang==='FR'?'Leads actifs':'Active leads'"></div>
+                    <div class="text-2xl font-black text-white mt-1" x-text="stats.active_leads ?? 0"></div>
+                </div>
+                <div class="glass-card rounded-2xl p-4">
+                    <div class="text-[10px] font-black uppercase tracking-widest text-slate-500" x-text="lang==='FR'?'Valeur pipeline':'Pipeline value'"></div>
+                    <div class="text-2xl font-black text-amber-400 mt-1" x-text="fmtXaf(stats.pipeline_value ?? 0)"></div>
+                </div>
+                <div class="glass-card rounded-2xl p-4">
+                    <div class="text-[10px] font-black uppercase tracking-widest text-slate-500" x-text="lang==='FR'?'Taux de conversion':'Conversion rate'"></div>
+                    <div class="text-2xl font-black text-emerald-400 mt-1" x-text="(stats.conversion_rate ?? 0) + ' %'"></div>
+                </div>
+                <div class="glass-card rounded-2xl p-4">
+                    <div class="text-[10px] font-black uppercase tracking-widest text-slate-500" x-text="lang==='FR'?'Gagnés ce mois':'Won this month'"></div>
+                    <div class="text-2xl font-black text-white mt-1"><span x-text="stats.won_this_month ?? 0"></span>
+                        <span class="text-xs text-slate-400" x-text="'· ' + fmtXaf(stats.won_value_month ?? 0)"></span></div>
+                </div>
+            </div>
+
+            <!-- View switcher -->
+            <div class="flex gap-1">
+                <template x-for="v in [['pipeline','Pipeline'],['list', lang==='FR'?'Liste':'List'],['activities', lang==='FR'?'Activités':'Activities']]" :key="v[0]">
+                    <button @click="view=v[0]"
+                            class="px-4 py-2 rounded-xl text-[11px] font-black uppercase tracking-wider transition-all"
+                            :style="view===v[0] ? 'background:rgba(201,155,14,0.15);color:#C99B0E;border:1px solid rgba(201,155,14,0.4)' : 'background:rgba(255,255,255,0.04);color:rgba(148,163,184,0.85);border:1px solid rgba(255,255,255,0.1)'"
+                            x-text="v[1]"></button>
+                </template>
+            </div>
+
+            <!-- PIPELINE (kanban) -->
+            <div x-show="view==='pipeline'" class="overflow-x-auto pb-2">
+                <div class="flex gap-3 min-w-max">
+                    <template x-for="col in columns" :key="col.key">
+                        <div class="w-64 shrink-0">
+                            <div class="flex items-center justify-between px-1 mb-2">
+                                <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest" :style="col.badge" x-text="col.label"></span>
+                                <span class="text-[10px] font-black text-slate-500" x-text="leadsByStatus(col.key).length"></span>
+                            </div>
+                            <div class="space-y-2 min-h-[80px]">
+                                <template x-for="lead in leadsByStatus(col.key)" :key="lead.id">
+                                    <div class="glass-card rounded-xl p-3 space-y-2">
+                                        <div class="font-black text-white text-sm truncate" x-text="lead.contact_name"></div>
+                                        <div class="text-[11px] text-slate-400 truncate" x-text="lead.company_name || '—'"></div>
+                                        <div class="text-amber-400 font-black text-sm" x-text="fmtXaf(lead.estimated_value)"></div>
+                                        <div class="text-[9px] text-slate-500" x-text="daysInStage(lead)"></div>
+                                        <div class="flex items-center gap-1.5 pt-1">
+                                            <select @change="moveStage(lead, $event.target.value); $event.target.value=''"
+                                                    class="input-field text-[10px] py-1 px-2 flex-1">
+                                                <option value="" x-text="lang==='FR'?'Déplacer…':'Move…'"></option>
+                                                <template x-for="c in columns" :key="c.key">
+                                                    <option :value="c.key" x-show="c.key!==lead.status" x-text="c.label"></option>
+                                                </template>
+                                            </select>
+                                            <button @click="openActivity(lead)" :title="lang==='FR'?'Activité':'Activity'" class="p-1.5 rounded-lg text-slate-400 hover:text-white" style="background:rgba(255,255,255,0.05)">
+                                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                                            </button>
+                                            <a :href="waLink(lead)" target="_blank" x-show="lead.contact_phone" title="WhatsApp" class="p-1.5 rounded-lg text-emerald-400 hover:text-emerald-300" style="background:rgba(16,185,129,0.1)">
+                                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </template>
+                                <div x-show="leadsByStatus(col.key).length===0" class="flex flex-col items-center gap-1.5 py-6 opacity-30">
+                                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="3 3"><circle cx="12" cy="12" r="10"/></svg>
+                                    <span class="text-[10px] uppercase tracking-widest" x-text="lang==='FR'?'Aucun lead':'No leads'"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+            <!-- LIST -->
+            <div x-show="view==='list'" class="glass-card rounded-2xl overflow-hidden">
+                <div class="flex flex-wrap gap-2 p-3 border-b" style="border-color:rgba(255,255,255,0.08)">
+                    <input x-model="search" @input.debounce.400ms="load()" class="input-field text-xs flex-1 min-w-[160px]" :placeholder="lang==='FR'?'Rechercher…':'Search…'">
+                    <select x-model="filterStatus" @change="load()" class="input-field text-xs">
+                        <option value="" x-text="lang==='FR'?'Tous statuts':'All statuses'"></option>
+                        <template x-for="c in columns" :key="c.key"><option :value="c.key" x-text="c.label"></option></template>
+                    </select>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead><tr class="text-[9px] font-black uppercase tracking-widest text-slate-500" style="border-bottom:1px solid rgba(255,255,255,0.08)">
+                            <th class="py-2.5 px-4">Contact</th><th class="py-2.5 px-3" x-text="lang==='FR'?'Entreprise':'Company'"></th>
+                            <th class="py-2.5 px-3" x-text="lang==='FR'?'Valeur':'Value'"></th><th class="py-2.5 px-3">Source</th>
+                            <th class="py-2.5 px-3" x-text="lang==='FR'?'Statut':'Status'"></th><th class="py-2.5 px-3"></th>
+                        </tr></thead>
+                        <tbody>
+                            <template x-for="lead in leads" :key="lead.id">
+                                <tr class="glass-row">
+                                    <td class="py-2.5 px-4 font-bold text-white" x-text="lead.contact_name"></td>
+                                    <td class="py-2.5 px-3 text-slate-400" x-text="lead.company_name || '—'"></td>
+                                    <td class="py-2.5 px-3 text-amber-400 font-black" x-text="fmtXaf(lead.estimated_value)"></td>
+                                    <td class="py-2.5 px-3 text-slate-400" x-text="lead.source"></td>
+                                    <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase" :style="statusBadge(lead.status)" x-text="statusLabel(lead.status)"></span></td>
+                                    <td class="py-2.5 px-3 text-right">
+                                        <a :href="waLink(lead)" target="_blank" x-show="lead.contact_phone" class="text-emerald-400 text-[10px] font-black uppercase mr-2">WhatsApp</a>
+                                        <button @click="openActivity(lead)" class="text-slate-400 hover:text-white text-[10px] font-black uppercase" x-text="lang==='FR'?'+ Activité':'+ Activity'"></button>
+                                    </td>
+                                </tr>
+                            </template>
+                            <tr x-show="leads.length===0"><td colspan="6" class="text-center py-10 opacity-40 text-xs" x-text="lang==='FR'?'Aucun lead.':'No leads.'"></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ACTIVITIES -->
+            <div x-show="view==='activities'" class="glass-card rounded-2xl p-5 space-y-3">
+                <template x-for="a in activities" :key="a.id">
+                    <div class="flex items-start gap-3 pb-3 border-b" style="border-color:rgba(255,255,255,0.06)">
+                        <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 text-amber-400" style="background:rgba(201,155,14,0.1)">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="text-xs text-slate-200" x-text="a.description"></div>
+                            <div class="text-[10px] text-slate-500 mt-0.5">
+                                <span class="text-amber-400 font-black uppercase" x-text="a.type"></span> ·
+                                <span x-text="a.lead?.contact_name"></span> ·
+                                <span x-text="a.user?.name"></span> ·
+                                <span x-text="fmtDate(a.created_at)"></span>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+                <div x-show="activities.length===0" class="text-center py-10 opacity-40 text-xs" x-text="lang==='FR'?'Aucune activité.':'No activities.'"></div>
+            </div>
+
+            <!-- Add Lead modal -->
+            <div x-show="showAdd" x-cloak class="fixed inset-0 z-[80] flex items-center justify-center p-4" style="background:rgba(5,13,26,0.7);backdrop-filter:blur(6px)" @click.self="showAdd=false">
+                <div class="glass-card rounded-2xl p-6 w-full max-w-md space-y-3">
+                    <h3 class="text-sm font-black text-white uppercase tracking-widest" x-text="lang==='FR'?'Nouveau Lead':'New Lead'"></h3>
+                    <div x-show="addError" x-cloak class="px-3 py-2 rounded-lg text-xs font-bold" style="background:rgba(244,63,94,0.12);color:rgb(252,165,165)" x-text="addError"></div>
+                    <input x-model="addForm.contact_name" class="input-field" :placeholder="(lang==='FR'?'Nom du contact':'Contact name')+' *'">
+                    <div class="grid grid-cols-2 gap-2">
+                        <input x-model="addForm.contact_phone" class="input-field" :placeholder="lang==='FR'?'Téléphone':'Phone'">
+                        <input x-model="addForm.contact_email" class="input-field" placeholder="Email">
+                    </div>
+                    <input x-model="addForm.company_name" class="input-field" :placeholder="lang==='FR'?'Entreprise':'Company'">
+                    <div class="grid grid-cols-2 gap-2">
+                        <select x-model="addForm.source" class="input-field">
+                            <option value="referral" x-text="lang==='FR'?'Recommandation':'Referral'"></option>
+                            <option value="cold_call" x-text="lang==='FR'?'Appel à froid':'Cold call'"></option>
+                            <option value="walk_in" x-text="lang==='FR'?'Visite':'Walk-in'"></option>
+                            <option value="social_media" x-text="lang==='FR'?'Réseaux sociaux':'Social media'"></option>
+                            <option value="other" x-text="lang==='FR'?'Autre':'Other'"></option>
+                        </select>
+                        <input x-model="addForm.estimated_value" type="number" class="input-field" :placeholder="lang==='FR'?'Valeur (XAF)':'Value (XAF)'">
+                    </div>
+                    <textarea x-model="addForm.notes" rows="2" class="input-field" :placeholder="lang==='FR'?'Notes':'Notes'"></textarea>
+                    <div class="flex gap-2 pt-1">
+                        <button @click="saveLead()" :disabled="addSaving" class="glass-btn-amber px-4 py-2 rounded-xl text-xs uppercase tracking-widest flex-1 disabled:opacity-50" x-text="addSaving?'…':(lang==='FR'?'Créer':'Create')"></button>
+                        <button @click="showAdd=false" class="glass-btn-dark px-4 py-2 rounded-xl text-xs uppercase tracking-widest" x-text="lang==='FR'?'Annuler':'Cancel'"></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity modal -->
+            <div x-show="showActivity" x-cloak class="fixed inset-0 z-[80] flex items-center justify-center p-4" style="background:rgba(5,13,26,0.7);backdrop-filter:blur(6px)" @click.self="showActivity=false">
+                <div class="glass-card rounded-2xl p-6 w-full max-w-md space-y-3">
+                    <h3 class="text-sm font-black text-white uppercase tracking-widest"><span x-text="lang==='FR'?'Activité':'Activity'"></span> · <span class="text-amber-400" x-text="activityLead?.contact_name"></span></h3>
+                    <select x-model="activityForm.type" class="input-field">
+                        <option value="call" x-text="lang==='FR'?'Appel':'Call'"></option>
+                        <option value="meeting" x-text="lang==='FR'?'Réunion':'Meeting'"></option>
+                        <option value="email">Email</option>
+                        <option value="whatsapp">WhatsApp</option>
+                        <option value="note" x-text="lang==='FR'?'Note':'Note'"></option>
+                    </select>
+                    <textarea x-model="activityForm.description" rows="3" class="input-field" :placeholder="lang==='FR'?'Description':'Description'"></textarea>
+                    <div class="flex gap-2">
+                        <button @click="saveActivity()" :disabled="activitySaving" class="glass-btn-amber px-4 py-2 rounded-xl text-xs uppercase tracking-widest flex-1 disabled:opacity-50" x-text="activitySaving?'…':(lang==='FR'?'Enregistrer':'Save')"></button>
+                        <button @click="showActivity=false" class="glass-btn-dark px-4 py-2 rounded-xl text-xs uppercase tracking-widest" x-text="lang==='FR'?'Annuler':'Cancel'"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </main>
 </div>
 
@@ -4450,6 +4651,82 @@ function customersPanel() {
             finally { this.saving = false; }
         },
         fmtXaf(v) { return Number(v).toLocaleString('fr-CM',{minimumFractionDigits:0})+' XAF'; },
+    };
+}
+
+function crmPanel() {
+    return {
+        view: 'pipeline',
+        leads: [], activities: [], stats: {},
+        search: '', filterStatus: '',
+        showAdd: false, addSaving: false, addError: '',
+        addForm: { contact_name:'', contact_phone:'', contact_email:'', company_name:'', source:'other', estimated_value:'', notes:'' },
+        showActivity: false, activitySaving: false, activityLead: null,
+        activityForm: { type:'note', description:'' },
+        columns: [
+            { key:'new',           label:'Nouveau',     badge:'background:rgba(59,130,246,0.18);color:rgb(147,197,253);border:1px solid rgba(59,130,246,0.35)' },
+            { key:'contacted',     label:'Contacté',    badge:'background:rgba(234,179,8,0.18);color:rgb(253,224,71);border:1px solid rgba(234,179,8,0.35)' },
+            { key:'qualified',     label:'Qualifié',    badge:'background:rgba(168,85,247,0.18);color:rgb(216,180,254);border:1px solid rgba(168,85,247,0.35)' },
+            { key:'proposal_sent', label:'Devis envoyé',badge:'background:rgba(249,115,22,0.18);color:rgb(253,186,116);border:1px solid rgba(249,115,22,0.35)' },
+            { key:'won',           label:'Gagné',       badge:'background:rgba(16,185,129,0.18);color:rgb(110,231,183);border:1px solid rgba(16,185,129,0.35)' },
+            { key:'lost',          label:'Perdu',       badge:'background:rgba(244,63,94,0.18);color:rgb(252,165,165);border:1px solid rgba(244,63,94,0.35)' },
+        ],
+        _lang() { return localStorage.getItem('opes_lang') || 'FR'; },
+        _company() { try { return JSON.parse(localStorage.getItem('opes_company') || '{}'); } catch(e) { return {}; } },
+        _tok() { return localStorage.getItem('opes_token'); },
+        async _get(path) { const r = await fetch('/api/v1/'+path, { headers:{'Authorization':'Bearer '+this._tok(),'Accept':'application/json'} }); return r.json(); },
+        async _send(path, method, body) {
+            const r = await fetch('/api/v1/'+path, { method, headers:{'Authorization':'Bearer '+this._tok(),'Content-Type':'application/json','Accept':'application/json'}, body: JSON.stringify(body) });
+            const d = await r.json();
+            if (!r.ok) throw new Error(d.message || Object.values(d.errors ?? {}).flat().join(' | '));
+            return d;
+        },
+        async init() { await this.load(); this.loadStats(); this.loadActivities(); },
+        async load() {
+            const qs = new URLSearchParams();
+            if (this.search) qs.set('search', this.search);
+            if (this.filterStatus) qs.set('status', this.filterStatus);
+            const data = await this._get('crm/leads' + (qs.toString() ? '?'+qs.toString() : ''));
+            this.leads = Array.isArray(data) ? data : [];
+        },
+        async loadStats() { this.stats = (await this._get('crm/stats')) || {}; },
+        async loadActivities() { const d = await this._get('crm/activities'); this.activities = Array.isArray(d) ? d : []; },
+        leadsByStatus(s) { return this.leads.filter(l => l.status === s); },
+        statusLabel(s) { return (this.columns.find(c => c.key === s) || {}).label || s; },
+        statusBadge(s) { return (this.columns.find(c => c.key === s) || {}).badge || ''; },
+        daysInStage(lead) {
+            const d = lead.stage_changed_at || lead.created_at; if (!d) return '';
+            const days = Math.floor((Date.now() - new Date(d).getTime()) / 86400000);
+            return this._lang()==='FR' ? `depuis ${days} jour${days!==1?'s':''}` : `${days}d in stage`;
+        },
+        waLink(lead) {
+            const phone = (lead.contact_phone || '').replace(/[^0-9]/g, '');
+            const msg = `Bonjour ${lead.contact_name}, je reviens vers vous concernant notre proposition d'un montant de ${this.fmtXaf(lead.estimated_value)}. Êtes-vous disponible pour en discuter? — ${this._company()?.name || 'Opes Books'}`;
+            return `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+        },
+        openAdd() { this.addForm = { contact_name:'', contact_phone:'', contact_email:'', company_name:'', source:'other', estimated_value:'', notes:'' }; this.addError=''; this.showAdd=true; },
+        async saveLead() {
+            this.addError = '';
+            if (!this.addForm.contact_name) { this.addError = this._lang()==='FR' ? 'Nom du contact requis.' : 'Contact name required.'; return; }
+            this.addSaving = true;
+            try { await this._send('crm/leads', 'POST', this.addForm); this.showAdd=false; await this.load(); this.loadStats(); }
+            catch(e) { this.addError = e.message; }
+            finally { this.addSaving = false; }
+        },
+        async moveStage(lead, status) {
+            if (!status) return;
+            try { await this._send(`crm/leads/${lead.id}/stage`, 'PATCH', { status }); await this.load(); this.loadStats(); this.loadActivities(); } catch(e) {}
+        },
+        openActivity(lead) { this.activityLead = lead; this.activityForm = { type:'note', description:'' }; this.showActivity = true; },
+        async saveActivity() {
+            if (!this.activityForm.description) return;
+            this.activitySaving = true;
+            try { await this._send(`crm/leads/${this.activityLead.id}/activities`, 'POST', this.activityForm); this.showActivity=false; this.loadActivities(); }
+            catch(e) {}
+            finally { this.activitySaving = false; }
+        },
+        fmtXaf(v) { return Number(v || 0).toLocaleString('fr-CM', { minimumFractionDigits:0 }) + ' XAF'; },
+        fmtDate(d) { return d ? new Date(d).toLocaleDateString('fr-CM', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' }) : ''; },
     };
 }
 
