@@ -10,7 +10,7 @@
         .page { padding: 28px 32px; }
         .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; border-bottom: 3px solid #0A192F; padding-bottom: 14px; }
         .brand-name { font-size: 18pt; font-weight: 900; color: #0A192F; }
-        .brand-name span { color: #F59E0B; }
+        .brand-name span { color: #C99B0E; }
         .brand-meta { font-size: 7.5pt; color: #64748b; margin-top: 3px; }
         .doc-label { text-align: right; }
         .doc-label h1 { font-size: 13pt; font-weight: 900; color: #0A192F; text-transform: uppercase; letter-spacing: 1px; }
@@ -35,7 +35,7 @@
         .summary-item .value { font-size: 11pt; font-weight: 900; margin-top: 3px; }
         .total-box { background: #0A192F; color: #fff; border-radius: 6px; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
         .total-box .label { font-size: 9pt; opacity: 0.7; }
-        .total-box .value { font-size: 14pt; font-weight: 900; color: #F59E0B; }
+        .total-box .value { font-size: 14pt; font-weight: 900; color: #C99B0E; }
         .rates { font-size: 7pt; color: #64748b; margin-bottom: 14px; }
         .sig-row { display: flex; justify-content: space-between; margin-top: 24px; font-size: 8pt; }
         .sig-box { text-align: center; width: 45%; border-top: 1px solid #0A192F; padding-top: 6px; }

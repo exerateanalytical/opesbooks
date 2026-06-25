@@ -54,7 +54,7 @@
 
         <a href="/app"
            class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-black uppercase tracking-widest transition-all active:scale-98"
-           style="background:linear-gradient(135deg,rgba(245,158,11,.95),rgba(217,119,6,.95));border:1px solid rgba(245,158,11,.5);color:#0a192f;box-shadow:0 4px 20px rgba(245,158,11,.3)">
+           style="background:linear-gradient(135deg,rgba(245,158,11,.95),rgba(160,124,8,.95));border:1px solid rgba(245,158,11,.5);color:#0a192f;box-shadow:0 4px 20px rgba(245,158,11,.3)">
             ← Retour au Tableau de Bord
         </a>
 

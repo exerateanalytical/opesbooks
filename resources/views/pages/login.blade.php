@@ -57,7 +57,7 @@
         }
         select.glass-input option { background: #0a192f; }
         .glass-btn-amber {
-            background: linear-gradient(135deg, rgba(201,155,14,0.95) 0%, rgba(217,119,6,0.95) 100%);
+            background: linear-gradient(135deg, rgba(201,155,14,0.95) 0%, rgba(160,124,8,0.95) 100%);
             border: 1px solid rgba(201,155,14,0.5);
             box-shadow: 0 4px 20px rgba(201,155,14,0.3), 0 1px 0 rgba(255,255,255,0.2) inset;
             color: #0a192f;

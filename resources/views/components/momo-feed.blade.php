@@ -11,7 +11,7 @@
          style="border-color:rgba(255,255,255,0.08);background:rgba(255,255,255,0.04)">
         <div class="flex items-center gap-3">
             <div class="w-9 h-9 rounded-xl flex items-center justify-center text-[9px] font-black text-slate-950"
-                 style="background:linear-gradient(135deg,rgba(245,158,11,0.95),rgba(217,119,6,0.95));box-shadow:0 4px 14px rgba(245,158,11,0.35)">
+                 style="background:linear-gradient(135deg,rgba(245,158,11,0.95),rgba(160,124,8,0.95));box-shadow:0 4px 14px rgba(245,158,11,0.35)">
                 MOMO
             </div>
             <div>

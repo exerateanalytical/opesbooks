@@ -10,13 +10,13 @@
         .page { padding: 28px 32px; }
         .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; border-bottom: 3px solid #0A192F; padding-bottom: 16px; }
         .brand-name { font-size: 18pt; font-weight: 900; color: #0A192F; }
-        .brand-name span { color: #F59E0B; }
+        .brand-name span { color: #C99B0E; }
         .brand-meta { font-size: 7.5pt; color: #64748b; margin-top: 3px; }
         .doc-label { text-align: right; }
         .doc-label h1 { font-size: 14pt; font-weight: 900; color: #0A192F; text-transform: uppercase; letter-spacing: 1px; }
-        .doc-label .ref { font-size: 9pt; color: #F59E0B; font-weight: 700; margin-top: 4px; }
+        .doc-label .ref { font-size: 9pt; color: #C99B0E; font-weight: 700; margin-top: 4px; }
         .doc-label .sub { font-size: 8pt; color: #64748b; margin-top: 2px; }
-        .validity { background: #fff7ed; border: 1.5px solid #F59E0B; border-radius: 6px; padding: 8px 14px; margin-bottom: 16px; font-size: 8pt; color: #92400e; }
+        .validity { background: #fff7ed; border: 1.5px solid #C99B0E; border-radius: 6px; padding: 8px 14px; margin-bottom: 16px; font-size: 8pt; color: #92400e; }
         .parties { display: flex; justify-content: space-between; gap: 20px; margin-bottom: 20px; }
         .party-box { flex: 1; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 12px; }
         .party-box h3 { font-size: 7pt; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: #94a3b8; margin-bottom: 6px; }
@@ -33,7 +33,7 @@
         .totals { margin-left: auto; width: 260px; }
         .total-row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 8.5pt; }
         .total-row.grand { border-top: 2px solid #0A192F; margin-top: 6px; padding-top: 6px; font-size: 11pt; font-weight: 900; }
-        .notes-box { background: #f8fafc; border-left: 3px solid #F59E0B; padding: 8px 12px; margin-bottom: 16px; font-size: 8pt; color: #475569; }
+        .notes-box { background: #f8fafc; border-left: 3px solid #C99B0E; padding: 8px 12px; margin-bottom: 16px; font-size: 8pt; color: #475569; }
         .cta { background: #0A192F; color: #fff; border-radius: 6px; padding: 12px 16px; margin-top: 16px; font-size: 8pt; }
         .sig-row { display: flex; justify-content: space-between; margin-top: 30px; font-size: 8pt; }
         .sig-box { text-align: center; width: 45%; border-top: 1px solid #0A192F; padding-top: 6px; }

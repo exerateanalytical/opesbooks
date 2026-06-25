@@ -11,7 +11,7 @@
             theme: { extend: {
                 colors: {
                     'opes-navy':  '#0A192F',
-                    'opes-amber': '#F59E0B',
+                    'opes-amber': '#C99B0E',
                     'opes-green': '#10B981',
                 },
                 backdropBlur: {
@@ -137,7 +137,7 @@
 
         /* Glass button — primary */
         .glass-btn {
-            background: linear-gradient(135deg, rgba(245,158,11,0.9) 0%, rgba(217,119,6,0.9) 100%);
+            background: linear-gradient(135deg, rgba(245,158,11,0.9) 0%, rgba(160,124,8,0.9) 100%);
             border: 1px solid rgba(245,158,11,0.5);
             box-shadow: 0 4px 16px rgba(245,158,11,0.25), 0 1px 0 rgba(255,255,255,0.2) inset;
             transition: all 0.2s ease;

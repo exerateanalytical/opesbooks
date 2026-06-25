@@ -17,11 +17,11 @@
         /* Header */
         .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; border-bottom: 3px solid #0A192F; padding-bottom: 16px; }
         .brand-name { font-size: 20pt; font-weight: 900; color: #0A192F; letter-spacing: -1px; }
-        .brand-name span { color: #F59E0B; }
+        .brand-name span { color: #C99B0E; }
         .brand-meta { font-size: 7.5pt; color: #64748b; margin-top: 3px; }
         .invoice-label { text-align: right; }
         .invoice-label h1 { font-size: 18pt; font-weight: 900; color: #0A192F; letter-spacing: 2px; text-transform: uppercase; }
-        .invoice-label .inv-num { font-size: 10pt; font-weight: 700; color: #F59E0B; margin-top: 4px; }
+        .invoice-label .inv-num { font-size: 10pt; font-weight: 700; color: #C99B0E; margin-top: 4px; }
         .invoice-label .inv-date { font-size: 8pt; color: #475569; margin-top: 2px; }
 
         /* Parties */
@@ -30,7 +30,7 @@
         .party-box h3 { font-size: 7pt; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: #94a3b8; margin-bottom: 6px; }
         .party-box .party-name { font-size: 10.5pt; font-weight: 900; color: #0f172a; }
         .party-box .party-detail { font-size: 7.5pt; color: #475569; margin-top: 2px; }
-        .party-box .badge { display: inline-block; background: #0A192F; color: #F59E0B; font-size: 7pt; font-weight: 700; padding: 1px 6px; border-radius: 3px; margin-top: 4px; }
+        .party-box .badge { display: inline-block; background: #0A192F; color: #C99B0E; font-size: 7pt; font-weight: 700; padding: 1px 6px; border-radius: 3px; margin-top: 4px; }
 
         /* Line items table */
         table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
@@ -51,12 +51,12 @@
         .totals-row .amount { font-family: monospace; font-weight: 700; color: #1e293b; }
         .totals-row.grand { background: #0A192F; }
         .totals-row.grand .label { color: #cbd5e1; font-weight: 900; text-transform: uppercase; font-size: 9pt; }
-        .totals-row.grand .amount { color: #F59E0B; font-size: 11pt; }
+        .totals-row.grand .amount { color: #C99B0E; font-size: 11pt; }
 
         /* Crypto / QR footer */
         .crypto-band { background: #0f172a; border-radius: 8px; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
         .crypto-text { flex: 1; }
-        .crypto-text h4 { font-size: 7pt; font-weight: 900; text-transform: uppercase; color: #F59E0B; letter-spacing: 1px; margin-bottom: 4px; }
+        .crypto-text h4 { font-size: 7pt; font-weight: 900; text-transform: uppercase; color: #C99B0E; letter-spacing: 1px; margin-bottom: 4px; }
         .crypto-text .hash { font-family: monospace; font-size: 6.5pt; color: #94a3b8; word-break: break-all; }
         .crypto-text .ts { font-size: 6.5pt; color: #64748b; margin-top: 3px; }
         .qr-wrap { margin-left: 16px; text-align: center; }
@@ -210,7 +210,7 @@
             <h4>{{ $lang === 'FR' ? 'Signature Numérique DGI — Empreinte SHA-256' : 'DGI Digital Signature — SHA-256 Fingerprint' }}</h4>
             <div class="hash">{{ $hash }}</div>
             <div class="ts">{{ $lang === 'FR' ? 'Horodatage ISO :' : 'ISO Timestamp:' }} {{ $isoTimestamp }}</div>
-            <div class="ts" style="margin-top:4px; color:#F59E0B;">
+            <div class="ts" style="margin-top:4px; color:#C99B0E;">
                 {{ $lang === 'FR'
                     ? 'Scannez le QR code pour vérifier l\'authenticité sur opesbooks.cm'
                     : 'Scan QR code to verify authenticity at opesbooks.cm' }}
