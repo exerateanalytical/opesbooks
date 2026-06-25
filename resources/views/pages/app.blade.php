@@ -1487,6 +1487,43 @@
                    x-text="lang==='FR' ? 'Profil fiscal, en-tête de facture, logo' : 'Tax profile, invoice letterhead, logo'"></p>
             </div>
 
+            <!-- Pays & Fiscalité (CEMAC country config — read only) -->
+            <div class="glass-card rounded-2xl p-6 space-y-4" x-show="company?.country_config">
+                <p class="text-[10px] font-black text-amber-400 uppercase tracking-widest"
+                   x-text="lang==='FR' ? 'Pays & Fiscalité' : 'Country & Taxation'"></p>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
+                    <div>
+                        <div class="text-[9px] font-black uppercase tracking-widest text-slate-500 mb-1" x-text="lang==='FR'?'Pays':'Country'"></div>
+                        <div class="text-white font-bold"><span x-text="company?.country_config?.flag"></span> <span x-text="company?.country_config?.country_name_fr"></span></div>
+                    </div>
+                    <div>
+                        <div class="text-[9px] font-black uppercase tracking-widest text-slate-500 mb-1" x-text="lang==='FR'?'Monnaie':'Currency'"></div>
+                        <div class="text-white font-bold" x-text="company?.country_config?.currency_code + ' (Franc CFA)'"></div>
+                    </div>
+                    <div>
+                        <div class="text-[9px] font-black uppercase tracking-widest text-slate-500 mb-1">TVA standard</div>
+                        <div class="text-amber-400 font-black" x-text="company?.country_config?.vat_standard_rate + ' %'"></div>
+                    </div>
+                    <div>
+                        <div class="text-[9px] font-black uppercase tracking-widest text-slate-500 mb-1" x-text="lang==='FR'?'TVA réduite':'Reduced VAT'"></div>
+                        <div class="text-white font-bold" x-text="(company?.country_config?.vat_reduced_rate ?? '—') + (company?.country_config?.vat_reduced_rate ? ' %' : '')"></div>
+                    </div>
+                    <div>
+                        <div class="text-[9px] font-black uppercase tracking-widest text-slate-500 mb-1" x-text="lang==='FR'?'Identifiant fiscal':'Tax ID'"></div>
+                        <div class="text-white font-bold" x-text="company?.country_config?.company_id_label"></div>
+                    </div>
+                    <div class="col-span-2">
+                        <div class="text-[9px] font-black uppercase tracking-widest text-slate-500 mb-1" x-text="lang==='FR'?'Autorité fiscale':'Tax authority'"></div>
+                        <div class="text-white font-bold" x-text="company?.country_config?.regulatory_body_name"></div>
+                    </div>
+                    <div>
+                        <div class="text-[9px] font-black uppercase tracking-widest text-slate-500 mb-1" x-text="lang==='FR'?'Déclaration':'Filing'"></div>
+                        <div class="text-white font-bold" x-text="company?.country_config?.dsf_equivalent_name"></div>
+                    </div>
+                </div>
+                <p class="text-[10px] text-slate-500" x-text="lang==='FR' ? 'Le pays est défini à l\'inscription. Contactez le support pour le modifier.' : 'Country is set at sign-up. Contact support to change it.'"></p>
+            </div>
+
             <!-- Logo upload -->
             <div class="glass-card rounded-2xl p-6 space-y-4">
                 <p class="text-[10px] font-black text-amber-400 uppercase tracking-widest"

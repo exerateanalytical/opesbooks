@@ -18,6 +18,7 @@ class Company extends Model
         'rccm',
         'tax_regime',
         'tax_center',
+        'country_code',
         'vat_prorata_coefficient',
         'subscription_status',
         'phone',
@@ -47,6 +48,29 @@ class Company extends Model
         return $this->belongsToMany(User::class, 'company_user')
             ->withPivot('role', 'is_default')
             ->withTimestamps();
+    }
+
+    /** CEMAC country fiscal configuration. */
+    public function countryConfig()
+    {
+        return $this->belongsTo(CountryConfig::class, 'country_code', 'country_code');
+    }
+
+    /** Standard VAT rate for this company's country (default Cameroon 19.25). */
+    public function taxRate(): float
+    {
+        return (float) ($this->countryConfig?->vat_standard_rate ?? 19.25);
+    }
+
+    public function currencySymbol(): string
+    {
+        return $this->countryConfig?->currency_code ?? 'XAF';
+    }
+
+    /** Fiscal ID label (NIU / NIF) per country. */
+    public function companyIdLabel(): string
+    {
+        return $this->countryConfig?->company_id_label ?? 'NIU';
     }
 
     public function journalEntries()

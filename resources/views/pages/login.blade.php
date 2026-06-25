@@ -257,6 +257,14 @@
 
                     <input type="text" x-model="regForm.company_name" required
                            class="glass-input" placeholder="Nom de l'entreprise">
+                    <select x-model="regForm.company_country_code" required class="glass-input">
+                        <option value="CM">🇨🇲 Cameroun (XAF · TVA 19,25% · NIU)</option>
+                        <option value="GA">🇬🇦 Gabon (XAF · TVA 18% · NIF)</option>
+                        <option value="CG">🇨🇬 Congo (XAF · TVA 18% · NIU)</option>
+                        <option value="TD">🇹🇩 Tchad (XAF · TVA 18% · NIF)</option>
+                        <option value="GQ">🇬🇶 Guinée Équatoriale (XAF · TVA 15% · NIF)</option>
+                        <option value="CF">🇨🇫 Centrafrique (XAF · TVA 19% · NIF)</option>
+                    </select>
                     <div class="grid grid-cols-2 gap-2.5">
                         <input type="text" x-model="regForm.company_niu" required
                                class="glass-input" placeholder="NIU (ex: M08200001)">
@@ -330,7 +338,7 @@
             loginForm: { email: '', password: '' },
             regForm: {
                 company_name: '', company_niu: '', company_rccm: '',
-                company_tax_regime: '', company_tax_center: '',
+                company_tax_regime: '', company_tax_center: '', company_country_code: 'CM',
                 name: '', email: '', password: '', password_confirmation: '',
             },
             async doLogin() {

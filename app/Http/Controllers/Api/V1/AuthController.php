@@ -25,6 +25,7 @@ class AuthController extends Controller
             'company_rccm'           => 'required|string|unique:companies,rccm',
             'company_tax_regime'     => ['required', Rule::in(['REEL', 'SIMPLIFIE', 'LIBERATOIRE'])],
             'company_tax_center'     => 'required|string|max:100',
+            'company_country_code'   => 'nullable|string|size:2|exists:country_configs,country_code',
             'company_phone'          => 'nullable|string|max:20',
             'company_email'          => 'nullable|email|max:255',
             'company_address'        => 'nullable|string|max:500',
@@ -39,6 +40,7 @@ class AuthController extends Controller
             'rccm'                   => strtoupper($data['company_rccm']),
             'tax_regime'             => $data['company_tax_regime'],
             'tax_center'             => $data['company_tax_center'],
+            'country_code'           => strtoupper($data['company_country_code'] ?? 'CM'),
             'phone'                  => $data['company_phone'] ?? null,
             'email'                  => $data['company_email'] ?? null,
             'address'                => $data['company_address'] ?? null,
@@ -92,6 +94,9 @@ class AuthController extends Controller
         if ($company?->logo_path) {
             $companyData['logo_url'] = \Storage::url($company->logo_path);
         }
+        if ($company) {
+            $companyData['country_config'] = $company->countryConfig;
+        }
 
         return response()->json([
             'message' => 'Login successful.',
@@ -123,6 +128,9 @@ class AuthController extends Controller
         $companyData = $company ? $company->toArray() : null;
         if ($company && $company->logo_path) {
             $companyData['logo_url'] = \Storage::url($company->logo_path);
+        }
+        if ($company) {
+            $companyData['country_config'] = $company->countryConfig;
         }
 
         return response()->json([
