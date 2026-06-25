@@ -126,7 +126,7 @@ class AdminInsightsController extends Controller
         ]);
 
         $company->update([
-            'subscription_status'     => 'active',
+            'subscription_status'     => 'ACTIVE',
             'subscription_renewed_at' => now(),
             'next_billing_at'         => $data['period_end'] ?? now()->addMonth(),
         ]);

@@ -90,6 +90,12 @@ Route::prefix('v1')->name('v1.')->group(function () {
             ->get(['id', 'title', 'body', 'type']);
     })->name('announcements');
 
+    // ── Plans & self-service upgrade (auth only) ─────────────────────────────
+    Route::get('plans', [\App\Http\Controllers\Api\V1\PlanPaymentController::class, 'plans'])->name('plans');
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('companies/plan/pay', [\App\Http\Controllers\Api\V1\PlanPaymentController::class, 'pay'])->name('plan.pay');
+    });
+
     // ── Onboarding (auth only; runs during trial before full access) ──────────
     Route::middleware('auth:sanctum')->prefix('onboarding')->name('onboarding.')->group(function () {
         Route::get('status',           [\App\Http\Controllers\Api\V1\OnboardingController::class, 'status'])->name('status');
