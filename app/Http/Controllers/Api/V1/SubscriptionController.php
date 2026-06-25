@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Models\Company;
 use App\Models\Subscription;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -114,6 +115,25 @@ class SubscriptionController extends Controller
             'period_end'          => $active?->period_end?->toDateString(),
             'days_remaining'      => $active?->period_end?->diffInDays(now()),
         ]);
+    }
+
+    // GET /companies/{company}/subscriptions/receipt
+    public function receipt(Company $company): \Illuminate\Http\Response
+    {
+        $subscription = Subscription::where('company_id', $company->id)
+            ->where('status', 'ACTIVE')
+            ->latest()
+            ->firstOrFail();
+
+        $receiptNumber = 'REC-' . $company->id . '-' . $subscription->id . '-' . date('Ymd');
+
+        $pdf = Pdf::loadView('subscriptions.receipt', [
+            'company'       => $company,
+            'subscription'  => $subscription,
+            'receiptNumber' => $receiptNumber,
+        ])->setPaper([0, 0, 300, 500], 'portrait');
+
+        return $pdf->download("recu-abonnement-{$receiptNumber}.pdf");
     }
 
     private function buildAggregatorPayload(Subscription $subscription, Company $company): array

@@ -95,14 +95,16 @@ class PayrollController extends Controller
             'status'       => 'DRAFT',
         ]);
 
-        $totals = ['gross' => 0, 'cnps_e' => 0, 'cnps_r' => 0, 'irpp' => 0, 'cac' => 0, 'net' => 0];
+        $totals = ['gross' => 0, 'cnps_e' => 0, 'cnps_r' => 0, 'irpp' => 0, 'cac' => 0, 'net' => 0, 'tsr' => 0];
 
         foreach ($employees as $emp) {
-            $calc = $this->cnps->calculate($emp->gross_salary_xaf);
+            $calc    = $this->cnps->calculate($emp->gross_salary_xaf);
+            $tsrAmt  = round($emp->gross_salary_xaf * 0.01, 2); // TSR = 1% of gross, employer charge
             PayrollLine::create([
                 'payroll_period_id' => $period->id,
                 'employee_id'       => $emp->id,
                 'gross_salary'      => $emp->gross_salary_xaf,
+                'tsr_employer'      => $tsrAmt,
                 ...$calc,
             ]);
             $totals['gross']  += $emp->gross_salary_xaf;
@@ -111,6 +113,7 @@ class PayrollController extends Controller
             $totals['irpp']   += $calc['irpp'];
             $totals['cac']    += $calc['cac_irpp'];
             $totals['net']    += $calc['net_salary'];
+            $totals['tsr']    += $tsrAmt;
         }
 
         $period->update([
@@ -120,6 +123,7 @@ class PayrollController extends Controller
             'total_irpp'           => $totals['irpp'],
             'total_cac_irpp'       => $totals['cac'],
             'total_net'            => $totals['net'],
+            'total_tsr'            => $totals['tsr'],
         ]);
 
         return response()->json($period->load('lines.employee'), 201);
@@ -149,9 +153,11 @@ class PayrollController extends Controller
         ], [
             ['account_code' => '661100', 'debit' => $period->total_gross, 'credit' => 0],
             ['account_code' => '664000', 'debit' => $period->total_cnps_employer, 'credit' => 0],
+            ['account_code' => '664100', 'debit' => $period->total_tsr ?? 0, 'credit' => 0],
             ['account_code' => '421100', 'debit' => 0, 'credit' => $period->total_net],
             ['account_code' => '431000', 'debit' => 0, 'credit' => $period->total_cnps_employee + $period->total_cnps_employer],
             ['account_code' => '447000', 'debit' => 0, 'credit' => $period->total_irpp + $period->total_cac_irpp],
+            ['account_code' => '447300', 'debit' => 0, 'credit' => $period->total_tsr ?? 0],
         ]);
 
         $period->update(['status' => 'POSTED', 'journal_entry_id' => $entry->id]);

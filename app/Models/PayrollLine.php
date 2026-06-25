@@ -8,7 +8,7 @@ class PayrollLine extends Model
 {
     protected $fillable = [
         'payroll_period_id', 'employee_id', 'gross_salary',
-        'cnps_employee', 'cnps_employer', 'irpp', 'cac_irpp', 'rav', 'net_salary',
+        'cnps_employee', 'cnps_employer', 'irpp', 'cac_irpp', 'rav', 'net_salary', 'tsr_employer',
     ];
 
     protected $casts = [

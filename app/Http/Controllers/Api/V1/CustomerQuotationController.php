@@ -7,6 +7,7 @@ use App\Models\Company;
 use App\Models\CustomerInvoice;
 use App\Models\CustomerQuotation;
 use App\Services\CameroonTaxEngine;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -144,5 +145,22 @@ class CustomerQuotationController extends Controller
         abort_if($quotation->status === 'CONVERTED', 422, 'Cannot delete a converted quotation.');
         $quotation->delete();
         return response()->json(['message' => 'Deleted']);
+    }
+
+    // GET /companies/{company}/quotations/{quotation}/pdf
+    public function pdf(Company $company, CustomerQuotation $quotation)
+    {
+        abort_if($quotation->company_id !== $company->id, 404);
+        $quotation->load('lines');
+        $customer = \App\Models\Customer::find($quotation->customer_id);
+
+        $pdf = Pdf::loadView('quotations.quotation', [
+            'company'   => $company,
+            'quotation' => $quotation,
+            'customer'  => $customer,
+            'lines'     => $quotation->lines,
+        ])->setPaper('a4');
+
+        return $pdf->download("DEV-{$quotation->quotation_number}.pdf");
     }
 }

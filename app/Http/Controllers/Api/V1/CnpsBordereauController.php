@@ -8,10 +8,6 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-/**
- * CNPS Bordereau Mensuel — monthly social security contribution declaration.
- * Employers in Cameroun must file this with CNPS (Caisse Nationale de Prévoyance Sociale).
- */
 class CnpsBordereauController extends Controller
 {
     public function generate(Request $request, Company $company)
@@ -23,26 +19,25 @@ class CnpsBordereauController extends Controller
 
         $month = (int) $data['month'];
         $year  = (int) $data['year'];
-        $from  = sprintf('%d-%02d-01', $year, $month);
-        $to    = date('Y-m-t', strtotime($from));
 
-        // Pull payroll entries for the period
         $payrolls = DB::select("
-            SELECT p.employee_name, p.employee_id_number, p.gross_salary,
-                   p.cnps_employee, p.cnps_employer, p.net_salary,
-                   p.pay_period_start, p.pay_period_end
-            FROM payrolls p
-            WHERE p.company_id = ?
-              AND p.pay_period_start >= ?
-              AND p.pay_period_end <= ?
-              AND p.status = 'PAID'
-              AND p.deleted_at IS NULL
-            ORDER BY p.employee_name
-        ", [$company->id, $from, $to]);
+            SELECT e.name AS employee_name, e.cnps_number AS employee_id_number,
+                   pl.gross_salary, pl.cnps_employee, pl.cnps_employer, pl.net_salary,
+                   COALESCE(pl.tsr_employer, 0) AS tsr_employer
+            FROM payroll_lines pl
+            JOIN employees e ON pl.employee_id = e.id
+            JOIN payroll_periods pp ON pl.payroll_period_id = pp.id
+            WHERE pp.company_id = ?
+              AND pp.period_month = ?
+              AND pp.period_year = ?
+              AND pp.status = 'POSTED'
+            ORDER BY e.name
+        ", [$company->id, $month, $year]);
 
         $totalGross    = array_sum(array_column((array)$payrolls, 'gross_salary'));
         $totalEmployee = array_sum(array_column((array)$payrolls, 'cnps_employee'));
         $totalEmployer = array_sum(array_column((array)$payrolls, 'cnps_employer'));
+        $totalTsr      = array_sum(array_column((array)$payrolls, 'tsr_employer'));
         $totalCnps     = $totalEmployee + $totalEmployer;
 
         $pdf = Pdf::loadView('certificates.cnps_bordereau', [
@@ -54,6 +49,7 @@ class CnpsBordereauController extends Controller
             'total_gross'    => $totalGross,
             'total_employee' => $totalEmployee,
             'total_employer' => $totalEmployer,
+            'total_tsr'      => $totalTsr,
             'total_cnps'     => $totalCnps,
             'generated_at'   => now()->format('d/m/Y H:i'),
         ])->setPaper('a4');

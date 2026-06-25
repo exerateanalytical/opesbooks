@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Company;
 use App\Models\Supplier;
 use App\Models\SupplierCreditNote;
+use App\Models\SupplierInvoice;
 use App\Services\FiscalGeographyRouter;
 use App\Services\JournalPostingService;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
 class SupplierCreditNoteController extends Controller
@@ -97,5 +99,23 @@ class SupplierCreditNoteController extends Controller
     {
         abort_if($creditNote->company_id !== $company->id, 404);
         return response()->json($creditNote->load('originalInvoice:id,invoice_number', 'supplier:id,name'));
+    }
+
+    // GET /companies/{company}/suppliers/{supplier}/credit-notes/{cn}/pdf
+    public function pdf(Company $company, Supplier $supplier, SupplierCreditNote $creditNote)
+    {
+        abort_if($creditNote->company_id !== $company->id, 404);
+        $originalInvoice = $creditNote->original_invoice_id
+            ? SupplierInvoice::find($creditNote->original_invoice_id)
+            : null;
+
+        $pdf = Pdf::loadView('credit_notes.supplier', [
+            'company'         => $company,
+            'cn'              => $creditNote,
+            'supplier'        => $supplier,
+            'originalInvoice' => $originalInvoice,
+        ])->setPaper('a4');
+
+        return $pdf->download("AV-{$creditNote->credit_note_number}.pdf");
     }
 }

@@ -13,6 +13,7 @@ class CustomerInvoice extends Model
         'company_id', 'customer_id', 'journal_entry_id', 'invoice_number',
         'invoice_date', 'due_date', 'amount_ht', 'tva_amount', 'cac_amount',
         'amount_ttc', 'status', 'credit_note_for_id', 'paid_at', 'notes',
+        'withholding_received', 'net_receivable',
     ];
 
     protected $casts = [

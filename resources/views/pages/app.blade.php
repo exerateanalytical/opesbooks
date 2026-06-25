@@ -320,6 +320,14 @@
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/></svg>
                 <span x-text="lang==='FR' ? 'Patente' : 'Patente Tax'"></span>
             </button>
+            <button @click="setPage('delivery-notes')" :class="page==='delivery-notes' ? 'nav-item active' : 'nav-item'">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>
+                <span x-text="lang==='FR' ? 'Bons Livraison' : 'Delivery Notes'"></span>
+            </button>
+            <button @click="setPage('cashflow')" :class="page==='cashflow' ? 'nav-item active' : 'nav-item'">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/></svg>
+                <span x-text="lang==='FR' ? 'Trésorerie Prev.' : 'Cashflow Forecast'"></span>
+            </button>
 
             <div class="my-2" style="height:1px;background:rgba(255,255,255,0.07)"></div>
 
@@ -1600,6 +1608,32 @@
                         class="glass-btn-dark px-6 py-2.5 rounded-xl text-xs uppercase tracking-widest disabled:opacity-40"
                         x-text="pwdSaving ? '…' : (lang==='FR' ? 'Changer le Mot de Passe' : 'Change Password')"></button>
             </div>
+
+            <!-- 2FA / OTP card -->
+            <div class="glass-card rounded-2xl p-6 space-y-4">
+                <p class="text-[10px] font-black text-amber-400 uppercase tracking-widest" x-text="lang==='FR' ? 'Double Authentification (2FA)' : 'Two-Factor Authentication (2FA)'"></p>
+                <p class="text-xs opacity-60" x-text="lang==='FR' ? 'Recevez un code par email pour sécuriser votre connexion.' : 'Receive a one-time code by email to secure your login.'"></p>
+
+                <div x-show="!otpSent" class="flex gap-3 flex-wrap">
+                    <button @click="generateOtp()" :disabled="otpLoading" class="glass-btn-dark px-5 py-2 rounded-xl text-xs uppercase tracking-widest disabled:opacity-40"
+                        x-text="otpLoading ? '…' : (lang==='FR' ? 'Envoyer un code OTP par email' : 'Send OTP code by email')"></button>
+                </div>
+
+                <div x-show="otpSent" class="space-y-3">
+                    <p class="text-xs text-emerald-400" x-text="lang==='FR' ? 'Code envoyé ! Vérifiez votre boîte email.' : 'Code sent! Check your email.'"></p>
+                    <div class="flex gap-3 items-end">
+                        <div>
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5" x-text="lang==='FR' ? 'Code OTP (6 chiffres)' : 'OTP Code (6 digits)'"></label>
+                            <input x-model="otpCode" type="text" maxlength="6" pattern="[0-9]*" class="glass-input w-32 text-center font-mono tracking-widest text-lg" placeholder="000000">
+                        </div>
+                        <button @click="verifyOtp()" :disabled="otpLoading" class="glass-btn-dark px-5 py-2 rounded-xl text-xs uppercase tracking-widest disabled:opacity-40"
+                            x-text="otpLoading ? '…' : (lang==='FR' ? 'Vérifier et Activer 2FA' : 'Verify & Enable 2FA')"></button>
+                    </div>
+                </div>
+
+                <div x-show="otpError" class="text-red-400 text-xs" x-text="otpError"></div>
+                <div x-show="otpSuccess" class="text-emerald-400 text-xs font-bold" x-text="otpSuccess"></div>
+            </div>
         </div>
 
         <!-- ── Customer Invoices ─────────────────────────────────────────────── -->
@@ -1795,6 +1829,152 @@
                         </template>
                     </tbody>
                 </table>
+            </div>
+        </div>
+
+        <!-- ── Delivery Notes ────────────────────────────────────────────────── -->
+        <div x-show="page==='delivery-notes'" x-cloak class="p-6 space-y-5 float-in" x-data="deliveryNotesPanel()">
+            <div class="flex items-center justify-between flex-wrap gap-3">
+                <h2 class="text-xl font-bold tracking-tight" x-text="lang==='FR' ? 'Bons de Livraison' : 'Delivery Notes'"></h2>
+                <button @click="showForm=!showForm" class="glass-btn-dark px-4 py-2 rounded-xl text-xs uppercase tracking-widest" x-text="lang==='FR' ? '+ Nouveau BL' : '+ New DN'"></button>
+            </div>
+
+            <!-- Filters -->
+            <div class="flex gap-3 flex-wrap">
+                <select x-model="filterType" @change="load()" class="glass-input px-3 py-2 rounded-xl text-sm">
+                    <option value="" x-text="lang==='FR' ? 'Tous les types' : 'All types'"></option>
+                    <option value="OUT" x-text="lang==='FR' ? 'Expédition (OUT)' : 'Outbound (OUT)'"></option>
+                    <option value="IN" x-text="lang==='FR' ? 'Réception (IN)' : 'Inbound (IN)'"></option>
+                </select>
+                <select x-model="filterStatus" @change="load()" class="glass-input px-3 py-2 rounded-xl text-sm">
+                    <option value="" x-text="lang==='FR' ? 'Tous les statuts' : 'All statuses'"></option>
+                    <option value="DRAFT">DRAFT</option>
+                    <option value="DELIVERED">DELIVERED</option>
+                    <option value="SIGNED">SIGNED</option>
+                </select>
+            </div>
+
+            <!-- New DN form -->
+            <div x-show="showForm" class="glass-card rounded-2xl p-5 space-y-3">
+                <h3 class="text-sm font-semibold opacity-70" x-text="lang==='FR' ? 'Nouveau bon de livraison' : 'New delivery note'"></h3>
+                <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                    <div>
+                        <label class="text-xs opacity-60" x-text="lang==='FR' ? 'Type' : 'Type'"></label>
+                        <select x-model="form.dn_type" class="w-full mt-1 input-field text-sm">
+                            <option value="OUT" x-text="lang==='FR' ? 'Expédition Client (OUT)' : 'Outbound (OUT)'"></option>
+                            <option value="IN" x-text="lang==='FR' ? 'Réception Fournisseur (IN)' : 'Inbound (IN)'"></option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs opacity-60" x-text="lang==='FR' ? 'Date livraison' : 'Delivery date'"></label>
+                        <input x-model="form.delivery_date" type="date" class="w-full mt-1 input-field text-sm">
+                    </div>
+                    <div>
+                        <label class="text-xs opacity-60" x-text="lang==='FR' ? 'Adresse livraison' : 'Delivery address'"></label>
+                        <input x-model="form.delivery_address" class="w-full mt-1 input-field text-sm">
+                    </div>
+                    <div class="col-span-2">
+                        <label class="text-xs opacity-60">Notes</label>
+                        <input x-model="form.notes" class="w-full mt-1 input-field text-sm">
+                    </div>
+                </div>
+                <div x-show="err" class="text-red-400 text-xs" x-text="err"></div>
+                <button @click="save()" class="glass-btn-dark px-5 py-2 rounded-xl text-xs uppercase tracking-widest" x-text="saving ? '…' : (lang==='FR' ? 'Créer BL' : 'Create DN')"></button>
+            </div>
+
+            <!-- List -->
+            <div class="glass-card rounded-2xl overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead><tr class="border-b border-white/10 text-xs opacity-50 uppercase tracking-widest">
+                            <th class="px-4 py-3 text-left" x-text="lang==='FR' ? 'Numéro' : 'Number'"></th>
+                            <th class="px-4 py-3 text-left" x-text="lang==='FR' ? 'Type' : 'Type'"></th>
+                            <th class="px-4 py-3 text-left" x-text="lang==='FR' ? 'Date' : 'Date'"></th>
+                            <th class="px-4 py-3 text-left" x-text="lang==='FR' ? 'Contrepartie' : 'Counterparty'"></th>
+                            <th class="px-4 py-3 text-left">Statut</th>
+                            <th class="px-4 py-3 text-right">PDF</th>
+                        </tr></thead>
+                        <tbody>
+                            <template x-if="loading"><tr><td colspan="6" class="px-4 py-8 text-center opacity-40" x-text="lang==='FR' ? 'Chargement…' : 'Loading…'"></td></tr></template>
+                            <template x-for="dn in items" :key="dn.id">
+                                <tr class="border-b border-white/5 hover:bg-white/5 transition">
+                                    <td class="px-4 py-3 font-mono text-xs" x-text="dn.dn_number"></td>
+                                    <td class="px-4 py-3"><span :class="dn.dn_type==='OUT' ? 'badge-blue' : 'badge-amber'" x-text="dn.dn_type"></span></td>
+                                    <td class="px-4 py-3 text-xs opacity-70" x-text="dn.delivery_date"></td>
+                                    <td class="px-4 py-3 text-xs" x-text="dn.customer?.name || dn.supplier?.name || '—'"></td>
+                                    <td class="px-4 py-3"><span class="badge-neutral" x-text="dn.status"></span></td>
+                                    <td class="px-4 py-3 text-right">
+                                        <a :href="`/api/v1/companies/${_cid}/delivery-notes/${dn.id}/pdf`" target="_blank" class="glass-btn px-3 py-1 rounded-lg text-xs">PDF</a>
+                                    </td>
+                                </tr>
+                            </template>
+                            <template x-if="!loading && items.length===0">
+                                <tr><td colspan="6" class="px-4 py-8 text-center opacity-40" x-text="lang==='FR' ? 'Aucun bon de livraison.' : 'No delivery notes.'"></td></tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Cashflow Projection ─────────────────────────────────────────────── -->
+        <div x-show="page==='cashflow'" x-cloak class="p-6 space-y-5 float-in" x-data="cashflowPanel()">
+            <div class="flex items-center justify-between flex-wrap gap-3">
+                <h2 class="text-xl font-bold tracking-tight" x-text="lang==='FR' ? 'Projection de Trésorerie (90 jours)' : 'Cash Flow Forecast (90 days)'"></h2>
+                <button @click="load()" class="glass-btn-dark px-4 py-2 rounded-xl text-xs uppercase tracking-widest" x-text="loading ? '…' : (lang==='FR' ? 'Actualiser' : 'Refresh')"></button>
+            </div>
+
+            <div x-show="err" class="text-red-400 text-xs" x-text="err"></div>
+
+            <!-- Summary cards -->
+            <div x-show="data" class="grid grid-cols-3 gap-4">
+                <div class="glass-card p-4 rounded-2xl text-center">
+                    <div class="text-xs opacity-50 mb-1" x-text="lang==='FR' ? 'Entrées Prévues' : 'Expected Inflows'"></div>
+                    <div class="text-lg font-bold text-emerald-400" x-text="fmtXaf(data?.summary?.total_inflow)"></div>
+                </div>
+                <div class="glass-card p-4 rounded-2xl text-center">
+                    <div class="text-xs opacity-50 mb-1" x-text="lang==='FR' ? 'Sorties Prévues' : 'Expected Outflows'"></div>
+                    <div class="text-lg font-bold text-red-400" x-text="fmtXaf(data?.summary?.total_outflow)"></div>
+                </div>
+                <div class="glass-card p-4 rounded-2xl text-center">
+                    <div class="text-xs opacity-50 mb-1" x-text="lang==='FR' ? 'Position Nette' : 'Net Position'"></div>
+                    <div class="text-lg font-bold" :class="(data?.summary?.net_position??0)>=0 ? 'text-emerald-400' : 'text-red-400'" x-text="fmtXaf(data?.summary?.net_position)"></div>
+                </div>
+            </div>
+
+            <!-- Buckets -->
+            <div x-show="data" class="grid grid-cols-3 gap-4">
+                <template x-for="[key, bucket] in Object.entries(data?.buckets ?? {})" :key="key">
+                    <div class="glass-card p-4 rounded-2xl space-y-2">
+                        <div class="text-xs font-bold uppercase tracking-widest opacity-60" x-text="(lang==='FR' ? 'Jours ' : 'Days ') + key"></div>
+                        <div class="flex justify-between text-xs"><span class="text-emerald-400" x-text="lang==='FR' ? 'Entrées' : 'In'"></span><span x-text="fmtXaf(bucket.inflow)"></span></div>
+                        <div class="flex justify-between text-xs"><span class="text-red-400" x-text="lang==='FR' ? 'Sorties' : 'Out'"></span><span x-text="fmtXaf(bucket.outflow)"></span></div>
+                        <div class="flex justify-between text-xs font-bold border-t border-white/10 pt-2"><span x-text="lang==='FR' ? 'Net' : 'Net'"></span><span :class="bucket.net>=0 ? 'text-emerald-400' : 'text-red-400'" x-text="fmtXaf(bucket.net)"></span></div>
+                    </div>
+                </template>
+            </div>
+
+            <!-- Receivables table -->
+            <div x-show="data?.receivables?.length" class="glass-card rounded-2xl overflow-hidden">
+                <div class="px-4 py-3 text-xs font-bold uppercase tracking-widest opacity-60" x-text="lang==='FR' ? 'Créances Clients à Recevoir' : 'Receivables Due'"></div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead><tr class="border-b border-white/10 text-xs opacity-50">
+                            <th class="px-4 py-2 text-left">N° Facture</th><th class="px-4 py-2 text-left">Client</th>
+                            <th class="px-4 py-2 text-left">Échéance</th><th class="px-4 py-2 text-right">Montant</th>
+                        </tr></thead>
+                        <tbody>
+                            <template x-for="r in (data?.receivables ?? [])" :key="r.invoice_number">
+                                <tr class="border-b border-white/5 hover:bg-white/5">
+                                    <td class="px-4 py-2 font-mono text-xs" x-text="r.invoice_number"></td>
+                                    <td class="px-4 py-2 text-xs" x-text="r.counterparty"></td>
+                                    <td class="px-4 py-2 text-xs" x-text="r.due_date"></td>
+                                    <td class="px-4 py-2 text-right text-xs text-emerald-400" x-text="fmtXaf(r.net_receivable)"></td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
@@ -3552,6 +3732,11 @@ function profilePanel() {
         pwdSaving: false,
         pwdError: '',
         pwdSuccess: '',
+        otpSent: false,
+        otpCode: '',
+        otpLoading: false,
+        otpError: '',
+        otpSuccess: '',
 
         async init() {
             const token = localStorage.getItem('opes_token');
@@ -3609,6 +3794,30 @@ function profilePanel() {
             } finally {
                 this.pwdSaving = false;
             }
+        },
+
+        async generateOtp() {
+            this.otpLoading=true; this.otpError=''; this.otpSuccess='';
+            const token = localStorage.getItem('opes_token');
+            const r = await fetch('/api/v1/auth/otp/generate', {method:'POST',headers:{Authorization:'Bearer '+token}});
+            const d = await r.json();
+            if(r.ok) { this.otpSent=true; }
+            else { this.otpError = d.message ?? 'Erreur'; }
+            this.otpLoading=false;
+        },
+
+        async verifyOtp() {
+            if(!this.otpCode) return;
+            this.otpLoading=true; this.otpError=''; this.otpSuccess='';
+            const token = localStorage.getItem('opes_token');
+            const r = await fetch('/api/v1/auth/otp/verify', {
+                method:'POST', headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},
+                body: JSON.stringify({code: this.otpCode})
+            });
+            const d = await r.json();
+            if(r.ok) { this.otpSuccess = d.message; this.otpSent=false; this.otpCode=''; }
+            else { this.otpError = d.message ?? 'Code invalide'; }
+            this.otpLoading=false;
         },
     };
 }
@@ -4465,6 +4674,69 @@ function stockPanel() {
             } else { this.formError = d.message ?? JSON.stringify(d.errors ?? d); }
             this.saving=false;
         },
+    };
+}
+
+function deliveryNotesPanel() {
+    return {
+        _cid: null, items: [], loading: false, showForm: false, saving: false, err: '',
+        filterType: '', filterStatus: '',
+        form: { dn_type:'OUT', delivery_date: new Date().toISOString().slice(0,10), delivery_address:'', notes:'' },
+
+        async init() {
+            const token = localStorage.getItem('opes_token');
+            const me = await fetch('/api/v1/auth/me', {headers:{Authorization:'Bearer '+token}}).then(r=>r.json());
+            this._cid = me.company?.id;
+            await this.load();
+        },
+
+        async load() {
+            this.loading = true;
+            const token = localStorage.getItem('opes_token');
+            const params = new URLSearchParams();
+            if(this.filterType) params.append('dn_type', this.filterType);
+            if(this.filterStatus) params.append('status', this.filterStatus);
+            const d = await fetch(`/api/v1/companies/${this._cid}/delivery-notes?${params}`, {headers:{Authorization:'Bearer '+token}}).then(r=>r.json());
+            this.items = d.data ?? [];
+            this.loading = false;
+        },
+
+        async save() {
+            this.saving = true; this.err = '';
+            const token = localStorage.getItem('opes_token');
+            const r = await fetch(`/api/v1/companies/${this._cid}/delivery-notes`, {
+                method:'POST', headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},
+                body: JSON.stringify(this.form)
+            });
+            const d = await r.json();
+            if(r.ok) { this.showForm=false; await this.load(); }
+            else { this.err = d.message ?? JSON.stringify(d.errors ?? d); }
+            this.saving = false;
+        },
+    };
+}
+
+function cashflowPanel() {
+    return {
+        _cid: null, data: null, loading: false, err: '',
+
+        async init() {
+            const token = localStorage.getItem('opes_token');
+            const me = await fetch('/api/v1/auth/me', {headers:{Authorization:'Bearer '+token}}).then(r=>r.json());
+            this._cid = me.company?.id;
+            await this.load();
+        },
+
+        async load() {
+            this.loading = true; this.err = '';
+            const token = localStorage.getItem('opes_token');
+            const r = await fetch(`/api/v1/companies/${this._cid}/cashflow/projection`, {headers:{Authorization:'Bearer '+token}});
+            if(r.ok) { this.data = await r.json(); }
+            else { const d = await r.json(); this.err = d.message ?? 'Erreur'; }
+            this.loading = false;
+        },
+
+        fmtXaf(v) { return new Intl.NumberFormat('fr-CM',{style:'currency',currency:'XAF',maximumFractionDigits:0}).format(v??0); },
     };
 }
 </script>

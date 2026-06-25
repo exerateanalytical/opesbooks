@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Company;
 use App\Models\Customer;
 use App\Models\CustomerCreditNote;
+use App\Models\CustomerInvoice;
 use App\Services\CameroonTaxEngine;
 use App\Services\JournalPostingService;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
 class CustomerCreditNoteController extends Controller
@@ -90,5 +92,23 @@ class CustomerCreditNoteController extends Controller
     {
         abort_if($creditNote->company_id !== $company->id, 404);
         return response()->json($creditNote->load('originalInvoice:id,invoice_number', 'customer:id,name'));
+    }
+
+    // GET /companies/{company}/customers/{customer}/credit-notes/{cn}/pdf
+    public function pdf(Company $company, Customer $customer, CustomerCreditNote $creditNote)
+    {
+        abort_if($creditNote->company_id !== $company->id, 404);
+        $originalInvoice = $creditNote->original_invoice_id
+            ? CustomerInvoice::find($creditNote->original_invoice_id)
+            : null;
+
+        $pdf = Pdf::loadView('credit_notes.customer', [
+            'company'         => $company,
+            'cn'              => $creditNote,
+            'customer'        => $customer,
+            'originalInvoice' => $originalInvoice,
+        ])->setPaper('a4');
+
+        return $pdf->download("AV-{$creditNote->credit_note_number}.pdf");
     }
 }

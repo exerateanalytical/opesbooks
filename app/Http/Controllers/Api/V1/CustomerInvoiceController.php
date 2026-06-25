@@ -145,4 +145,44 @@ class CustomerInvoiceController extends Controller
             app(\App\Services\FinancialStatementService::class)->agedReceivables($company)
         );
     }
+
+    // POST /companies/{company}/customer-invoices/{invoice}/record-withholding
+    // Records customer-side withholding (précompte reçu) when a DGE/CIME buyer withholds 5.5%
+    public function recordWithholding(Request $request, Company $company, CustomerInvoice $invoice): JsonResponse
+    {
+        abort_if($invoice->company_id !== $company->id, 404);
+        abort_if(!in_array($invoice->status, ['SENT', 'OVERDUE', 'PARTIAL']), 422, 'Invoice must be outstanding.');
+
+        $data = $request->validate([
+            'withholding_received' => 'required|numeric|min:0',
+            'payment_date'         => 'required|date',
+        ]);
+
+        $withholdingAmt = round((float) $data['withholding_received'], 2);
+        $netReceivable  = round($invoice->amount_ttc - $withholdingAmt, 2);
+
+        // Post GL entry: Dr 447200 (Créances Précompte) Cr 411000 (Clients)
+        $this->poster->post([
+            'company_id'   => $company->id,
+            'entry_date'   => $data['payment_date'],
+            'reference'    => 'PRC-' . $invoice->invoice_number,
+            'description'  => "Précompte client reçu — facture {$invoice->invoice_number}",
+            'posting_type' => 'STANDARD',
+            'source'       => 'CUSTOMER_INVOICE',
+        ], [
+            ['account_code' => '447200', 'debit' => $withholdingAmt, 'credit' => 0],
+            ['account_code' => '411000', 'debit' => 0,               'credit' => $withholdingAmt],
+        ]);
+
+        $invoice->update([
+            'withholding_received' => $withholdingAmt,
+            'net_receivable'       => $netReceivable,
+        ]);
+
+        return response()->json([
+            'invoice'              => $invoice->fresh(),
+            'withholding_received' => $withholdingAmt,
+            'net_receivable'       => $netReceivable,
+        ]);
+    }
 }

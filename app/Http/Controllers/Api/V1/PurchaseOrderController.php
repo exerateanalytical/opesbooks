@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Company;
 use App\Models\PurchaseOrder;
 use App\Models\PurchaseOrderLine;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -129,5 +130,22 @@ class PurchaseOrderController extends Controller
         abort_if(!in_array($purchaseOrder->status, ['DRAFT', 'CANCELLED']), 422, 'Only DRAFT or CANCELLED orders can be deleted.');
         $purchaseOrder->delete();
         return response()->json(['message' => 'Deleted']);
+    }
+
+    // GET /companies/{company}/purchase-orders/{po}/pdf
+    public function pdf(Company $company, PurchaseOrder $purchaseOrder)
+    {
+        abort_if($purchaseOrder->company_id !== $company->id, 404);
+        $purchaseOrder->load('lines');
+        $supplier = \App\Models\Supplier::find($purchaseOrder->supplier_id);
+
+        $pdf = Pdf::loadView('purchase_orders.purchase_order', [
+            'company'  => $company,
+            'po'       => $purchaseOrder,
+            'supplier' => $supplier,
+            'lines'    => $purchaseOrder->lines,
+        ])->setPaper('a4');
+
+        return $pdf->download("BC-{$purchaseOrder->po_number}.pdf");
     }
 }

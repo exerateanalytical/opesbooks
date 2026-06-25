@@ -33,6 +33,9 @@ use App\Http\Controllers\Api\V1\StockMovementController;
 use App\Http\Controllers\Api\V1\SupplierController;
 use App\Http\Controllers\Api\V1\SupplierCreditNoteController;
 use App\Http\Controllers\Api\V1\SupplierInvoiceController;
+use App\Http\Controllers\Api\V1\CashflowProjectionController;
+use App\Http\Controllers\Api\V1\DeliveryNoteController;
+use App\Http\Controllers\Api\V1\OtpController;
 use App\Http\Controllers\Api\V1\WithholdingCertificateController;
 use App\Jobs\SyncInvoiceToDgiPortalJob;
 use App\Http\Controllers\Api\V1\LedgerController;
@@ -82,6 +85,10 @@ Route::prefix('v1')->name('v1.')->group(function () {
             Route::post('users',     [AuthController::class, 'invite'])
                 ->middleware(\App\Http\Middleware\RequireRole::class . ':OWNER')
                 ->name('invite');
+            // Email OTP / 2FA
+            Route::post('otp/generate', [OtpController::class, 'generate'])->name('otp.generate');
+            Route::post('otp/verify',   [OtpController::class, 'verify'])->name('otp.verify');
+            Route::post('otp/disable',  [OtpController::class, 'disable'])->name('otp.disable');
         });
 
         // Company management (OWNER/ACCOUNTANT only)
@@ -198,7 +205,8 @@ Route::prefix('v1')->name('v1.')->group(function () {
                 Route::post('customer-invoices',                         [CustomerInvoiceController::class, 'store'])->name('customer-invoices.store');
                 Route::post('customer-invoices/{invoice}/send',          [CustomerInvoiceController::class, 'markSent'])->name('customer-invoices.send');
                 Route::post('customer-invoices/{invoice}/pay',           [CustomerInvoiceController::class, 'markPaid'])->name('customer-invoices.pay');
-                Route::post('customer-invoices/{invoice}/credit-note',   [CustomerInvoiceController::class, 'creditNote'])->name('customer-invoices.credit-note');
+                Route::post('customer-invoices/{invoice}/credit-note',         [CustomerInvoiceController::class, 'creditNote'])->name('customer-invoices.credit-note');
+                Route::post('customer-invoices/{invoice}/record-withholding', [CustomerInvoiceController::class, 'recordWithholding'])->name('customer-invoices.record-withholding');
             });
             Route::get('aged-receivables', [CustomerInvoiceController::class, 'agedReceivables'])->name('aged-receivables');
 
@@ -295,9 +303,15 @@ Route::prefix('v1')->name('v1.')->group(function () {
                 Route::post('suppliers/{supplier}/credit-notes',   [SupplierCreditNoteController::class, 'store'])->name('suppliers.credit-notes.store');
             });
 
+            // Customer credit note PDFs
+            Route::get('customers/{customer}/credit-notes/{creditNote}/pdf', [CustomerCreditNoteController::class, 'pdf'])->name('customers.credit-notes.pdf');
+            // Supplier credit note PDFs
+            Route::get('suppliers/{supplier}/credit-notes/{creditNote}/pdf', [SupplierCreditNoteController::class, 'pdf'])->name('suppliers.credit-notes.pdf');
+
             // Customer quotations / devis
             Route::get('quotations',                            [CustomerQuotationController::class, 'index'])->name('quotations.index');
             Route::get('quotations/{quotation}',                [CustomerQuotationController::class, 'show'])->name('quotations.show');
+            Route::get('quotations/{quotation}/pdf',            [CustomerQuotationController::class, 'pdf'])->name('quotations.pdf');
             Route::middleware(\App\Http\Middleware\RequireRole::class . ':OWNER,ACCOUNTANT')->group(function () {
                 Route::post('quotations',                       [CustomerQuotationController::class, 'store'])->name('quotations.store');
                 Route::put('quotations/{quotation}/status',     [CustomerQuotationController::class, 'updateStatus'])->name('quotations.status');
@@ -308,12 +322,29 @@ Route::prefix('v1')->name('v1.')->group(function () {
             // Purchase orders / bons de commande
             Route::get('purchase-orders',                       [PurchaseOrderController::class, 'index'])->name('purchase-orders.index');
             Route::get('purchase-orders/{purchaseOrder}',       [PurchaseOrderController::class, 'show'])->name('purchase-orders.show');
+            Route::get('purchase-orders/{purchaseOrder}/pdf',   [PurchaseOrderController::class, 'pdf'])->name('purchase-orders.pdf');
             Route::middleware(\App\Http\Middleware\RequireRole::class . ':OWNER,ACCOUNTANT')->group(function () {
                 Route::post('purchase-orders',                  [PurchaseOrderController::class, 'store'])->name('purchase-orders.store');
                 Route::put('purchase-orders/{purchaseOrder}/status',   [PurchaseOrderController::class, 'updateStatus'])->name('purchase-orders.status');
                 Route::post('purchase-orders/{purchaseOrder}/receive',  [PurchaseOrderController::class, 'receive'])->name('purchase-orders.receive');
                 Route::delete('purchase-orders/{purchaseOrder}',        [PurchaseOrderController::class, 'destroy'])->name('purchase-orders.destroy');
             });
+
+            // Delivery notes / bons de livraison
+            Route::get('delivery-notes',                            [DeliveryNoteController::class, 'index'])->name('delivery-notes.index');
+            Route::get('delivery-notes/{deliveryNote}',             [DeliveryNoteController::class, 'show'])->name('delivery-notes.show');
+            Route::get('delivery-notes/{deliveryNote}/pdf',         [DeliveryNoteController::class, 'pdf'])->name('delivery-notes.pdf');
+            Route::middleware(\App\Http\Middleware\RequireRole::class . ':OWNER,ACCOUNTANT')->group(function () {
+                Route::post('delivery-notes',                       [DeliveryNoteController::class, 'store'])->name('delivery-notes.store');
+                Route::put('delivery-notes/{deliveryNote}/status',  [DeliveryNoteController::class, 'updateStatus'])->name('delivery-notes.status');
+                Route::delete('delivery-notes/{deliveryNote}',      [DeliveryNoteController::class, 'destroy'])->name('delivery-notes.destroy');
+            });
+
+            // Cashflow projection (30/60/90 days)
+            Route::get('cashflow/projection', [CashflowProjectionController::class, 'projection'])->name('cashflow.projection');
+
+            // Subscription receipt PDF
+            Route::get('subscriptions/receipt', [SubscriptionController::class, 'receipt'])->name('subscriptions.receipt');
 
             // Patente (local business tax)
             Route::get('patente',                               [PatenteController::class, 'index'])->name('patente.index');
