@@ -359,6 +359,10 @@
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
                 <span x-text="lang==='FR' ? 'Tableau de Bord' : 'Dashboard'"></span>
             </button>
+            <button @click="setPage('ai-assistant')" :class="page==='ai-assistant' ? 'nav-item active' : 'nav-item'">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3l1.9 4.6L18.5 9.5l-4.6 1.9L12 16l-1.9-4.6L5.5 9.5l4.6-1.9L12 3zM5 16l.9 2.1L8 19l-2.1.9L5 22l-.9-2.1L2 19l2.1-.9L5 16z"/></svg>
+                <span>Assistant IA</span>
+            </button>
             <button @click="setPage('journal')" :class="page==='journal' ? 'nav-item active' : 'nav-item'" x-show="user?.role === 'OWNER' || user?.role === 'ACCOUNTANT'">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
                 <span x-text="lang==='FR' ? 'Journal' : 'Journal'"></span>
@@ -1530,6 +1534,40 @@
                     </div>
                 </div>
                 <p class="text-[10px] text-slate-500" x-text="lang==='FR' ? 'Le pays est défini à l\'inscription. Contactez le support pour le modifier.' : 'Country is set at sign-up. Contact support to change it.'"></p>
+            </div>
+
+            <!-- IA & Automatisation -->
+            <div class="glass-card rounded-2xl p-6 space-y-4" x-show="user?.role==='OWNER'"
+                 x-data="{ cfg:{ has_gemini_key:false, ollama_enabled:false, ollama_model:'gemma3:1b', auto_categorize:false, auto_dsf_check:false, anomaly_scan:false }, key:'', saving:false, saved:false,
+                    async load(){ try{ this.cfg = await (await fetch('/api/v1/ai/config',{headers:{'Authorization':'Bearer '+localStorage.getItem('opes_token'),'Accept':'application/json'}})).json(); }catch(e){} },
+                    async save(){ this.saving=true; this.saved=false; try{ const body={ gemini_api_key:this.key, ollama_enabled:this.cfg.ollama_enabled, ollama_model:this.cfg.ollama_model, auto_categorize:this.cfg.auto_categorize, auto_dsf_check:this.cfg.auto_dsf_check, anomaly_scan:this.cfg.anomaly_scan }; await fetch('/api/v1/ai/config',{method:'PUT',headers:{'Authorization':'Bearer '+localStorage.getItem('opes_token'),'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(body)}); this.key=''; this.saved=true; await this.load(); }catch(e){}finally{this.saving=false;} } }"
+                 x-init="load()">
+                <p class="text-[10px] font-black text-amber-400 uppercase tracking-widest">IA & Automatisation</p>
+                <div>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Clé API Gemini</label>
+                    <input type="password" x-model="key" class="input-field" :placeholder="cfg.has_gemini_key ? '•••••••••• (configurée — laisser vide pour garder)' : 'AIza…'">
+                </div>
+                <label class="flex items-center justify-between text-xs cursor-pointer">
+                    <span class="text-slate-300" x-text="lang==='FR'?'Catégorisation automatique':'Auto-categorize'"></span>
+                    <input type="checkbox" x-model="cfg.auto_categorize" class="accent-amber-500 w-4 h-4">
+                </label>
+                <label class="flex items-center justify-between text-xs cursor-pointer">
+                    <span class="text-slate-300" x-text="lang==='FR'?'Vérification DSF automatique':'Auto DSF check'"></span>
+                    <input type="checkbox" x-model="cfg.auto_dsf_check" class="accent-amber-500 w-4 h-4">
+                </label>
+                <label class="flex items-center justify-between text-xs cursor-pointer">
+                    <span class="text-slate-300" x-text="lang==='FR'?'Détection d\'anomalies':'Anomaly detection'"></span>
+                    <input type="checkbox" x-model="cfg.anomaly_scan" class="accent-amber-500 w-4 h-4">
+                </label>
+                <label class="flex items-center justify-between text-xs cursor-pointer">
+                    <span class="text-slate-300" x-text="lang==='FR'?'Modèle local Ollama (hors ligne)':'Local Ollama model (offline)'"></span>
+                    <input type="checkbox" x-model="cfg.ollama_enabled" class="accent-amber-500 w-4 h-4">
+                </label>
+                <p class="text-[10px] text-slate-500" x-text="lang==='FR' ? 'Ollama nécessite un serveur dédié — souvent indisponible en hébergement mutualisé. L\'IA en ligne (Gemini) est recommandée.' : 'Ollama needs a dedicated server — usually unavailable on shared hosting. Online AI (Gemini) is recommended.'"></p>
+                <div class="flex items-center gap-3">
+                    <button @click="save()" :disabled="saving" class="glass-btn-amber px-4 py-2 rounded-xl text-xs uppercase tracking-widest disabled:opacity-50" x-text="saving?'…':(lang==='FR'?'Enregistrer':'Save')"></button>
+                    <span x-show="saved" x-cloak class="text-emerald-400 text-xs font-bold" x-text="lang==='FR'?'Enregistré ✔':'Saved ✔'"></span>
+                </div>
             </div>
 
             <!-- Logo upload -->
@@ -3844,6 +3882,59 @@
             </div>
         </div>
 
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!-- AI ASSISTANT PAGE                                          -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <div x-show="page==='ai-assistant'" x-cloak class="p-6 float-in flex flex-col" style="height:calc(100vh - 0px)" x-data="aiPanel()" x-init="init()">
+            <div class="flex items-center justify-between gap-3 mb-4">
+                <div class="flex items-center gap-2">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgb(201,155,14)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 4.6L18.5 9.5l-4.6 1.9L12 16l-1.9-4.6L5.5 9.5l4.6-1.9L12 3z"/></svg>
+                    <h2 class="text-2xl font-black text-white uppercase tracking-wide" x-text="lang==='FR'?'Assistant IA':'AI Assistant'"></h2>
+                </div>
+                <span class="px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-widest"
+                      :style="aiStatus.mode==='online' ? 'background:rgba(16,185,129,0.2);color:rgb(110,231,183);border:1px solid rgba(16,185,129,0.3)' : aiStatus.mode==='offline' ? 'background:rgba(201,155,14,0.2);color:#E3B420;border:1px solid rgba(201,155,14,0.3)' : 'background:rgba(100,116,139,0.2);color:rgb(148,163,184);border:1px solid rgba(100,116,139,0.3)'"
+                      x-text="aiStatus.mode==='online'?'IA: En ligne':(aiStatus.mode==='offline'?'IA: Hors ligne':(lang==='FR'?'IA: Indisponible':'AI: Unavailable'))"></span>
+            </div>
+
+            <!-- Unavailable banner -->
+            <div x-show="aiStatus.mode==='unavailable'" x-cloak class="glass-card rounded-xl p-4 mb-4 text-xs text-slate-300" style="border-color:rgba(201,155,14,0.3)">
+                <span x-text="lang==='FR' ? 'IA non configurée. Ajoutez une clé API Gemini dans Paramètres › IA pour activer l\'assistant.' : 'AI not configured. Add a Gemini API key in Settings › AI to enable the assistant.'"></span>
+                <button @click="setPage('settings')" class="text-amber-400 font-black uppercase tracking-wider ml-1" x-text="lang==='FR'?'Configurer →':'Configure →'"></button>
+            </div>
+
+            <!-- Chat -->
+            <div class="glass-card rounded-2xl flex-1 flex flex-col overflow-hidden" style="min-height:300px">
+                <div class="flex-1 overflow-y-auto p-4 space-y-3" x-ref="chat">
+                    <template x-for="(m,i) in messages" :key="i">
+                        <div :class="m.role==='user' ? 'flex justify-end' : 'flex justify-start'">
+                            <div class="max-w-[80%] px-4 py-2.5 rounded-2xl text-sm"
+                                 :style="m.role==='user' ? 'background:rgba(201,155,14,0.18);border:1px solid rgba(201,155,14,0.3);color:#fff' : 'background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:rgb(226,232,240)'">
+                                <div x-text="m.text" style="white-space:pre-wrap"></div>
+                                <template x-if="m.figures && m.figures.length">
+                                    <div class="mt-2 space-y-1">
+                                        <template x-for="f in m.figures" :key="f.label">
+                                            <div class="flex justify-between gap-4 text-xs"><span class="text-slate-400" x-text="f.label"></span><span class="font-black text-amber-400" x-text="f.value"></span></div>
+                                        </template>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+                    <div x-show="thinking" class="flex justify-start"><div class="px-4 py-2.5 rounded-2xl text-sm" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1)"><span class="text-slate-400">…</span></div></div>
+                    <!-- Suggested chips (empty state) -->
+                    <div x-show="messages.length===0 && aiStatus.mode!=='unavailable'" class="flex flex-wrap gap-2 pt-2">
+                        <template x-for="q in chips" :key="q">
+                            <button @click="send(q)" class="px-3 py-2 rounded-xl text-xs text-left" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1)" x-text="q"></button>
+                        </template>
+                    </div>
+                </div>
+                <div class="p-3 border-t flex gap-2" style="border-color:rgba(255,255,255,0.08)">
+                    <input x-model="input" @keydown.enter="send()" :disabled="aiStatus.mode==='unavailable'||thinking" class="input-field flex-1" :placeholder="lang==='FR'?'Posez une question sur vos finances…':'Ask about your finances…'">
+                    <button @click="send()" :disabled="aiStatus.mode==='unavailable'||thinking" class="glass-btn-amber px-5 rounded-xl text-xs uppercase tracking-widest disabled:opacity-40" x-text="lang==='FR'?'Envoyer':'Send'"></button>
+                </div>
+            </div>
+        </div>
+
     </main>
 </div>
 
@@ -4784,6 +4875,45 @@ function customersPanel() {
             finally { this.saving = false; }
         },
         fmtXaf(v) { return Number(v).toLocaleString('fr-CM',{minimumFractionDigits:0})+' XAF'; },
+    };
+}
+
+function aiPanel() {
+    return {
+        aiStatus: { mode:'unavailable', model:null },
+        messages: [], input: '', thinking: false,
+        _tok() { return localStorage.getItem('opes_token'); },
+        _lang() { return localStorage.getItem('opes_lang') || 'FR'; },
+        get chips() {
+            return this._lang()==='FR'
+                ? ['Combien ai-je facturé ce mois?', 'Quel est mon total TVA collectée?', 'Combien de factures ai-je émises?', 'Suis-je prêt pour ma déclaration TVA?']
+                : ['How much did I invoice this month?', 'What is my total VAT collected?', 'How many invoices have I issued?', 'Am I ready for my VAT return?'];
+        },
+        async init() {
+            try { this.aiStatus = await (await fetch('/api/v1/ai/status', { headers:{'Authorization':'Bearer '+this._tok(),'Accept':'application/json'} })).json(); } catch(e) {}
+        },
+        async send(text) {
+            const q = (text ?? this.input).trim();
+            if (!q || this.thinking) return;
+            this.input = '';
+            this.messages.push({ role:'user', text:q });
+            this.thinking = true;
+            this.$nextTick(() => { if (this.$refs.chat) this.$refs.chat.scrollTop = this.$refs.chat.scrollHeight; });
+            try {
+                const res = await fetch('/api/v1/ai/query', { method:'POST', headers:{'Authorization':'Bearer '+this._tok(),'Content-Type':'application/json','Accept':'application/json'}, body: JSON.stringify({ question:q }) });
+                const d = await res.json();
+                if (d.ok && d.data) {
+                    this.messages.push({ role:'ai', text: d.data.answer || '…', figures: d.data.figures || [] });
+                } else {
+                    this.messages.push({ role:'ai', text: d.reason || (this._lang()==='FR'?'IA indisponible.':'AI unavailable.') });
+                }
+            } catch(e) {
+                this.messages.push({ role:'ai', text: this._lang()==='FR'?'Erreur de connexion.':'Connection error.' });
+            } finally {
+                this.thinking = false;
+                this.$nextTick(() => { if (this.$refs.chat) this.$refs.chat.scrollTop = this.$refs.chat.scrollHeight; });
+            }
+        },
     };
 }
 
