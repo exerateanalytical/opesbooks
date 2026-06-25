@@ -40,6 +40,10 @@
             backdrop-filter: blur(40px) saturate(200%);
             -webkit-backdrop-filter: blur(40px) saturate(200%);
             border-right: 1px solid rgba(255,255,255,0.09);
+            height: 100vh;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255,255,255,0.1) transparent;
             box-shadow: 4px 0 32px rgba(0,0,0,0.4);
         }
         .glass-card {
