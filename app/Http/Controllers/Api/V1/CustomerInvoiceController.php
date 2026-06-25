@@ -92,6 +92,21 @@ class CustomerInvoiceController extends Controller
         abort_if($invoice->company_id !== $company->id, 404);
         abort_if($invoice->status !== 'DRAFT', 422, 'Only DRAFT invoices can be sent.');
         $invoice->update(['status' => 'SENT']);
+
+        // Email the client a copy (best-effort).
+        $invoice->loadMissing('customer');
+        if ($invoice->customer?->email) {
+            try {
+                \Illuminate\Support\Facades\Mail::to($invoice->customer->email)->send(new \App\Mail\TransactionalMail(
+                    subjectLine: "Facture N° {$invoice->invoice_number} de " . ($company->name ?? 'votre fournisseur'),
+                    heading: "Vous avez reçu une facture",
+                    lines: [
+                        "Bonjour {$invoice->customer->name},",
+                        "Veuillez trouver votre facture <strong>{$invoice->invoice_number}</strong> d'un montant de <strong>" . number_format($invoice->amount_ttc, 0, ',', ' ') . " XAF TTC</strong>, échéance le " . optional($invoice->due_date)->format('d/m/Y') . ".",
+                    ],
+                ));
+            } catch (\Throwable $e) { /* ignore */ }
+        }
         return response()->json($invoice);
     }
 
@@ -100,6 +115,19 @@ class CustomerInvoiceController extends Controller
         abort_if($invoice->company_id !== $company->id, 404);
         abort_if(!in_array($invoice->status, ['SENT', 'OVERDUE']), 422, 'Invoice is not outstanding.');
         $invoice->update(['status' => 'PAID', 'paid_at' => now()]);
+
+        // Notify the company owner of the payment (best-effort).
+        $owner = \App\Models\User::where('company_id', $company->id)->where('role', 'OWNER')->first();
+        if ($owner?->email) {
+            try {
+                \Illuminate\Support\Facades\Mail::to($owner->email)->send(new \App\Mail\TransactionalMail(
+                    subjectLine: "Paiement reçu — " . number_format($invoice->amount_ttc, 0, ',', ' ') . " XAF",
+                    heading: "✓ Paiement reçu",
+                    lines: ["La facture <strong>{$invoice->invoice_number}</strong> a été marquée comme payée (" . number_format($invoice->amount_ttc, 0, ',', ' ') . " XAF)."],
+                    cta: ['url' => url('/app?page=customer-invoices'), 'label' => 'Voir les factures'],
+                ));
+            } catch (\Throwable $e) { /* ignore */ }
+        }
         return response()->json($invoice);
     }
 

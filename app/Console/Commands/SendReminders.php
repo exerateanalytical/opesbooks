@@ -70,6 +70,15 @@ class SendReminders extends Command
                 'title' => $title, 'body' => $body, 'icon' => $icon, 'icon_color' => $color,
                 'action_url' => $url, 'action_label' => 'Voir',
             ]);
+            // Mirror the reminder by email (no-op-safe if mail isn't configured).
+            try {
+                \Illuminate\Support\Facades\Mail::to($owner->email)->send(new \App\Mail\TransactionalMail(
+                    subjectLine: $title,
+                    heading: $title,
+                    lines: [$body],
+                    cta: ['url' => url($url), 'label' => 'Ouvrir OPESBooks'],
+                ));
+            } catch (\Throwable $e) { /* ignore mail errors */ }
             $n++;
         }
         return $n;

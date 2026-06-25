@@ -207,6 +207,19 @@ class AuthController extends Controller
             'is_default' => true,
         ]);
 
+        // Invitation email with a link to set their password (forgot-password flow).
+        try {
+            \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\TransactionalMail(
+                subjectLine: "{$request->user()->name} vous invite sur OPESBooks",
+                heading: 'Vous avez été invité(e) sur OPESBooks',
+                lines: [
+                    "<strong>{$request->user()->name}</strong> vous a invité(e) à rejoindre <strong>" . ($request->user()->company?->name ?? 'leur entreprise') . "</strong> en tant que <strong>{$data['role']}</strong>.",
+                    "Cliquez ci-dessous pour définir votre mot de passe et accéder à votre espace.",
+                ],
+                cta: ['url' => url('/login'), 'label' => 'Accepter l\'invitation'],
+            ));
+        } catch (\Throwable $e) { /* mail failures never block the invite */ }
+
         return response()->json([
             'message' => 'Team member invited.',
             'user'    => $this->userPayload($user),
