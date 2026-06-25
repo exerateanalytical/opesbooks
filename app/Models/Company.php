@@ -41,6 +41,14 @@ class Company extends Model
         return $this->hasMany(User::class);
     }
 
+    /** Users who may access this company (many-to-many membership). */
+    public function members()
+    {
+        return $this->belongsToMany(User::class, 'company_user')
+            ->withPivot('role', 'is_default')
+            ->withTimestamps();
+    }
+
     public function journalEntries()
     {
         return $this->hasMany(JournalEntry::class);

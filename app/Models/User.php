@@ -35,6 +35,25 @@ class User extends Authenticatable
         return $this->belongsTo(Company::class);
     }
 
+    /** Companies this user may access (active one is company_id). */
+    public function companies()
+    {
+        return $this->belongsToMany(Company::class, 'company_user')
+            ->withPivot('role', 'is_default')
+            ->withTimestamps();
+    }
+
+    /** This user's role within a given company (from the pivot). */
+    public function roleInCompany(int $companyId): ?string
+    {
+        return $this->companies()->where('companies.id', $companyId)->first()?->pivot->role;
+    }
+
+    public function belongsToCompany(int $companyId): bool
+    {
+        return $this->companies()->where('companies.id', $companyId)->exists();
+    }
+
     public function journalEntries()
     {
         return $this->hasMany(JournalEntry::class);

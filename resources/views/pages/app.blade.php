@@ -280,8 +280,63 @@
                           class="inline-block px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest"
                           style="background:rgba(100,116,139,0.18);color:rgb(148,163,184);border:1px solid rgba(100,116,139,0.35)">CLERK</span>
                 </div>
-                <div class="text-slate-500 mt-0.5 uppercase tracking-wider flex items-center gap-1.5">
-                    <span class="truncate" x-text="company?.name ?? '...'"></span>
+                <div class="text-slate-500 mt-0.5 uppercase tracking-wider relative" @click.outside="companySwitcherOpen=false">
+                    <!-- Single company: static; multiple: clickable switcher -->
+                    <button type="button" @click="companies.length > 1 && (companySwitcherOpen = !companySwitcherOpen)"
+                            class="flex items-center gap-1.5 w-full text-left"
+                            :class="companies.length > 1 ? 'hover:text-slate-300 transition-colors' : 'cursor-default'">
+                        <span class="truncate flex-1" x-text="company?.name ?? '...'"></span>
+                        <svg x-show="companies.length > 1" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><polyline points="6 9 12 15 18 9"/></svg>
+                    </button>
+
+                    <!-- Switcher dropdown -->
+                    <div x-show="companySwitcherOpen" x-cloak x-transition.opacity
+                         class="absolute left-0 right-0 mt-2 z-50 rounded-xl overflow-hidden"
+                         style="background:rgba(13,29,51,0.98);border:1px solid rgba(255,255,255,0.12);box-shadow:0 12px 40px rgba(0,0,0,0.6)">
+                        <template x-for="c in companies" :key="c.id">
+                            <button type="button" @click="switchCompany(c.id)"
+                                    class="w-full flex items-center gap-2 px-3 py-2.5 text-left hover:bg-white/5 transition-colors"
+                                    :class="c.is_active ? 'bg-white/5' : ''">
+                                <svg x-show="c.is_active" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgb(201,155,14)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><polyline points="20 6 9 17 4 12"/></svg>
+                                <span x-show="!c.is_active" class="w-[13px] shrink-0"></span>
+                                <span class="flex-1 min-w-0">
+                                    <span class="block truncate text-slate-200 font-black normal-case tracking-normal" x-text="c.name"></span>
+                                    <span class="block text-[9px] text-slate-500 uppercase tracking-widest" x-text="c.role"></span>
+                                </span>
+                            </button>
+                        </template>
+                        <button type="button" @click="companySwitcherOpen=false; showAddCompany=true"
+                                class="w-full flex items-center gap-2 px-3 py-2.5 text-left border-t hover:bg-white/5 transition-colors text-amber-400"
+                                style="border-color:rgba(255,255,255,0.08)">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            <span class="text-[10px] font-black uppercase tracking-wider normal-case" x-text="lang==='FR' ? 'Ajouter une entreprise' : 'Add company'"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add-company modal -->
+        <div x-show="showAddCompany" x-cloak class="fixed inset-0 z-[80] flex items-center justify-center p-4"
+             style="background:rgba(5,13,26,0.7);backdrop-filter:blur(6px)" @click.self="showAddCompany=false">
+            <div class="glass-card rounded-2xl p-6 w-full max-w-md space-y-3">
+                <h3 class="text-sm font-black text-white uppercase tracking-widest" x-text="lang==='FR' ? 'Nouvelle Entreprise' : 'New Company'"></h3>
+                <div x-show="addCompanyError" x-cloak class="px-3 py-2 rounded-lg text-xs font-bold" style="background:rgba(244,63,94,0.12);border:1px solid rgba(244,63,94,0.28);color:rgb(252,165,165)" x-text="addCompanyError"></div>
+                <input x-model="addCompanyForm.name" class="glass-input" :placeholder="lang==='FR' ? 'Nom de l\'entreprise' : 'Company name'">
+                <div class="grid grid-cols-2 gap-2">
+                    <input x-model="addCompanyForm.niu" class="glass-input" placeholder="NIU">
+                    <input x-model="addCompanyForm.rccm" class="glass-input" placeholder="RCCM">
+                    <select x-model="addCompanyForm.tax_regime" class="glass-input">
+                        <option value="REEL">REEL</option>
+                        <option value="SIMPLIFIE">SIMPLIFIÉ</option>
+                        <option value="LIBERATOIRE">LIBÉRATOIRE</option>
+                    </select>
+                    <input x-model="addCompanyForm.tax_center" class="glass-input" :placeholder="lang==='FR' ? 'Centre fiscal' : 'Tax center'">
+                </div>
+                <div class="flex gap-2 pt-1">
+                    <button @click="createCompany()" :disabled="addCompanyLoading" class="glass-btn-amber px-4 py-2 rounded-xl text-xs uppercase tracking-widest flex-1 disabled:opacity-50"
+                            x-text="addCompanyLoading ? '…' : (lang==='FR' ? 'Créer' : 'Create')"></button>
+                    <button @click="showAddCompany=false" class="glass-btn-dark px-4 py-2 rounded-xl text-xs uppercase tracking-widest" x-text="lang==='FR' ? 'Annuler' : 'Cancel'"></button>
                 </div>
             </div>
         </div>
@@ -3449,6 +3504,13 @@ function opesApp() {
         connStatus: navigator.onLine ? 'ONLINE' : 'OFFLINE',
         loading: false,
         sidebarOpen: false,
+        /* Multi-company switcher */
+        companies: [],
+        companySwitcherOpen: false,
+        showAddCompany: false,
+        addCompanyForm: { name:'', niu:'', rccm:'', tax_regime:'REEL', tax_center:'' },
+        addCompanyLoading: false,
+        addCompanyError: '',
         user: null,
         company: null,
         fiscalProvision: 0,
@@ -3516,6 +3578,7 @@ function opesApp() {
             await this.loadMe();
             this.loading = false;
             this.loadAnnouncements();
+            this.loadCompanies();
             /* Auto-load data for initial page */
             if (this.page==='journal')  this.loadJournal();
             if (this.page==='ledger')   this.loadLedger();
@@ -3537,6 +3600,51 @@ function opesApp() {
             dismissed.push(id);
             localStorage.setItem('opes_dismissed_ann', JSON.stringify(dismissed));
             this.announcements = this.announcements.filter(a => a.id !== id);
+        },
+
+        /* Multi-company switcher */
+        async loadCompanies() {
+            try {
+                const list = await this.api('companies/mine');
+                this.companies = Array.isArray(list) ? list : [];
+            } catch(e) { this.companies = []; }
+        },
+        async switchCompany(id) {
+            if (this.company && id === this.company.id) { this.companySwitcherOpen = false; return; }
+            this.companySwitcherOpen = false;
+            this.loading = true;
+            try {
+                const res = await this.api('companies/switch', { method:'POST', body: JSON.stringify({ company_id: id }) });
+                if (res.company) {
+                    localStorage.setItem('opes_company', JSON.stringify(res.company));
+                    // Reload so every page re-fetches data scoped to the new company.
+                    window.location.reload();
+                }
+            } catch(e) { this.loading = false; }
+        },
+        async createCompany() {
+            this.addCompanyError = '';
+            if (!this.addCompanyForm.name || !this.addCompanyForm.niu || !this.addCompanyForm.rccm || !this.addCompanyForm.tax_center) {
+                this.addCompanyError = this.lang==='FR' ? 'Tous les champs sont requis.' : 'All fields are required.';
+                return;
+            }
+            this.addCompanyLoading = true;
+            try {
+                const res = await this.api('companies/additional', { method:'POST', body: JSON.stringify(this.addCompanyForm) });
+                if (res.company) {
+                    await this.loadCompanies();
+                    this.showAddCompany = false;
+                    this.addCompanyForm = { name:'', niu:'', rccm:'', tax_regime:'REEL', tax_center:'' };
+                    // Switch into the new company immediately.
+                    this.switchCompany(res.company.id);
+                } else {
+                    this.addCompanyError = (res.errors ? Object.values(res.errors).flat().join(' ') : res.message) || 'Erreur';
+                }
+            } catch(e) {
+                this.addCompanyError = e.message;
+            } finally {
+                this.addCompanyLoading = false;
+            }
         },
 
         async api(path, opts={}) {

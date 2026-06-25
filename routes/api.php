@@ -81,6 +81,13 @@ Route::prefix('v1')->name('v1.')->group(function () {
             ->get(['id', 'title', 'body', 'type']);
     })->name('announcements');
 
+    // ── Multi-company switcher (auth only; works regardless of sub status) ────
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('companies/mine',        [\App\Http\Controllers\Api\V1\CompanySwitchController::class, 'mine'])->name('companies.mine');
+        Route::post('companies/switch',     [\App\Http\Controllers\Api\V1\CompanySwitchController::class, 'switch'])->name('companies.switch');
+        Route::post('companies/additional', [\App\Http\Controllers\Api\V1\CompanySwitchController::class, 'createAdditional'])->name('companies.additional');
+    });
+
     // ── Authenticated routes ─────────────────────────────────────────────────
     Route::middleware(['auth:sanctum', \App\Http\Middleware\RequireActiveSubscription::class])
         ->group(function () {

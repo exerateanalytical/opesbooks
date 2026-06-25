@@ -53,6 +53,7 @@ class AuthController extends Controller
             'password'   => Hash::make($data['password']),
             'role'       => 'OWNER',
         ]);
+        $user->companies()->attach($company->id, ['role' => 'OWNER', 'is_default' => true]);
 
         $token = $user->createToken('opes-api')->plainTextToken;
 
@@ -155,6 +156,10 @@ class AuthController extends Controller
             'password'             => Hash::make($data['password']),
             'role'                 => $data['role'],
             'assigned_caisse_code' => $data['assigned_caisse_code'] ?? null,
+        ]);
+        $user->companies()->attach($request->user()->company_id, [
+            'role'       => $data['role'],
+            'is_default' => true,
         ]);
 
         return response()->json([
