@@ -1,0 +1,18 @@
+{
+  "name": "OPESBooks",
+  "short_name": "OPESBooks",
+  "description": "Logiciel de comptabilité pour PME camerounaises",
+  "start_url": "/app",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#010048",
+  "theme_color": "#010048",
+  "lang": "fr",
+  "dir": "ltr",
+  "scope": "/",
+  "categories": ["business", "finance", "productivity"],
+  "prefer_related_applications": false,
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

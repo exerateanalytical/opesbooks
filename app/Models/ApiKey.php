@@ -9,11 +9,12 @@ class ApiKey extends Model
 {
     protected $fillable = [
         'company_id', 'name', 'environment', 'key_prefix', 'key_hash',
-        'scopes', 'rate_limit', 'status', 'last_used_at', 'expires_at', 'created_by',
+        'scopes', 'allowed_ips', 'rate_limit', 'status', 'last_used_at', 'expires_at', 'created_by',
     ];
 
     protected $casts = [
         'scopes'       => 'array',
+        'allowed_ips'  => 'array',
         'last_used_at' => 'datetime',
         'expires_at'   => 'datetime',
     ];

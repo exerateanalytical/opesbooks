@@ -24,6 +24,9 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Log all mutating API requests to audit_logs
         $middleware->appendToGroup('api', \App\Http\Middleware\AuditActivity::class);
+
+        // Security response headers on every request
+        $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

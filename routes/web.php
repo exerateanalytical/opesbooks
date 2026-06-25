@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/login',      fn () => view('pages.login'))->name('login');
 Route::get('/app',        fn () => view('pages.app'))->name('app');
 Route::get('/onboarding', fn () => view('pages.onboarding'))->name('onboarding');
+Route::get('/offline',    fn () => view('offline'))->name('offline');
 Route::get('/about', fn () => view('pages.about'))->name('about');
 
 // Root redirects to SPA — the authenticated SPA is the primary interface

@@ -39,6 +39,13 @@ class AuthenticateApiKey
             abort(403, "API key missing required scope: {$requiredScope}");
         }
 
+        // Optional IP allow-list (null = any IP).
+        $allowed = $key->allowed_ips ?? null;
+        if (! empty($allowed) && ! in_array($request->ip(), $allowed, true)) {
+            $this->log($request, 403, $key);
+            abort(403, 'API key not authorized from IP: ' . $request->ip());
+        }
+
         $limiterKey = 'apikey:' . $key->id;
         if (RateLimiter::tooManyAttempts($limiterKey, $key->rate_limit)) {
             $this->log($request, 429, $key);

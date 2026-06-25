@@ -7,6 +7,15 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#010048">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="OPESBooks">
+    <link rel="apple-touch-icon" href="/icon.svg">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         // Brand gold — overrides Tailwind's default amber so utility classes match #C99B0E
@@ -286,6 +295,24 @@
             </button>
         </div>
     </template>
+</div>
+
+<!-- PWA install banner -->
+<div x-data="pwaInstall()" x-init="init()" x-show="showBanner" x-cloak
+     class="fixed bottom-6 left-4 right-4 lg:left-auto lg:right-6 lg:w-80 z-[110] rounded-xl p-4 shadow-2xl"
+     style="background:#0d1d33;border:1px solid rgba(201,155,14,0.3)">
+    <div class="flex items-start gap-3">
+        <img src="/icon.svg" class="w-11 h-11 rounded-xl" alt="OPESBooks">
+        <div class="flex-1 min-w-0">
+            <p class="text-white font-black text-sm">Installer OPESBooks</p>
+            <p class="text-slate-400 text-[11px] mt-0.5">Accès rapide + fonctionne hors ligne</p>
+        </div>
+        <button @click="dismiss()" class="text-slate-500 hover:text-slate-300"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="flex gap-2 mt-3">
+        <button @click="dismiss()" class="flex-1 glass-btn-dark py-2 rounded-lg text-[11px] uppercase tracking-wider">Plus tard</button>
+        <button @click="install()" class="flex-1 glass-btn-amber py-2 rounded-lg text-[11px] uppercase tracking-wider">Installer</button>
+    </div>
 </div>
 
 <!-- ── Layout ──────────────────────────────────────────────────────── -->
@@ -4098,6 +4125,31 @@ function toastManager() {
 // Fire from anywhere: opesToast('success','Titre','Message')
 window.opesToast = (type, title, message = '') =>
     window.dispatchEvent(new CustomEvent('toast', { detail: { type, title, message } }));
+
+// ── PWA: install prompt + service worker ──────────────────────────────────
+function pwaInstall() {
+    return {
+        showBanner: false, deferredPrompt: null,
+        init() {
+            if (localStorage.getItem('pwa-dismissed') || window.matchMedia('(display-mode: standalone)').matches) return;
+            window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); this.deferredPrompt = e; this.showBanner = true; });
+        },
+        async install() {
+            if (!this.deferredPrompt) { this.showBanner = false; return; }
+            this.deferredPrompt.prompt();
+            await this.deferredPrompt.userChoice;
+            this.showBanner = false; this.deferredPrompt = null;
+        },
+        dismiss() { this.showBanner = false; localStorage.setItem('pwa-dismissed', Date.now()); },
+    };
+}
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+            .then(reg => setInterval(() => reg.update(), 60000))
+            .catch(() => {});
+    });
+}
 
 // Global helper: extract readable message from Laravel error responses
 function extractError(data) {

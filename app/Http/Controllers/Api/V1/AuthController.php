@@ -31,7 +31,7 @@ class AuthController extends Controller
             'company_address'        => 'nullable|string|max:500',
             'name'                   => 'required|string|max:255',
             'email'                  => 'required|email|unique:users,email',
-            'password'               => 'required|string|min:8|confirmed',
+            'password'               => ['required', 'confirmed', new \App\Rules\StrongPassword],
         ]);
 
         $company = Company::create([
