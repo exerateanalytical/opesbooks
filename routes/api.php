@@ -515,4 +515,12 @@ Route::prefix('v1/integration')->name('api.integration.')->group(function () {
         ->middleware('apikey:tax:read')->name('tax.vat-summary');
     Route::get('/reports/pl',          [\App\Http\Controllers\Api\V1\IntegrationController::class, 'profitAndLoss'])
         ->middleware('apikey:reports:read')->name('reports.pl');
+
+    // Webhooks (manage scope)
+    Route::middleware('apikey:webhooks:manage')->group(function () {
+        Route::get('/webhooks',              [\App\Http\Controllers\Api\V1\IntegrationController::class, 'webhooks'])->name('webhooks.index');
+        Route::post('/webhooks',             [\App\Http\Controllers\Api\V1\IntegrationController::class, 'storeWebhook'])->name('webhooks.store');
+        Route::delete('/webhooks/{id}',      [\App\Http\Controllers\Api\V1\IntegrationController::class, 'destroyWebhook'])->name('webhooks.destroy');
+        Route::post('/webhooks/{id}/test',   [\App\Http\Controllers\Api\V1\IntegrationController::class, 'testWebhook'])->name('webhooks.test');
+    });
 });

@@ -32,6 +32,13 @@ class JournalEntry extends Model
         'dgi_validated_at' => 'datetime',
     ];
 
+    protected static function booted(): void
+    {
+        static::created(function (self $entry) {
+            app(\App\Services\WebhookService::class)->dispatch('journal.entry.posted', $entry->toArray(), $entry->company);
+        });
+    }
+
     public function company()
     {
         return $this->belongsTo(Company::class);

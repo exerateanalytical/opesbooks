@@ -31,3 +31,6 @@ Schedule::call(function () {
 
 // Capture platform metrics for admin System Health charts (every 5 min)
 Schedule::command('metrics:record')->everyFiveMinutes()->withoutOverlapping();
+
+// Deliver pending webhook events (cron-friendly; shared-hosting safe)
+Schedule::command('webhooks:deliver')->everyMinute()->withoutOverlapping();

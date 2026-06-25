@@ -17,6 +17,13 @@ class Payment extends Model
         'amount_xaf'   => 'integer',
     ];
 
+    protected static function booted(): void
+    {
+        static::created(function (self $payment) {
+            app(\App\Services\WebhookService::class)->dispatch('payment.received', $payment->toArray(), $payment->company);
+        });
+    }
+
     public function company() { return $this->belongsTo(Company::class); }
 
     public static function nextReceiptNumber(): string

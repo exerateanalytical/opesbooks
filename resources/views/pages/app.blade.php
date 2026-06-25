@@ -260,6 +260,31 @@
     </button>
 </div>
 
+<!-- Global toast notifications -->
+<div x-data="toastManager()" @toast.window="addToast($event.detail)"
+     class="fixed bottom-6 right-6 z-[120] flex flex-col gap-3 pointer-events-none" style="max-width:380px">
+    <template x-for="t in toasts" :key="t.id">
+        <div x-show="t.show" x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+             class="backdrop-blur border rounded-xl px-4 py-3 flex items-start gap-3 pointer-events-auto shadow-lg shadow-black/40"
+             :style="({
+                success:'background:rgba(16,185,129,0.18);border:1px solid rgba(16,185,129,0.35);color:rgb(110,231,183)',
+                error:'background:rgba(244,63,94,0.18);border:1px solid rgba(244,63,94,0.35);color:rgb(252,165,165)',
+                warning:'background:rgba(201,155,14,0.18);border:1px solid rgba(201,155,14,0.35);color:#E3B420',
+                info:'background:rgba(99,102,241,0.18);border:1px solid rgba(99,102,241,0.35);color:rgb(165,180,252)'
+             })[t.type] || 'background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#fff'">
+            <div class="flex-1 min-w-0">
+                <p class="font-black text-sm" x-text="t.title"></p>
+                <p x-show="t.message" class="text-xs opacity-80 mt-0.5" x-text="t.message"></p>
+            </div>
+            <button @click="removeToast(t.id)" class="opacity-60 hover:opacity-100 shrink-0 mt-0.5">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+    </template>
+</div>
+
 <!-- ── Layout ──────────────────────────────────────────────────────── -->
 <div class="flex relative z-10" :class="impersonation ? 'h-[calc(100vh-2.5rem)]' : 'h-screen'">
 
@@ -3994,6 +4019,26 @@
 </div>
 
 <script>
+// ── Global toast system ───────────────────────────────────────────────────
+function toastManager() {
+    return {
+        toasts: [],
+        addToast({ type = 'info', title = '', message = '', duration = 4000 } = {}) {
+            const id = Date.now() + Math.floor(performance.now());
+            this.toasts.push({ id, type, title, message, show: true });
+            setTimeout(() => this.removeToast(id), duration);
+        },
+        removeToast(id) {
+            const t = this.toasts.find(x => x.id === id);
+            if (t) t.show = false;
+            setTimeout(() => { this.toasts = this.toasts.filter(x => x.id !== id); }, 250);
+        },
+    };
+}
+// Fire from anywhere: opesToast('success','Titre','Message')
+window.opesToast = (type, title, message = '') =>
+    window.dispatchEvent(new CustomEvent('toast', { detail: { type, title, message } }));
+
 // Global helper: extract readable message from Laravel error responses
 function extractError(data) {
     if (!data) return 'Erreur inconnue';
@@ -4846,8 +4891,9 @@ function customerInvoicesPanel() {
                     inv.mecef_status   = d.invoice.mecef_status;
                     inv.mecef_counter  = d.invoice.mecef_counter;
                     inv.mecef_nim      = d.invoice.mecef_nim;
+                    window.opesToast('success', 'Facture certifiée DGI', 'Compteur ' + (d.invoice.mecef_counter || ''));
                 } else {
-                    alert(d.message || 'MECeF: échec de la certification.');
+                    window.opesToast('error', 'MECeF', d.message || 'Échec de la certification.');
                 }
             } catch(e) {} finally { this.mecefLoading = null; }
         },
@@ -5033,6 +5079,7 @@ function projectsPanel() {
                 const payload = Object.fromEntries(Object.entries(this.addForm).filter(([, v]) => v !== '' && v !== null));
                 await this._send('projects', 'POST', payload);
                 this.showAdd = false; await this.load();
+                window.opesToast('success', this._lang()==='FR'?'Projet créé':'Project created');
             } catch(e) { this.addError = e.message; }
             finally { this.addSaving = false; }
         },
@@ -5111,7 +5158,7 @@ function crmPanel() {
             this.addError = '';
             if (!this.addForm.contact_name) { this.addError = this._lang()==='FR' ? 'Nom du contact requis.' : 'Contact name required.'; return; }
             this.addSaving = true;
-            try { await this._send('crm/leads', 'POST', this.addForm); this.showAdd=false; await this.load(); this.loadStats(); }
+            try { await this._send('crm/leads', 'POST', this.addForm); this.showAdd=false; await this.load(); this.loadStats(); window.opesToast('success', this._lang()==='FR'?'Lead créé':'Lead created'); }
             catch(e) { this.addError = e.message; }
             finally { this.addSaving = false; }
         },

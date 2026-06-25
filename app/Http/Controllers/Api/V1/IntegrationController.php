@@ -69,6 +69,52 @@ class IntegrationController extends Controller
         ]);
     }
 
+    /** GET /api/v1/integration/webhooks */
+    public function webhooks(Request $request)
+    {
+        return response()->json(
+            \App\Models\WebhookEndpoint::where('company_id', $this->companyId())->get()
+        );
+    }
+
+    /** POST /api/v1/integration/webhooks */
+    public function storeWebhook(Request $request)
+    {
+        $data = $request->validate([
+            'url'      => 'required|url|max:500',
+            'events'   => 'required|array|min:1',
+            'events.*' => 'in:' . implode(',', \App\Models\WebhookEndpoint::EVENTS),
+        ]);
+
+        $secret = \Illuminate\Support\Str::random(32);
+        $endpoint = \App\Models\WebhookEndpoint::create([
+            'company_id' => $this->companyId(),
+            'api_key_id' => $request->attributes->get('api_key')?->id,
+            'url'        => $data['url'],
+            'events'     => $data['events'],
+            'secret'     => $secret,
+        ]);
+
+        // Secret returned ONCE (it is hidden on subsequent reads).
+        return response()->json(array_merge($endpoint->toArray(), ['secret' => $secret]), 201);
+    }
+
+    /** DELETE /api/v1/integration/webhooks/{id} */
+    public function destroyWebhook(Request $request, int $id)
+    {
+        $endpoint = \App\Models\WebhookEndpoint::where('company_id', $this->companyId())->findOrFail($id);
+        $endpoint->delete();
+        return response()->json(['ok' => true]);
+    }
+
+    /** POST /api/v1/integration/webhooks/{id}/test */
+    public function testWebhook(Request $request, int $id)
+    {
+        $endpoint = \App\Models\WebhookEndpoint::where('company_id', $this->companyId())->findOrFail($id);
+        app(\App\Services\WebhookService::class)->dispatch('webhook.test', ['message' => 'Test event from OPESBooks'], $endpoint->company);
+        return response()->json(['ok' => true, 'message' => 'Test event queued for delivery.']);
+    }
+
     /** GET /api/v1/integration/reports/pl */
     public function profitAndLoss(Request $request)
     {

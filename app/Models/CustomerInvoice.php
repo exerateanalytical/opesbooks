@@ -26,6 +26,21 @@ class CustomerInvoice extends Model
         'mecef_certified_at' => 'datetime', 'mecef_response_raw' => 'array',
     ];
 
+    protected static function booted(): void
+    {
+        static::created(function (self $inv) {
+            app(\App\Services\WebhookService::class)->dispatch('invoice.created', $inv->toArray(), $inv->company);
+        });
+        static::updated(function (self $inv) {
+            if ($inv->wasChanged('status') && $inv->status === 'PAID') {
+                app(\App\Services\WebhookService::class)->dispatch('invoice.paid', $inv->toArray(), $inv->company);
+            }
+            if ($inv->wasChanged('mecef_status') && $inv->mecef_status === 'certified') {
+                app(\App\Services\WebhookService::class)->dispatch('invoice.certified_mecef', $inv->toArray(), $inv->company);
+            }
+        });
+    }
+
     public function company()      { return $this->belongsTo(Company::class); }
     public function customer()     { return $this->belongsTo(Customer::class); }
     public function journalEntry() { return $this->belongsTo(JournalEntry::class); }
