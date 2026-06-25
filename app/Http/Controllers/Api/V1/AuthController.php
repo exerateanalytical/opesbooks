@@ -149,6 +149,15 @@ class AuthController extends Controller
     {
         $this->authorizeOwner($request);
 
+        // Plan limit: max users per plan.
+        $company = $request->user()->company;
+        if ($company && ! app(\App\Services\PlanLimitService::class)->canAddUser($company)) {
+            return response()->json(
+                app(\App\Services\PlanLimitService::class)->limitReached($company, 'utilisateurs'),
+                402
+            );
+        }
+
         $data = $request->validate([
             'name'                 => 'required|string|max:255',
             'email'                => 'required|email|unique:users,email',

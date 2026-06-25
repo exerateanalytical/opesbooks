@@ -38,6 +38,14 @@ class CustomerInvoiceController extends Controller
 
     public function store(Request $request, Company $company): JsonResponse
     {
+        // Plan limit: monthly invoice cap (free plan = 20/month).
+        if (! app(\App\Services\PlanLimitService::class)->canCreateInvoice($company)) {
+            return response()->json(
+                app(\App\Services\PlanLimitService::class)->limitReached($company, 'factures/mois'),
+                402
+            );
+        }
+
         $data = $request->validate([
             'customer_id'   => 'required|integer|exists:customers,id',
             'invoice_date'  => 'required|date',
