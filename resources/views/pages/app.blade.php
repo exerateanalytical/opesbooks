@@ -2045,6 +2045,19 @@
                 </template>
             </div>
 
+            <!-- Sessions -->
+            <div class="glass-card rounded-2xl p-6 space-y-3"
+                 x-data="{ busy:false, async logoutAll(){ this.busy=true; try{ await fetch('/api/v1/auth/logout-all',{method:'POST',headers:{'Authorization':'Bearer '+localStorage.getItem('opes_token'),'Accept':'application/json'}}); }catch(e){} localStorage.clear(); window.location.href='/login'; } }">
+                <p class="text-[10px] font-black text-amber-400 uppercase tracking-widest" x-text="lang==='FR'?'Sessions & Connexion':'Sessions & Login'"></p>
+                <div class="text-xs text-slate-400">
+                    <span x-text="lang==='FR'?'Dernière connexion : ':'Last login: '"></span>
+                    <span class="text-slate-200 font-bold" x-text="user?.last_login_at ? new Date(user.last_login_at).toLocaleString('fr-CM') : '—'"></span>
+                    <span x-show="user?.last_login_ip" class="text-slate-500" x-text="' · '+(user?.last_login_ip||'')"></span>
+                </div>
+                <p class="text-[10px] text-slate-500" x-text="lang==='FR'?'Une seule session active à la fois (connexion sur un nouvel appareil déconnecte les autres).':'Single active session (logging in elsewhere ends others).'"></p>
+                <button @click="logoutAll()" :disabled="busy" class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest disabled:opacity-50" style="background:rgba(244,63,94,0.15);color:rgb(252,165,165);border:1px solid rgba(244,63,94,0.3)" x-text="busy?'…':(lang==='FR'?'Déconnecter tous les appareils':'Log out everywhere')"></button>
+            </div>
+
             <!-- Profile info card -->
             <div class="glass-card rounded-2xl p-6 space-y-4">
                 <p class="text-[10px] font-black text-amber-400 uppercase tracking-widest"

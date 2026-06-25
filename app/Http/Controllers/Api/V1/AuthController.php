@@ -227,6 +227,13 @@ class AuthController extends Controller
 
     // -------------------------------------------------------------------------
 
+    /** POST /api/v1/auth/logout-all — revoke every token (log out all devices). */
+    public function logoutAll(Request $request): JsonResponse
+    {
+        $request->user()->tokens()->delete();
+        return response()->json(['message' => 'Toutes les sessions ont été déconnectées.']);
+    }
+
     private function userPayload(User $user): array
     {
         return [
@@ -236,6 +243,9 @@ class AuthController extends Controller
             'role'                 => $user->role,
             'company_id'           => $user->company_id,
             'assigned_caisse_code' => $user->assigned_caisse_code,
+            'two_factor_enabled'   => $user->hasTwoFactorEnabled(),
+            'last_login_at'        => optional($user->last_login_at)->toIso8601String(),
+            'last_login_ip'        => $user->last_login_ip,
         ];
     }
 

@@ -39,3 +39,6 @@ Schedule::command('webhooks:deliver')->everyMinute()->withoutOverlapping();
 // One `schedule:run` cron line therefore covers commands AND queued jobs.
 Schedule::command('queue:work --stop-when-empty --max-time=55 --tries=3')
     ->everyMinute()->withoutOverlapping();
+
+// Daily reminder notifications (overdue invoices, DSF on the 15th, renewals).
+Schedule::command('notifications:reminders')->dailyAt('08:00')->withoutOverlapping();

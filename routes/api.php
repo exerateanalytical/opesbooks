@@ -180,6 +180,7 @@ Route::prefix('v1')->name('v1.')->group(function () {
         // Auth utilities
         Route::prefix('auth')->name('auth.')->group(function () {
             Route::post('logout',    [AuthController::class, 'logout'])->name('logout');
+            Route::post('logout-all',[AuthController::class, 'logoutAll'])->name('logout-all');
             Route::get('me',         [AuthController::class, 'me'])->name('me');
             Route::put('profile',    [ProfileController::class, 'update'])->name('profile.update');
             Route::put('password',   [ProfileController::class, 'changePassword'])->name('password.change');
@@ -545,6 +546,10 @@ Route::prefix('v1/integration')->name('api.integration.')->group(function () {
     Route::middleware('apikey:invoices:read')->group(function () {
         Route::get('/invoices',        [\App\Http\Controllers\Api\V1\IntegrationController::class, 'invoices'])->name('invoices');
         Route::get('/invoices/{id}',   [\App\Http\Controllers\Api\V1\IntegrationController::class, 'showInvoice'])->name('invoices.show');
+    });
+    Route::middleware('apikey:invoices:write')->group(function () {
+        Route::post('/invoices',          [\App\Http\Controllers\Api\V1\IntegrationController::class, 'storeInvoice'])->name('invoices.store');
+        Route::post('/invoices/{id}/void',[\App\Http\Controllers\Api\V1\IntegrationController::class, 'voidInvoice'])->name('invoices.void');
     });
     Route::get('/journal',             [\App\Http\Controllers\Api\V1\IntegrationController::class, 'journal'])
         ->middleware('apikey:journal:read')->name('journal');

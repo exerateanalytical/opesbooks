@@ -40,6 +40,64 @@ class IntegrationController extends Controller
         return response()->json($invoice);
     }
 
+    /** POST /api/v1/integration/invoices — create a customer invoice. */
+    public function storeInvoice(Request $request)
+    {
+        $cid = $this->companyId();
+        $company = \App\Models\Company::find($cid);
+
+        if (! app(\App\Services\PlanLimitService::class)->canCreateInvoice($company)) {
+            return response()->json(app(\App\Services\PlanLimitService::class)->limitReached($company, 'factures/mois'), 402);
+        }
+
+        $data = $request->validate([
+            'client_id'          => 'required|integer',
+            'invoice_date'       => 'required|date',
+            'due_date'           => 'nullable|date|after_or_equal:invoice_date',
+            'items'              => 'required|array|min:1',
+            'items.*.description'=> 'required|string|max:255',
+            'items.*.quantity'   => 'required|numeric|min:0.01',
+            'items.*.unit_price' => 'required|numeric|min:0',
+            'notes'              => 'nullable|string|max:1000',
+        ]);
+
+        // Client must belong to the API key's company.
+        $customer = \App\Models\Customer::where('company_id', $cid)->find($data['client_id']);
+        if (! $customer) {
+            return response()->json(['error' => 'invalid_client', 'message' => 'client_id not found for this company.'], 422);
+        }
+
+        $amountHt = collect($data['items'])->sum(fn ($i) => $i['quantity'] * $i['unit_price']);
+        $tax = \App\Services\CameroonTaxEngine::compute((string) $amountHt);
+
+        $invoice = \App\Models\CustomerInvoice::create([
+            'company_id'     => $cid,
+            'customer_id'    => $customer->id,
+            'invoice_number' => 'API-' . date('Y') . '-' . strtoupper(\Illuminate\Support\Str::random(6)),
+            'invoice_date'   => $data['invoice_date'],
+            'due_date'       => $data['due_date'] ?? \Illuminate\Support\Carbon::parse($data['invoice_date'])->addDays(30),
+            'amount_ht'      => $tax['amount_ht'],
+            'tva_amount'     => $tax['base_vat'],
+            'cac_amount'     => $tax['cac'],
+            'amount_ttc'     => $tax['amount_ttc'],
+            'status'         => 'DRAFT',
+            'notes'          => $data['notes'] ?? null,
+        ]);
+
+        return response()->json(['success' => true, 'data' => $invoice->load('customer')], 201);
+    }
+
+    /** POST /api/v1/integration/invoices/{id}/void */
+    public function voidInvoice(Request $request, int $id)
+    {
+        $invoice = CustomerInvoice::where('company_id', $this->companyId())->findOrFail($id);
+        if ($invoice->status === 'PAID') {
+            return response()->json(['error' => 'cannot_void_paid', 'message' => 'Cannot void a paid invoice. Issue a credit note instead.'], 422);
+        }
+        $invoice->update(['status' => 'CANCELLED']);
+        return response()->json(['success' => true, 'data' => $invoice]);
+    }
+
     /** GET /api/v1/integration/journal */
     public function journal(Request $request)
     {
