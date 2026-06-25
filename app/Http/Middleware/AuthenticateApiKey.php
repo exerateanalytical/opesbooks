@@ -55,7 +55,16 @@ class AuthenticateApiKey
         // Downstream controllers scope tenant data by this company id.
         app()->instance('current_api_company_id', $key->company_id);
 
-        return $next($request);
+        $response = $next($request);
+
+        // Standard rate-limit headers for integrators.
+        if (method_exists($response, 'header')) {
+            $response->header('X-RateLimit-Limit', $key->rate_limit);
+            $response->header('X-RateLimit-Remaining', max(0, RateLimiter::remaining($limiterKey, $key->rate_limit)));
+            $response->header('X-RateLimit-Reset', now()->addSeconds(RateLimiter::availableIn($limiterKey) ?: 3600)->timestamp);
+        }
+
+        return $response;
     }
 
     /** Log a successful/authorized request after the response is sent. */

@@ -79,6 +79,33 @@ class AdminDashboardController extends Controller
             'created_at' => now(),
         ]);
 
-        return response()->json(['token' => $token, 'user' => $user->only('id', 'name', 'email', 'role')]);
+        // Dedicated impersonation log (start).
+        \App\Models\AdminImpersonationLog::create([
+            'admin_user_id' => $request->user()->id,
+            'company_id'    => $user->company_id,
+            'started_at'    => now(),
+            'ip_address'    => $request->ip(),
+            'created_at'    => now(),
+        ]);
+
+        $company = $user->company;
+
+        return response()->json([
+            'token'        => $token,
+            'user'         => $user->only('id', 'name', 'email', 'role'),
+            'company_name' => $company?->name,
+        ]);
+    }
+
+    /** GET /admin/impersonate/leave — end the active impersonation and return to admin. */
+    public function leaveImpersonation(Request $request)
+    {
+        \App\Models\AdminImpersonationLog::where('admin_user_id', $request->user()->id)
+            ->whereNull('ended_at')
+            ->latest('id')
+            ->limit(1)
+            ->update(['ended_at' => now()]);
+
+        return redirect()->route('admin.companies')->with('success', 'Impersonnification terminée.');
     }
 }

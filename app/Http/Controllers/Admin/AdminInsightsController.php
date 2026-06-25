@@ -176,6 +176,20 @@ class AdminInsightsController extends Controller
         return view('admin.system', compact('services', 'failedJobs', 'counts'));
     }
 
+    /** POST /admin/system/retry-jobs */
+    public function retryFailedJobs()
+    {
+        \Illuminate\Support\Facades\Artisan::call('queue:retry', ['id' => ['all']]);
+        return back()->with('success', 'Jobs échoués relancés.');
+    }
+
+    /** POST /admin/system/flush-jobs */
+    public function flushFailedJobs()
+    {
+        \Illuminate\Support\Facades\Artisan::call('queue:flush');
+        return back()->with('success', 'File des jobs échoués vidée.');
+    }
+
     private function checkDatabase(): array
     {
         try {

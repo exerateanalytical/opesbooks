@@ -28,6 +28,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/companies/{company}',       [\App\Http\Controllers\Admin\AdminDashboardController::class, 'company'])->name('company');
         Route::post('/companies/{company}/subscription', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'updateSubscription'])->name('company.subscription');
         Route::post('/impersonate/{user}',       [\App\Http\Controllers\Admin\AdminDashboardController::class, 'impersonate'])->name('impersonate');
+        Route::get('/impersonate/leave',          [\App\Http\Controllers\Admin\AdminDashboardController::class, 'leaveImpersonation'])->name('impersonate.leave');
 
         // Subscriptions & billing
         Route::get('/subscriptions',             [\App\Http\Controllers\Admin\AdminInsightsController::class, 'subscriptions'])->name('subscriptions');
@@ -44,6 +45,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // Platform ops
         Route::get('/system',                    [\App\Http\Controllers\Admin\AdminInsightsController::class, 'system'])->name('system');
+        Route::post('/system/retry-jobs',        [\App\Http\Controllers\Admin\AdminInsightsController::class, 'retryFailedJobs'])->name('system.retry-jobs');
+        Route::post('/system/flush-jobs',        [\App\Http\Controllers\Admin\AdminInsightsController::class, 'flushFailedJobs'])->name('system.flush-jobs');
         Route::get('/audit',                     [\App\Http\Controllers\Admin\AdminInsightsController::class, 'audit'])->name('audit');
         Route::get('/announcements',             [\App\Http\Controllers\Admin\AdminAnnouncementController::class, 'index'])->name('announcements');
         Route::post('/announcements',            [\App\Http\Controllers\Admin\AdminAnnouncementController::class, 'store'])->name('announcements.store');

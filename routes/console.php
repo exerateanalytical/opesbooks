@@ -28,3 +28,6 @@ Schedule::call(function () {
     $now = now();
     app(FixedAssetService::class)->runMonthlyDepreciation($now->month, $now->year);
 })->monthlyOn(1, '03:00')->name('monthly-depreciation')->withoutOverlapping();
+
+// Capture platform metrics for admin System Health charts (every 5 min)
+Schedule::command('metrics:record')->everyFiveMinutes()->withoutOverlapping();

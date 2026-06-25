@@ -51,6 +51,16 @@
             @endif
         </div>
         <p class="text-slate-500 text-xs mt-2">Background queue worker status across all tenants.</p>
+        <div class="flex gap-2 mt-4">
+            <form method="POST" action="{{ route('admin.system.retry-jobs') }}" onsubmit="return confirm('Relancer tous les jobs échoués ?')">
+                @csrf
+                <button class="px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wide bg-amber-500/15 text-amber-300 border border-amber-500/30 hover:bg-amber-500/25">Relancer les jobs échoués</button>
+            </form>
+            <form method="POST" action="{{ route('admin.system.flush-jobs') }}" onsubmit="return confirm('Vider définitivement la file des jobs échoués ?')">
+                @csrf
+                <button class="px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wide bg-red-500/15 text-red-300 border border-red-500/30 hover:bg-red-500/25">Vider la file</button>
+            </form>
+        </div>
     </div>
 </div>
 

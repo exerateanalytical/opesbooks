@@ -92,6 +92,12 @@ async function handleImpersonate(e, form) {
     });
     const data = await resp.json();
     if (data.token) {
+        // Enter the tenant app as this user, with an impersonation banner.
+        localStorage.setItem('opes_token', data.token);
+        localStorage.setItem('opes_user', JSON.stringify(data.user));
+        localStorage.setItem('opes_impersonation', JSON.stringify({ name: data.company_name || '', role: data.user.role }));
+        window.open('/app', '_blank');
+        // Also surface the raw token for API testing.
         document.getElementById('impersonate-token').textContent = data.token;
         document.getElementById('impersonate-user').textContent =
             `User: ${data.user.name} (${data.user.email}) — Role: ${data.user.role}`;

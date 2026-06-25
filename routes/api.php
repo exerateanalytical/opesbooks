@@ -49,6 +49,15 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->name('v1.')->group(function () {
 
+    // ── Health check (public) ────────────────────────────────────────────────
+    Route::get('health', function () {
+        return response()->json([
+            'status'    => 'ok',
+            'timestamp' => now()->toIso8601String(),
+            'version'   => '1.0.0',
+        ]);
+    })->name('health');
+
     // ── Auth (public) — rate-limited ────────────────────────────────────────
     Route::prefix('auth')->name('auth.')->middleware('throttle:api-auth')->group(function () {
         Route::post('register',         [AuthController::class,       'register'])->name('register');

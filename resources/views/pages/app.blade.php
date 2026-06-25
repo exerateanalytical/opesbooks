@@ -248,8 +248,20 @@
 </head>
 <body x-data="opesApp()" x-cloak class="relative">
 
+<!-- Admin impersonation banner -->
+<div x-show="impersonation" x-cloak class="relative z-[100] flex items-center justify-between gap-3 px-4 py-2 text-black"
+     style="background:#C99B0E">
+    <span class="text-xs font-black uppercase tracking-wider flex items-center gap-2">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+        <span x-text="(lang==='FR'?'Mode Admin — Vous consultez : ':'Admin Mode — Viewing: ') + (impersonation?.name || '')"></span>
+    </span>
+    <button @click="leaveImpersonation()" class="text-xs font-black uppercase tracking-wider underline hover:no-underline">
+        <span x-text="lang==='FR'?'Quitter l\'impersonnification →':'Exit impersonation →'"></span>
+    </button>
+</div>
+
 <!-- ── Layout ──────────────────────────────────────────────────────── -->
-<div class="flex h-screen relative z-10">
+<div class="flex relative z-10" :class="impersonation ? 'h-[calc(100vh-2.5rem)]' : 'h-screen'">
 
     <!-- Mobile drawer overlay -->
     <div class="sidebar-overlay" :class="{ 'is-open': sidebarOpen }" @click="sidebarOpen = false"></div>
@@ -4009,6 +4021,15 @@ function opesApp() {
         connStatus: navigator.onLine ? 'ONLINE' : 'OFFLINE',
         loading: false,
         sidebarOpen: false,
+        /* Admin impersonation */
+        impersonation: (() => { try { return JSON.parse(localStorage.getItem('opes_impersonation') || 'null'); } catch(e) { return null; } })(),
+        leaveImpersonation() {
+            localStorage.removeItem('opes_impersonation');
+            localStorage.removeItem('opes_token');
+            localStorage.removeItem('opes_user');
+            localStorage.removeItem('opes_company');
+            window.location.href = '/admin/impersonate/leave';
+        },
         /* Multi-company switcher */
         companies: [],
         companySwitcherOpen: false,
