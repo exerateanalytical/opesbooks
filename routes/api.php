@@ -379,3 +379,28 @@ Route::prefix('v1')->name('v1.')->group(function () {
         });
     });
 });
+
+// Platform SUPER_ADMIN API
+Route::prefix('v1/admin')->name('api.admin.')->middleware(['auth:sanctum', \App\Http\Middleware\RequireSuperAdmin::class])->group(function () {
+    Route::get('/stats', function () {
+        return response()->json([
+            'companies'            => \App\Models\Company::count(),
+            'users'                => \App\Models\User::whereNotIn('role', ['SUPER_ADMIN'])->count(),
+            'active_subscriptions' => \App\Models\Subscription::where('status', 'ACTIVE')->count(),
+        ]);
+    })->name('stats');
+
+    Route::get('/companies', function () {
+        return \App\Models\Company::with('subscriptions')->latest()->paginate(20);
+    })->name('companies');
+
+    Route::get('/users', function () {
+        return \App\Models\User::with('company')->whereNotIn('role', ['SUPER_ADMIN'])->latest()->paginate(30);
+    })->name('users');
+
+    Route::patch('/users/{user}/role', function (\Illuminate\Http\Request $request, \App\Models\User $user) {
+        $request->validate(['role' => 'required|in:OWNER,ACCOUNTANT,CLERK']);
+        $user->update(['role' => $request->role]);
+        return response()->json(['ok' => true]);
+    })->name('users.role');
+});
