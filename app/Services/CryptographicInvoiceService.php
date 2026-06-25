@@ -46,12 +46,12 @@ class CryptographicInvoiceService
     {
         $verificationUrl = rtrim($appUrl, '/') . '/api/v1/verify/invoice/' . $hash;
 
-        $png = QrCode::format('png')
+        $svg = QrCode::format('svg')
             ->size(200)
             ->errorCorrection('H')
             ->generate($verificationUrl);
 
-        return 'data:image/png;base64,' . base64_encode($png);
+        return 'data:image/svg+xml;base64,' . base64_encode($svg);
     }
 
     public function verify(string $hash, Company $company, string $totalTtc, string $isoTimestamp): bool

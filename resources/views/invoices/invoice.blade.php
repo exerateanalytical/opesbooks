@@ -217,7 +217,7 @@
             </div>
         </div>
         <div class="qr-wrap">
-            <img src="data:image/png;base64,{{ $qrBase64 }}" alt="QR Verification">
+            <img src="{{ $qrBase64 }}" alt="QR Verification">
             <p>{{ $lang === 'FR' ? 'Vérification DGI' : 'DGI Verify' }}</p>
         </div>
     </div>
