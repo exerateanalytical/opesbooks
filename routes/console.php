@@ -34,3 +34,8 @@ Schedule::command('metrics:record')->everyFiveMinutes()->withoutOverlapping();
 
 // Deliver pending webhook events (cron-friendly; shared-hosting safe)
 Schedule::command('webhooks:deliver')->everyMinute()->withoutOverlapping();
+
+// Drain the database queue without a persistent worker (shared hosting).
+// One `schedule:run` cron line therefore covers commands AND queued jobs.
+Schedule::command('queue:work --stop-when-empty --max-time=55 --tries=3')
+    ->everyMinute()->withoutOverlapping();
