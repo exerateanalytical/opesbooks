@@ -90,6 +90,17 @@ Route::prefix('v1')->name('v1.')->group(function () {
             ->get(['id', 'title', 'body', 'type']);
     })->name('announcements');
 
+    // ── Onboarding (auth only; runs during trial before full access) ──────────
+    Route::middleware('auth:sanctum')->prefix('onboarding')->name('onboarding.')->group(function () {
+        Route::get('status',           [\App\Http\Controllers\Api\V1\OnboardingController::class, 'status'])->name('status');
+        Route::post('profile',         [\App\Http\Controllers\Api\V1\OnboardingController::class, 'saveProfile'])->name('profile');
+        Route::post('client',          [\App\Http\Controllers\Api\V1\OnboardingController::class, 'addClient'])->name('client');
+        Route::post('invoice',         [\App\Http\Controllers\Api\V1\OnboardingController::class, 'addInvoice'])->name('invoice');
+        Route::post('invite',          [\App\Http\Controllers\Api\V1\OnboardingController::class, 'invite'])->name('invite');
+        Route::post('complete',        [\App\Http\Controllers\Api\V1\OnboardingController::class, 'complete'])->name('complete');
+        Route::post('dismiss-checklist',[\App\Http\Controllers\Api\V1\OnboardingController::class, 'dismissChecklist'])->name('dismiss');
+    });
+
     // ── Multi-company switcher (auth only; works regardless of sub status) ────
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('companies/mine',        [\App\Http\Controllers\Api\V1\CompanySwitchController::class, 'mine'])->name('companies.mine');

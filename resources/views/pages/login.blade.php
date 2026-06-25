@@ -397,7 +397,9 @@
                     }
                     localStorage.setItem('opes_token', json.token);
                     localStorage.setItem('opes_user', JSON.stringify(json.user));
-                    window.location.href = '/app';
+                    if (json.company) localStorage.setItem('opes_company', JSON.stringify(json.company));
+                    // New companies start in the onboarding wizard.
+                    window.location.href = '/onboarding';
                 } catch (e) {
                     this.error = e.message;
                 } finally {

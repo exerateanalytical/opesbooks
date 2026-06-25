@@ -637,6 +637,38 @@
                      x-text="(company?.tax_regime ?? '—') + ' · NIU: ' + (company?.niu ?? '—')"></div>
             </div>
 
+            <!-- Onboarding checklist -->
+            <div x-show="onboarding" x-cloak class="glass-card rounded-2xl p-5">
+                <div class="flex items-center justify-between mb-3">
+                    <div>
+                        <p class="text-sm font-black text-white uppercase tracking-wide" x-text="lang==='FR'?'Premiers pas':'Getting started'"></p>
+                        <p class="text-[10px] text-slate-400" x-text="(onboarding?.checklist_done||0)+'/'+(onboarding?.checklist_total||5)+' '+(lang==='FR'?'complétés':'completed')"></p>
+                    </div>
+                    <button @click="dismissChecklist()" class="text-[10px] text-slate-500 hover:text-slate-300 uppercase tracking-wider" x-text="lang==='FR'?'Fermer':'Dismiss'"></button>
+                </div>
+                <div class="h-2 rounded-full overflow-hidden mb-4" style="background:rgba(255,255,255,0.08)">
+                    <div class="h-full rounded-full transition-all" :style="'width:'+(((onboarding?.checklist_done||0)/(onboarding?.checklist_total||5))*100)+'%;background:#C99B0E'"></div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <template x-for="item in [
+                        {k:'profile', fr:'Profil entreprise', en:'Company profile', page:'settings'},
+                        {k:'client',  fr:'Premier client',    en:'First client',    page:'customers'},
+                        {k:'invoice', fr:'Première facture',   en:'First invoice',   page:'customer-invoices'},
+                        {k:'team',    fr:'Équipe invitée',     en:'Team invited',     page:'team'},
+                        {k:'report',  fr:'Rapport consulté',   en:'Report viewed',    page:'reports'}
+                    ]" :key="item.k">
+                        <button @click="setPage(item.page)" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-left transition-all"
+                                :style="onboarding?.checklist?.[item.k] ? 'background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2)' : 'background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08)'">
+                            <span class="w-5 h-5 rounded-full flex items-center justify-center shrink-0"
+                                  :style="onboarding?.checklist?.[item.k] ? 'background:rgb(16,185,129);color:#0a192f' : 'background:rgba(255,255,255,0.08);color:rgba(148,163,184,0.6)'">
+                                <svg x-show="onboarding?.checklist?.[item.k]" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>
+                            </span>
+                            <span class="text-xs font-bold" :class="onboarding?.checklist?.[item.k] ? 'text-slate-300 line-through opacity-60' : 'text-white'" x-text="lang==='FR'?item.fr:item.en"></span>
+                        </button>
+                    </template>
+                </div>
+            </div>
+
             <!-- KPI grid -->
             <div class="grid grid-cols-2 xl:grid-cols-4 gap-4">
                 <template x-for="stat in kpiStats" :key="stat.key">
@@ -4153,6 +4185,7 @@ function opesApp() {
             this.loading = false;
             this.loadAnnouncements();
             this.loadCompanies();
+            this.loadOnboarding();
             /* Auto-load data for initial page */
             if (this.page==='journal')  this.loadJournal();
             if (this.page==='ledger')   this.loadLedger();
@@ -4174,6 +4207,19 @@ function opesApp() {
             dismissed.push(id);
             localStorage.setItem('opes_dismissed_ann', JSON.stringify(dismissed));
             this.announcements = this.announcements.filter(a => a.id !== id);
+        },
+
+        /* Onboarding checklist */
+        onboarding: null,
+        async loadOnboarding() {
+            try {
+                const s = await this.api('onboarding/status');
+                this.onboarding = (s && !s.completed && !s.dismissed) ? s : null;
+            } catch(e) { this.onboarding = null; }
+        },
+        async dismissChecklist() {
+            this.onboarding = null;
+            try { await this.api('onboarding/dismiss-checklist', { method:'POST', body: '{}' }); } catch(e) {}
         },
 
         /* Multi-company switcher */
