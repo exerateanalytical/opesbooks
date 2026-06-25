@@ -43,19 +43,42 @@ class AdminDashboardController extends Controller
             'expires_at' => 'required|date',
         ]);
 
+        // The form field is "expires_at"; the column is "period_end".
+        $attributes = [
+            'plan'       => $data['plan'],
+            'status'     => $data['status'],
+            'period_end' => $data['expires_at'],
+        ];
+
         $sub = $company->subscriptions()->latest()->first();
         if ($sub) {
-            $sub->update($data);
+            $sub->update($attributes);
         } else {
-            $company->subscriptions()->create(array_merge($data, ['amount_xaf' => 0]));
+            $company->subscriptions()->create(array_merge($attributes, [
+                'amount_xaf'   => 0,
+                'period_start' => now(),
+            ]));
         }
 
         return back()->with('success', 'Subscription updated.');
     }
 
-    public function impersonate(User $user)
+    public function impersonate(Request $request, User $user)
     {
         $token = $user->createToken('admin-impersonate', ['*'], now()->addHour())->plainTextToken;
+
+        // Audit trail: record who impersonated whom.
+        \App\Models\AuditLog::create([
+            'user_id'    => $request->user()->id,
+            'company_id' => $user->company_id,
+            'action'     => 'IMPERSONATE',
+            'model_type' => User::class,
+            'model_id'   => $user->id,
+            'new_values' => ['impersonated_email' => $user->email],
+            'ip_address' => $request->ip(),
+            'created_at' => now(),
+        ]);
+
         return response()->json(['token' => $token, 'user' => $user->only('id', 'name', 'email', 'role')]);
     }
 }

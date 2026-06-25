@@ -4,10 +4,10 @@
     {{-- Hero --}}
     <div class="glass-card rounded-3xl p-10 text-center relative overflow-hidden float-in">
         <div class="absolute inset-0 pointer-events-none"
-             style="background:radial-gradient(ellipse 70% 60% at 50% 0%,rgba(245,158,11,0.10) 0%,transparent 70%)"></div>
+             style="background:radial-gradient(ellipse 70% 60% at 50% 0%,rgba(201,155,14,0.10) 0%,transparent 70%)"></div>
         <div class="relative z-10">
             <div class="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-6"
-                 style="background:linear-gradient(145deg,rgba(245,158,11,0.22),rgba(245,158,11,0.08));border:1px solid rgba(245,158,11,0.35);box-shadow:0 0 60px rgba(245,158,11,0.18)">
+                 style="background:linear-gradient(145deg,rgba(201,155,14,0.22),rgba(201,155,14,0.08));border:1px solid rgba(201,155,14,0.35);box-shadow:0 0 60px rgba(201,155,14,0.18)">
                 <span class="text-amber-400 font-black text-2xl tracking-widest">OB</span>
             </div>
             <h1 class="text-4xl font-black text-white tracking-tight">
@@ -21,11 +21,18 @@
                 <span class="glass-pill px-3 py-1 text-[10px] font-black uppercase tracking-widest text-emerald-400"
                       style="background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.28)">Version 1.0.0</span>
                 <span class="glass-pill px-3 py-1 text-[10px] font-black uppercase tracking-widest text-amber-400"
-                      style="background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.28)">SYSCOHADA Révisé</span>
+                      style="background:rgba(201,155,14,0.12);border:1px solid rgba(201,155,14,0.28)">SYSCOHADA Révisé</span>
                 <span class="glass-pill px-3 py-1 text-[10px] font-black uppercase tracking-widest text-indigo-400"
                       style="background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.28)">DGI Live-Link 2026</span>
                 <span class="glass-pill px-3 py-1 text-[10px] font-black uppercase tracking-widest text-slate-300"
                       style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.14)">Loi Finance 2026</span>
+            </div>
+            <div class="mt-7">
+                <a href="/app"
+                   class="inline-flex items-center gap-2 glass-btn text-slate-900 px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                    <span>Accéder à l'Application</span>
+                </a>
             </div>
         </div>
     </div>
@@ -44,19 +51,21 @@
     {{-- Feature grid --}}
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 float-in" style="animation-delay:0.08s">
         @foreach ([
-            ['icon' => '📊', 'title' => 'Comptabilité SYSCOHADA', 'desc' => 'Plan comptable OHADA révisé complet — classes 1 à 7, codes à 6 chiffres, journaux d\'écritures, grand livre, balance.'],
-            ['icon' => '🧾', 'title' => 'Facturation & TVA', 'desc' => 'Génération de factures PDF avec TVA 17,5 % + CAC 10 %, QR code de validation DGI et numérotation automatique.'],
-            ['icon' => '📡', 'title' => 'DGI Live-Link', 'desc' => 'Télétransmission automatique à Fiscalis/SIGIT. Token de validation horodaté, retry automatique en cas d\'échec.'],
-            ['icon' => '📱', 'title' => 'Intégration Mobile Money', 'desc' => 'Ingestion des webhooks MTN MoMo et Orange Money. Chaque encaissement génère automatiquement une écriture comptable.'],
-            ['icon' => '🔒', 'title' => 'Multi-Utilisateurs & Rôles', 'desc' => 'OWNER, ACCOUNTANT, CLERK — chaque rôle dispose d\'accès strictement calibrés.'],
-            ['icon' => '🌐', 'title' => 'Mode Hors Ligne', 'desc' => 'Toutes les saisies fonctionnent sans internet. Synchronisation automatique dès le retour de la connexion.'],
-            ['icon' => '📈', 'title' => 'Tableau de Bord Fiscal', 'desc' => 'TVA nette, IS, provisions automatiques, simulation de charges fiscales par période.'],
-            ['icon' => '🏦', 'title' => 'Import Relevé Bancaire', 'desc' => 'Import CSV de relevés bancaires avec rapprochement automatique sur les écritures existantes.'],
+            ['icon' => '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>', 'title' => 'Comptabilité SYSCOHADA', 'desc' => 'Plan comptable OHADA révisé complet — classes 1 à 7, codes à 6 chiffres, journaux d\'écritures, grand livre, balance.'],
+            ['icon' => '<path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M8 7h8"/><path d="M8 11h8"/><path d="M8 15h5"/>', 'title' => 'Facturation & TVA', 'desc' => 'Génération de factures PDF avec TVA 17,5 % + CAC 10 %, QR code de validation DGI et numérotation automatique.'],
+            ['icon' => '<path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/>', 'title' => 'DGI Live-Link', 'desc' => 'Télétransmission automatique à Fiscalis/SIGIT. Token de validation horodaté, retry automatique en cas d\'échec.'],
+            ['icon' => '<rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>', 'title' => 'Intégration Mobile Money', 'desc' => 'Ingestion des webhooks MTN MoMo et Orange Money. Chaque encaissement génère automatiquement une écriture comptable.'],
+            ['icon' => '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/>', 'title' => 'Multi-Utilisateurs & Rôles', 'desc' => 'OWNER, ACCOUNTANT, CLERK — chaque rôle dispose d\'accès strictement calibrés.'],
+            ['icon' => '<line x1="1" y1="1" x2="23" y2="23"/><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/><path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/><path d="M10.71 5.05A16 16 0 0 1 22.58 9"/><path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/>', 'title' => 'Mode Hors Ligne', 'desc' => 'Toutes les saisies fonctionnent sans internet. Synchronisation automatique dès le retour de la connexion.'],
+            ['icon' => '<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>', 'title' => 'Tableau de Bord Fiscal', 'desc' => 'TVA nette, IS, provisions automatiques, simulation de charges fiscales par période.'],
+            ['icon' => '<line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/>', 'title' => 'Import Relevé Bancaire', 'desc' => 'Import CSV de relevés bancaires avec rapprochement automatique sur les écritures existantes.'],
         ] as $f)
         <div class="glass-card rounded-2xl p-5 hover:border-white/20 transition-all">
             <div class="flex items-start gap-4">
-                <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 text-xl"
-                     style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.10)">{{ $f['icon'] }}</div>
+                <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 text-amber-400"
+                     style="background:rgba(201,155,14,0.10);border:1px solid rgba(201,155,14,0.22)">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">{!! $f['icon'] !!}</svg>
+                </div>
                 <div>
                     <div class="text-xs font-black uppercase tracking-wider text-white mb-1">{{ $f['title'] }}</div>
                     <p class="text-slate-400 text-[11px] leading-relaxed">{{ $f['desc'] }}</p>
@@ -76,7 +85,7 @@
                 ['Livewire v4', 'Composants temps réel', 'text-pink-400', 'rgba(236,72,153,0.12)', 'rgba(236,72,153,0.28)'],
                 ['Alpine.js v3', 'Réactivité client', 'text-sky-400', 'rgba(14,165,233,0.12)', 'rgba(14,165,233,0.28)'],
                 ['Tailwind CSS', 'Design System', 'text-cyan-400', 'rgba(6,182,212,0.12)', 'rgba(6,182,212,0.28)'],
-                ['Laravel Sanctum', 'Auth Bearer Token', 'text-amber-400', 'rgba(245,158,11,0.12)', 'rgba(245,158,11,0.28)'],
+                ['Laravel Sanctum', 'Auth Bearer Token', 'text-amber-400', 'rgba(201,155,14,0.12)', 'rgba(201,155,14,0.28)'],
                 ['SYSCOHADA Révisé', 'Plan Comptable OHADA', 'text-emerald-400', 'rgba(16,185,129,0.12)', 'rgba(16,185,129,0.28)'],
                 ['DGI Fiscalis', 'API Cameroun 2026', 'text-indigo-400', 'rgba(99,102,241,0.12)', 'rgba(99,102,241,0.28)'],
             ] as [$name, $role, $color, $bg, $border])

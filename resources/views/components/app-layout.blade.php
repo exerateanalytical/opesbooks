@@ -11,8 +11,9 @@
         tailwind.config = {
             theme: { extend: { colors: {
                 'opes-navy':  '#0A192F',
-                'opes-amber': '#F59E0B',
+                'opes-amber': '#C99B0E',
                 'opes-green': '#10B981',
+                amber: { 300:'#E3B420', 400:'#C99B0E', 500:'#B5890C', 600:'#A07C08', 700:'#866709' },
             }}}
         }
     </script>
@@ -45,7 +46,7 @@
             pointer-events: none;
             z-index: 0;
             background:
-                radial-gradient(ellipse 60% 40% at 10% 15%, rgba(245,158,11,0.07) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 40% at 10% 15%, rgba(201,155,14,0.07) 0%, transparent 60%),
                 radial-gradient(ellipse 50% 35% at 90% 80%, rgba(16,185,129,0.06) 0%, transparent 55%),
                 radial-gradient(ellipse 40% 30% at 50% 50%, rgba(99,102,241,0.04) 0%, transparent 60%);
         }
@@ -80,16 +81,36 @@
         .glass-input::placeholder { color: rgba(148,163,184,0.6); }
         .glass-input:focus {
             outline: none;
-            border-color: rgba(245,158,11,0.6);
-            box-shadow: 0 0 0 3px rgba(245,158,11,0.12);
+            border-color: rgba(201,155,14,0.6);
+            box-shadow: 0 0 0 3px rgba(201,155,14,0.12);
         }
+        /* .input / .input-field aliases (were undefined → white default) */
+        .input, .input-field {
+            background: rgba(255,255,255,0.06);
+            -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.14);
+            color: #f1f5f9; width: 100%;
+            border-radius: 0.75rem; padding: 0.6rem 1rem; font-size: 0.8125rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .input::placeholder, .input-field::placeholder { color: rgba(148,163,184,0.6); }
+        .input:focus, .input-field:focus, textarea.glass-input:focus, select.glass-input:focus {
+            outline: none; border-color: rgba(201,155,14,0.6); box-shadow: 0 0 0 3px rgba(201,155,14,0.12);
+        }
+        .input option, .input-field option, select.glass-input option { background: #0a192f; color: #f1f5f9; }
+        select.glass-input, select.input, select.input-field {
+            -webkit-appearance: none; -moz-appearance: none; appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 0.85rem center; padding-right: 2.25rem; cursor: pointer;
+        }
+        button:focus-visible, a:focus-visible { outline: 2px solid rgba(201,155,14,0.85); outline-offset: 2px; }
         .glass-btn {
-            background: linear-gradient(135deg, rgba(245,158,11,0.9) 0%, rgba(217,119,6,0.9) 100%);
-            border: 1px solid rgba(245,158,11,0.5);
-            box-shadow: 0 4px 16px rgba(245,158,11,0.25), 0 1px 0 rgba(255,255,255,0.2) inset;
+            background: linear-gradient(135deg, rgba(201,155,14,0.9) 0%, rgba(217,119,6,0.9) 100%);
+            border: 1px solid rgba(201,155,14,0.5);
+            box-shadow: 0 4px 16px rgba(201,155,14,0.25), 0 1px 0 rgba(255,255,255,0.2) inset;
             transition: all 0.2s ease;
         }
-        .glass-btn:hover { box-shadow: 0 6px 24px rgba(245,158,11,0.35), 0 1px 0 rgba(255,255,255,0.25) inset; }
+        .glass-btn:hover { box-shadow: 0 6px 24px rgba(201,155,14,0.35), 0 1px 0 rgba(255,255,255,0.25) inset; }
         .glass-btn:active { transform: scale(0.98); }
         .glass-btn-dark {
             background: linear-gradient(135deg, rgba(30,58,100,0.85) 0%, rgba(15,30,58,0.9) 100%);
@@ -143,7 +164,7 @@
             </a>
 
             <nav class="hidden md:flex items-center gap-0.5 text-[11px] font-black uppercase tracking-wider flex-1 justify-center">
-                <a href="/"            class="nav-link px-3.5 py-2 rounded-xl font-bold uppercase tracking-wider text-[11px]">
+                <a href="/app"         class="nav-link px-3.5 py-2 rounded-xl font-bold uppercase tracking-wider text-[11px]">
                     <span x-show="lang==='FR'">Tableau de Bord</span><span x-show="lang==='EN'" x-cloak>Dashboard</span>
                 </a>
                 <a href="/app?page=journal" class="nav-link px-3.5 py-2 rounded-xl font-bold uppercase tracking-wider text-[11px]">Transactions</a>

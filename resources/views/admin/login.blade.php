@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OpesBooks — Admin Login</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { theme: { extend: { colors: { amber: {
+            300:'#E3B420', 400:'#C99B0E', 500:'#B5890C', 600:'#A07C08', 700:'#866709'
+        } } } } };
+    </script>
 </head>
 <body class="bg-slate-950 text-slate-200 min-h-screen flex items-center justify-center">
 

@@ -62,7 +62,7 @@
                     $active = $statusFilter === $val;
                     $activeStyle = match($val) {
                         'APPROVED' => 'background:rgba(16,185,129,0.2);border:1px solid rgba(16,185,129,0.4);color:rgb(110,231,183)',
-                        'PENDING'  => 'background:rgba(245,158,11,0.2);border:1px solid rgba(245,158,11,0.4);color:rgb(252,211,77)',
+                        'PENDING'  => 'background:rgba(201,155,14,0.2);border:1px solid rgba(201,155,14,0.4);color:rgb(252,211,77)',
                         'REJECTED' => 'background:rgba(244,63,94,0.2);border:1px solid rgba(244,63,94,0.4);color:rgb(252,165,165)',
                         default    => 'background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);color:white',
                     };
@@ -120,7 +120,7 @@
                                     </span>
                                 @elseif ($entry->dgi_sync_status === 'PENDING')
                                     <span class="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full animate-pulse"
-                                          style="background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.35);color:rgb(252,211,77)">
+                                          style="background:rgba(201,155,14,0.15);border:1px solid rgba(201,155,14,0.35);color:rgb(252,211,77)">
                                         ⏳ {{ $language === 'FR' ? 'EN ATTENTE' : 'PENDING' }}
                                     </span>
                                 @else
@@ -134,7 +134,7 @@
                             <td class="py-3.5 px-5 font-mono">
                                 @if ($entry->dgi_sync_status === 'APPROVED')
                                     <span class="text-amber-400 font-bold text-[11px] block select-all px-2 py-1 rounded-lg max-w-[220px] truncate"
-                                          style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2)">
+                                          style="background:rgba(201,155,14,0.08);border:1px solid rgba(201,155,14,0.2)">
                                         {{ $entry->dgi_validation_token }}
                                     </span>
                                     <span class="text-[9px] text-slate-500 block mt-1">

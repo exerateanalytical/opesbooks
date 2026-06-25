@@ -49,7 +49,7 @@
             <div>
                 <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Expires At</label>
                 <input type="date" name="expires_at"
-                       value="{{ $sub?->expires_at ? \Carbon\Carbon::parse($sub->expires_at)->format('Y-m-d') : '' }}"
+                       value="{{ $sub?->period_end ? \Carbon\Carbon::parse($sub->period_end)->format('Y-m-d') : '' }}"
                        class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500/60 transition-all">
             </div>
             @if($errors->any())

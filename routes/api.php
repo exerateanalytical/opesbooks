@@ -71,6 +71,16 @@ Route::prefix('v1')->name('v1.')->group(function () {
     Route::get('verify/invoice/{hash}', [InvoiceVerificationController::class, 'verify'])
         ->name('verify.invoice');
 
+    // ── Platform announcements (auth only; visible even without active sub) ───
+    Route::middleware('auth:sanctum')->get('announcements', function (\Illuminate\Http\Request $request) {
+        $user = $request->user();
+        $plan = \App\Models\Subscription::where('company_id', $user->company_id)
+            ->where('status', 'ACTIVE')->latest()->value('plan');
+        return \App\Models\Announcement::visible($user->company_id, $plan)
+            ->latest('published_at')->latest('id')->limit(5)
+            ->get(['id', 'title', 'body', 'type']);
+    })->name('announcements');
+
     // ── Authenticated routes ─────────────────────────────────────────────────
     Route::middleware(['auth:sanctum', \App\Http\Middleware\RequireActiveSubscription::class])
         ->group(function () {
@@ -403,4 +413,51 @@ Route::prefix('v1/admin')->name('api.admin.')->middleware(['auth:sanctum', \App\
         $user->update(['role' => $request->role]);
         return response()->json(['ok' => true]);
     })->name('users.role');
+
+    // Platform metrics
+    Route::get('/metrics', function () {
+        return response()->json([
+            'mrr_xaf'        => (float) \App\Models\Subscription::where('status', 'ACTIVE')->sum('amount_xaf'),
+            'active_keys'    => \App\Models\ApiKey::where('status', 'ACTIVE')->count(),
+            'api_calls_24h'  => \App\Models\ApiRequestLog::where('created_at', '>=', now()->subDay())->count(),
+        ]);
+    })->name('metrics');
+
+    // API key management
+    Route::get('/api-keys', fn () => \App\Models\ApiKey::with('company')->latest()->paginate(25))->name('api-keys');
+    Route::post('/api-keys', function (\Illuminate\Http\Request $request) {
+        $data = $request->validate([
+            'company_id'  => 'required|exists:companies,id',
+            'name'        => 'required|string|max:100',
+            'environment' => 'nullable|in:live,test',
+            'scopes'      => 'array',
+            'rate_limit'  => 'nullable|integer|min:10|max:100000',
+        ]);
+        [$model, $plain] = \App\Models\ApiKey::issue(array_merge($data, [
+            'rate_limit' => $data['rate_limit'] ?? 1000,
+            'created_by' => $request->user()->id,
+        ]));
+        return response()->json(['key' => $plain, 'id' => $model->id, 'prefix' => $model->key_prefix], 201);
+    })->name('api-keys.store');
+    Route::delete('/api-keys/{apiKey}', function (\App\Models\ApiKey $apiKey) {
+        $apiKey->update(['status' => 'REVOKED']);
+        return response()->json(['ok' => true]);
+    })->name('api-keys.revoke');
+
+    // API request logs
+    Route::get('/logs', fn () => \App\Models\ApiRequestLog::with(['apiKey', 'company'])->latest('created_at')->paginate(50))->name('logs');
+});
+
+// ── API-as-a-product: third-party integration surface (API key auth) ──────
+Route::prefix('v1/integration')->name('api.integration.')->group(function () {
+    Route::middleware('apikey:invoices:read')->group(function () {
+        Route::get('/invoices',        [\App\Http\Controllers\Api\V1\IntegrationController::class, 'invoices'])->name('invoices');
+        Route::get('/invoices/{id}',   [\App\Http\Controllers\Api\V1\IntegrationController::class, 'showInvoice'])->name('invoices.show');
+    });
+    Route::get('/journal',             [\App\Http\Controllers\Api\V1\IntegrationController::class, 'journal'])
+        ->middleware('apikey:journal:read')->name('journal');
+    Route::get('/tax/vat-summary',     [\App\Http\Controllers\Api\V1\IntegrationController::class, 'vatSummary'])
+        ->middleware('apikey:tax:read')->name('tax.vat-summary');
+    Route::get('/reports/pl',          [\App\Http\Controllers\Api\V1\IntegrationController::class, 'profitAndLoss'])
+        ->middleware('apikey:reports:read')->name('reports.pl');
 });
