@@ -10,6 +10,7 @@
         "bacon/bacon-qr-code": "*",
         "barryvdh/laravel-dompdf": "^3.1",
         "brick/math": "^0.18.0",
+        "dedoc/scramble": "^0.13.29",
         "laravel/framework": "^13.8",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^3.0",

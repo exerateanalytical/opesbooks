@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             CountryConfigSeeder::class,
             FeatureFlagSeeder::class,
             PlanConfigSeeder::class,
+            BlogPostSeeder::class,
             SyscohadaAccountSeeder::class,
             DemoSeeder::class,
         ]);
