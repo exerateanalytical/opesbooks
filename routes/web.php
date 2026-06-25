@@ -32,6 +32,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Subscriptions & billing
         Route::get('/subscriptions',             [\App\Http\Controllers\Admin\AdminInsightsController::class, 'subscriptions'])->name('subscriptions');
         Route::get('/billing',                   [\App\Http\Controllers\Admin\AdminInsightsController::class, 'billing'])->name('billing');
+        Route::post('/companies/{company}/payments', [\App\Http\Controllers\Admin\AdminInsightsController::class, 'recordPayment'])->name('payments.record');
+        Route::get('/payments/{payment}/receipt',    [\App\Http\Controllers\Admin\AdminInsightsController::class, 'receipt'])->name('payments.receipt');
 
         // API product
         Route::get('/api-keys',                  [\App\Http\Controllers\Admin\AdminApiKeyController::class, 'index'])->name('api-keys');
@@ -51,5 +53,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Platform settings / feature flags
         Route::get('/settings',  [\App\Http\Controllers\Admin\AdminSettingsController::class, 'index'])->name('settings');
         Route::post('/settings', [\App\Http\Controllers\Admin\AdminSettingsController::class, 'update'])->name('settings.update');
+        Route::get('/feature-flags',          [\App\Http\Controllers\Admin\AdminFeatureFlagController::class, 'index'])->name('feature-flags');
+        Route::post('/feature-flags/{flag}',  [\App\Http\Controllers\Admin\AdminFeatureFlagController::class, 'update'])->name('feature-flags.update');
     });
 });

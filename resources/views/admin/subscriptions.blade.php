@@ -54,6 +54,7 @@
                     <th class="py-3 px-4">Status</th>
                     <th class="py-3 px-4">Renews</th>
                     <th class="py-3 px-4">Phone</th>
+                    <th class="py-3 px-4"></th>
                 </tr>
             </thead>
             <tbody class="text-xs font-medium divide-y divide-slate-800/60">
@@ -81,10 +82,18 @@
                             {{ $sub->period_end ? \Carbon\Carbon::parse($sub->period_end)->format('Y-m-d') : '—' }}
                         </td>
                         <td class="py-3.5 px-4 text-slate-400 font-mono text-[10px]">{{ $sub->billing_phone ?? '—' }}</td>
+                        <td class="py-3.5 px-4">
+                            @if($sub->company_id)
+                            <button type="button" @click="$dispatch('record-pay', { cid: {{ $sub->company_id }}, name: @js($sub->company?->name), amount: {{ (int) $sub->amount_xaf }} })"
+                                    class="px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wide bg-amber-500/15 text-amber-300 border border-amber-500/30 hover:bg-amber-500/25">
+                                + Paiement
+                            </button>
+                            @endif
+                        </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="py-12 text-center text-slate-500 text-sm">No subscriptions found.</td>
+                        <td colspan="7" class="py-12 text-center text-slate-500 text-sm">No subscriptions found.</td>
                     </tr>
                 @endforelse
             </tbody>
@@ -95,5 +104,44 @@
             {{ $subscriptions->links() }}
         </div>
     @endif
+</div>
+
+<!-- Record payment modal -->
+<div x-data="{ open:false, cid:null, cname:'', amount:0 }"
+     @record-pay.window="open=true; cid=$event.detail.cid; cname=$event.detail.name; amount=$event.detail.amount"
+     x-show="open" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4" style="background:rgba(0,0,0,0.6)"
+     @click.self="open=false">
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl p-6 w-full max-w-md">
+        <h3 class="text-sm font-black text-white uppercase tracking-widest mb-1">Enregistrer un paiement</h3>
+        <p class="text-xs text-slate-500 mb-4" x-text="cname"></p>
+        <form method="POST" :action="'/admin/companies/' + cid + '/payments'" class="space-y-3">
+            @csrf
+            <div>
+                <label class="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1.5">Montant (XAF)</label>
+                <input type="number" name="amount_xaf" :value="amount" required
+                       class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500/60">
+            </div>
+            <div>
+                <label class="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1.5">Méthode</label>
+                <select name="payment_method" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500/60">
+                    <option value="orange_money">Orange Money</option>
+                    <option value="mtn_momo">MTN MoMo</option>
+                    <option value="bank_transfer">Virement</option>
+                    <option value="cash">Espèces</option>
+                    <option value="manual">Manuel</option>
+                </select>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <input type="date" name="period_start" class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500/60">
+                <input type="date" name="period_end" class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500/60">
+            </div>
+            <input type="text" name="reference" placeholder="Référence transaction"
+                   class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500/60">
+            <div class="flex gap-2 pt-1">
+                <button type="submit" class="flex-1 py-2.5 rounded-xl text-sm font-black uppercase tracking-widest text-slate-900 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400">Enregistrer</button>
+                <button type="button" @click="open=false" class="px-4 py-2.5 rounded-xl text-sm font-black uppercase tracking-widest bg-slate-800 text-slate-300 border border-slate-700">Annuler</button>
+            </div>
+        </form>
+    </div>
 </div>
 @endsection

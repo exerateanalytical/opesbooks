@@ -19,6 +19,12 @@ class Company extends Model
         'tax_regime',
         'tax_center',
         'country_code',
+        'plan_slug',
+        'trial_ends_at',
+        'subscription_started_at',
+        'subscription_renewed_at',
+        'next_billing_at',
+        'custom_price_xaf',
         'vat_prorata_coefficient',
         'subscription_status',
         'phone',
@@ -81,6 +87,16 @@ class Company extends Model
     public function subscriptions()
     {
         return $this->hasMany(Subscription::class);
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+    public function subscriptionEvents()
+    {
+        return $this->hasMany(SubscriptionEvent::class);
     }
 
     public function hasValidFiscalProfile(): bool

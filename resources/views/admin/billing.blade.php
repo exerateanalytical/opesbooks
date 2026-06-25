@@ -129,4 +129,42 @@
         </table>
     </div>
 </div>
+
+<!-- Payments received (with receipts) -->
+<div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden mt-6">
+    <div class="px-6 pt-6 pb-4 flex items-center justify-between">
+        <span class="text-[9px] font-black uppercase tracking-widest text-slate-500">Paiements reçus</span>
+        <span class="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30">Reçus PDF</span>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="w-full text-left">
+            <thead>
+                <tr class="text-[9px] font-black uppercase tracking-widest text-slate-500 border-b border-slate-800 bg-slate-950/50">
+                    <th class="py-3 px-6">Date</th><th class="py-3 px-4">Entreprise</th>
+                    <th class="py-3 px-4">Montant</th><th class="py-3 px-4">Méthode</th>
+                    <th class="py-3 px-4">Référence</th><th class="py-3 px-4">Reçu</th>
+                </tr>
+            </thead>
+            <tbody class="text-xs font-medium divide-y divide-slate-800/60">
+                @forelse($payments as $p)
+                    <tr class="hover:bg-slate-800/40 transition-colors">
+                        <td class="py-3.5 px-6 font-mono text-[10px] text-slate-400">{{ $p->created_at?->format('Y-m-d') }}</td>
+                        <td class="py-3.5 px-4 font-bold text-white">{{ $p->company?->name ?? '—' }}</td>
+                        <td class="py-3.5 px-4 font-black text-amber-400">{{ number_format($p->amount_xaf) }} XAF</td>
+                        <td class="py-3.5 px-4 text-slate-400">{{ str_replace('_', ' ', ucfirst($p->payment_method)) }}</td>
+                        <td class="py-3.5 px-4 font-mono text-[10px] text-slate-500">{{ $p->reference ?? '—' }}</td>
+                        <td class="py-3.5 px-4">
+                            <a href="{{ route('admin.payments.receipt', $p) }}"
+                               class="px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wide bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700">
+                                {{ $p->receipt_number }}
+                            </a>
+                        </td>
+                    </tr>
+                @empty
+                    <tr><td colspan="6" class="py-12 text-center text-slate-500 text-sm">Aucun paiement enregistré.</td></tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+</div>
 @endsection

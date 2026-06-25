@@ -6,7 +6,10 @@ use App\Models\ApiKey;
 use App\Models\ApiRequestLog;
 use App\Models\AuditLog;
 use App\Models\Company;
+use App\Models\Payment;
+use App\Models\PlanConfig;
 use App\Models\Subscription;
+use App\Models\SubscriptionEvent;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -67,14 +70,76 @@ class AdminInsightsController extends Controller
 
         $recent = Subscription::with('company')->latest()->limit(15)->get();
 
+        // Payments by method (for the billing chart) + recent payments table.
+        $byMethod = Payment::where('status', 'completed')
+            ->select('payment_method', DB::raw('SUM(amount_xaf) as total'))
+            ->groupBy('payment_method')->pluck('total', 'payment_method')->toArray();
+        $payments = Payment::with('company')->latest()->limit(20)->get();
+
         $metrics = [
             'mrr'           => $mrr,
             'arr'           => $mrr * 12,
             'active'        => Subscription::where('status', 'ACTIVE')->count(),
             'avg_per_co'    => Subscription::where('status', 'ACTIVE')->avg('amount_xaf') ?? 0,
+            'churn_rate'    => $this->churnRate(),
         ];
 
-        return view('admin.billing', compact('metrics', 'byMonth', 'byPlan', 'recent'));
+        return view('admin.billing', compact('metrics', 'byMonth', 'byPlan', 'recent', 'byMethod', 'payments'));
+    }
+
+    private function churnRate(): float
+    {
+        $startActive = Subscription::where('status', 'ACTIVE')
+            ->where('created_at', '<', now()->startOfMonth())->count();
+        $churned = SubscriptionEvent::where('event_type', 'cancelled')
+            ->whereMonth('created_at', now()->month)->whereYear('created_at', now()->year)->count();
+        return $startActive > 0 ? round($churned / $startActive * 100, 1) : 0;
+    }
+
+    /** POST /admin/companies/{company}/payments */
+    public function recordPayment(Request $request, Company $company)
+    {
+        $data = $request->validate([
+            'amount_xaf'     => 'required|integer|min:0',
+            'payment_method' => 'required|in:orange_money,mtn_momo,bank_transfer,cash,manual,stripe',
+            'reference'      => 'nullable|string|max:120',
+            'period_start'   => 'nullable|date',
+            'period_end'     => 'nullable|date|after_or_equal:period_start',
+            'notes'          => 'nullable|string|max:500',
+        ]);
+
+        $payment = Payment::create(array_merge($data, [
+            'company_id'     => $company->id,
+            'plan_slug'      => $company->plan_slug ?? 'free',
+            'currency'       => 'XAF',
+            'status'         => 'completed',
+            'receipt_number' => Payment::nextReceiptNumber(),
+        ]));
+
+        SubscriptionEvent::create([
+            'company_id'    => $company->id,
+            'admin_user_id' => $request->user()->id,
+            'event_type'    => 'payment_received',
+            'to_plan'       => $company->plan_slug,
+            'amount_xaf'    => $data['amount_xaf'],
+            'created_at'    => now(),
+        ]);
+
+        $company->update([
+            'subscription_status'     => 'active',
+            'subscription_renewed_at' => now(),
+            'next_billing_at'         => $data['period_end'] ?? now()->addMonth(),
+        ]);
+
+        return back()->with('success', "Paiement enregistré · Reçu {$payment->receipt_number}");
+    }
+
+    /** GET /admin/payments/{payment}/receipt */
+    public function receipt(Payment $payment)
+    {
+        $payment->load('company');
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('admin.receipt', compact('payment'));
+        return $pdf->download("{$payment->receipt_number}.pdf");
     }
 
     public function audit(Request $request)
