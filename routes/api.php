@@ -103,6 +103,15 @@ Route::prefix('v1')->name('v1.')->group(function () {
         Route::post('companies/plan/pay', [\App\Http\Controllers\Api\V1\PlanPaymentController::class, 'pay'])->name('plan.pay');
     });
 
+    // ── Two-factor authentication (auth only) ────────────────────────────────
+    Route::middleware('auth:sanctum')->prefix('auth/two-factor')->name('auth.2fa.')->group(function () {
+        Route::get('/',                [\App\Http\Controllers\Api\V1\TwoFactorController::class, 'status'])->name('status');
+        Route::post('setup',           [\App\Http\Controllers\Api\V1\TwoFactorController::class, 'setup'])->name('setup');
+        Route::post('confirm',         [\App\Http\Controllers\Api\V1\TwoFactorController::class, 'confirm'])->name('confirm');
+        Route::post('disable',         [\App\Http\Controllers\Api\V1\TwoFactorController::class, 'disable'])->name('disable');
+        Route::post('recovery-codes',  [\App\Http\Controllers\Api\V1\TwoFactorController::class, 'regenerate'])->name('recovery');
+    });
+
     // ── Onboarding (auth only; runs during trial before full access) ──────────
     Route::middleware('auth:sanctum')->prefix('onboarding')->name('onboarding.')->group(function () {
         Route::get('status',           [\App\Http\Controllers\Api\V1\OnboardingController::class, 'status'])->name('status');

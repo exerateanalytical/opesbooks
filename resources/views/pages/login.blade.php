@@ -241,11 +241,28 @@
                             <p x-show="forgotErr" x-cloak class="text-[10px] text-red-400 mt-2 font-bold" x-text="forgotErr"></p>
                         </div>
                     </div>
+                    {{-- 2FA code challenge --}}
+                    <div x-show="twoFactorRequired" x-cloak>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">
+                            <span x-show="lang === 'FR'">Code d'authentification</span>
+                            <span x-show="lang === 'EN'" x-cloak>Authentication code</span>
+                        </label>
+                        <input type="text" x-model="loginForm.code" inputmode="numeric" autocomplete="one-time-code"
+                               class="glass-input text-center tracking-[0.4em] font-black" placeholder="000000" maxlength="9">
+                        <p class="text-[10px] text-slate-500 mt-1.5">
+                            <span x-show="lang === 'FR'">Saisissez le code de votre application (ou un code de récupération).</span>
+                            <span x-show="lang === 'EN'" x-cloak>Enter the code from your authenticator app (or a recovery code).</span>
+                        </p>
+                    </div>
                     <button type="submit" :disabled="loading"
                             class="w-full glass-btn-dark py-3 rounded-xl uppercase tracking-widest text-xs disabled:opacity-40">
                         <span x-show="!loading">
-                            <span x-show="lang === 'FR'">Se Connecter</span>
-                            <span x-show="lang === 'EN'" x-cloak>Sign In</span>
+                            <span x-show="twoFactorRequired">
+                                <span x-show="lang === 'FR'">Vérifier</span><span x-show="lang === 'EN'" x-cloak>Verify</span>
+                            </span>
+                            <span x-show="!twoFactorRequired">
+                                <span x-show="lang === 'FR'">Se Connecter</span><span x-show="lang === 'EN'" x-cloak>Sign In</span>
+                            </span>
                         </span>
                         <span x-show="loading" x-cloak>…</span>
                     </button>
@@ -338,7 +355,8 @@
             forgotLoading: false,
             forgotMsg: '',
             forgotErr: '',
-            loginForm: { email: '', password: '' },
+            twoFactorRequired: false,
+            loginForm: { email: '', password: '', code: '' },
             regForm: {
                 company_name: '', company_niu: '', company_rccm: '',
                 company_tax_regime: '', company_tax_center: '', company_country_code: 'CM',
@@ -353,6 +371,12 @@
                         body: JSON.stringify(this.loginForm),
                     });
                     const json = await res.json();
+                    // Two-factor challenge: reveal the code field and let the user retry.
+                    if (res.status === 422 && json.two_factor_required) {
+                        this.twoFactorRequired = true;
+                        this.error = this.loginForm.code ? (json.message || 'Code invalide.') : '';
+                        return;
+                    }
                     if (!res.ok) throw new Error(json.message || Object.values(json.errors || {})[0]?.[0] || 'Login failed');
                     localStorage.setItem('opes_token', json.token);
                     localStorage.setItem('opes_user', JSON.stringify(json.user));

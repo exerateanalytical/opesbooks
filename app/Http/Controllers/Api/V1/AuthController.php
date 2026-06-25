@@ -100,8 +100,21 @@ class AuthController extends Controller
             ]);
         }
 
+        // Two-factor challenge: password is correct, but a valid TOTP or
+        // recovery code is required before a token is issued.
+        if ($user->hasTwoFactorEnabled()) {
+            $code = trim((string) $request->input('code', ''));
+            if ($code === '') {
+                return response()->json(['two_factor_required' => true, 'message' => 'Code 2FA requis.'], 422);
+            }
+            if (! $this->verifyTwoFactor($user, $code)) {
+                return response()->json(['two_factor_required' => true, 'message' => 'Code 2FA invalide.'], 422);
+            }
+        }
+
         // Revoke all previous tokens to enforce single-session discipline
         $user->tokens()->delete();
+        $user->forceFill(['last_login_at' => now(), 'last_login_ip' => $request->ip()])->save();
         $token = $user->createToken('opes-api')->plainTextToken;
 
         $company = $user->company;
@@ -224,6 +237,25 @@ class AuthController extends Controller
             'company_id'           => $user->company_id,
             'assigned_caisse_code' => $user->assigned_caisse_code,
         ];
+    }
+
+    /** Verify a TOTP code or consume a one-time recovery code. */
+    private function verifyTwoFactor(User $user, string $code): bool
+    {
+        if ($user->two_factor_secret
+            && (new \PragmaRX\Google2FAQRCode\Google2FA())->verifyKey($user->two_factor_secret, $code)) {
+            return true;
+        }
+
+        $recovery = $user->two_factor_recovery_codes ?? [];
+        if (in_array($code, $recovery, true)) {
+            $user->forceFill([
+                'two_factor_recovery_codes' => array_values(array_diff($recovery, [$code])),
+            ])->save();
+            return true;
+        }
+
+        return false;
     }
 
     private function authorizeOwner(Request $request): void

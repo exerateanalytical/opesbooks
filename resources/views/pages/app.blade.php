@@ -1986,6 +1986,65 @@
                    x-text="lang==='FR' ? 'Gérez vos informations personnelles et votre mot de passe.' : 'Manage your personal info and password.'"></p>
             </div>
 
+            <!-- Sécurité — 2FA -->
+            <div class="glass-card rounded-2xl p-6 space-y-4"
+                 x-data="{ enabled:false, busy:false, step:'idle', secret:'', qr:'', code:'', err:'', recovery:[], pwd:'',
+                    _h(){ return {'Authorization':'Bearer '+localStorage.getItem('opes_token'),'Content-Type':'application/json','Accept':'application/json'}; },
+                    async load(){ try{ const r=await(await fetch('/api/v1/auth/two-factor',{headers:this._h()})).json(); this.enabled=!!r.enabled; }catch(e){} },
+                    async start(){ this.err=''; this.busy=true; try{ const r=await(await fetch('/api/v1/auth/two-factor/setup',{method:'POST',headers:this._h()})).json(); this.secret=r.secret; this.qr=r.qr; this.step='scan'; }catch(e){this.err='Erreur'}finally{this.busy=false} },
+                    async confirm(){ this.err=''; this.busy=true; try{ const res=await fetch('/api/v1/auth/two-factor/confirm',{method:'POST',headers:this._h(),body:JSON.stringify({code:this.code})}); const d=await res.json(); if(!res.ok){this.err=d.message||'Code invalide';return;} this.recovery=d.recovery_codes; this.enabled=true; this.step='codes'; }catch(e){this.err='Erreur'}finally{this.busy=false} },
+                    async disable(){ this.err=''; this.busy=true; try{ const res=await fetch('/api/v1/auth/two-factor/disable',{method:'POST',headers:this._h(),body:JSON.stringify({password:this.pwd})}); const d=await res.json(); if(!res.ok){this.err=d.message||'Erreur';return;} this.enabled=false; this.step='idle'; this.pwd=''; }catch(e){this.err='Erreur'}finally{this.busy=false} } }"
+                 x-init="load()">
+                <div class="flex items-center justify-between">
+                    <p class="text-[10px] font-black text-amber-400 uppercase tracking-widest" x-text="lang==='FR'?'Sécurité · Double Authentification':'Security · Two-Factor Auth'"></p>
+                    <span x-show="enabled" class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase" style="background:rgba(16,185,129,0.18);color:rgb(110,231,183);border:1px solid rgba(16,185,129,0.35)">✓ Activée</span>
+                </div>
+                <div x-show="err" x-cloak class="px-3 py-2 rounded-lg text-xs font-bold" style="background:rgba(244,63,94,0.12);color:rgb(252,165,165)" x-text="err"></div>
+
+                <!-- Not enabled, idle -->
+                <template x-if="!enabled && step==='idle'">
+                    <div>
+                        <p class="text-xs text-slate-400 mb-3" x-text="lang==='FR'?'Protégez votre compte avec une application d\'authentification (Google Authenticator, Authy).':'Protect your account with an authenticator app.'"></p>
+                        <button @click="start()" :disabled="busy" class="glass-btn-amber px-4 py-2 rounded-xl text-xs uppercase tracking-widest disabled:opacity-50" x-text="busy?'…':(lang==='FR'?'Activer la 2FA':'Enable 2FA')"></button>
+                    </div>
+                </template>
+
+                <!-- Setup: scan QR + confirm -->
+                <template x-if="step==='scan'">
+                    <div class="space-y-3">
+                        <p class="text-xs text-slate-400" x-text="lang==='FR'?'Scannez ce QR code, puis saisissez le code à 6 chiffres.':'Scan this QR code, then enter the 6-digit code.'"></p>
+                        <div class="bg-white rounded-xl p-3 inline-block" x-html="qr"></div>
+                        <p class="text-[10px] text-slate-500 font-mono">Secret: <span x-text="secret"></span></p>
+                        <div class="flex gap-2">
+                            <input x-model="code" inputmode="numeric" maxlength="6" class="input-field text-center tracking-[0.3em] font-black w-40" placeholder="000000">
+                            <button @click="confirm()" :disabled="busy" class="glass-btn-amber px-4 py-2 rounded-xl text-xs uppercase tracking-widest disabled:opacity-50" x-text="busy?'…':(lang==='FR'?'Vérifier':'Verify')"></button>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Recovery codes (once) -->
+                <template x-if="step==='codes'">
+                    <div class="space-y-2">
+                        <p class="text-xs text-amber-300 font-bold" x-text="lang==='FR'?'Sauvegardez ces codes de récupération — ils ne seront plus affichés.':'Save these recovery codes — they won\'t be shown again.'"></p>
+                        <div class="grid grid-cols-2 gap-2 font-mono text-sm">
+                            <template x-for="c in recovery" :key="c"><div class="px-3 py-1.5 rounded-lg text-amber-400" style="background:rgba(255,255,255,0.04)" x-text="c"></div></template>
+                        </div>
+                        <button @click="step='idle'" class="glass-btn-dark px-4 py-2 rounded-xl text-xs uppercase tracking-widest mt-1" x-text="lang==='FR'?'J\'ai sauvegardé':'Done'"></button>
+                    </div>
+                </template>
+
+                <!-- Enabled: disable -->
+                <template x-if="enabled && step==='idle'">
+                    <div class="flex flex-wrap items-end gap-2">
+                        <div>
+                            <label class="block text-[10px] text-slate-500 uppercase tracking-widest mb-1" x-text="lang==='FR'?'Mot de passe pour désactiver':'Password to disable'"></label>
+                            <input type="password" x-model="pwd" class="input-field w-56" placeholder="••••••••">
+                        </div>
+                        <button @click="disable()" :disabled="busy||!pwd" class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest disabled:opacity-50" style="background:rgba(244,63,94,0.15);color:rgb(252,165,165);border:1px solid rgba(244,63,94,0.3)" x-text="busy?'…':(lang==='FR'?'Désactiver':'Disable')"></button>
+                    </div>
+                </template>
+            </div>
+
             <!-- Profile info card -->
             <div class="glass-card rounded-2xl p-6 space-y-4">
                 <p class="text-[10px] font-black text-amber-400 uppercase tracking-widest"
