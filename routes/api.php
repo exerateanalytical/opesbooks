@@ -134,6 +134,10 @@ Route::prefix('v1')->name('v1.')->group(function () {
     Route::middleware(['auth:sanctum', \App\Http\Middleware\RequireActiveSubscription::class])
         ->group(function () {
 
+        // Universal data export (Excel / CSV / PDF)
+        Route::get('companies/{company}/export/{type}', [\App\Http\Controllers\Api\V1\ExportDataController::class, 'download'])
+            ->name('export.download');
+
         // CRM (sales pipeline)
         Route::prefix('crm')->name('crm.')->group(function () {
             Route::get('leads',                 [\App\Http\Controllers\Api\V1\CrmController::class, 'leads'])->name('leads');

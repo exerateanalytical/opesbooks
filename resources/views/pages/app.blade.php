@@ -2153,8 +2153,22 @@
         <div x-show="page==='customer-invoices'" x-cloak class="p-6 space-y-5 float-in" x-data="customerInvoicesPanel()">
             <div class="flex items-center justify-between flex-wrap gap-3">
                 <h2 class="text-xl font-bold tracking-tight" x-text="lang==='FR' ? 'Factures Clients' : 'Customer Invoices'"></h2>
-                <button @click="showForm=!showForm" class="glass-btn-dark px-4 py-2 rounded-xl text-xs uppercase tracking-widest"
-                    x-text="showForm ? (lang==='FR'?'Annuler':'Cancel') : (lang==='FR'?'+ Nouvelle Facture':'+ New Invoice')"></button>
+                <div class="flex items-center gap-2">
+                    <div class="relative" x-data="{ open:false }" @click.outside="open=false">
+                        <button @click="open=!open" class="glass-btn-dark px-3 py-2 rounded-xl text-xs uppercase tracking-widest inline-flex items-center gap-1.5">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            <span x-text="lang==='FR'?'Exporter':'Export'"></span>
+                        </button>
+                        <div x-show="open" x-cloak class="absolute right-0 mt-1 z-20 rounded-xl overflow-hidden min-w-36" style="background:rgba(13,29,51,0.98);border:1px solid rgba(255,255,255,0.12)">
+                            <template x-for="f in [['xlsx','Excel'],['csv','CSV'],['pdf','PDF']]" :key="f[0]">
+                                <button type="button" @click="open=false; exportDownload('invoices', f[0])"
+                                   class="block w-full text-left px-4 py-2.5 text-xs text-slate-300 hover:bg-white/5 hover:text-white" x-text="f[1]"></button>
+                            </template>
+                        </div>
+                    </div>
+                    <button @click="showForm=!showForm" class="glass-btn-dark px-4 py-2 rounded-xl text-xs uppercase tracking-widest"
+                        x-text="showForm ? (lang==='FR'?'Annuler':'Cancel') : (lang==='FR'?'+ Nouvelle Facture':'+ New Invoice')"></button>
+                </div>
             </div>
 
             <div x-show="showForm" class="glass-card p-5 rounded-2xl space-y-4">
@@ -5079,6 +5093,18 @@ function customerInvoicesPanel() {
         ttcPreview: { tva:0, cac:0, ttc:0 },
         form: { customer_id:'', invoice_date:'', due_date:'', amount_ht:'', notes:'' },
         _cid: null,
+        async exportDownload(type, fmt) {
+            try {
+                const res = await fetch(`/api/v1/companies/${this._cid}/export/${type}?format=${fmt}`, {
+                    headers: { 'Authorization': 'Bearer ' + localStorage.getItem('opes_token') }
+                });
+                if (!res.ok) { window.opesToast && window.opesToast('error', 'Export', 'Échec de l\'export.'); return; }
+                const blob = await res.blob();
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a'); a.href = url; a.download = `${type}.${fmt}`; a.click();
+                URL.revokeObjectURL(url);
+            } catch (e) { window.opesToast && window.opesToast('error', 'Export', e.message); }
+        },
         mecefLoading: null,
         async certifyMecef(inv) {
             this.mecefLoading = inv.id;
