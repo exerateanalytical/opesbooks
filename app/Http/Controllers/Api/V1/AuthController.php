@@ -164,10 +164,22 @@ class AuthController extends Controller
         return response()->json([
             'user'           => $this->userPayload($user),
             'company'        => $companyData,
+            // Company enforces 2FA but this user hasn't enabled it yet.
+            'must_enable_2fa'=> (bool) ($company?->require_2fa) && ! $user->hasTwoFactorEnabled(),
+            'require_2fa'    => (bool) ($company?->require_2fa),
             'fiscal_modules' => $company
                 ? app(\App\Services\FiscalGeographyRouter::class)->getActiveFiscalModules($company)
                 : null,
         ]);
+    }
+
+    /** PUT /api/v1/auth/company/require-2fa  (OWNER only) */
+    public function setRequire2fa(Request $request): JsonResponse
+    {
+        $this->authorizeOwner($request);
+        $data = $request->validate(['enabled' => 'required|boolean']);
+        $request->user()->company?->update(['require_2fa' => $data['enabled']]);
+        return response()->json(['ok' => true]);
     }
 
     /**

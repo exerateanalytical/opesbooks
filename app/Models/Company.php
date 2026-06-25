@@ -31,6 +31,7 @@ class Company extends Model
         'onboarding_step',
         'onboarding_completed_at',
         'onboarding_checklist_dismissed',
+        'require_2fa',
         'phone',
         'email',
         'address',

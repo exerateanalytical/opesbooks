@@ -181,6 +181,7 @@ Route::prefix('v1')->name('v1.')->group(function () {
         Route::prefix('auth')->name('auth.')->group(function () {
             Route::post('logout',    [AuthController::class, 'logout'])->name('logout');
             Route::post('logout-all',[AuthController::class, 'logoutAll'])->name('logout-all');
+            Route::put('company/require-2fa', [AuthController::class, 'setRequire2fa'])->name('company.require-2fa');
             Route::get('me',         [AuthController::class, 'me'])->name('me');
             Route::put('profile',    [ProfileController::class, 'update'])->name('profile.update');
             Route::put('password',   [ProfileController::class, 'changePassword'])->name('password.change');

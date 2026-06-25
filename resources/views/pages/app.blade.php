@@ -639,6 +639,16 @@
             <span class="text-white font-black text-sm tracking-widest uppercase">OPES<span class="text-amber-400">BOOKS</span></span>
         </div>
 
+        <!-- 2FA required (company enforces it, user hasn't enabled) -->
+        <div x-show="mustEnable2fa" x-cloak class="px-6 pt-5">
+            <div class="flex items-center justify-between gap-3 px-4 py-3 rounded-xl text-xs" style="background:rgba(244,63,94,0.12);border:1px solid rgba(244,63,94,0.3)">
+                <span class="text-red-300 font-bold">
+                    <span x-text="lang==='FR' ? 'Votre organisation exige l\'authentification à deux facteurs. Activez-la pour sécuriser votre compte.' : 'Your organisation requires two-factor authentication. Enable it to secure your account.'"></span>
+                </span>
+                <button @click="setPage('profile')" class="shrink-0 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider" style="background:rgba(244,63,94,0.2);color:rgb(252,165,165)" x-text="lang==='FR'?'Activer la 2FA →':'Enable 2FA →'"></button>
+            </div>
+        </div>
+
         <!-- Platform announcement banners -->
         <div x-show="announcements.length" x-cloak class="px-6 pt-5 space-y-2">
             <template x-for="a in announcements" :key="a.id">
@@ -1727,6 +1737,21 @@
                     <button @click="save()" :disabled="saving" class="glass-btn-amber px-4 py-2 rounded-xl text-xs uppercase tracking-widest disabled:opacity-50" x-text="saving?'…':(lang==='FR'?'Enregistrer':'Save')"></button>
                     <span x-show="saved" x-cloak class="text-emerald-400 text-xs font-bold" x-text="lang==='FR'?'Enregistré ✔':'Saved ✔'"></span>
                 </div>
+            </div>
+
+            <!-- Sécurité équipe — enforce 2FA -->
+            <div class="glass-card rounded-2xl p-6" x-show="user?.role==='OWNER'"
+                 x-data="{ on: !!(company?.require_2fa), busy:false,
+                    async toggle(){ this.busy=true; this.on=!this.on; try{ await fetch('/api/v1/auth/company/require-2fa',{method:'PUT',headers:{'Authorization':'Bearer '+localStorage.getItem('opes_token'),'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({enabled:this.on})}); if(company) company.require_2fa=this.on; window.opesToast&&window.opesToast('success', on?'2FA exigée':'2FA optionnelle'); }catch(e){ this.on=!this.on; }finally{this.busy=false} } }">
+                <label class="flex items-center justify-between cursor-pointer">
+                    <span>
+                        <span class="block text-[10px] font-black text-amber-400 uppercase tracking-widest" x-text="lang==='FR'?'Sécurité de l\'équipe':'Team security'"></span>
+                        <span class="block text-xs text-slate-400 mt-1" x-text="lang==='FR'?'Exiger la 2FA pour tous les membres':'Require 2FA for all members'"></span>
+                    </span>
+                    <button type="button" @click="toggle()" :disabled="busy" class="relative w-12 h-6 rounded-full transition-colors shrink-0" :style="on ? 'background:#C99B0E' : 'background:rgba(255,255,255,0.15)'">
+                        <span class="absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform" :class="on ? 'translate-x-6' : ''"></span>
+                    </button>
+                </label>
             </div>
 
             <!-- Logo upload -->
@@ -4454,10 +4479,12 @@ function opesApp() {
             return res.json();
         },
 
+        mustEnable2fa: false,
         async loadMe() {
             const data = await this.api('auth/me');
             this.user    = data.user;
             this.company = data.company;
+            this.mustEnable2fa = !!data.must_enable_2fa;
             if (this.company) {
                 this.buildKpis();
                 // Refresh KPI totals from trial balance
