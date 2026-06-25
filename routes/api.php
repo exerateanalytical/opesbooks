@@ -103,6 +103,15 @@ Route::prefix('v1')->name('v1.')->group(function () {
             Route::get('stats',                 [\App\Http\Controllers\Api\V1\CrmController::class, 'stats'])->name('stats');
         });
 
+        // Projects (project accounting)
+        Route::prefix('projects')->name('projects.')->group(function () {
+            Route::get('/',                   [\App\Http\Controllers\Api\V1\ProjectController::class, 'index'])->name('index');
+            Route::post('/',                  [\App\Http\Controllers\Api\V1\ProjectController::class, 'store'])->name('store');
+            Route::get('{project}',           [\App\Http\Controllers\Api\V1\ProjectController::class, 'show'])->name('show');
+            Route::patch('{project}/status',  [\App\Http\Controllers\Api\V1\ProjectController::class, 'updateStatus'])->name('status');
+            Route::post('{project}/entries',  [\App\Http\Controllers\Api\V1\ProjectController::class, 'addEntry'])->name('entries');
+        });
+
         // Auth utilities
         Route::prefix('auth')->name('auth.')->group(function () {
             Route::post('logout',    [AuthController::class, 'logout'])->name('logout');

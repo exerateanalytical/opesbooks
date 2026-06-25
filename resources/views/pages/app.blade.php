@@ -419,6 +419,10 @@
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><polyline points="16 7 22 7 22 13" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg>
                 <span>CRM</span>
             </button>
+            <button @click="setPage('projects')" :class="page==='projects' ? 'nav-item active' : 'nav-item'">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+                <span x-text="lang==='FR' ? 'Projets' : 'Projects'"></span>
+            </button>
             <button @click="setPage('suppliers')" :class="page==='suppliers' ? 'nav-item active' : 'nav-item'" x-show="user?.role === 'OWNER' || user?.role === 'ACCOUNTANT'">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"/></svg>
                 <span x-text="lang==='FR' ? 'Fournisseurs' : 'Suppliers'"></span>
@@ -3711,6 +3715,135 @@
             </div>
         </div>
 
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!-- PROJECTS PAGE                                              -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <div x-show="page==='projects'" x-cloak class="p-6 space-y-5 float-in" x-data="projectsPanel()" x-init="init()">
+            <div class="flex flex-wrap items-end justify-between gap-3">
+                <div>
+                    <h2 class="text-2xl font-black text-white uppercase tracking-wide" x-text="lang==='FR'?'Projets':'Projects'"></h2>
+                    <p class="text-xs text-slate-400 mt-1" x-text="lang==='FR'?'Comptabilité par projet — coûts, revenus, rentabilité':'Project accounting — costs, revenue, profitability'"></p>
+                </div>
+                <button @click="openAdd()" class="glass-btn-amber px-4 py-2 rounded-xl text-xs uppercase tracking-widest flex items-center gap-2">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    <span x-text="lang==='FR'?'Nouveau Projet':'New Project'"></span>
+                </button>
+            </div>
+
+            <!-- Project cards -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <template x-for="p in projects" :key="p.id">
+                    <div class="glass-card rounded-2xl p-5 space-y-3 cursor-pointer" @click="openProject(p)">
+                        <div class="flex items-start justify-between gap-2">
+                            <div class="min-w-0">
+                                <div class="text-lg font-black text-white truncate" x-text="p.name"></div>
+                                <div class="text-[11px] text-slate-400 truncate"><span x-text="p.client?.name || (lang==='FR'?'Sans client':'No client')"></span></div>
+                            </div>
+                            <div class="flex flex-col items-end gap-1 shrink-0">
+                                <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest text-amber-400" style="background:rgba(201,155,14,0.12);border:1px solid rgba(201,155,14,0.3)" x-text="p.code"></span>
+                                <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase" :style="statusBadge(p.status)" x-text="p.status"></span>
+                            </div>
+                        </div>
+                        <!-- budget progress -->
+                        <div x-show="p.budget_amount">
+                            <div class="flex justify-between text-[10px] text-slate-500 mb-1">
+                                <span x-text="lang==='FR'?'Coûts / Budget':'Costs / Budget'"></span>
+                                <span x-text="fmtXaf(p.costs)+' / '+fmtXaf(p.budget_amount)"></span>
+                            </div>
+                            <div class="h-2 rounded-full overflow-hidden" style="background:rgba(255,255,255,0.08)">
+                                <div class="h-full rounded-full" :style="'width:'+Math.min(100,(p.budget_amount? p.costs/p.budget_amount*100:0))+'%;background:'+(p.costs>p.budget_amount?'rgb(244,63,94)':'rgb(201,155,14)')"></div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 pt-1">
+                            <div><div class="text-[9px] uppercase tracking-widest text-slate-500" x-text="lang==='FR'?'Revenus':'Revenue'"></div><div class="text-xs font-black text-white" x-text="fmtXaf(p.revenue)"></div></div>
+                            <div><div class="text-[9px] uppercase tracking-widest text-slate-500" x-text="lang==='FR'?'Coûts':'Costs'"></div><div class="text-xs font-black text-white" x-text="fmtXaf(p.costs)"></div></div>
+                            <div><div class="text-[9px] uppercase tracking-widest text-slate-500" x-text="lang==='FR'?'Bénéfice':'Profit'"></div><div class="text-xs font-black" :class="p.profit>=0?'text-emerald-400':'text-red-400'" x-text="fmtXaf(p.profit)"></div></div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+            <div x-show="projects.length===0" class="glass-card rounded-2xl py-16 flex flex-col items-center gap-3">
+                <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-amber-400/70" style="background:rgba(201,155,14,0.08);border:1px solid rgba(201,155,14,0.18)">
+                    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+                </div>
+                <p class="text-[11px] font-black uppercase tracking-widest text-slate-500" x-text="lang==='FR'?'Aucun projet':'No projects'"></p>
+                <p class="text-xs text-slate-600" x-text="lang==='FR'?'Créez votre premier projet pour suivre coûts et revenus.':'Create your first project to track costs and revenue.'"></p>
+            </div>
+
+            <!-- Add project modal -->
+            <div x-show="showAdd" x-cloak class="fixed inset-0 z-[80] flex items-center justify-center p-4" style="background:rgba(5,13,26,0.7);backdrop-filter:blur(6px)" @click.self="showAdd=false">
+                <div class="glass-card rounded-2xl p-6 w-full max-w-md space-y-3">
+                    <h3 class="text-sm font-black text-white uppercase tracking-widest" x-text="lang==='FR'?'Nouveau Projet':'New Project'"></h3>
+                    <div x-show="addError" x-cloak class="px-3 py-2 rounded-lg text-xs font-bold" style="background:rgba(244,63,94,0.12);color:rgb(252,165,165)" x-text="addError"></div>
+                    <input x-model="addForm.name" class="input-field" :placeholder="(lang==='FR'?'Nom du projet':'Project name')+' *'">
+                    <textarea x-model="addForm.description" rows="2" class="input-field" :placeholder="lang==='FR'?'Description':'Description'"></textarea>
+                    <div class="grid grid-cols-2 gap-2">
+                        <input x-model="addForm.start_date" type="date" class="input-field">
+                        <input x-model="addForm.end_date" type="date" class="input-field">
+                        <input x-model="addForm.contract_value" type="number" class="input-field" :placeholder="lang==='FR'?'Valeur contrat (XAF)':'Contract value'">
+                        <input x-model="addForm.budget_amount" type="number" class="input-field" :placeholder="lang==='FR'?'Budget (XAF)':'Budget'">
+                    </div>
+                    <div class="flex gap-2 pt-1">
+                        <button @click="saveProject()" :disabled="addSaving" class="glass-btn-amber px-4 py-2 rounded-xl text-xs uppercase tracking-widest flex-1 disabled:opacity-50" x-text="addSaving?'…':(lang==='FR'?'Créer':'Create')"></button>
+                        <button @click="showAdd=false" class="glass-btn-dark px-4 py-2 rounded-xl text-xs uppercase tracking-widest" x-text="lang==='FR'?'Annuler':'Cancel'"></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project detail modal -->
+            <div x-show="showDetail" x-cloak class="fixed inset-0 z-[80] flex items-start justify-center p-4 overflow-y-auto" style="background:rgba(5,13,26,0.7);backdrop-filter:blur(6px)" @click.self="showDetail=false">
+                <div class="glass-card rounded-2xl p-6 w-full max-w-2xl space-y-4 my-8" x-show="detail">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <h3 class="text-lg font-black text-white" x-text="detail?.project?.name"></h3>
+                            <span class="text-[10px] text-amber-400 font-black" x-text="detail?.project?.code"></span>
+                        </div>
+                        <button @click="showDetail=false" class="text-slate-400 hover:text-white"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+                    </div>
+                    <!-- KPIs -->
+                    <div class="grid grid-cols-3 gap-3">
+                        <div class="rounded-xl p-3" style="background:rgba(255,255,255,0.04)"><div class="text-[9px] uppercase tracking-widest text-slate-500" x-text="lang==='FR'?'Revenus':'Revenue'"></div><div class="text-sm font-black text-white" x-text="fmtXaf(detail?.project?.revenue)"></div></div>
+                        <div class="rounded-xl p-3" style="background:rgba(255,255,255,0.04)"><div class="text-[9px] uppercase tracking-widest text-slate-500" x-text="lang==='FR'?'Coûts':'Costs'"></div><div class="text-sm font-black text-white" x-text="fmtXaf(detail?.project?.costs)"></div></div>
+                        <div class="rounded-xl p-3" style="background:rgba(255,255,255,0.04)"><div class="text-[9px] uppercase tracking-widest text-slate-500" x-text="lang==='FR'?'Bénéfice':'Profit'"></div><div class="text-sm font-black" :class="(detail?.project?.profit>=0)?'text-emerald-400':'text-red-400'" x-text="fmtXaf(detail?.project?.profit)+' ('+(detail?.project?.margin)+'%)'"></div></div>
+                    </div>
+                    <!-- Add entry -->
+                    <div class="rounded-xl p-3 space-y-2" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08)">
+                        <div class="text-[10px] font-black uppercase tracking-widest text-amber-400" x-text="lang==='FR'?'Ajouter une ligne':'Add entry'"></div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <select x-model="entryForm.direction" class="input-field text-xs">
+                                <option value="revenue" x-text="lang==='FR'?'Revenu':'Revenue'"></option>
+                                <option value="cost" x-text="lang==='FR'?'Coût':'Cost'"></option>
+                            </select>
+                            <select x-model="entryForm.entry_type" class="input-field text-xs">
+                                <option value="invoice" x-text="lang==='FR'?'Facture':'Invoice'"></option>
+                                <option value="supplier_invoice" x-text="lang==='FR'?'Fournisseur':'Supplier'"></option>
+                                <option value="payroll_cost" x-text="lang==='FR'?'Paie':'Payroll'"></option>
+                                <option value="journal_entry">Journal</option>
+                                <option value="expense" x-text="lang==='FR'?'Dépense':'Expense'"></option>
+                            </select>
+                            <input x-model="entryForm.description" class="input-field text-xs col-span-2" :placeholder="lang==='FR'?'Description':'Description'">
+                            <input x-model="entryForm.amount" type="number" class="input-field text-xs" :placeholder="lang==='FR'?'Montant (XAF)':'Amount'">
+                            <button @click="addEntry()" :disabled="entrySaving" class="glass-btn-amber px-3 py-2 rounded-xl text-[10px] uppercase tracking-widest disabled:opacity-50" x-text="entrySaving?'…':(lang==='FR'?'Ajouter':'Add')"></button>
+                        </div>
+                    </div>
+                    <!-- Transactions -->
+                    <div>
+                        <div class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2" x-text="lang==='FR'?'Transactions':'Transactions'"></div>
+                        <div class="space-y-1 max-h-52 overflow-y-auto">
+                            <template x-for="e in (detail?.entries||[])" :key="e.id">
+                                <div class="flex items-center justify-between text-xs py-1.5 px-2 rounded-lg" style="background:rgba(255,255,255,0.03)">
+                                    <span class="text-slate-300 truncate flex-1" x-text="e.description"></span>
+                                    <span class="text-[9px] uppercase tracking-wider text-slate-500 mx-2" x-text="e.entry_type"></span>
+                                    <span class="font-black shrink-0" :class="e.amount>=0?'text-emerald-400':'text-red-400'" x-text="fmtXaf(e.amount)"></span>
+                                </div>
+                            </template>
+                            <div x-show="(detail?.entries||[]).length===0" class="text-center py-4 opacity-40 text-xs" x-text="lang==='FR'?'Aucune transaction.':'No transactions.'"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </main>
 </div>
 
@@ -4651,6 +4784,65 @@ function customersPanel() {
             finally { this.saving = false; }
         },
         fmtXaf(v) { return Number(v).toLocaleString('fr-CM',{minimumFractionDigits:0})+' XAF'; },
+    };
+}
+
+function projectsPanel() {
+    return {
+        projects: [],
+        showAdd: false, addSaving: false, addError: '',
+        addForm: { name:'', description:'', start_date:'', end_date:'', contract_value:'', budget_amount:'' },
+        showDetail: false, detail: null,
+        entryForm: { direction:'cost', entry_type:'expense', description:'', amount:'' },
+        entrySaving: false,
+        _tok() { return localStorage.getItem('opes_token'); },
+        async _get(path) { const r = await fetch('/api/v1/'+path, { headers:{'Authorization':'Bearer '+this._tok(),'Accept':'application/json'} }); return r.json(); },
+        async _send(path, method, body) {
+            const r = await fetch('/api/v1/'+path, { method, headers:{'Authorization':'Bearer '+this._tok(),'Content-Type':'application/json','Accept':'application/json'}, body: JSON.stringify(body) });
+            const d = await r.json();
+            if (!r.ok) throw new Error(d.message || Object.values(d.errors ?? {}).flat().join(' | '));
+            return d;
+        },
+        _lang() { return localStorage.getItem('opes_lang') || 'FR'; },
+        async init() { await this.load(); },
+        async load() { const d = await this._get('projects'); this.projects = Array.isArray(d) ? d : []; },
+        statusBadge(s) {
+            return ({
+                draft:     'background:rgba(100,116,139,0.18);color:rgb(148,163,184);border:1px solid rgba(100,116,139,0.35)',
+                active:    'background:rgba(16,185,129,0.18);color:rgb(110,231,183);border:1px solid rgba(16,185,129,0.35)',
+                completed: 'background:rgba(59,130,246,0.18);color:rgb(147,197,253);border:1px solid rgba(59,130,246,0.35)',
+                cancelled: 'background:rgba(244,63,94,0.18);color:rgb(252,165,165);border:1px solid rgba(244,63,94,0.35)',
+            })[s] || '';
+        },
+        openAdd() { this.addForm = { name:'', description:'', start_date:'', end_date:'', contract_value:'', budget_amount:'' }; this.addError=''; this.showAdd=true; },
+        async saveProject() {
+            this.addError = '';
+            if (!this.addForm.name) { this.addError = this._lang()==='FR' ? 'Nom requis.' : 'Name required.'; return; }
+            this.addSaving = true;
+            try {
+                const payload = Object.fromEntries(Object.entries(this.addForm).filter(([, v]) => v !== '' && v !== null));
+                await this._send('projects', 'POST', payload);
+                this.showAdd = false; await this.load();
+            } catch(e) { this.addError = e.message; }
+            finally { this.addSaving = false; }
+        },
+        async openProject(p) {
+            this.detail = null; this.showDetail = true;
+            this.entryForm = { direction:'cost', entry_type:'expense', description:'', amount:'' };
+            this.detail = await this._get('projects/' + p.id);
+        },
+        async addEntry() {
+            if (!this.entryForm.description || !this.entryForm.amount || !this.detail) return;
+            this.entrySaving = true;
+            try {
+                await this._send(`projects/${this.detail.project.id}/entries`, 'POST', this.entryForm);
+                this.detail = await this._get('projects/' + this.detail.project.id);
+                this.entryForm = { direction:'cost', entry_type:'expense', description:'', amount:'' };
+                this.load(); // refresh card aggregates
+            } catch(e) {}
+            finally { this.entrySaving = false; }
+        },
+        fmtXaf(v) { return Number(v || 0).toLocaleString('fr-CM', { minimumFractionDigits:0 }) + ' XAF'; },
     };
 }
 
