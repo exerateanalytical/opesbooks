@@ -57,6 +57,21 @@ class AuthController extends Controller
         ]);
         $user->companies()->attach($company->id, ['role' => 'OWNER', 'is_default' => true]);
 
+        // In-app welcome (always) + email (best-effort; needs SMTP).
+        app(\App\Services\NotificationService::class)->push($company, [
+            'type'         => 'welcome',
+            'title'        => 'Bienvenue sur OPESBooks',
+            'body'         => 'Configurez votre espace en quelques minutes.',
+            'icon'         => 'sparkles',
+            'action_url'   => '/onboarding',
+            'action_label' => 'Commencer',
+        ], $user);
+        try {
+            \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\WelcomeMail($user));
+        } catch (\Throwable $e) {
+            // SMTP not configured in this environment — non-fatal.
+        }
+
         $token = $user->createToken('opes-api')->plainTextToken;
 
         return response()->json([

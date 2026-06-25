@@ -20,7 +20,19 @@ class Payment extends Model
     protected static function booted(): void
     {
         static::created(function (self $payment) {
-            app(\App\Services\WebhookService::class)->dispatch('payment.received', $payment->toArray(), $payment->company);
+            $company = $payment->company;
+            app(\App\Services\WebhookService::class)->dispatch('payment.received', $payment->toArray(), $company);
+            if ($company) {
+                app(\App\Services\NotificationService::class)->pushOwners($company, [
+                    'type'       => 'payment.received',
+                    'title'      => 'Paiement reçu',
+                    'body'       => number_format($payment->amount_xaf, 0, ',', ' ') . ' XAF · ' . $payment->receipt_number,
+                    'icon'       => 'check-circle',
+                    'icon_color' => 'text-emerald-400',
+                    'action_url' => '/app?page=subscription',
+                    'action_label' => 'Voir',
+                ]);
+            }
         });
     }
 

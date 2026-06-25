@@ -302,7 +302,32 @@
             <div class="flex items-center gap-2.5 mb-3">
                 <div class="w-8 h-8 rounded-xl flex items-center justify-center text-[10px] font-black text-amber-400 flex-shrink-0"
                      style="background:rgba(201,155,14,0.14);border:1px solid rgba(201,155,14,0.3)">OB</div>
-                <span class="text-white font-black text-sm tracking-widest uppercase">OPES<span class="text-amber-400">BOOKS</span></span>
+                <span class="text-white font-black text-sm tracking-widest uppercase flex-1">OPES<span class="text-amber-400">BOOKS</span></span>
+                <!-- Notification bell -->
+                <div class="relative" @click.outside="notifOpen=false">
+                    <button @click="notifOpen=!notifOpen; if(notifOpen) loadNotifications()" class="relative p-1.5 text-slate-400 hover:text-white">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                        <span x-show="notifUnread>0" x-cloak class="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[8px] font-black rounded-full min-w-[14px] h-[14px] px-0.5 flex items-center justify-center" x-text="notifUnread>9?'9+':notifUnread"></span>
+                    </button>
+                    <div x-show="notifOpen" x-cloak class="absolute left-0 mt-2 w-72 rounded-xl overflow-hidden z-[90]" style="background:rgba(13,29,51,0.99);border:1px solid rgba(255,255,255,0.12);box-shadow:0 12px 40px rgba(0,0,0,0.6)">
+                        <div class="flex items-center justify-between px-3 py-2.5 border-b" style="border-color:rgba(255,255,255,0.08)">
+                            <span class="text-xs font-black text-white uppercase tracking-wider">Notifications</span>
+                            <button @click="markAllNotifsRead()" x-show="notifUnread>0" class="text-[10px] text-amber-400 font-bold uppercase">Tout lire</button>
+                        </div>
+                        <div class="max-h-72 overflow-y-auto">
+                            <template x-for="n in notifications" :key="n.id">
+                                <a :href="n.action_url || '#'" class="flex items-start gap-2.5 px-3 py-2.5 hover:bg-white/5 transition-colors border-b" style="border-color:rgba(255,255,255,0.05)" :style="!n.read_at ? 'background:rgba(201,155,14,0.05)' : ''">
+                                    <span class="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" :style="!n.read_at ? 'background:#C99B0E' : 'background:transparent'"></span>
+                                    <div class="min-w-0 flex-1">
+                                        <div class="text-xs font-bold text-slate-200 truncate" x-text="n.title"></div>
+                                        <div class="text-[10px] text-slate-500 truncate" x-text="n.body"></div>
+                                    </div>
+                                </a>
+                            </template>
+                            <div x-show="notifications.length===0" class="px-3 py-8 text-center text-[10px] text-slate-500 uppercase tracking-widest">Aucune notification</div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <!-- User chip -->
             <div class="px-2.5 py-1.5 rounded-xl text-[10px] font-bold"
@@ -4186,6 +4211,7 @@ function opesApp() {
             this.loadAnnouncements();
             this.loadCompanies();
             this.loadOnboarding();
+            this.loadNotifications();
             /* Auto-load data for initial page */
             if (this.page==='journal')  this.loadJournal();
             if (this.page==='ledger')   this.loadLedger();
@@ -4207,6 +4233,19 @@ function opesApp() {
             dismissed.push(id);
             localStorage.setItem('opes_dismissed_ann', JSON.stringify(dismissed));
             this.announcements = this.announcements.filter(a => a.id !== id);
+        },
+
+        /* Notifications (bell) */
+        notifications: [],
+        notifUnread: 0,
+        notifOpen: false,
+        async loadNotifications() {
+            try { const d = await this.api('notifications'); this.notifications = d.notifications ?? []; this.notifUnread = d.unread ?? 0; } catch(e) {}
+        },
+        async markAllNotifsRead() {
+            this.notifUnread = 0;
+            this.notifications = this.notifications.map(n => ({ ...n, read_at: n.read_at || new Date().toISOString() }));
+            try { await this.api('notifications/read-all', { method:'POST', body:'{}' }); } catch(e) {}
         },
 
         /* Onboarding checklist */

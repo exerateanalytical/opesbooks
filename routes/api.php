@@ -90,6 +90,13 @@ Route::prefix('v1')->name('v1.')->group(function () {
             ->get(['id', 'title', 'body', 'type']);
     })->name('announcements');
 
+    // ── In-app notifications (auth only) ─────────────────────────────────────
+    Route::middleware('auth:sanctum')->prefix('notifications')->name('notifications.')->group(function () {
+        Route::get('/',            [\App\Http\Controllers\Api\V1\NotificationController::class, 'index'])->name('index');
+        Route::post('read-all',    [\App\Http\Controllers\Api\V1\NotificationController::class, 'markAllRead'])->name('read-all');
+        Route::post('{id}/read',   [\App\Http\Controllers\Api\V1\NotificationController::class, 'markRead'])->name('read');
+    });
+
     // ── Plans & self-service upgrade (auth only) ─────────────────────────────
     Route::get('plans', [\App\Http\Controllers\Api\V1\PlanPaymentController::class, 'plans'])->name('plans');
     Route::middleware('auth:sanctum')->group(function () {
