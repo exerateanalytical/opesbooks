@@ -1457,6 +1457,12 @@
                     <span x-text="lang==='FR' ? 'Jours restants : ' : 'Days remaining: '"></span>
                     <span class="font-bold text-white" x-text="subStatus?.days_remaining ?? '—'"></span>
                 </div>
+                <div class="pt-2">
+                    <button @click="downloadReceipt()"
+                            class="glass-btn-amber px-4 py-2 rounded-xl text-xs uppercase tracking-widest font-black">
+                        ⬇ <span x-text="lang==='FR' ? 'Télécharger Reçu' : 'Download Receipt'"></span>
+                    </button>
+                </div>
             </div>
 
             <!-- Plan cards -->
@@ -1855,7 +1861,7 @@
             </div>
 
             <!-- New DN form -->
-            <div x-show="showForm" class="glass-card rounded-2xl p-5 space-y-3">
+            <div x-show="showForm" class="glass-card rounded-2xl p-5 space-y-4">
                 <h3 class="text-sm font-semibold opacity-70" x-text="lang==='FR' ? 'Nouveau bon de livraison' : 'New delivery note'"></h3>
                 <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
                     <div>
@@ -1865,21 +1871,66 @@
                             <option value="IN" x-text="lang==='FR' ? 'Réception Fournisseur (IN)' : 'Inbound (IN)'"></option>
                         </select>
                     </div>
+                    <div x-show="form.dn_type==='OUT'">
+                        <label class="text-xs opacity-60" x-text="lang==='FR' ? 'Client *' : 'Customer *'"></label>
+                        <select x-model="form.customer_id" class="w-full mt-1 input-field text-sm">
+                            <option value="" x-text="lang==='FR' ? '— Choisir client —' : '— Select customer —'"></option>
+                            <template x-for="c in customers" :key="c.id">
+                                <option :value="c.id" x-text="c.name"></option>
+                            </template>
+                        </select>
+                    </div>
+                    <div x-show="form.dn_type==='IN'">
+                        <label class="text-xs opacity-60" x-text="lang==='FR' ? 'Fournisseur *' : 'Supplier *'"></label>
+                        <select x-model="form.supplier_id" class="w-full mt-1 input-field text-sm">
+                            <option value="" x-text="lang==='FR' ? '— Choisir fournisseur —' : '— Select supplier —'"></option>
+                            <template x-for="s in suppliers" :key="s.id">
+                                <option :value="s.id" x-text="s.name"></option>
+                            </template>
+                        </select>
+                    </div>
                     <div>
-                        <label class="text-xs opacity-60" x-text="lang==='FR' ? 'Date livraison' : 'Delivery date'"></label>
+                        <label class="text-xs opacity-60" x-text="lang==='FR' ? 'Date livraison *' : 'Delivery date *'"></label>
                         <input x-model="form.delivery_date" type="date" class="w-full mt-1 input-field text-sm">
                     </div>
                     <div>
                         <label class="text-xs opacity-60" x-text="lang==='FR' ? 'Adresse livraison' : 'Delivery address'"></label>
                         <input x-model="form.delivery_address" class="w-full mt-1 input-field text-sm">
                     </div>
-                    <div class="col-span-2">
+                    <div class="col-span-2 sm:col-span-3">
                         <label class="text-xs opacity-60">Notes</label>
                         <input x-model="form.notes" class="w-full mt-1 input-field text-sm">
                     </div>
                 </div>
-                <div x-show="err" class="text-red-400 text-xs" x-text="err"></div>
-                <button @click="save()" class="glass-btn-dark px-5 py-2 rounded-xl text-xs uppercase tracking-widest" x-text="saving ? '…' : (lang==='FR' ? 'Créer BL' : 'Create DN')"></button>
+
+                <!-- Lines -->
+                <div>
+                    <div class="text-xs opacity-60 mb-2 font-semibold uppercase tracking-widest" x-text="lang==='FR' ? 'Articles / Lignes' : 'Items / Lines'"></div>
+                    <table class="w-full text-xs mb-2">
+                        <thead><tr class="text-left opacity-50 border-b border-white/10">
+                            <th class="pb-1 pr-2" x-text="lang==='FR' ? 'Désignation *' : 'Description *'"></th>
+                            <th class="pb-1 pr-2 w-24" x-text="lang==='FR' ? 'Réf.' : 'Ref.'"></th>
+                            <th class="pb-1 pr-2 w-20" x-text="lang==='FR' ? 'Qté *' : 'Qty *'"></th>
+                            <th class="pb-1 pr-2 w-16" x-text="lang==='FR' ? 'Unité' : 'Unit'"></th>
+                            <th class="pb-1 w-8"></th>
+                        </tr></thead>
+                        <tbody>
+                            <template x-for="(line, i) in form.lines" :key="i">
+                                <tr class="border-b border-white/5">
+                                    <td class="py-1 pr-2"><input x-model="line.description" class="w-full input-field text-xs" :placeholder="lang==='FR' ? 'Désignation' : 'Description'"></td>
+                                    <td class="py-1 pr-2"><input x-model="line.product_code" class="w-full input-field text-xs font-mono" placeholder="PROD-001"></td>
+                                    <td class="py-1 pr-2"><input x-model.number="line.quantity" type="number" min="0.001" step="0.001" class="w-full input-field text-xs text-right"></td>
+                                    <td class="py-1 pr-2"><input x-model="line.unit" class="w-full input-field text-xs" placeholder="pcs"></td>
+                                    <td class="py-1 text-center"><button @click="removeLine(i)" class="text-red-400 hover:text-red-300 text-base leading-none">×</button></td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                    <button @click="addLine()" class="glass-btn px-3 py-1 rounded-lg text-xs" x-text="lang==='FR' ? '+ Ligne' : '+ Line'"></button>
+                </div>
+
+                <div x-show="err" class="text-red-400 text-xs font-semibold" x-text="err"></div>
+                <button @click="save()" :disabled="saving" class="glass-btn-dark px-5 py-2 rounded-xl text-xs uppercase tracking-widest disabled:opacity-40" x-text="saving ? '…' : (lang==='FR' ? 'Créer BL' : 'Create DN')"></button>
             </div>
 
             <!-- List -->
@@ -1892,7 +1943,7 @@
                             <th class="px-4 py-3 text-left" x-text="lang==='FR' ? 'Date' : 'Date'"></th>
                             <th class="px-4 py-3 text-left" x-text="lang==='FR' ? 'Contrepartie' : 'Counterparty'"></th>
                             <th class="px-4 py-3 text-left">Statut</th>
-                            <th class="px-4 py-3 text-right">PDF</th>
+                            <th class="px-4 py-3 text-right" x-text="lang==='FR' ? 'Actions' : 'Actions'"></th>
                         </tr></thead>
                         <tbody>
                             <template x-if="loading"><tr><td colspan="6" class="px-4 py-8 text-center opacity-40" x-text="lang==='FR' ? 'Chargement…' : 'Loading…'"></td></tr></template>
@@ -1902,9 +1953,23 @@
                                     <td class="px-4 py-3"><span :class="dn.dn_type==='OUT' ? 'badge-blue' : 'badge-amber'" x-text="dn.dn_type"></span></td>
                                     <td class="px-4 py-3 text-xs opacity-70" x-text="dn.delivery_date"></td>
                                     <td class="px-4 py-3 text-xs" x-text="dn.customer?.name || dn.supplier?.name || '—'"></td>
-                                    <td class="px-4 py-3"><span class="badge-neutral" x-text="dn.status"></span></td>
+                                    <td class="px-4 py-3">
+                                        <span :class="{
+                                            'text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded text-xs font-bold': dn.status==='DRAFT',
+                                            'text-blue-400 bg-blue-400/10 px-2 py-0.5 rounded text-xs font-bold': dn.status==='DELIVERED',
+                                            'text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded text-xs font-bold': dn.status==='SIGNED',
+                                        }" x-text="dn.status"></span>
+                                    </td>
                                     <td class="px-4 py-3 text-right">
-                                        <a :href="`/api/v1/companies/${_cid}/delivery-notes/${dn.id}/pdf`" target="_blank" class="glass-btn px-3 py-1 rounded-lg text-xs">PDF</a>
+                                        <div class="flex gap-1 justify-end flex-wrap">
+                                            <template x-if="dn.status==='DRAFT'">
+                                                <button @click="markStatus(dn,'DELIVERED')" class="glass-btn px-2 py-1 rounded-lg text-xs" x-text="lang==='FR' ? 'Livré' : 'Delivered'"></button>
+                                            </template>
+                                            <template x-if="dn.status==='DELIVERED'">
+                                                <button @click="markStatus(dn,'SIGNED')" class="glass-btn px-2 py-1 rounded-lg text-xs" x-text="lang==='FR' ? 'Signé' : 'Signed'"></button>
+                                            </template>
+                                            <a :href="`/api/v1/companies/${_cid}/delivery-notes/${dn.id}/pdf`" target="_blank" class="glass-btn-dark px-2 py-1 rounded-lg text-xs">PDF</a>
+                                        </div>
                                     </td>
                                 </tr>
                             </template>
@@ -3135,6 +3200,26 @@
 </div>
 
 <script>
+// Global helper: extract readable message from Laravel error responses
+function extractError(data) {
+    if (!data) return 'Erreur inconnue';
+    if (data.errors) {
+        return Object.values(data.errors).flat()
+            .map(m => String(m).replace(/^validation\.(\w+)$/, (_, k) => ({
+                required: 'Champ obligatoire',
+                string: 'Doit être du texte',
+                numeric: 'Doit être un nombre',
+                min: 'Valeur trop petite',
+                max: 'Valeur trop grande',
+                date: 'Date invalide',
+                email: 'Email invalide',
+                unique: 'Déjà utilisé',
+            }[k] ?? k)))
+            .join(' | ');
+    }
+    return data.message ?? 'Erreur';
+}
+
 function opesApp() {
     return {
         page: new URLSearchParams(location.search).get('page') || 'dashboard',
@@ -3506,12 +3591,20 @@ function invoiceForm() {
             return Number(v).toLocaleString('fr-CM', { minimumFractionDigits:0 }) + ' XAF';
         },
         async generatePdf() {
-            this.generating=true; this.invoiceError='';
+            this.invoiceError = '';
+            // Client-side guard
+            if (!this.form.invoice_number) { this.invoiceError = 'N° Facture obligatoire.'; return; }
+            if (!this.form.client_name)    { this.invoiceError = 'Nom du client obligatoire.'; return; }
+            if (!this.form.invoice_date)   { this.invoiceError = 'Date de facture obligatoire.'; return; }
+            const badLines = this.form.lines.filter(l => !l.description || Number(l.quantity) <= 0 || Number(l.unit_price_ht) < 0);
+            if (this.form.lines.length === 0 || badLines.length) { this.invoiceError = 'Chaque ligne doit avoir une désignation et une quantité > 0.'; return; }
+
+            this.generating = true;
             try {
                 const token = localStorage.getItem('opes_token');
                 const me = await (await fetch('/api/v1/auth/me', { headers:{'Authorization':'Bearer '+token,'Accept':'application/json'} })).json();
                 const companyId = me.company?.id;
-                if (!companyId) throw new Error('Company not found');
+                if (!companyId) throw new Error('Entreprise introuvable — reconnectez-vous.');
                 const payload = {
                     ...this.form,
                     lines: this.form.lines.map(l => ({ ...l, quantity:Number(l.quantity), unit_price_ht:Number(l.unit_price_ht) }))
@@ -3521,7 +3614,7 @@ function invoiceForm() {
                     headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json','Accept':'application/pdf'},
                     body: JSON.stringify(payload),
                 });
-                if (!res.ok) { const err=await res.json(); throw new Error(err.message||'PDF generation failed'); }
+                if (!res.ok) { const err = await res.json(); throw new Error(extractError(err)); }
                 const blob = await res.blob();
                 const url  = URL.createObjectURL(blob);
                 const a    = document.createElement('a');
@@ -3688,6 +3781,21 @@ function subscriptionPanel() {
                 });
                 if (res.ok) this.subStatus = await res.json();
             } catch(e) {}
+        },
+
+        async downloadReceipt() {
+            const token = localStorage.getItem('opes_token');
+            const me = await (await fetch('/api/v1/auth/me', {headers:{'Authorization':'Bearer '+token,'Accept':'application/json'}})).json();
+            const companyId = me.user?.company_id;
+            if (!companyId) return;
+            const res = await fetch(`/api/v1/companies/${companyId}/subscriptions/receipt`, {
+                headers:{'Authorization':'Bearer '+token,'Accept':'application/pdf'}
+            });
+            if (!res.ok) { this.subError = 'Aucun abonnement actif.'; return; }
+            const blob = await res.blob();
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = 'recu-abonnement.pdf'; a.click();
+            URL.revokeObjectURL(url);
         },
 
         async initiateSubscription() {
@@ -4212,7 +4320,7 @@ function supplierInvoicesPanel() {
             });
             const d = await r.json();
             if (r.ok) { this.invoices.unshift(d); this.showForm=false; this.form={supplier_id:'',invoice_number:'',supplier_ref:'',invoice_date:'',due_date:'',amount_ht:0,tva_amount:0,expense_account:'601100',notes:''}; }
-            else { this.formError = d.message ?? JSON.stringify(d.errors); }
+            else { this.formError = extractError(d); }
             this.submitting = false;
         },
         async payInvoice(inv) {
@@ -4251,7 +4359,7 @@ function fixedAssetsPanel() {
             });
             const d = await r.json();
             if(r.ok) { this.assets.unshift(d); this.showForm=false; }
-            else { this.formError = d.message ?? JSON.stringify(d.errors); }
+            else { this.formError = extractError(d); }
             this.submitting=false;
         },
         async runDepreciation() {
@@ -4484,7 +4592,7 @@ function chartOfAccountsPanel() {
                 this.accounts.sort((a,b) => a.code.localeCompare(b.code));
                 this.showForm=false;
                 this.form={code:'',label:'',class_digit:''};
-            } else { this.formError = d.message ?? JSON.stringify(d.errors); }
+            } else { this.formError = extractError(d); }
             this.submitting=false;
         },
     };
@@ -4511,7 +4619,7 @@ function quotationsPanel() {
             const r = await fetch(`/api/v1/companies/${this._cid}/quotations`,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify(this.form)});
             const d = await r.json();
             if(r.ok) { this.quotations.unshift(d); this.showForm=false; this.form={customer_id:'',quotation_date:new Date().toISOString().slice(0,10),valid_until:'',notes:'',lines:[{description:'',quantity:1,unit_price_ht:0}]}; }
-            else { this.formError = d.message ?? JSON.stringify(d.errors ?? d); }
+            else { this.formError = extractError(d); }
             this.saving=false;
         },
         async markSent(q) {
@@ -4552,7 +4660,7 @@ function purchaseOrdersPanel() {
             const r = await fetch(`/api/v1/companies/${this._cid}/purchase-orders`,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify(this.form)});
             const d = await r.json();
             if(r.ok) { this.orders.unshift(d); this.showForm=false; this.form={supplier_id:'',order_date:new Date().toISOString().slice(0,10),expected_delivery_date:'',notes:'',lines:[{description:'',quantity:1,unit_price_ht:0}]}; }
-            else { this.poError = d.message ?? JSON.stringify(d.errors ?? d); }
+            else { this.poError = extractError(d); }
             this.saving=false;
         },
     };
@@ -4581,7 +4689,7 @@ function creditNotesPanel() {
             const r = await fetch(`/api/v1/companies/${this._cid}/customers/${this.cnForm.customer_id}/credit-notes`,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify(this.cnForm)});
             const d = await r.json();
             if(r.ok) { this.cnSuccess = 'Avoir '+d.credit_note_number+' créé.'; this.cnForm={customer_id:'',credit_note_date:new Date().toISOString().slice(0,10),amount_ht:0,reason:''}; }
-            else { this.cnError = d.message ?? JSON.stringify(d.errors ?? d); }
+            else { this.cnError = extractError(d); }
             this.cnSaving=false;
         },
         async submitSupplierCN() {
@@ -4590,7 +4698,7 @@ function creditNotesPanel() {
             const r = await fetch(`/api/v1/companies/${this._cid}/suppliers/${this.snForm.supplier_id}/credit-notes`,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify(this.snForm)});
             const d = await r.json();
             if(r.ok) { this.snSuccess = 'Avoir '+d.credit_note_number+' enregistré.'; this.snForm={supplier_id:'',credit_note_date:new Date().toISOString().slice(0,10),amount_ht:0,reason:''}; }
-            else { this.snError = d.message ?? JSON.stringify(d.errors ?? d); }
+            else { this.snError = extractError(d); }
             this.snSaving=false;
         },
     };
@@ -4613,7 +4721,7 @@ function patentePanel() {
             const r = await fetch(`/api/v1/companies/${this._cid}/patente`,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify(this.form)});
             const d = await r.json();
             if(r.ok) { this.records.unshift(d); this.showForm=false; this.form={tax_year:new Date().getFullYear(),patente_number:'',amount_due_xaf:0,due_date:'',notes:''}; }
-            else { this.formError = d.message ?? JSON.stringify(d.errors ?? d); }
+            else { this.formError = extractError(d); }
             this.saving=false;
         },
         async payPatente(p) {
@@ -4671,7 +4779,7 @@ function stockPanel() {
                 this.form={ product_code:'', product_name:'', account_code:'310000', movement_type:'IN', quantity:1, unit_cost_xaf:0, movement_date:new Date().toISOString().slice(0,10), reference:'', post_to_gl:true };
                 await this.loadValuation();
                 if(this.ledger) await this.loadLedger(d.product_code);
-            } else { this.formError = d.message ?? JSON.stringify(d.errors ?? d); }
+            } else { this.formError = extractError(d); }
             this.saving=false;
         },
     };
@@ -4680,15 +4788,29 @@ function stockPanel() {
 function deliveryNotesPanel() {
     return {
         _cid: null, items: [], loading: false, showForm: false, saving: false, err: '',
+        customers: [], suppliers: [],
         filterType: '', filterStatus: '',
-        form: { dn_type:'OUT', delivery_date: new Date().toISOString().slice(0,10), delivery_address:'', notes:'' },
+        form: {
+            dn_type:'OUT', delivery_date: new Date().toISOString().slice(0,10),
+            customer_id:'', supplier_id:'', delivery_address:'', notes:'',
+            lines: [{ description:'', product_code:'', quantity:1, unit:'' }],
+        },
 
         async init() {
             const token = localStorage.getItem('opes_token');
             const me = await fetch('/api/v1/auth/me', {headers:{Authorization:'Bearer '+token}}).then(r=>r.json());
             this._cid = me.company?.id;
+            const [cu, su] = await Promise.all([
+                fetch(`/api/v1/companies/${this._cid}/customers?per_page=200`, {headers:{Authorization:'Bearer '+token}}).then(r=>r.json()),
+                fetch(`/api/v1/companies/${this._cid}/suppliers?per_page=200`, {headers:{Authorization:'Bearer '+token}}).then(r=>r.json()),
+            ]);
+            this.customers = cu.data ?? cu ?? [];
+            this.suppliers = su.data ?? su ?? [];
             await this.load();
         },
+
+        addLine() { this.form.lines.push({ description:'', product_code:'', quantity:1, unit:'' }); },
+        removeLine(i) { if(this.form.lines.length > 1) this.form.lines.splice(i,1); },
 
         async load() {
             this.loading = true;
@@ -4702,16 +4824,38 @@ function deliveryNotesPanel() {
         },
 
         async save() {
-            this.saving = true; this.err = '';
+            this.err = '';
+            if(!this.form.delivery_date) { this.err='Date de livraison obligatoire.'; return; }
+            if(this.form.dn_type==='OUT' && !this.form.customer_id) { this.err='Client obligatoire pour une expédition.'; return; }
+            if(this.form.dn_type==='IN'  && !this.form.supplier_id) { this.err='Fournisseur obligatoire pour une réception.'; return; }
+            const badLines = this.form.lines.filter(l=>!l.description||Number(l.quantity)<=0);
+            if(badLines.length) { this.err='Chaque ligne doit avoir une désignation et une quantité > 0.'; return; }
+
+            this.saving = true;
             const token = localStorage.getItem('opes_token');
+            const payload = { ...this.form, lines: this.form.lines.map(l=>({...l, quantity:Number(l.quantity)})) };
+            if(payload.dn_type==='OUT') delete payload.supplier_id;
+            else delete payload.customer_id;
             const r = await fetch(`/api/v1/companies/${this._cid}/delivery-notes`, {
                 method:'POST', headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},
-                body: JSON.stringify(this.form)
+                body: JSON.stringify(payload)
             });
             const d = await r.json();
-            if(r.ok) { this.showForm=false; await this.load(); }
-            else { this.err = d.message ?? JSON.stringify(d.errors ?? d); }
+            if(r.ok) {
+                this.showForm=false;
+                this.form={ dn_type:'OUT', delivery_date:new Date().toISOString().slice(0,10), customer_id:'', supplier_id:'', delivery_address:'', notes:'', lines:[{description:'',product_code:'',quantity:1,unit:''}] };
+                await this.load();
+            } else { this.err = extractError(d); }
             this.saving = false;
+        },
+
+        async markStatus(dn, status) {
+            const token = localStorage.getItem('opes_token');
+            const r = await fetch(`/api/v1/companies/${this._cid}/delivery-notes/${dn.id}/status`, {
+                method:'PUT', headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},
+                body: JSON.stringify({status})
+            });
+            if(r.ok) await this.load();
         },
     };
 }
