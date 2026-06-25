@@ -169,9 +169,19 @@
             <div class="px-2.5 py-1.5 rounded-xl text-[10px] font-bold"
                  style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09)">
                 <div class="text-slate-300 font-black truncate" x-text="user?.name ?? '—'"></div>
+                <!-- Role badge -->
+                <div class="mt-1 mb-0.5">
+                    <span x-show="user?.role === 'OWNER'"
+                          class="inline-block px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest"
+                          style="background:rgba(245,158,11,0.18);color:rgb(252,211,77);border:1px solid rgba(245,158,11,0.35)">OWNER</span>
+                    <span x-show="user?.role === 'ACCOUNTANT'"
+                          class="inline-block px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest"
+                          style="background:rgba(99,102,241,0.18);color:rgb(165,180,252);border:1px solid rgba(99,102,241,0.35)">ACCOUNTANT</span>
+                    <span x-show="user?.role === 'CLERK'"
+                          class="inline-block px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest"
+                          style="background:rgba(100,116,139,0.18);color:rgb(148,163,184);border:1px solid rgba(100,116,139,0.35)">CLERK</span>
+                </div>
                 <div class="text-slate-500 mt-0.5 uppercase tracking-wider flex items-center gap-1.5">
-                    <span x-text="user?.role ?? ''"></span>
-                    <span class="opacity-40">·</span>
                     <span class="truncate" x-text="company?.name ?? '...'"></span>
                 </div>
             </div>
@@ -195,11 +205,11 @@
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
                 <span x-text="lang==='FR' ? 'Tableau de Bord' : 'Dashboard'"></span>
             </button>
-            <button @click="setPage('journal')" :class="page==='journal' ? 'nav-item active' : 'nav-item'">
+            <button @click="setPage('journal')" :class="page==='journal' ? 'nav-item active' : 'nav-item'" x-show="user?.role === 'OWNER' || user?.role === 'ACCOUNTANT'">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
                 <span x-text="lang==='FR' ? 'Journal' : 'Journal'"></span>
             </button>
-            <button @click="setPage('ledger')" :class="page==='ledger' ? 'nav-item active' : 'nav-item'">
+            <button @click="setPage('ledger')" :class="page==='ledger' ? 'nav-item active' : 'nav-item'" x-show="user?.role === 'OWNER' || user?.role === 'ACCOUNTANT'">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
                 <span x-text="lang==='FR' ? 'Grand Livre' : 'Ledger'"></span>
             </button>
@@ -212,11 +222,11 @@
                 <span x-text="lang==='FR' ? 'Calc. TVA' : 'VAT Calc'"></span>
             </button>
 
-            <button @click="setPage('import')" :class="page==='import' ? 'nav-item active' : 'nav-item'">
+            <button @click="setPage('import')" :class="page==='import' ? 'nav-item active' : 'nav-item'" x-show="user?.role === 'OWNER' || user?.role === 'ACCOUNTANT'">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
                 <span x-text="lang==='FR' ? 'Import CSV' : 'CSV Import'"></span>
             </button>
-            <button @click="setPage('subledgers')" :class="page==='subledgers' ? 'nav-item active' : 'nav-item'">
+            <button @click="setPage('subledgers')" :class="page==='subledgers' ? 'nav-item active' : 'nav-item'" x-show="user?.role === 'OWNER' || user?.role === 'ACCOUNTANT'">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
                 <span x-text="lang==='FR' ? 'Sous-Comptes' : 'Sub-Ledgers'"></span>
             </button>
@@ -224,15 +234,15 @@
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
                 <span x-text="lang==='FR' ? 'Sync Hors Ligne' : 'Offline Sync'"></span>
             </button>
-            <button @click="setPage('team')" :class="page==='team' ? 'nav-item active' : 'nav-item'">
+            <button @click="setPage('team')" :class="page==='team' ? 'nav-item active' : 'nav-item'" x-show="user?.role === 'OWNER'">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                 <span x-text="lang==='FR' ? 'Équipe' : 'Team'"></span>
             </button>
-            <button @click="setPage('settings')" :class="page==='settings' ? 'nav-item active' : 'nav-item'">
+            <button @click="setPage('settings')" :class="page==='settings' ? 'nav-item active' : 'nav-item'" x-show="user?.role === 'OWNER'">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                 <span x-text="lang==='FR' ? 'Paramètres' : 'Settings'"></span>
             </button>
-            <button @click="setPage('subscription')" :class="page==='subscription' ? 'nav-item active' : 'nav-item'">
+            <button @click="setPage('subscription')" :class="page==='subscription' ? 'nav-item active' : 'nav-item'" x-show="user?.role === 'OWNER'">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
                 <span x-text="lang==='FR' ? 'Abonnement' : 'Subscription'"></span>
             </button>
@@ -251,52 +261,52 @@
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                 <span x-text="lang==='FR' ? 'Clients' : 'Customers'"></span>
             </button>
-            <button @click="setPage('suppliers')" :class="page==='suppliers' ? 'nav-item active' : 'nav-item'">
+            <button @click="setPage('suppliers')" :class="page==='suppliers' ? 'nav-item active' : 'nav-item'" x-show="user?.role === 'OWNER' || user?.role === 'ACCOUNTANT'">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"/></svg>
                 <span x-text="lang==='FR' ? 'Fournisseurs' : 'Suppliers'"></span>
             </button>
-            <button @click="setPage('reports')" :class="page==='reports' ? 'nav-item active' : 'nav-item'">
+            <button @click="setPage('reports')" :class="page==='reports' ? 'nav-item active' : 'nav-item'" x-show="user?.role === 'OWNER' || user?.role === 'ACCOUNTANT'">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                 <span x-text="lang==='FR' ? 'Rapports' : 'Reports'"></span>
             </button>
-            <button @click="setPage('recurring')" :class="page==='recurring' ? 'nav-item active' : 'nav-item'">
+            <button @click="setPage('recurring')" :class="page==='recurring' ? 'nav-item active' : 'nav-item'" x-show="user?.role === 'OWNER' || user?.role === 'ACCOUNTANT'">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
                 <span x-text="lang==='FR' ? 'Récurrents' : 'Recurring'"></span>
             </button>
-            <button @click="setPage('payroll')" :class="page==='payroll' ? 'nav-item active' : 'nav-item'">
+            <button @click="setPage('payroll')" :class="page==='payroll' ? 'nav-item active' : 'nav-item'" x-show="user?.role === 'OWNER' || user?.role === 'ACCOUNTANT'">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
                 <span x-text="lang==='FR' ? 'Paie' : 'Payroll'"></span>
             </button>
 
-            <button @click="setPage('supplier-invoices')" :class="page==='supplier-invoices' ? 'nav-item active' : 'nav-item'">
+            <button @click="setPage('supplier-invoices')" :class="page==='supplier-invoices' ? 'nav-item active' : 'nav-item'" x-show="user?.role === 'OWNER' || user?.role === 'ACCOUNTANT'">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                 <span x-text="lang==='FR' ? 'Fact. Fournisseurs' : 'Supplier Invoices'"></span>
             </button>
-            <button @click="setPage('fixed-assets')" :class="page==='fixed-assets' ? 'nav-item active' : 'nav-item'">
+            <button @click="setPage('fixed-assets')" :class="page==='fixed-assets' ? 'nav-item active' : 'nav-item'" x-show="user?.role === 'OWNER' || user?.role === 'ACCOUNTANT'">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
                 <span x-text="lang==='FR' ? 'Immobilisations' : 'Fixed Assets'"></span>
             </button>
-            <button @click="setPage('reconciliation')" :class="page==='reconciliation' ? 'nav-item active' : 'nav-item'">
+            <button @click="setPage('reconciliation')" :class="page==='reconciliation' ? 'nav-item active' : 'nav-item'" x-show="user?.role === 'OWNER' || user?.role === 'ACCOUNTANT'">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
                 <span x-text="lang==='FR' ? 'Rapprochement' : 'Reconciliation'"></span>
             </button>
-            <button @click="setPage('budget')" :class="page==='budget' ? 'nav-item active' : 'nav-item'">
+            <button @click="setPage('budget')" :class="page==='budget' ? 'nav-item active' : 'nav-item'" x-show="user?.role === 'OWNER' || user?.role === 'ACCOUNTANT'">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/></svg>
                 <span x-text="lang==='FR' ? 'Budget' : 'Budget'"></span>
             </button>
-            <button @click="setPage('dsf-export')" :class="page==='dsf-export' ? 'nav-item active' : 'nav-item'">
+            <button @click="setPage('dsf-export')" :class="page==='dsf-export' ? 'nav-item active' : 'nav-item'" x-show="user?.role === 'OWNER' || user?.role === 'ACCOUNTANT'">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                 <span x-text="lang==='FR' ? 'DSF / TVA D10' : 'DSF / TVA D10'"></span>
             </button>
-            <button @click="setPage('audit-log')" :class="page==='audit-log' ? 'nav-item active' : 'nav-item'">
+            <button @click="setPage('audit-log')" :class="page==='audit-log' ? 'nav-item active' : 'nav-item'" x-show="user?.role === 'OWNER'">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                 <span x-text="lang==='FR' ? 'Journal d\'Audit' : 'Audit Log'"></span>
             </button>
-            <button @click="setPage('fiscal-year')" :class="page==='fiscal-year' ? 'nav-item active' : 'nav-item'">
+            <button @click="setPage('fiscal-year')" :class="page==='fiscal-year' ? 'nav-item active' : 'nav-item'" x-show="user?.role === 'OWNER'">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                 <span x-text="lang==='FR' ? 'Clôture Exercice' : 'Fiscal Year'"></span>
             </button>
-            <button @click="setPage('accounts')" :class="page==='accounts' ? 'nav-item active' : 'nav-item'">
+            <button @click="setPage('accounts')" :class="page==='accounts' ? 'nav-item active' : 'nav-item'" x-show="user?.role === 'OWNER' || user?.role === 'ACCOUNTANT'">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
                 <span x-text="lang==='FR' ? 'Plan Comptable' : 'Chart of Accounts'"></span>
             </button>
@@ -308,15 +318,15 @@
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                 <span x-text="lang==='FR' ? 'Devis' : 'Quotations'"></span>
             </button>
-            <button @click="setPage('purchase-orders')" :class="page==='purchase-orders' ? 'nav-item active' : 'nav-item'">
+            <button @click="setPage('purchase-orders')" :class="page==='purchase-orders' ? 'nav-item active' : 'nav-item'" x-show="user?.role === 'OWNER' || user?.role === 'ACCOUNTANT'">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
                 <span x-text="lang==='FR' ? 'Bons de Cmd.' : 'Purchase Orders'"></span>
             </button>
-            <button @click="setPage('credit-notes')" :class="page==='credit-notes' ? 'nav-item active' : 'nav-item'">
+            <button @click="setPage('credit-notes')" :class="page==='credit-notes' ? 'nav-item active' : 'nav-item'" x-show="user?.role === 'OWNER' || user?.role === 'ACCOUNTANT'">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
                 <span x-text="lang==='FR' ? 'Avoirs' : 'Credit Notes'"></span>
             </button>
-            <button @click="setPage('patente')" :class="page==='patente' ? 'nav-item active' : 'nav-item'">
+            <button @click="setPage('patente')" :class="page==='patente' ? 'nav-item active' : 'nav-item'" x-show="user?.role === 'OWNER' || user?.role === 'ACCOUNTANT'">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/></svg>
                 <span x-text="lang==='FR' ? 'Patente' : 'Patente Tax'"></span>
             </button>
@@ -324,18 +334,18 @@
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>
                 <span x-text="lang==='FR' ? 'Bons Livraison' : 'Delivery Notes'"></span>
             </button>
-            <button @click="setPage('cashflow')" :class="page==='cashflow' ? 'nav-item active' : 'nav-item'">
+            <button @click="setPage('cashflow')" :class="page==='cashflow' ? 'nav-item active' : 'nav-item'" x-show="user?.role === 'OWNER' || user?.role === 'ACCOUNTANT'">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/></svg>
                 <span x-text="lang==='FR' ? 'Trésorerie Prev.' : 'Cashflow Forecast'"></span>
             </button>
 
             <div class="my-2" style="height:1px;background:rgba(255,255,255,0.07)"></div>
 
-            <a href="/tax-dashboard" class="nav-item">
+            <a href="/tax-dashboard" class="nav-item" x-show="user?.role === 'OWNER' || user?.role === 'ACCOUNTANT'">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
                 <span x-text="lang==='FR' ? 'Bilan Fiscal' : 'Tax Monitor'"></span>
             </a>
-            <a href="/dgi-monitor" class="nav-item">
+            <a href="/dgi-monitor" class="nav-item" x-show="user?.role === 'OWNER' || user?.role === 'ACCOUNTANT'">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.14 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"/></svg>
                 <span x-text="lang==='FR' ? 'Suivi DGI' : 'DGI Monitor'"></span>
             </a>
@@ -3345,6 +3355,18 @@ function opesApp() {
         },
 
         setPage(p) {
+            // RBAC guard — redirect unauthorized access to dashboard
+            const role = this.user?.role;
+            const ownerOnly = ['team','settings','subscription','audit-log','fiscal-year'];
+            const ownerAccountant = ['journal','ledger','import','subledgers','suppliers','reports','recurring',
+                'payroll','supplier-invoices','fixed-assets','reconciliation','budget','dsf-export',
+                'accounts','purchase-orders','credit-notes','patente','cashflow'];
+            if (role === 'CLERK' && (ownerOnly.includes(p) || ownerAccountant.includes(p))) {
+                p = 'dashboard';
+            } else if (role === 'ACCOUNTANT' && ownerOnly.includes(p)) {
+                p = 'dashboard';
+            }
+
             this.page = p;
             history.replaceState(null,'','/app?page='+p);
             if (p==='journal'    && !this.journalEntries.length) this.loadJournal();

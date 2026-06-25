@@ -18,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role'                 => \App\Http\Middleware\RequireRole::class,
             'active_subscription'  => \App\Http\Middleware\RequireActiveSubscription::class,
+            'superadmin'           => \App\Http\Middleware\RequireSuperAdmin::class,
         ]);
 
         // Log all mutating API requests to audit_logs

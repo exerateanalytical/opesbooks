@@ -43,6 +43,7 @@ class User extends Authenticatable
     public function isClerk(): bool      { return $this->role === 'CLERK'; }
     public function isAccountant(): bool { return $this->role === 'ACCOUNTANT'; }
     public function isOwner(): bool      { return $this->role === 'OWNER'; }
+    public function isSuperAdmin(): bool { return $this->role === 'SUPER_ADMIN'; }
 
     public function activeCaisseCode(): string
     {
