@@ -14,12 +14,16 @@ class CustomerInvoice extends Model
         'invoice_date', 'due_date', 'amount_ht', 'tva_amount', 'cac_amount',
         'amount_ttc', 'status', 'credit_note_for_id', 'paid_at', 'notes',
         'withholding_received', 'net_receivable',
+        'lead_id', 'project_id',
+        'mecef_status', 'mecef_counter', 'mecef_nim', 'mecef_qr_data',
+        'mecef_certified_at', 'mecef_response_raw',
     ];
 
     protected $casts = [
         'invoice_date' => 'date', 'due_date' => 'date', 'paid_at' => 'datetime',
         'amount_ht' => 'float', 'tva_amount' => 'float',
         'cac_amount' => 'float', 'amount_ttc' => 'float',
+        'mecef_certified_at' => 'datetime', 'mecef_response_raw' => 'array',
     ];
 
     public function company()      { return $this->belongsTo(Company::class); }

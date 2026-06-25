@@ -103,6 +103,14 @@ Route::prefix('v1')->name('v1.')->group(function () {
             Route::get('stats',                 [\App\Http\Controllers\Api\V1\CrmController::class, 'stats'])->name('stats');
         });
 
+        // MECeF (DGI Cameroun e-invoice certification)
+        Route::prefix('mecef')->name('mecef.')->group(function () {
+            Route::get('config',  [\App\Http\Controllers\Api\V1\MecefController::class, 'getConfig'])->name('config');
+            Route::put('config',  [\App\Http\Controllers\Api\V1\MecefController::class, 'saveConfig'])->name('config.save');
+            Route::get('stats',   [\App\Http\Controllers\Api\V1\MecefController::class, 'stats'])->name('stats');
+            Route::post('invoices/{invoice}/certify', [\App\Http\Controllers\Api\V1\MecefController::class, 'certify'])->name('certify');
+        });
+
         // AI module (Gemini online + optional Ollama offline)
         Route::prefix('ai')->name('ai.')->group(function () {
             Route::get('status',     [\App\Http\Controllers\Api\V1\AiController::class, 'status'])->name('status');

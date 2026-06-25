@@ -1570,6 +1570,41 @@
                 </div>
             </div>
 
+            <!-- MECeF / DGI -->
+            <div class="glass-card rounded-2xl p-6 space-y-4" x-show="user?.role==='OWNER'"
+                 x-data="{ cfg:{ nim:'', api_endpoint:'', has_token:false, is_active:false, sandbox_mode:true }, token:'', saving:false, saved:false,
+                    async load(){ try{ this.cfg = await (await fetch('/api/v1/mecef/config',{headers:{'Authorization':'Bearer '+localStorage.getItem('opes_token'),'Accept':'application/json'}})).json(); }catch(e){} },
+                    async save(){ this.saving=true; this.saved=false; try{ const body={ nim:this.cfg.nim, api_endpoint:this.cfg.api_endpoint, api_token:this.token, is_active:this.cfg.is_active, sandbox_mode:this.cfg.sandbox_mode }; await fetch('/api/v1/mecef/config',{method:'PUT',headers:{'Authorization':'Bearer '+localStorage.getItem('opes_token'),'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(body)}); this.token=''; this.saved=true; await this.load(); }catch(e){}finally{this.saving=false;} } }"
+                 x-init="load()">
+                <div class="flex items-center justify-between">
+                    <p class="text-[10px] font-black text-amber-400 uppercase tracking-widest">MECeF · DGI Cameroun</p>
+                    <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest"
+                          :style="cfg.is_active ? (cfg.sandbox_mode ? 'background:rgba(201,155,14,0.18);color:#E3B420;border:1px solid rgba(201,155,14,0.35)' : 'background:rgba(16,185,129,0.18);color:rgb(110,231,183);border:1px solid rgba(16,185,129,0.35)') : 'background:rgba(100,116,139,0.18);color:rgb(148,163,184);border:1px solid rgba(100,116,139,0.35)'"
+                          x-text="cfg.is_active ? (cfg.sandbox_mode ? 'SANDBOX' : 'LIVE') : (lang==='FR'?'INACTIF':'INACTIVE')"></span>
+                </div>
+                <p class="text-[10px] text-slate-500" x-text="lang==='FR' ? 'Certifiez vos factures auprès de la DGI. Contactez la DGI pour obtenir votre NIM et vos identifiants API.' : 'Certify invoices with the DGI. Contact the DGI to obtain your NIM and API credentials.'"></p>
+                <div class="grid grid-cols-2 gap-3">
+                    <div><label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">NIM</label>
+                        <input x-model="cfg.nim" class="input-field" placeholder="CM-MECeF-…"></div>
+                    <div><label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Endpoint DGI</label>
+                        <input x-model="cfg.api_endpoint" class="input-field" placeholder="https://…"></div>
+                    <div class="col-span-2"><label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Token API</label>
+                        <input type="password" x-model="token" class="input-field" :placeholder="cfg.has_token ? '•••••••• (configuré — laisser vide pour garder)' : '—'"></div>
+                </div>
+                <label class="flex items-center justify-between text-xs cursor-pointer">
+                    <span class="text-slate-300" x-text="lang==='FR'?'Activer MECeF':'Enable MECeF'"></span>
+                    <input type="checkbox" x-model="cfg.is_active" class="accent-amber-500 w-4 h-4">
+                </label>
+                <label class="flex items-center justify-between text-xs cursor-pointer">
+                    <span class="text-slate-300" x-text="lang==='FR'?'Mode sandbox (test)':'Sandbox mode (test)'"></span>
+                    <input type="checkbox" x-model="cfg.sandbox_mode" class="accent-amber-500 w-4 h-4">
+                </label>
+                <div class="flex items-center gap-3">
+                    <button @click="save()" :disabled="saving" class="glass-btn-amber px-4 py-2 rounded-xl text-xs uppercase tracking-widest disabled:opacity-50" x-text="saving?'…':(lang==='FR'?'Enregistrer':'Save')"></button>
+                    <span x-show="saved" x-cloak class="text-emerald-400 text-xs font-bold" x-text="lang==='FR'?'Enregistré ✔':'Saved ✔'"></span>
+                </div>
+            </div>
+
             <!-- Logo upload -->
             <div class="glass-card rounded-2xl p-6 space-y-4">
                 <p class="text-[10px] font-black text-amber-400 uppercase tracking-widest"
@@ -2013,6 +2048,14 @@
                                         <button x-show="inv.status==='PAID'||inv.status==='SENT'" @click="creditNote(inv)"
                                             class="px-2 py-1 rounded-lg text-xs" style="background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.2);color:rgb(165,180,252)"
                                             x-text="lang==='FR'?'Avoir':'Credit Note'"></button>
+                                        <!-- MECeF DGI certification -->
+                                        <span x-show="inv.mecef_status==='certified'" class="px-2 py-1 rounded-lg text-xs inline-flex items-center gap-1" style="background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.25);color:rgb(110,231,183)" :title="'NIM '+(inv.mecef_nim||'')">
+                                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                                            <span x-text="(lang==='FR'?'Certifiée ':'Certified ')+(inv.mecef_counter||'')"></span>
+                                        </span>
+                                        <button x-show="inv.mecef_status!=='certified' && (inv.status==='SENT'||inv.status==='PAID')" @click="certifyMecef(inv)" :disabled="mecefLoading===inv.id"
+                                            class="px-2 py-1 rounded-lg text-xs disabled:opacity-50" style="background:rgba(201,155,14,0.12);border:1px solid rgba(201,155,14,0.25);color:#E3B420"
+                                            x-text="mecefLoading===inv.id ? '…' : (lang==='FR'?'Certifier DGI':'Certify DGI')"></button>
                                     </div>
                                 </td>
                             </tr>
@@ -4771,6 +4814,22 @@ function customerInvoicesPanel() {
         ttcPreview: { tva:0, cac:0, ttc:0 },
         form: { customer_id:'', invoice_date:'', due_date:'', amount_ht:'', notes:'' },
         _cid: null,
+        mecefLoading: null,
+        async certifyMecef(inv) {
+            this.mecefLoading = inv.id;
+            try {
+                const token = localStorage.getItem('opes_token');
+                const res = await fetch(`/api/v1/mecef/invoices/${inv.id}/certify`, { method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json','Accept':'application/json'} });
+                const d = await res.json();
+                if (d.ok && d.invoice) {
+                    inv.mecef_status   = d.invoice.mecef_status;
+                    inv.mecef_counter  = d.invoice.mecef_counter;
+                    inv.mecef_nim      = d.invoice.mecef_nim;
+                } else {
+                    alert(d.message || 'MECeF: échec de la certification.');
+                }
+            } catch(e) {} finally { this.mecefLoading = null; }
+        },
 
         async init() {
             const token = localStorage.getItem('opes_token');

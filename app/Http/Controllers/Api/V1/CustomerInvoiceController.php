@@ -52,14 +52,14 @@ class CustomerInvoiceController extends Controller
             $outstanding = CustomerInvoice::where('customer_id', $customer->id)
                 ->whereIn('status', ['SENT', 'OVERDUE'])
                 ->sum('amount_ttc');
-            $taxed = $this->tax->fromHt($data['amount_ht']);
-            if (($outstanding + $taxed['ttc']) > $customer->credit_limit) {
+            $taxed = $this->tax->compute($data['amount_ht']);
+            if (($outstanding + $taxed['amount_ttc']) > $customer->credit_limit) {
                 return response()->json([
                     'message' => "Credit limit exceeded. Outstanding: {$outstanding} XAF, Limit: {$customer->credit_limit} XAF.",
                 ], 422);
             }
         } else {
-            $taxed = $this->tax->fromHt($data['amount_ht']);
+            $taxed = $this->tax->compute($data['amount_ht']);
         }
 
         $invoice = CustomerInvoice::create([
@@ -69,9 +69,9 @@ class CustomerInvoiceController extends Controller
             'invoice_date'   => $data['invoice_date'],
             'due_date'       => $data['due_date'],
             'amount_ht'      => $data['amount_ht'],
-            'tva_amount'     => $taxed['tva'],
+            'tva_amount'     => $taxed['base_vat'],
             'cac_amount'     => $taxed['cac'],
-            'amount_ttc'     => $taxed['ttc'],
+            'amount_ttc'     => $taxed['amount_ttc'],
             'status'         => 'DRAFT',
             'notes'          => $data['notes'] ?? null,
         ]);
