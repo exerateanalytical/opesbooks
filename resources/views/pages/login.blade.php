@@ -134,23 +134,37 @@
                     </p>
                     <div class="grid grid-cols-2 gap-2">
                         <button type="button"
-                                @click="loginForm.email='owner@demo.cm'; loginForm.password='demo1234'"
+                                @click="loginForm.email='owner@testco.cm'; loginForm.password='password123'"
                                 class="px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider text-left transition-all"
                                 style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2)">
-                            <div class="text-amber-400">Owner</div>
-                            <div class="text-slate-400 font-medium normal-case tracking-normal mt-0.5">owner@demo.cm</div>
+                            <div class="text-amber-400">👑 Owner</div>
+                            <div class="text-slate-400 font-medium normal-case tracking-normal mt-0.5">owner@testco.cm</div>
                         </button>
                         <button type="button"
-                                @click="loginForm.email='accountant@demo.cm'; loginForm.password='demo1234'"
+                                @click="loginForm.email='accountant@testco.cm'; loginForm.password='password123'"
                                 class="px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider text-left transition-all"
-                                style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2)">
-                            <div class="text-emerald-400">Accountant</div>
-                            <div class="text-slate-400 font-medium normal-case tracking-normal mt-0.5">accountant@demo.cm</div>
+                                style="background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.2)">
+                            <div class="text-indigo-400">📊 Accountant</div>
+                            <div class="text-slate-400 font-medium normal-case tracking-normal mt-0.5">accountant@testco.cm</div>
+                        </button>
+                        <button type="button"
+                                @click="loginForm.email='clerk@testco.cm'; loginForm.password='password123'"
+                                class="px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider text-left transition-all"
+                                style="background:rgba(100,116,139,0.08);border:1px solid rgba(100,116,139,0.2)">
+                            <div class="text-slate-400">🖊 Clerk</div>
+                            <div class="text-slate-400 font-medium normal-case tracking-normal mt-0.5">clerk@testco.cm</div>
+                        </button>
+                        <button type="button"
+                                @click="loginForm.email='admin@opesbooks.cm'; loginForm.password='yourpassword'"
+                                class="px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider text-left transition-all"
+                                style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2)">
+                            <div class="text-red-400">🛡 Super Admin</div>
+                            <div class="text-slate-400 font-medium normal-case tracking-normal mt-0.5">admin@opesbooks.cm</div>
                         </button>
                     </div>
                     <p class="text-[10px] text-slate-600 text-center mt-1.5">
-                        <span x-show="lang === 'FR'">Mot de passe démo : <span class="text-slate-500 font-mono">demo1234</span></span>
-                        <span x-show="lang === 'EN'" x-cloak>Demo password: <span class="text-slate-500 font-mono">demo1234</span></span>
+                        <span x-show="lang === 'FR'">Cliquez un rôle pour remplir automatiquement</span>
+                        <span x-show="lang === 'EN'" x-cloak>Click a role to auto-fill credentials</span>
                     </p>
                 </div>
 
