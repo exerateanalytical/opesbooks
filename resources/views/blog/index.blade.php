@@ -12,9 +12,9 @@
         @forelse($posts as $post)
         @php $tag = is_array($post->tags) ? ($post->tags[0] ?? 'GUIDE') : 'GUIDE'; @endphp
         <a href="{{ route('blog.show', $post) }}" class="glass rounded-2xl overflow-hidden hover:border-gold/30 transition flex flex-col">
-            <div class="h-36 relative flex items-end p-4" style="background:linear-gradient(135deg,#01006e 0%,#010048 60%,#0a0820 100%)">
-                <div class="absolute inset-0 opacity-30" style="background:radial-gradient(ellipse 80% 70% at 80% 10%,rgba(201,155,14,0.5),transparent 60%)"></div>
-                <span class="relative px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider text-[#010048] bg-gold">{{ $tag }}</span>
+            <div class="h-36 relative flex items-end p-4" style="background:linear-gradient(135deg,#01006e 0%,#0F172A 60%,#0a0820 100%)">
+                <div class="absolute inset-0 opacity-30" style="background:radial-gradient(ellipse 80% 70% at 80% 10%,rgba(245,158,11,0.5),transparent 60%)"></div>
+                <span class="relative px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider text-[#0F172A] bg-gold">{{ $tag }}</span>
             </div>
             <div class="p-5 flex-1 flex flex-col">
                 <div class="text-[10px] uppercase tracking-widest text-gold mb-2">{{ optional($post->published_at)->translatedFormat('d M Y') }} · {{ $post->reading_time_minutes }} min</div>

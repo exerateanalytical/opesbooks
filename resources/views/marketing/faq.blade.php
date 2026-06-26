@@ -79,7 +79,7 @@ $groups = [
     </div>
     @endforeach
 
-    <div class="glass rounded-2xl p-8 text-center" style="background:linear-gradient(145deg,rgba(245,158,11,0.08),rgba(255,255,255,0.03))">
+    <div class="glass rounded-2xl p-8 text-center" style="background:linear-gradient(145deg,rgba(245,158,11,0.08),rgba(41,53,72,0.5))">
         <h2 class="text-xl md:text-2xl font-black">Une autre question ?</h2>
         <p class="text-slate-400 mt-2 text-sm">Notre équipe à Douala vous répond.</p>
         <div class="flex flex-wrap justify-center gap-3 mt-5">

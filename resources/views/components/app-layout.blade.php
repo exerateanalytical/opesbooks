@@ -10,10 +10,10 @@
     <script>
         tailwind.config = {
             theme: { extend: { colors: {
-                'opes-navy':  '#010048',
-                'opes-amber': '#C99B0E',
+                'opes-navy':  '#0F172A',
+                'opes-amber': '#F59E0B',
                 'opes-green': '#10B981',
-                amber: { 300:'#E3B420', 400:'#C99B0E', 500:'#B5890C', 600:'#A07C08', 700:'#866709' },
+                amber: { 300:'#E3B420', 400:'#F59E0B', 500:'#B5890C', 600:'#A07C08', 700:'#866709' },
             }}}
         }
     </script>
@@ -21,19 +21,19 @@
     <style>
         [x-cloak] { display: none !important; }
         :root {
-            --glass-white:     rgba(255,255,255,0.07);
-            --glass-white-mid: rgba(255,255,255,0.12);
-            --glass-white-hi:  rgba(255,255,255,0.18);
-            --glass-border:    rgba(255,255,255,0.14);
+            --glass-white:     rgba(41,53,72,0.8);
+            --glass-white-mid: rgba(41,53,72,1);
+            --glass-white-hi:  rgba(41,53,72,1);
+            --glass-border:    rgba(41,53,72,1);
             --glass-border-hi: rgba(255,255,255,0.28);
             --glass-shadow:    0 8px 40px rgba(0,0,0,0.55), 0 2px 8px rgba(0,0,0,0.35);
-            --glass-inset:     inset 0 1px 0 rgba(255,255,255,0.18), inset 0 -1px 0 rgba(0,0,0,0.15);
+            --glass-inset:     inset 0 1px 0 rgba(41,53,72,1), inset 0 -1px 0 rgba(0,0,0,0.15);
         }
         * { box-sizing: border-box; }
         html, body { height: 100%; margin: 0; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
-            background: radial-gradient(ellipse 120% 80% at 20% -5%, #1a2d4f 0%, #010048 35%, #050d1a 65%, #0f0a1e 100%);
+            background: radial-gradient(ellipse 120% 80% at 20% -5%, #1a2d4f 0%, #0F172A 35%, #050d1a 65%, #0f0a1e 100%);
             background-attachment: fixed;
             min-height: 100vh;
             color: #e2e8f0;
@@ -46,7 +46,7 @@
             pointer-events: none;
             z-index: 0;
             background:
-                radial-gradient(ellipse 60% 40% at 10% 15%, rgba(201,155,14,0.07) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 40% at 10% 15%, rgba(245,158,11,0.07) 0%, transparent 60%),
                 radial-gradient(ellipse 50% 35% at 90% 80%, rgba(16,185,129,0.06) 0%, transparent 55%),
                 radial-gradient(ellipse 40% 30% at 50% 50%, rgba(99,102,241,0.04) 0%, transparent 60%);
         }
@@ -54,68 +54,68 @@
             background: rgba(1,0,72,0.72);
             backdrop-filter: blur(40px) saturate(200%) brightness(1.1);
             -webkit-backdrop-filter: blur(40px) saturate(200%) brightness(1.1);
-            border-bottom: 1px solid rgba(255,255,255,0.10);
-            box-shadow: 0 1px 0 rgba(255,255,255,0.06), 0 4px 32px rgba(0,0,0,0.5);
+            border-bottom: 1px solid rgba(41,53,72,1);
+            box-shadow: 0 1px 0 rgba(30,41,59,0.9), 0 4px 32px rgba(0,0,0,0.5);
         }
         .glass-card {
-            background: linear-gradient(145deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.04) 100%);
+            background: linear-gradient(145deg, rgba(41,53,72,1) 0%, rgba(30,41,59,0.4) 100%);
             backdrop-filter: blur(24px) saturate(180%);
             -webkit-backdrop-filter: blur(24px) saturate(180%);
-            border: 1px solid rgba(255,255,255,0.14);
+            border: 1px solid rgba(41,53,72,1);
             border-top-color: rgba(255,255,255,0.24);
-            box-shadow: 0 4px 24px rgba(0,0,0,0.45), 0 1px 0 rgba(255,255,255,0.12) inset, 0 -1px 0 rgba(0,0,0,0.12) inset;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.45), 0 1px 0 rgba(41,53,72,1) inset, 0 -1px 0 rgba(0,0,0,0.12) inset;
             transition: box-shadow 0.25s ease, border-color 0.25s ease;
         }
         .glass-card:hover {
             border-color: rgba(255,255,255,0.22);
-            box-shadow: 0 8px 40px rgba(0,0,0,0.55), 0 1px 0 rgba(255,255,255,0.16) inset, 0 -1px 0 rgba(0,0,0,0.12) inset;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.55), 0 1px 0 rgba(41,53,72,1) inset, 0 -1px 0 rgba(0,0,0,0.12) inset;
         }
         .glass-input {
-            background: rgba(255,255,255,0.06);
+            background: rgba(30,41,59,0.9);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
-            border: 1px solid rgba(255,255,255,0.14);
+            border: 1px solid rgba(41,53,72,1);
             color: #f1f5f9;
             transition: border-color 0.2s, box-shadow 0.2s;
         }
         .glass-input::placeholder { color: rgba(148,163,184,0.6); }
         .glass-input:focus {
             outline: none;
-            border-color: rgba(201,155,14,0.6);
-            box-shadow: 0 0 0 3px rgba(201,155,14,0.12);
+            border-color: rgba(245,158,11,0.6);
+            box-shadow: 0 0 0 3px rgba(245,158,11,0.12);
         }
         /* .input / .input-field aliases (were undefined → white default) */
         .input, .input-field {
-            background: rgba(255,255,255,0.06);
+            background: rgba(30,41,59,0.9);
             -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
-            border: 1px solid rgba(255,255,255,0.14);
+            border: 1px solid rgba(41,53,72,1);
             color: #f1f5f9; width: 100%;
             border-radius: 0.75rem; padding: 0.6rem 1rem; font-size: 0.8125rem;
             transition: border-color 0.2s, box-shadow 0.2s;
         }
         .input::placeholder, .input-field::placeholder { color: rgba(148,163,184,0.6); }
         .input:focus, .input-field:focus, textarea.glass-input:focus, select.glass-input:focus {
-            outline: none; border-color: rgba(201,155,14,0.6); box-shadow: 0 0 0 3px rgba(201,155,14,0.12);
+            outline: none; border-color: rgba(245,158,11,0.6); box-shadow: 0 0 0 3px rgba(245,158,11,0.12);
         }
-        .input option, .input-field option, select.glass-input option { background: #010048; color: #f1f5f9; }
+        .input option, .input-field option, select.glass-input option { background: #0F172A; color: #f1f5f9; }
         select.glass-input, select.input, select.input-field {
             -webkit-appearance: none; -moz-appearance: none; appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
             background-repeat: no-repeat; background-position: right 0.85rem center; padding-right: 2.25rem; cursor: pointer;
         }
-        button:focus-visible, a:focus-visible { outline: 2px solid rgba(201,155,14,0.85); outline-offset: 2px; }
+        button:focus-visible, a:focus-visible { outline: 2px solid rgba(245,158,11,0.85); outline-offset: 2px; }
         .glass-btn {
-            background: linear-gradient(135deg, rgba(201,155,14,0.9) 0%, rgba(160,124,8,0.9) 100%);
-            border: 1px solid rgba(201,155,14,0.5);
-            box-shadow: 0 4px 16px rgba(201,155,14,0.25), 0 1px 0 rgba(255,255,255,0.2) inset;
+            background: linear-gradient(135deg, rgba(245,158,11,0.9) 0%, rgba(160,124,8,0.9) 100%);
+            border: 1px solid rgba(245,158,11,0.5);
+            box-shadow: 0 4px 16px rgba(245,158,11,0.25), 0 1px 0 rgba(255,255,255,0.2) inset;
             transition: all 0.2s ease;
         }
-        .glass-btn:hover { box-shadow: 0 6px 24px rgba(201,155,14,0.35), 0 1px 0 rgba(255,255,255,0.25) inset; }
+        .glass-btn:hover { box-shadow: 0 6px 24px rgba(245,158,11,0.35), 0 1px 0 rgba(255,255,255,0.25) inset; }
         .glass-btn:active { transform: scale(0.98); }
         .glass-btn-dark {
             background: linear-gradient(135deg, rgba(30,58,100,0.85) 0%, rgba(15,30,58,0.9) 100%);
-            border: 1px solid rgba(255,255,255,0.14);
-            box-shadow: 0 4px 16px rgba(0,0,0,0.4), 0 1px 0 rgba(255,255,255,0.1) inset;
+            border: 1px solid rgba(41,53,72,1);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.4), 0 1px 0 rgba(41,53,72,1) inset;
             transition: all 0.2s ease;
         }
         .glass-btn-dark:hover { border-color: rgba(255,255,255,0.2); }
@@ -136,7 +136,7 @@
             border-radius: 9999px;
         }
         .nav-link { color: rgba(148,163,184,0.9); transition: color 0.2s, background 0.2s; }
-        .nav-link:hover { color: #fff; background: rgba(255,255,255,0.08); }
+        .nav-link:hover { color: #fff; background: rgba(41,53,72,0.8); }
         @keyframes heartbeat  { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.25);opacity:.7} }
         @keyframes spin-frame { to{transform:rotate(360deg)} }
         @keyframes float-in   { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
@@ -145,7 +145,7 @@
         .float-in   { animation: float-in 0.35s cubic-bezier(0.34,1.56,0.64,1) both; }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: rgba(255,255,255,0.03); }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 99px; }
+        ::-webkit-scrollbar-thumb { background: rgba(41,53,72,1); border-radius: 99px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
     </style>
 </head>

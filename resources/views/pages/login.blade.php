@@ -103,7 +103,7 @@
         <div class="glass-card rounded-3xl overflow-hidden float-in" style="animation-delay:0.05s">
 
             {{-- Tab header --}}
-            <div class="flex border-b" style="border-color:rgba(255,255,255,0.08)">
+            <div class="flex border-b" style="border-color:#334155">
                 <button @click="tab = 'login'; error=''"
                         class="flex-1 py-4 text-xs font-black uppercase tracking-wider transition-all"
                         :style="tab === 'login'
@@ -216,7 +216,7 @@
                                 <span x-show="lang === 'EN'" x-cloak>Forgot password?</span>
                             </button>
                         </div>
-                        <div x-show="showForgot" x-cloak class="mt-3 p-3 rounded-xl" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1)">
+                        <div x-show="showForgot" x-cloak class="mt-3 p-3 rounded-xl" style="background:#293548;border:1px solid #334155">
                             <p class="text-[10px] text-slate-400 mb-2">
                                 <span x-show="lang === 'FR'">Entrez votre email pour recevoir un lien de réinitialisation.</span>
                                 <span x-show="lang === 'EN'" x-cloak>Enter your email to receive a reset link.</span>
@@ -295,7 +295,7 @@
                                class="glass-input" placeholder="Centre fiscal">
                     </div>
 
-                    <div class="border-t pt-3" style="border-color:rgba(255,255,255,0.08)">
+                    <div class="border-t pt-3" style="border-color:#334155">
                         <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">
                             <span x-show="lang === 'FR'">Votre Compte Administrateur</span>
                             <span x-show="lang === 'EN'" x-cloak>Owner Account</span>
@@ -318,7 +318,7 @@
                                 <div class="flex gap-1">
                                     <template x-for="i in 4" :key="i">
                                         <div class="h-1 flex-1 rounded transition-colors"
-                                             :style="score>=i ? (score<=1?'background:#ef4444':score===2?'background:#f59e0b':score===3?'background:#facc15':'background:#10b981') : 'background:rgba(255,255,255,0.1)'"></div>
+                                             :style="score>=i ? (score<=1?'background:#ef4444':score===2?'background:#f59e0b':score===3?'background:#facc15':'background:#10b981') : 'background:#334155'"></div>
                                     </template>
                                 </div>
                                 <p class="text-[10px] mt-1 font-bold" :style="score<=1?'color:#f87171':score===2?'color:#fbbf24':score===3?'color:#facc15':'color:#34d399'" x-text="label"></p>

@@ -4,10 +4,10 @@
     {{-- Hero --}}
     <div class="glass-card rounded-3xl p-10 text-center relative overflow-hidden float-in">
         <div class="absolute inset-0 pointer-events-none"
-             style="background:radial-gradient(ellipse 70% 60% at 50% 0%,rgba(201,155,14,0.10) 0%,transparent 70%)"></div>
+             style="background:radial-gradient(ellipse 70% 60% at 50% 0%,rgba(245,158,11,0.10) 0%,transparent 70%)"></div>
         <div class="relative z-10">
             <div class="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-6"
-                 style="background:linear-gradient(145deg,rgba(201,155,14,0.22),rgba(201,155,14,0.08));border:1px solid rgba(201,155,14,0.35);box-shadow:0 0 60px rgba(201,155,14,0.18)">
+                 style="background:linear-gradient(145deg,rgba(245,158,11,0.22),rgba(245,158,11,0.08));border:1px solid rgba(245,158,11,0.35);box-shadow:0 0 60px rgba(245,158,11,0.18)">
                 <span class="text-amber-400 font-black text-2xl tracking-widest">OB</span>
             </div>
             <h1 class="text-4xl font-black text-white tracking-tight">
@@ -21,11 +21,11 @@
                 <span class="glass-pill px-3 py-1 text-[10px] font-black uppercase tracking-widest text-emerald-400"
                       style="background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.28)">Version 1.0.0</span>
                 <span class="glass-pill px-3 py-1 text-[10px] font-black uppercase tracking-widest text-amber-400"
-                      style="background:rgba(201,155,14,0.12);border:1px solid rgba(201,155,14,0.28)">SYSCOHADA Révisé</span>
+                      style="background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.28)">SYSCOHADA Révisé</span>
                 <span class="glass-pill px-3 py-1 text-[10px] font-black uppercase tracking-widest text-indigo-400"
                       style="background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.28)">DGI Live-Link 2026</span>
                 <span class="glass-pill px-3 py-1 text-[10px] font-black uppercase tracking-widest text-slate-300"
-                      style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.14)">Loi Finance 2026</span>
+                      style="background:#293548;border:1px solid #334155">Loi Finance 2026</span>
             </div>
             <div class="mt-7">
                 <a href="/app"
@@ -63,7 +63,7 @@
         <div class="glass-card rounded-2xl p-5 hover:border-white/20 transition-all">
             <div class="flex items-start gap-4">
                 <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 text-amber-400"
-                     style="background:rgba(201,155,14,0.10);border:1px solid rgba(201,155,14,0.22)">
+                     style="background:rgba(245,158,11,0.10);border:1px solid rgba(245,158,11,0.22)">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">{!! $f['icon'] !!}</svg>
                 </div>
                 <div>
@@ -85,7 +85,7 @@
                 ['Livewire v4', 'Composants temps réel', 'text-pink-400', 'rgba(236,72,153,0.12)', 'rgba(236,72,153,0.28)'],
                 ['Alpine.js v3', 'Réactivité client', 'text-sky-400', 'rgba(14,165,233,0.12)', 'rgba(14,165,233,0.28)'],
                 ['Tailwind CSS', 'Design System', 'text-cyan-400', 'rgba(6,182,212,0.12)', 'rgba(6,182,212,0.28)'],
-                ['Laravel Sanctum', 'Auth Bearer Token', 'text-amber-400', 'rgba(201,155,14,0.12)', 'rgba(201,155,14,0.28)'],
+                ['Laravel Sanctum', 'Auth Bearer Token', 'text-amber-400', 'rgba(245,158,11,0.12)', 'rgba(245,158,11,0.28)'],
                 ['SYSCOHADA Révisé', 'Plan Comptable OHADA', 'text-emerald-400', 'rgba(16,185,129,0.12)', 'rgba(16,185,129,0.28)'],
                 ['DGI Fiscalis', 'API Cameroun 2026', 'text-indigo-400', 'rgba(99,102,241,0.12)', 'rgba(99,102,241,0.28)'],
             ] as [$name, $role, $color, $bg, $border])
@@ -118,19 +118,19 @@
                 Opesware est une société camerounaise d'ingénierie logicielle spécialisée dans les solutions de gestion financière, de conformité fiscale et de transformation numérique pour les entreprises africaines. Fondée à Douala, Opesware développe des produits SaaS adaptés aux réalités réglementaires et opérationnelles du marché camerounais et de la zone OHADA.
             </p>
             <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-                <div class="rounded-xl p-3" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08)">
+                <div class="rounded-xl p-3" style="background:#1E293B;border:1px solid #334155">
                     <div class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Contact</div>
                     <div class="text-slate-300 text-xs font-medium">contact@opesware.com</div>
                 </div>
-                <div class="rounded-xl p-3" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08)">
+                <div class="rounded-xl p-3" style="background:#1E293B;border:1px solid #334155">
                     <div class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Téléphone</div>
                     <div class="text-slate-300 text-xs font-medium">+237 670 416 238</div>
                 </div>
-                <div class="rounded-xl p-3" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08)">
+                <div class="rounded-xl p-3" style="background:#1E293B;border:1px solid #334155">
                     <div class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Siège</div>
                     <div class="text-slate-300 text-xs font-medium">Petite Terrain, Bonamoussadi — Douala, Cameroun</div>
                 </div>
-                <div class="rounded-xl p-3" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08)">
+                <div class="rounded-xl p-3" style="background:#1E293B;border:1px solid #334155">
                     <div class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Année</div>
                     <div class="text-slate-300 text-xs font-medium">2025 – {{ date('Y') }}</div>
                 </div>
@@ -149,7 +149,7 @@
                 ['DGI Fiscalis / SIGIT', 'Portail officiel de la Direction Générale des Impôts du Cameroun pour la télédéclaration.'],
                 ['OHADA (Organisation pour l\'Harmonisation en Afrique du Droit des Affaires)', 'Cadre juridique supranational applicable en zone franc.'],
             ] as [$title, $desc])
-            <div class="flex items-start gap-3 py-2.5 border-b last:border-b-0" style="border-color:rgba(255,255,255,0.06)">
+            <div class="flex items-start gap-3 py-2.5 border-b last:border-b-0" style="border-color:#334155">
                 <div class="w-1.5 h-1.5 rounded-full bg-amber-400 mt-1.5 flex-shrink-0"></div>
                 <div>
                     <div class="text-white text-xs font-bold">{{ $title }}</div>

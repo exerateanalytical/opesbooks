@@ -68,7 +68,7 @@ $c = $colors[$module['color']];
 <!-- Why it matters for Cameroun -->
 @if(!empty($module['context']))
 <section class="max-w-5xl mx-auto px-5 pb-10">
-    <div class="glass rounded-2xl p-8" style="background:linear-gradient(135deg,{{ $c['glow'] }},rgba(255,255,255,0.02))">
+    <div class="glass rounded-2xl p-8" style="background:linear-gradient(135deg,{{ $c['glow'] }},rgba(41,53,72,0.5))">
         <div class="flex items-center gap-3 mb-5">
             <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:{{ $c['bg'] }};border:1px solid {{ $c['border'] }}">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="{{ $c['text'] }}" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
@@ -93,7 +93,7 @@ $c = $colors[$module['color']];
     <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
         @foreach($related as $r)
         <a href="{{ route('m.feature', $r['slug']) }}" class="glass rounded-xl p-4 hover:bg-slate-700 transition text-center group">
-            <div class="w-8 h-8 rounded-lg flex items-center justify-center mx-auto mb-2" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1)">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center mx-auto mb-2" style="background:rgba(30,41,59,0.6);border:1px solid rgba(41,53,72,1)">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><path d="{{ $r['icon'] }}"/></svg>
             </div>
             <div class="text-xs font-bold text-slate-300 group-hover:text-white transition">{{ $r['title'] }}</div>
@@ -104,7 +104,7 @@ $c = $colors[$module['color']];
 
 <!-- CTA -->
 <section class="max-w-4xl mx-auto px-5 pb-20 text-center">
-    <div class="glass rounded-3xl p-10" style="background:linear-gradient(145deg,rgba(245,158,11,0.08),rgba(255,255,255,0.03))">
+    <div class="glass rounded-3xl p-10" style="background:linear-gradient(145deg,rgba(245,158,11,0.08),rgba(41,53,72,0.5))">
         <h2 class="text-2xl md:text-3xl font-black">Commencez avec {{ $module['title'] }}</h2>
         <p class="text-slate-400 mt-3 text-sm">Essai gratuit 30 jours · Sans carte bancaire · Support en français</p>
         <div class="flex flex-wrap justify-center gap-3 mt-6">

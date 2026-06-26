@@ -42,7 +42,7 @@
 
     {{-- Filter bar --}}
     <div class="glass-shimmer rounded-2xl p-4 mb-5 flex flex-wrap justify-between items-center gap-4"
-         style="background:rgba(255,255,255,0.055);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);border:1px solid rgba(255,255,255,0.13);box-shadow:0 4px 24px rgba(0,0,0,0.4)">
+         style="border:1px solid rgba(41,53,72,1);box-shadow:0 4px 24px rgba(0,0,0,0.4)">
 
         <div class="w-full md:w-72">
             <input wire:model.live.debounce.300ms="searchQuery"
@@ -51,7 +51,7 @@
                    class="glass-input w-full rounded-xl py-2.5 px-4 text-xs font-medium">
         </div>
 
-        <div class="flex items-center gap-1.5 p-1 rounded-xl" style="background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.07)">
+        <div class="flex items-center gap-1.5 p-1 rounded-xl" style="background:rgba(0,0,0,0.2);border:1px solid rgba(41,53,72,0.8)">
             @foreach ([
                 'ALL'      => ($language === 'FR' ? 'Tous' : 'All'),
                 'APPROVED' => ($language === 'FR' ? 'Approuvés' : 'Approved'),
@@ -62,9 +62,9 @@
                     $active = $statusFilter === $val;
                     $activeStyle = match($val) {
                         'APPROVED' => 'background:rgba(16,185,129,0.2);border:1px solid rgba(16,185,129,0.4);color:rgb(110,231,183)',
-                        'PENDING'  => 'background:rgba(201,155,14,0.2);border:1px solid rgba(201,155,14,0.4);color:rgb(252,211,77)',
+                        'PENDING'  => 'background:rgba(245,158,11,0.2);border:1px solid rgba(245,158,11,0.4);color:rgb(252,211,77)',
                         'REJECTED' => 'background:rgba(244,63,94,0.2);border:1px solid rgba(244,63,94,0.4);color:rgb(252,165,165)',
-                        default    => 'background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);color:white',
+                        default    => 'background:#1E293B;border:1px solid rgba(255,255,255,0.2);color:white',
                     };
                 @endphp
                 <button wire:click="$set('statusFilter', '{{ $val }}')"
@@ -78,12 +78,12 @@
 
     {{-- Table --}}
     <div class="glass-shimmer rounded-2xl overflow-hidden"
-         style="background:rgba(255,255,255,0.055);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);border:1px solid rgba(255,255,255,0.13);box-shadow:0 8px 40px rgba(0,0,0,0.5)">
+         style="border:1px solid rgba(41,53,72,1);box-shadow:0 8px 40px rgba(0,0,0,0.5)">
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="text-[10px] font-black uppercase text-slate-500 tracking-widest border-b"
-                        style="border-color:rgba(255,255,255,0.07);background:rgba(0,0,0,0.18)">
+                        style="border-color:rgba(41,53,72,0.8);background:rgba(0,0,0,0.18)">
                         <th class="py-3 px-5 whitespace-nowrap">{{ $language === 'FR' ? 'Référence' : 'Reference' }}</th>
                         <th class="py-3 px-5 whitespace-nowrap">{{ $language === 'FR' ? 'Date & Mémo' : 'Date & Memo' }}</th>
                         <th class="py-3 px-5 text-center whitespace-nowrap">{{ $language === 'FR' ? 'Statut DGI' : 'DGI Status' }}</th>
@@ -94,8 +94,8 @@
                 <tbody class="text-xs font-medium">
                     @forelse ($entries as $entry)
                         <tr class="border-b transition-colors"
-                            style="border-color:rgba(255,255,255,0.05);{{ $entry->dgi_sync_status === 'REJECTED' ? 'background:rgba(244,63,94,0.04)' : '' }}"
-                            onmouseenter="this.style.background='rgba(255,255,255,0.04)'"
+                            style="border-color:rgba(30,41,59,0.6);{{ $entry->dgi_sync_status === 'REJECTED' ? 'background:rgba(244,63,94,0.04)' : '' }}"
+                            onmouseenter="this.style.background='rgba(30,41,59,0.4)'"
                             onmouseleave="this.style.background='{{ $entry->dgi_sync_status === 'REJECTED' ? 'rgba(244,63,94,0.04)' : 'transparent' }}'">
 
                             <td class="py-3.5 px-5 font-mono whitespace-nowrap">
@@ -120,7 +120,7 @@
                                     </span>
                                 @elseif ($entry->dgi_sync_status === 'PENDING')
                                     <span class="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full animate-pulse"
-                                          style="background:rgba(201,155,14,0.15);border:1px solid rgba(201,155,14,0.35);color:rgb(252,211,77)">
+                                          style="background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.35);color:rgb(252,211,77)">
                                         ⏳ {{ $language === 'FR' ? 'EN ATTENTE' : 'PENDING' }}
                                     </span>
                                 @else
@@ -134,7 +134,7 @@
                             <td class="py-3.5 px-5 font-mono">
                                 @if ($entry->dgi_sync_status === 'APPROVED')
                                     <span class="text-amber-400 font-bold text-[11px] block select-all px-2 py-1 rounded-lg max-w-[220px] truncate"
-                                          style="background:rgba(201,155,14,0.08);border:1px solid rgba(201,155,14,0.2)">
+                                          style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2)">
                                         {{ $entry->dgi_validation_token }}
                                     </span>
                                     <span class="text-[9px] text-slate-500 block mt-1">
@@ -172,7 +172,7 @@
                             <td colspan="5" class="py-16 text-center">
                                 <div class="flex flex-col items-center gap-3">
                                     <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl"
-                                         style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08)">
+                                         style="background:rgba(30,41,59,0.6);border:1px solid rgba(41,53,72,0.8)">
                                         📡
                                     </div>
                                     <div class="text-slate-500 text-[11px] font-bold uppercase tracking-widest">
@@ -187,7 +187,7 @@
         </div>
 
         @if ($entries->hasPages())
-            <div class="px-5 py-3 border-t" style="border-color:rgba(255,255,255,0.07);background:rgba(0,0,0,0.1)">
+            <div class="px-5 py-3 border-t" style="border-color:rgba(41,53,72,0.8);background:rgba(0,0,0,0.1)">
                 {{ $entries->links() }}
             </div>
         @endif

@@ -131,11 +131,11 @@
                     @endphp
                     @foreach($rows as $row)
                     @if($row[1]==='' && $row[2]==='' && $row[3]==='' && $row[4]==='')
-                    <tr class="bg-white/[0.02]">
+                    <tr style="background:#0F172A">
                         <td colspan="5" class="px-5 py-2.5 text-[11px] font-black uppercase tracking-widest text-slate-500">{{ $row[0] }}</td>
                     </tr>
                     @else
-                    <tr class="hover:bg-white/[0.02]">
+                    <tr class="hover:bg-slate-900/50 transition-colors">
                         <td class="px-5 py-3 text-slate-300">{{ $row[0] }}</td>
                         @foreach(array_slice($row,1) as $i => $v)
                         <td class="px-4 py-3 text-center {{ $v==='✓'?'text-emerald-400 font-bold':($v==='—'?'text-slate-600':($i===2?'text-gold font-bold':'text-slate-300')) }}">{{ $v }}</td>
@@ -191,7 +191,7 @@
         @endforeach
     </div>
 
-    <div class="glass rounded-2xl p-8 mt-10 text-center" style="background:linear-gradient(145deg,rgba(245,158,11,0.08),rgba(255,255,255,0.02))">
+    <div class="glass rounded-2xl p-8 mt-10 text-center" style="background:linear-gradient(145deg,rgba(245,158,11,0.08),rgba(41,53,72,0.5))">
         <h2 class="text-xl font-black">Encore des questions ?</h2>
         <p class="text-slate-400 text-sm mt-2">Notre équipe à Douala vous répond sous 24h.</p>
         <div class="flex flex-wrap justify-center gap-3 mt-5">

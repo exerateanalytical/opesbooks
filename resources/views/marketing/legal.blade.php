@@ -7,13 +7,13 @@
     .legal{font-size:.95rem;line-height:1.75;color:rgba(226,232,240,0.82)}
     .legal h2{font-size:1.25rem;font-weight:800;color:#fff;margin:2rem 0 .6rem}
     .legal p{margin:0 0 .9rem}.legal ul{margin:0 0 .9rem;padding-left:1.3rem;list-style:disc}
-    .legal li{margin:.3rem 0}.legal strong{color:#fff}.legal a{color:#C99B0E;text-decoration:underline}
+    .legal li{margin:.3rem 0}.legal strong{color:#fff}.legal a{color:#F59E0B;text-decoration:underline}
 </style>
 <article class="max-w-3xl mx-auto px-5 py-16">
     <h1 class="text-3xl md:text-4xl font-black">{{ $title }}</h1>
-    <p class="text-white/40 text-xs mt-3">Dernière mise à jour : {{ now()->translatedFormat('F Y') }}</p>
+    <p class="text-slate-500 text-xs mt-3">Dernière mise à jour : {{ now()->translatedFormat('F Y') }}</p>
     <div class="legal mt-8">{!! $content !!}</div>
-    <div class="glass rounded-xl p-5 mt-10 text-sm text-white/60">
+    <div class="glass rounded-xl p-5 mt-10 text-sm text-slate-400">
         Pour toute question juridique, écrivez à <a href="mailto:contact@opesware.com" class="text-gold">contact@opesware.com</a>.
     </div>
 </article>

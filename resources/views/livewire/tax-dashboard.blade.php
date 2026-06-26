@@ -42,7 +42,7 @@
     {{-- DGI Deadline badge --}}
     <div class="mb-5">
         <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] font-black uppercase tracking-wider"
-              style="background:rgba(201,155,14,0.12);border:1px solid rgba(201,155,14,0.3);color:rgb(252,211,77)">
+              style="background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.3);color:rgb(252,211,77)">
             <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
             </svg>
@@ -60,7 +60,7 @@
 
             {{-- Turnover panel --}}
             <div class="glass-shimmer rounded-2xl p-5"
-                 style="background:rgba(255,255,255,0.055);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);border:1px solid rgba(255,255,255,0.13);box-shadow:0 4px 24px rgba(0,0,0,0.4)">
+                 style="background:rgba(255,255,255,0.055);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);border:1px solid rgba(41,53,72,1);box-shadow:0 4px 24px rgba(0,0,0,0.4)">
                 <h2 class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">
                     {{ $language === 'FR' ? 'Chiffre d\'Affaires' : 'Turnover' }}
                 </h2>
@@ -83,7 +83,7 @@
 
             {{-- Output taxes --}}
             <div class="glass-shimmer rounded-2xl p-5"
-                 style="background:rgba(255,255,255,0.055);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);border:1px solid rgba(255,255,255,0.13);box-shadow:0 4px 24px rgba(0,0,0,0.4)">
+                 style="background:rgba(255,255,255,0.055);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);border:1px solid rgba(41,53,72,1);box-shadow:0 4px 24px rgba(0,0,0,0.4)">
                 <h2 class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">
                     {{ $language === 'FR' ? 'Taxes Collectées (Sortie)' : 'Output Taxes Collected' }}
                 </h2>
@@ -95,14 +95,14 @@
                         <p class="text-xl font-black text-white font-mono">{{ number_format((float) $taxMetrics['output_vat_collected'], 2) }}</p>
                         <p class="text-[9px] text-slate-500 mt-1 font-mono">XAF · Cpte 443100</p>
                     </div>
-                    <div class="rounded-xl p-4" style="background:rgba(201,155,14,0.1);border:1px solid rgba(201,155,14,0.2)">
+                    <div class="rounded-xl p-4" style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2)">
                         <p class="text-[10px] text-amber-400 font-black uppercase tracking-wider mb-2">
                             {{ $language === 'FR' ? 'CAC (10% TVA)' : 'CAC (10% of VAT)' }}
                         </p>
                         <p class="text-xl font-black text-white font-mono">{{ number_format((float) $taxMetrics['output_cac_collected'], 2) }}</p>
                         <p class="text-[9px] text-slate-500 mt-1 font-mono">XAF · Cpte 448600</p>
                     </div>
-                    <div class="rounded-xl p-4" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.14)">
+                    <div class="rounded-xl p-4" style="background:rgba(30,41,59,0.9);border:1px solid rgba(41,53,72,1)">
                         <p class="text-[10px] text-slate-400 font-black uppercase tracking-wider mb-2">
                             {{ $language === 'FR' ? 'Total Taxes Sortie' : 'Total Output Tax' }}
                         </p>
@@ -114,12 +114,12 @@
 
             {{-- Input VAT --}}
             <div class="glass-shimmer rounded-2xl p-5"
-                 style="background:rgba(255,255,255,0.055);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);border:1px solid rgba(255,255,255,0.13);box-shadow:0 4px 24px rgba(0,0,0,0.4)">
+                 style="background:rgba(255,255,255,0.055);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);border:1px solid rgba(41,53,72,1);box-shadow:0 4px 24px rgba(0,0,0,0.4)">
                 <h2 class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">
                     {{ $language === 'FR' ? 'TVA Déductible (Entrée)' : 'Input VAT Recovery' }}
                 </h2>
                 <div class="grid grid-cols-3 gap-3">
-                    <div class="rounded-xl p-4" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1)">
+                    <div class="rounded-xl p-4" style="background:rgba(30,41,59,0.6);border:1px solid rgba(41,53,72,1)">
                         <p class="text-[10px] text-slate-400 font-black uppercase tracking-wider mb-2">
                             {{ $language === 'FR' ? 'TVA Brute Payée' : 'Gross Input VAT' }}
                         </p>
@@ -133,7 +133,7 @@
                         <p class="text-xl font-black text-emerald-400 font-mono">{{ number_format((float) $taxMetrics['input_vat_recoverable'], 2) }}</p>
                         <p class="text-[9px] text-slate-500 mt-1 font-mono">XAF ({{ $taxMetrics['prorata_coefficient'] }}%)</p>
                     </div>
-                    <div class="rounded-xl p-4" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1)">
+                    <div class="rounded-xl p-4" style="background:rgba(30,41,59,0.6);border:1px solid rgba(41,53,72,1)">
                         <p class="text-[10px] text-slate-400 font-black uppercase tracking-wider mb-2">
                             {{ $language === 'FR' ? 'Charges Déduct. HT' : 'Deductible Expenses' }}
                         </p>
@@ -150,7 +150,7 @@
 
             {{-- Net VAT to remit --}}
             <div class="glass-shimmer rounded-2xl p-5"
-                 style="background:rgba(255,255,255,0.055);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);border:1px solid rgba(255,255,255,0.13);box-shadow:0 4px 24px rgba(0,0,0,0.4)">
+                 style="background:rgba(255,255,255,0.055);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);border:1px solid rgba(41,53,72,1);box-shadow:0 4px 24px rgba(0,0,0,0.4)">
                 <h2 class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">
                     {{ $language === 'FR' ? 'TVA Nette à Reverser' : 'Net VAT to Remit' }}
                 </h2>
@@ -167,7 +167,7 @@
                         <span>{{ $language === 'FR' ? '− TVA Récupérable' : '− Input VAT' }}</span>
                         <span class="font-mono font-bold">{{ number_format((float) $taxMetrics['input_vat_recoverable'], 2) }}</span>
                     </div>
-                    <div class="border-t pt-1.5 flex justify-between font-black" style="border-color:rgba(255,255,255,0.1);color:rgb(252,165,165)">
+                    <div class="border-t pt-1.5 flex justify-between font-black" style="border-color:rgba(41,53,72,1);color:rgb(252,165,165)">
                         <span>Net DGI</span>
                         <span class="font-mono">{{ number_format((float) $taxMetrics['net_vat_to_remit'], 2) }}</span>
                     </div>
@@ -176,7 +176,7 @@
 
             {{-- Monthly IS Installment --}}
             <div class="glass-shimmer rounded-2xl p-5"
-                 style="background:rgba(255,255,255,0.055);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);border:1px solid rgba(255,255,255,0.13);box-shadow:0 4px 24px rgba(0,0,0,0.4)">
+                 style="background:rgba(255,255,255,0.055);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);border:1px solid rgba(41,53,72,1);box-shadow:0 4px 24px rgba(0,0,0,0.4)">
                 <h2 class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">
                     {{ $language === 'FR' ? 'Acompte IS Mensuel' : 'Monthly IS Installment' }}
                 </h2>
@@ -193,9 +193,9 @@
 
             {{-- Total Fiscal Provision --}}
             <div class="glass-shimmer rounded-2xl p-5 relative overflow-hidden"
-                 style="background:linear-gradient(145deg,rgba(201,155,14,0.12),rgba(10,25,47,0.85));backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);border:1px solid rgba(201,155,14,0.3);box-shadow:0 8px 32px rgba(201,155,14,0.15),0 4px 24px rgba(0,0,0,0.5)">
+                 style="background:linear-gradient(145deg,rgba(245,158,11,0.12),rgba(10,25,47,0.85));backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);border:1px solid rgba(245,158,11,0.3);box-shadow:0 8px 32px rgba(245,158,11,0.15),0 4px 24px rgba(0,0,0,0.5)">
                 <div class="absolute -top-6 -right-6 w-24 h-24 rounded-full opacity-20 blur-2xl pointer-events-none"
-                     style="background:radial-gradient(circle,rgba(201,155,14,1),transparent)"></div>
+                     style="background:radial-gradient(circle,rgba(245,158,11,1),transparent)"></div>
                 <h2 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 relative z-10">
                     {{ $language === 'FR' ? 'Provision Fiscale Totale' : 'Total Fiscal Provision' }}
                 </h2>
@@ -212,13 +212,13 @@
                         <span>{{ $language === 'FR' ? 'Acompte IS' : 'IS Installment' }}</span>
                         <span class="font-mono font-bold text-slate-300">{{ number_format((float) $taxMetrics['minimum_tax_installment'], 2) }}</span>
                     </div>
-                    <div class="border-t pt-1.5 flex justify-between font-black text-amber-400" style="border-color:rgba(201,155,14,0.3)">
+                    <div class="border-t pt-1.5 flex justify-between font-black text-amber-400" style="border-color:rgba(245,158,11,0.3)">
                         <span>TOTAL</span>
                         <span class="font-mono">{{ number_format((float) $taxMetrics['total_fiscal_provision'], 2) }}</span>
                     </div>
                 </div>
                 <div class="mt-4 px-3 py-2.5 rounded-xl text-[10px] font-bold relative z-10"
-                     style="background:rgba(201,155,14,0.1);border:1px solid rgba(201,155,14,0.25);color:rgb(252,211,77)">
+                     style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.25);color:rgb(252,211,77)">
                     {{ $language === 'FR'
                         ? 'À déclarer avant le ' . \Carbon\Carbon::parse($taxMetrics['filing_deadline'])->format('d/m/Y') . ' (DGI Cameroun)'
                         : 'File before ' . \Carbon\Carbon::parse($taxMetrics['filing_deadline'])->format('d/m/Y') . ' (DGI Cameroon)'
