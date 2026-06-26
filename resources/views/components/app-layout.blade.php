@@ -10,7 +10,7 @@
     <script>
         tailwind.config = {
             theme: { extend: { colors: {
-                'opes-navy':  '#0A192F',
+                'opes-navy':  '#010048',
                 'opes-amber': '#C99B0E',
                 'opes-green': '#10B981',
                 amber: { 300:'#E3B420', 400:'#C99B0E', 500:'#B5890C', 600:'#A07C08', 700:'#866709' },
@@ -33,7 +33,7 @@
         html, body { height: 100%; margin: 0; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
-            background: radial-gradient(ellipse 120% 80% at 20% -5%, #1a2d4f 0%, #0a192f 35%, #050d1a 65%, #0f0a1e 100%);
+            background: radial-gradient(ellipse 120% 80% at 20% -5%, #1a2d4f 0%, #010048 35%, #050d1a 65%, #0f0a1e 100%);
             background-attachment: fixed;
             min-height: 100vh;
             color: #e2e8f0;
@@ -51,7 +51,7 @@
                 radial-gradient(ellipse 40% 30% at 50% 50%, rgba(99,102,241,0.04) 0%, transparent 60%);
         }
         .glass-nav {
-            background: rgba(10,25,47,0.72);
+            background: rgba(1,0,72,0.72);
             backdrop-filter: blur(40px) saturate(200%) brightness(1.1);
             -webkit-backdrop-filter: blur(40px) saturate(200%) brightness(1.1);
             border-bottom: 1px solid rgba(255,255,255,0.10);
@@ -97,7 +97,7 @@
         .input:focus, .input-field:focus, textarea.glass-input:focus, select.glass-input:focus {
             outline: none; border-color: rgba(201,155,14,0.6); box-shadow: 0 0 0 3px rgba(201,155,14,0.12);
         }
-        .input option, .input-field option, select.glass-input option { background: #0a192f; color: #f1f5f9; }
+        .input option, .input-field option, select.glass-input option { background: #010048; color: #f1f5f9; }
         select.glass-input, select.input, select.input-field {
             -webkit-appearance: none; -moz-appearance: none; appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");

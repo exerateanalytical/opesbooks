@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>tailwind.config={theme:{extend:{colors:{amber:{400:'#C99B0E'}}}}};</script>
-    <style>body{font-family:'Inter',sans-serif;background:radial-gradient(ellipse 120% 80% at 20% -5%,#1a2d4f,#0a192f 35%,#050d1a 65%,#0f0a1e);min-height:100vh}
+    <style>body{font-family:'Inter',sans-serif;background:radial-gradient(ellipse 120% 80% at 20% -5%,#1a2d4f,#010048 35%,#050d1a 65%,#0f0a1e);min-height:100vh}
     .glass-card{background:rgba(255,255,255,0.05);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.1)}</style>
 </head>
 <body class="text-slate-200 flex items-center justify-center p-6">

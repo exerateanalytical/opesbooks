@@ -12,12 +12,12 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
         [x-cloak]{display:none!important}*{box-sizing:border-box}
-        body{font-family:'Inter',-apple-system,sans-serif;background:radial-gradient(ellipse 120% 80% at 20% -5%,#1a2d4f 0%,#0a192f 35%,#050d1a 65%,#0f0a1e 100%);min-height:100vh;color:#e2e8f0}
+        body{font-family:'Inter',-apple-system,sans-serif;background:radial-gradient(ellipse 120% 80% at 20% -5%,#1a2d4f 0%,#010048 35%,#050d1a 65%,#0f0a1e 100%);min-height:100vh;color:#e2e8f0}
         .glass-card{background:linear-gradient(145deg,rgba(255,255,255,0.10),rgba(255,255,255,0.04));backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.13);box-shadow:0 8px 40px rgba(0,0,0,0.5)}
         .glass-input{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.14);color:#f1f5f9;width:100%;border-radius:0.75rem;padding:0.6rem 1rem;font-size:0.875rem}
         .glass-input:focus{outline:none;border-color:rgba(201,155,14,0.6);box-shadow:0 0 0 3px rgba(201,155,14,0.12)}
-        select.glass-input option{background:#0a192f}
-        .glass-btn-amber{background:linear-gradient(135deg,rgba(201,155,14,0.95),rgba(160,124,8,0.95));border:1px solid rgba(201,155,14,0.5);color:#0a192f;font-weight:900}
+        select.glass-input option{background:#010048}
+        .glass-btn-amber{background:linear-gradient(135deg,rgba(201,155,14,0.95),rgba(160,124,8,0.95));border:1px solid rgba(201,155,14,0.5);color:#010048;font-weight:900}
         @keyframes pop{0%{transform:scale(0)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
         .pop{animation:pop .5s cubic-bezier(.34,1.56,.64,1) both}
     </style>
@@ -33,7 +33,7 @@
         <template x-for="i in 5" :key="i">
             <div class="flex items-center">
                 <div class="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-black transition-all"
-                     :style="i < step ? 'background:#C99B0E;color:#0a192f' : i===step ? 'background:rgba(201,155,14,0.25);color:#E3B420;border:1px solid #C99B0E' : 'background:rgba(255,255,255,0.06);color:rgba(148,163,184,0.6)'">
+                     :style="i < step ? 'background:#C99B0E;color:#010048' : i===step ? 'background:rgba(201,155,14,0.25);color:#E3B420;border:1px solid #C99B0E' : 'background:rgba(255,255,255,0.06);color:rgba(148,163,184,0.6)'">
                     <span x-show="i < step">✓</span><span x-show="i >= step" x-text="i"></span>
                 </div>
                 <div x-show="i < 5" class="w-8 h-0.5 mx-1" :style="i < step ? 'background:#C99B0E' : 'background:rgba(255,255,255,0.1)'"></div>
@@ -138,7 +138,7 @@
         <!-- STEP 5 — Done -->
         <div x-show="step===5" x-cloak class="text-center py-4">
             <div class="pop w-16 h-16 rounded-full mx-auto flex items-center justify-center mb-4" style="background:#C99B0E">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#0a192f" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#010048" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
             </div>
             <h2 class="text-xl font-black text-white mb-1">Vous êtes prêt !</h2>
             <p class="text-xs text-slate-400 mb-6">Votre espace OPESBooks est configuré.</p>

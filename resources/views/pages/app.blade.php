@@ -47,7 +47,7 @@
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
-            background: radial-gradient(ellipse 130% 90% at 15% -5%, #1e3560 0%, #0a192f 30%, #060e1f 60%, #0d0820 100%);
+            background: radial-gradient(ellipse 130% 90% at 15% -5%, #1e3560 0%, #010048 30%, #060e1f 60%, #0d0820 100%);
             background-attachment: fixed;
             color: #e2e8f0;
             -webkit-font-smoothing: antialiased;
@@ -70,7 +70,7 @@
             box-shadow: 0 8px 40px rgba(0,0,0,0.5), 0 1px 0 rgba(255,255,255,0.12) inset;
         }
         .glass-sidebar {
-            background: rgba(8,18,36,0.82);
+            background: rgba(1,0,87,0.82);
             backdrop-filter: blur(40px) saturate(200%);
             -webkit-backdrop-filter: blur(40px) saturate(200%);
             border-right: 1px solid rgba(255,255,255,0.09);
@@ -110,7 +110,7 @@
             border-color: rgba(201,155,14,0.55);
             box-shadow: 0 0 0 3px rgba(201,155,14,0.10);
         }
-        select.glass-input option { background: #0a192f; }
+        select.glass-input option { background: #010048; }
 
         /* ── Form controls (.input / .input-field were referenced ~79× but
               never defined — they rendered as white browser defaults on the
@@ -135,7 +135,7 @@
             border-color: rgba(var(--gold),0.55);
             box-shadow: 0 0 0 3px rgba(var(--gold),0.10);
         }
-        .input option, .input-field option { background: #0a192f; color: var(--text-primary); }
+        .input option, .input-field option { background: #010048; color: var(--text-primary); }
         textarea.glass-input, textarea.input, textarea.input-field { resize: vertical; min-height: 4.5rem; }
 
         /* Native <select> chevron so dropdowns match the dark theme */
@@ -160,7 +160,7 @@
             background: linear-gradient(135deg, rgba(201,155,14,0.95) 0%, rgba(160,124,8,0.95) 100%);
             border: 1px solid rgba(201,155,14,0.5);
             box-shadow: 0 4px 18px rgba(201,155,14,0.28), 0 1px 0 rgba(255,255,255,0.2) inset;
-            color: #0a192f; font-weight: 900;
+            color: #010048; font-weight: 900;
             transition: all 0.2s;
         }
         .glass-btn-amber:hover { box-shadow: 0 6px 26px rgba(201,155,14,0.38), 0 1px 0 rgba(255,255,255,0.25) inset; }
@@ -240,7 +240,7 @@
                 display: flex; align-items: center; gap: 0.75rem;
                 position: sticky; top: 0; z-index: 30;
                 padding: 0.625rem 1rem; height: 52px;
-                background: rgba(8,18,36,0.92);
+                background: rgba(1,0,87,0.92);
                 -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
                 border-bottom: 1px solid rgba(255,255,255,0.09);
             }
@@ -300,7 +300,7 @@
 <!-- PWA install banner -->
 <div x-data="pwaInstall()" x-init="init()" x-show="showBanner" x-cloak
      class="fixed bottom-6 left-4 right-4 lg:left-auto lg:right-6 lg:w-80 z-[110] rounded-xl p-4 shadow-2xl"
-     style="background:#0d1d33;border:1px solid rgba(201,155,14,0.3)">
+     style="background:#010057;border:1px solid rgba(201,155,14,0.3)">
     <div class="flex items-start gap-3">
         <img src="/icon.svg" class="w-11 h-11 rounded-xl" alt="OPESBooks">
         <div class="flex-1 min-w-0">
@@ -722,7 +722,7 @@
                         <button @click="setPage(item.page)" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-left transition-all"
                                 :style="onboarding?.checklist?.[item.k] ? 'background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2)' : 'background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08)'">
                             <span class="w-5 h-5 rounded-full flex items-center justify-center shrink-0"
-                                  :style="onboarding?.checklist?.[item.k] ? 'background:rgb(16,185,129);color:#0a192f' : 'background:rgba(255,255,255,0.08);color:rgba(148,163,184,0.6)'">
+                                  :style="onboarding?.checklist?.[item.k] ? 'background:rgb(16,185,129);color:#010048' : 'background:rgba(255,255,255,0.08);color:rgba(148,163,184,0.6)'">
                                 <svg x-show="onboarding?.checklist?.[item.k]" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>
                             </span>
                             <span class="text-xs font-bold" :class="onboarding?.checklist?.[item.k] ? 'text-slate-300 line-through opacity-60' : 'text-white'" x-text="lang==='FR'?item.fr:item.en"></span>
@@ -752,7 +752,7 @@
 
             <!-- DGI Provision banner -->
             <div class="glass-card rounded-2xl p-5 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between shimmer-top relative overflow-hidden"
-                 style="background:linear-gradient(135deg,rgba(201,155,14,0.12),rgba(10,25,47,0.7));border-color:rgba(201,155,14,0.28);box-shadow:0 8px 32px rgba(201,155,14,0.14),0 4px 24px rgba(0,0,0,0.5)">
+                 style="background:linear-gradient(135deg,rgba(201,155,14,0.12),rgba(1,0,72,0.7));border-color:rgba(201,155,14,0.28);box-shadow:0 8px 32px rgba(201,155,14,0.14),0 4px 24px rgba(0,0,0,0.5)">
                 <div class="absolute -right-8 -top-8 w-32 h-32 rounded-full blur-3xl pointer-events-none opacity-20"
                      style="background:radial-gradient(circle,rgba(201,155,14,1),transparent)"></div>
                 <div class="relative z-10">

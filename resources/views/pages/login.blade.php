@@ -19,7 +19,7 @@
         * { box-sizing: border-box; }
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
-            background: radial-gradient(ellipse 120% 80% at 20% -5%, #1a2d4f 0%, #0a192f 35%, #050d1a 65%, #0f0a1e 100%);
+            background: radial-gradient(ellipse 120% 80% at 20% -5%, #1a2d4f 0%, #010048 35%, #050d1a 65%, #0f0a1e 100%);
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
         }
@@ -58,12 +58,12 @@
             border-color: rgba(201,155,14,0.6);
             box-shadow: 0 0 0 3px rgba(201,155,14,0.12);
         }
-        select.glass-input option { background: #0a192f; }
+        select.glass-input option { background: #010048; }
         .glass-btn-amber {
             background: linear-gradient(135deg, rgba(201,155,14,0.95) 0%, rgba(160,124,8,0.95) 100%);
             border: 1px solid rgba(201,155,14,0.5);
             box-shadow: 0 4px 20px rgba(201,155,14,0.3), 0 1px 0 rgba(255,255,255,0.2) inset;
-            color: #0a192f;
+            color: #010048;
             font-weight: 900;
             transition: all 0.2s;
         }
