@@ -478,7 +478,11 @@
 
             <button @click="setPage('import')" :class="page==='import' ? 'nav-item active' : 'nav-item'" x-show="user?.role === 'OWNER' || user?.role === 'ACCOUNTANT'">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
-                <span x-text="lang==='FR' ? 'Import CSV' : 'CSV Import'"></span>
+                <span x-text="lang==='FR' ? 'Import relevé' : 'Bank Import'"></span>
+            </button>
+            <button @click="setPage('data-import')" :class="page==='data-import' ? 'nav-item active' : 'nav-item'" x-show="user?.role === 'OWNER' || user?.role === 'ACCOUNTANT'">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+                <span x-text="lang==='FR' ? 'Importer données' : 'Import Data'"></span>
             </button>
             <button @click="setPage('subledgers')" :class="page==='subledgers' ? 'nav-item active' : 'nav-item'" x-show="user?.role === 'OWNER' || user?.role === 'ACCOUNTANT'">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
@@ -1410,6 +1414,98 @@
                                   x-text="acc.code?.startsWith('5712') ? 'MTN' : acc.code?.startsWith('5713') ? 'ORANGE' : 'CASH'"></span>
                         </div>
                     </template>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!-- DATA IMPORT WIZARD (customers / suppliers / journal)        -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <div x-show="page==='data-import'" x-cloak class="p-6 space-y-5 float-in" x-data="dataImport()">
+            <div>
+                <h2 class="text-2xl font-black text-white" x-text="lang==='FR'?'Importer des données':'Import data'"></h2>
+                <p class="text-sm text-slate-400 mt-1" x-text="lang==='FR'?'Clients, fournisseurs ou écritures comptables — en 4 étapes.':'Customers, suppliers or journal entries — in 4 steps.'"></p>
+            </div>
+
+            <!-- Stepper -->
+            <div class="flex items-center gap-2 text-[11px] font-black uppercase tracking-wider">
+                <template x-for="(s,i) in steps" :key="i">
+                    <div class="flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-full flex items-center justify-center"
+                              :style="step>=i+1 ? 'background:#C99B0E;color:#010048' : 'background:rgba(255,255,255,0.1);color:#94a3b8'" x-text="i+1"></span>
+                        <span :class="step>=i+1?'text-amber-300':'text-slate-500'" x-text="lang==='FR'?s.fr:s.en"></span>
+                        <span x-show="i<3" class="w-6 h-px bg-white/15"></span>
+                    </div>
+                </template>
+            </div>
+
+            <div class="glass-card rounded-2xl p-6">
+                <!-- Step 1: pick type + download template -->
+                <div x-show="step===1" class="space-y-4">
+                    <p class="text-[10px] font-black text-amber-400 uppercase tracking-widest" x-text="lang==='FR'?'1. Type de données & modèle':'1. Data type & template'"></p>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <template x-for="t in types" :key="t.key">
+                            <button @click="type=t.key" class="text-left p-4 rounded-xl border transition"
+                                    :style="type===t.key ? 'border-color:#C99B0E;background:rgba(201,155,14,0.08)' : 'border-color:rgba(255,255,255,0.12)'">
+                                <div class="font-black text-white text-sm" x-text="lang==='FR'?t.fr:t.en"></div>
+                                <div class="text-[11px] text-slate-400 mt-1" x-text="lang==='FR'?t.descFr:t.descEn"></div>
+                            </button>
+                        </template>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-3 pt-2">
+                        <button @click="downloadTemplate()" class="glass-btn-dark px-4 py-2 rounded-xl text-xs font-bold text-white">⬇ <span x-text="lang==='FR'?'Télécharger le modèle CSV':'Download CSV template'"></span></button>
+                        <button @click="step=2" class="glass-btn px-5 py-2 rounded-xl text-xs font-black text-slate-900" x-text="lang==='FR'?'Suivant →':'Next →'"></button>
+                    </div>
+                </div>
+
+                <!-- Step 2: upload -->
+                <div x-show="step===2" class="space-y-4">
+                    <p class="text-[10px] font-black text-amber-400 uppercase tracking-widest" x-text="lang==='FR'?'2. Téléverser le fichier rempli':'2. Upload your filled file'"></p>
+                    <input type="file" accept=".csv,text/csv" @change="onFile($event)" class="block w-full text-sm text-slate-300 file:mr-3 file:px-4 file:py-2 file:rounded-lg file:border-0 file:bg-amber-500/20 file:text-amber-300 file:font-bold">
+                    <p x-show="error" x-cloak class="text-xs font-bold text-red-400" x-text="error"></p>
+                    <div class="flex gap-3">
+                        <button @click="step=1" class="glass-btn-dark px-4 py-2 rounded-xl text-xs text-white" x-text="lang==='FR'?'← Retour':'← Back'"></button>
+                        <button @click="runPreview()" :disabled="!file||loading" class="glass-btn px-5 py-2 rounded-xl text-xs font-black text-slate-900 disabled:opacity-50" x-text="loading?'…':(lang==='FR'?'Valider →':'Validate →')"></button>
+                    </div>
+                </div>
+
+                <!-- Step 3: preview -->
+                <div x-show="step===3 && report" class="space-y-4">
+                    <p class="text-[10px] font-black text-amber-400 uppercase tracking-widest" x-text="lang==='FR'?'3. Aperçu & validation':'3. Preview & validation'"></p>
+                    <div class="flex gap-3 text-xs">
+                        <span class="px-3 py-1.5 rounded-lg font-bold" style="background:rgba(16,185,129,0.15);color:#6ee7b7"><span x-text="report?.valid_count"></span> <span x-text="lang==='FR'?'valides':'valid'"></span></span>
+                        <span x-show="report?.error_count>0" class="px-3 py-1.5 rounded-lg font-bold" style="background:rgba(244,63,94,0.15);color:#fca5a5"><span x-text="report?.error_count"></span> <span x-text="lang==='FR'?'en erreur':'with errors'"></span></span>
+                    </div>
+                    <div class="overflow-auto rounded-xl border border-white/10 max-h-80">
+                        <table class="w-full text-[11px]">
+                            <thead class="sticky top-0" style="background:#010057">
+                                <tr><th class="px-2 py-2 text-left text-slate-400">#</th>
+                                    <template x-for="h in report.headers" :key="h"><th class="px-2 py-2 text-left text-slate-400" x-text="h"></th></template>
+                                    <th class="px-2 py-2 text-left text-slate-400" x-text="lang==='FR'?'Erreurs':'Errors'"></th></tr>
+                            </thead>
+                            <tbody>
+                                <template x-for="r in report.rows" :key="r.line">
+                                    <tr :style="r.errors.length ? 'background:rgba(244,63,94,0.06)' : ''" class="border-t border-white/5">
+                                        <td class="px-2 py-1.5 text-slate-500" x-text="r.line"></td>
+                                        <template x-for="h in report.headers" :key="h"><td class="px-2 py-1.5 text-slate-300" x-text="r.data[h]"></td></template>
+                                        <td class="px-2 py-1.5 text-red-300" x-text="r.errors.join('; ')"></td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="flex gap-3">
+                        <button @click="step=2" class="glass-btn-dark px-4 py-2 rounded-xl text-xs text-white" x-text="lang==='FR'?'← Retour':'← Back'"></button>
+                        <button @click="runCommit()" :disabled="report?.error_count>0||loading" class="glass-btn px-5 py-2 rounded-xl text-xs font-black text-slate-900 disabled:opacity-50"
+                                x-text="loading?'…':(report?.error_count>0 ? (lang==='FR'?'Corrigez les erreurs':'Fix errors first') : (lang==='FR'?'Importer '+report?.valid_count+' lignes':'Import '+report?.valid_count+' rows'))"></button>
+                    </div>
+                </div>
+
+                <!-- Step 4: done -->
+                <div x-show="step===4" class="text-center py-6 space-y-3">
+                    <div class="text-4xl">✓</div>
+                    <p class="text-lg font-black text-emerald-300" x-text="result"></p>
+                    <button @click="reset()" class="glass-btn px-5 py-2 rounded-xl text-xs font-black text-slate-900" x-text="lang==='FR'?'Nouvel import':'New import'"></button>
                 </div>
             </div>
         </div>
@@ -4861,6 +4957,77 @@ function invoiceForm() {
                 this.generating = false;
             }
         },
+    };
+}
+
+function dataImport() {
+    return {
+        step: 1,
+        type: 'customers',
+        file: null,
+        report: null,
+        result: '',
+        loading: false,
+        error: '',
+        _companyId: null,
+        steps: [
+            { fr:'Type', en:'Type' }, { fr:'Fichier', en:'File' },
+            { fr:'Aperçu', en:'Preview' }, { fr:'Terminé', en:'Done' },
+        ],
+        types: [
+            { key:'customers', fr:'Clients', en:'Customers', descFr:'Nom, NIU, email, téléphone…', descEn:'Name, NIU, email, phone…' },
+            { key:'suppliers', fr:'Fournisseurs', en:'Suppliers', descFr:'Nom, NIU, contacts, délais', descEn:'Name, NIU, contacts, terms' },
+            { key:'journal', fr:'Écritures', en:'Journal', descFr:'Écritures à double entrée', descEn:'Double-entry lines' },
+        ],
+        async companyId() {
+            if (this._companyId) return this._companyId;
+            const token = localStorage.getItem('opes_token');
+            const me = await (await fetch('/api/v1/auth/me', { headers:{'Authorization':'Bearer '+token,'Accept':'application/json'} })).json();
+            this._companyId = me.company?.id;
+            return this._companyId;
+        },
+        async downloadTemplate() {
+            const token = localStorage.getItem('opes_token');
+            const id = await this.companyId();
+            const res = await fetch(`/api/v1/companies/${id}/import/template/${this.type}`, { headers:{'Authorization':'Bearer '+token} });
+            const blob = await res.blob();
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `opesbooks_template_${this.type}.csv`;
+            document.body.appendChild(a); a.click(); a.remove();
+            window.opesToast && window.opesToast('success', this.lang==='FR'?'Modèle téléchargé':'Template downloaded');
+        },
+        onFile(e) { this.file = e.target.files[0] || null; this.error=''; this.report=null; },
+        async _send(endpoint) {
+            const token = localStorage.getItem('opes_token');
+            const id = await this.companyId();
+            const fd = new FormData();
+            fd.append('type', this.type);
+            fd.append('file', this.file);
+            const res = await fetch(`/api/v1/companies/${id}/import/${endpoint}`, {
+                method:'POST', headers:{'Authorization':'Bearer '+token,'Accept':'application/json'}, body: fd,
+            });
+            return { ok: res.ok, data: await res.json() };
+        },
+        async runPreview() {
+            if (!this.file) return;
+            this.loading=true; this.error='';
+            try {
+                const { ok, data } = await this._send('preview');
+                if (!ok) throw new Error(data.message || Object.values(data.errors??{}).flat().join(' | '));
+                this.report = data; this.step = 3;
+            } catch(e) { this.error = e.message; } finally { this.loading=false; }
+        },
+        async runCommit() {
+            this.loading=true; this.error='';
+            try {
+                const { ok, data } = await this._send('commit');
+                if (!ok) { this.report = data.report || this.report; throw new Error(data.message || 'Erreur'); }
+                this.result = data.message; this.step = 4;
+                window.opesToast && window.opesToast('success', data.message);
+            } catch(e) { this.error = e.message; window.opesToast && window.opesToast('error', e.message); } finally { this.loading=false; }
+        },
+        reset() { this.step=1; this.file=null; this.report=null; this.result=''; this.error=''; },
     };
 }
 
