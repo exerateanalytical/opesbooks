@@ -8,8 +8,8 @@
         <p class="text-white/60 mt-4">Une question ? L'équipe Opesware vous répond depuis Douala.</p>
     </div>
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-10 text-center">
-        <div class="glass rounded-xl p-5"><div class="text-gold font-black text-xs uppercase tracking-widest">Email</div><div class="text-sm text-white/80 mt-2">contact@opesware.cm</div></div>
-        <div class="glass rounded-xl p-5"><div class="text-gold font-black text-xs uppercase tracking-widest">Téléphone</div><div class="text-sm text-white/80 mt-2">+237 6XX XXX XXX</div></div>
+        <div class="glass rounded-xl p-5"><div class="text-gold font-black text-xs uppercase tracking-widest">Email</div><div class="text-sm text-white/80 mt-2">contact@opesware.com</div></div>
+        <div class="glass rounded-xl p-5"><div class="text-gold font-black text-xs uppercase tracking-widest">Téléphone</div><div class="text-sm text-white/80 mt-2">+237 670 416 238</div></div>
         <div class="glass rounded-xl p-5"><div class="text-gold font-black text-xs uppercase tracking-widest">Adresse</div><div class="text-sm text-white/80 mt-2">Douala, Cameroun</div></div>
     </div>
     <div class="glass rounded-2xl p-6 mt-8"
@@ -35,7 +35,7 @@
         <template x-if="sent">
             <div class="text-center py-6">
                 <div class="text-emerald-400 font-black">✓ Message envoyé</div>
-                <p class="text-white/50 text-sm mt-2">Nous vous répondrons sous 24h. Vous pouvez aussi écrire à contact@opesware.cm.</p>
+                <p class="text-white/50 text-sm mt-2">Nous vous répondrons sous 24h. Vous pouvez aussi écrire à contact@opesware.com.</p>
             </div>
         </template>
     </div>

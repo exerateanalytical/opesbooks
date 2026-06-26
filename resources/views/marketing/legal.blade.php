@@ -14,7 +14,7 @@
     <p class="text-white/40 text-xs mt-3">Dernière mise à jour : {{ now()->translatedFormat('F Y') }}</p>
     <div class="legal mt-8">{!! $content !!}</div>
     <div class="glass rounded-xl p-5 mt-10 text-sm text-white/60">
-        Pour toute question juridique, écrivez à <a href="mailto:contact@opesware.cm" class="text-gold">contact@opesware.cm</a>.
+        Pour toute question juridique, écrivez à <a href="mailto:contact@opesware.com" class="text-gold">contact@opesware.com</a>.
     </div>
 </article>
 @endsection

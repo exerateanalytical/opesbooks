@@ -111,7 +111,7 @@
                 <div>
                     <div class="text-white font-black text-xl tracking-tight">OPESWARE</div>
                     <div class="text-slate-400 text-xs font-medium mt-0.5">Software Engineering · Douala, Cameroun</div>
-                    <div class="text-indigo-400 text-[11px] font-bold mt-1">opesware.cm</div>
+                    <div class="text-indigo-400 text-[11px] font-bold mt-1">opesware.com</div>
                 </div>
             </div>
             <p class="text-slate-400 text-sm leading-relaxed mb-5">
@@ -120,7 +120,11 @@
             <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
                 <div class="rounded-xl p-3" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08)">
                     <div class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Contact</div>
-                    <div class="text-slate-300 text-xs font-medium">contact@opesware.cm</div>
+                    <div class="text-slate-300 text-xs font-medium">contact@opesware.com</div>
+                </div>
+                <div class="rounded-xl p-3" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08)">
+                    <div class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Téléphone</div>
+                    <div class="text-slate-300 text-xs font-medium">+237 670 416 238</div>
                 </div>
                 <div class="rounded-xl p-3" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08)">
                     <div class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Siège</div>

@@ -47,7 +47,7 @@
             @else
                 <p class="text-sm text-slate-400">
                     Veuillez réessayer dans quelques instants ou contacter
-                    <span class="text-amber-400 font-bold">support@opesware.cm</span>
+                    <span class="text-amber-400 font-bold">support@opesware.com</span>
                 </p>
             @endif
         </div>

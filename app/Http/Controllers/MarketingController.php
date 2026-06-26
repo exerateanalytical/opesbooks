@@ -114,10 +114,10 @@ HTML;
 <p>Vos données comptables ne sont jamais vendues. Elles peuvent être transmises à l'administration fiscale (DGI) uniquement sur votre instruction (télédéclaration), ou à des prestataires techniques strictement nécessaires au fonctionnement du service.</p>
 
 <h2>7. Vos droits</h2>
-<p>Vous disposez d'un droit d'accès, de rectification, d'export et de suppression de vos données. L'export est disponible depuis votre espace ; pour toute demande, écrivez à <a href="mailto:contact@opesware.cm">contact@opesware.cm</a>.</p>
+<p>Vous disposez d'un droit d'accès, de rectification, d'export et de suppression de vos données. L'export est disponible depuis votre espace ; pour toute demande, écrivez à <a href="mailto:contact@opesware.com">contact@opesware.com</a>.</p>
 
 <h2>8. Contact</h2>
-<p>Opesware — Douala, Cameroun — <a href="mailto:contact@opesware.cm">contact@opesware.cm</a>.</p>
+<p>Opesware — Douala, Cameroun — <a href="mailto:contact@opesware.com">contact@opesware.com</a>.</p>
 HTML;
 
         return view('marketing.legal', ['title' => 'Politique de Confidentialité', 'content' => $content]);
@@ -132,7 +132,7 @@ HTML;
         ]);
 
         try {
-            \Illuminate\Support\Facades\Mail::to('contact@opesware.cm')->send(new \App\Mail\TransactionalMail(
+            \Illuminate\Support\Facades\Mail::to('contact@opesware.com')->send(new \App\Mail\TransactionalMail(
                 subjectLine: "Contact site — {$data['name']}",
                 heading: 'Nouveau message depuis le site',
                 lines: [
