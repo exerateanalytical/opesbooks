@@ -5,12 +5,12 @@
 @section('content')
 <!-- Hero -->
 <section class="relative overflow-hidden pt-20 pb-14 text-center px-5">
-    <div class="absolute inset-0 pointer-events-none" style="background:radial-gradient(ellipse 900px 400px at 50% -80px,rgba(201,155,14,0.12),transparent)"></div>
-    <span class="inline-block px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-widest text-gold mb-6" style="background:rgba(201,155,14,0.1);border:1px solid rgba(201,155,14,0.3)">Une plateforme, tout votre back-office</span>
+    <div class="absolute inset-0 pointer-events-none" style="background:radial-gradient(ellipse 900px 400px at 50% -80px,rgba(245,158,11,0.12),transparent)"></div>
+    <span class="inline-block px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-widest text-gold mb-6" style="background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.30)">Une plateforme, tout votre back-office</span>
     <h1 class="text-4xl md:text-6xl font-black leading-tight max-w-4xl mx-auto">Tout ce qu'il faut pour <span class="text-gold">gérer une PME</span><br>au Cameroun et en CEMAC</h1>
     <p class="text-white/60 mt-6 max-w-2xl mx-auto text-base md:text-lg leading-relaxed">De la première écriture à la télédéclaration DGI — comptabilité SYSCOHADA, facturation électronique MECeF, paie, trésorerie Mobile Money, CRM et IA, conçu nativement pour l'environnement fiscal camerounais.</p>
     <div class="flex flex-wrap justify-center gap-3 mt-8">
-        <a href="/login" class="px-6 py-3.5 rounded-xl text-sm font-black text-[#010048] bg-gold hover:bg-gold-light transition">Essai gratuit 30 jours →</a>
+        <a href="/login" class="px-6 py-3.5 rounded-xl text-sm font-black text-navy bg-gold hover:bg-gold-light transition">Essai gratuit 30 jours →</a>
         <a href="{{ route('m.pricing') }}" class="px-6 py-3.5 rounded-xl text-sm font-bold text-white glass hover:bg-white/10 transition">Voir les tarifs</a>
     </div>
     <!-- Stat bar -->
@@ -187,11 +187,11 @@ $colors = [
 
 <!-- Bottom CTA -->
 <section class="max-w-4xl mx-auto px-5 pb-20 text-center">
-    <div class="glass rounded-3xl p-10" style="background:linear-gradient(145deg,rgba(201,155,14,0.08),rgba(255,255,255,0.03))">
+    <div class="glass rounded-3xl p-10" style="background:linear-gradient(145deg,rgba(245,158,11,0.08),rgba(255,255,255,0.03))">
         <h2 class="text-2xl md:text-3xl font-black">Prêt à simplifier votre comptabilité ?</h2>
         <p class="text-white/60 mt-3 text-sm">Essai gratuit 30 jours · Sans carte bancaire · Support en français</p>
         <div class="flex flex-wrap justify-center gap-3 mt-6">
-            <a href="/login" class="px-7 py-3.5 rounded-xl text-sm font-black text-[#010048] bg-gold hover:bg-gold-light transition">Commencer gratuitement →</a>
+            <a href="/login" class="px-7 py-3.5 rounded-xl text-sm font-black text-navy bg-gold hover:bg-gold-light transition">Commencer gratuitement →</a>
             <a href="{{ route('m.contact') }}" class="px-7 py-3.5 rounded-xl text-sm font-bold text-white glass hover:bg-white/10 transition">Parler à un conseiller</a>
         </div>
     </div>

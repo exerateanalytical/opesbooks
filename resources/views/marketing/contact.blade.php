@@ -6,8 +6,8 @@
 
 <!-- Hero -->
 <section class="relative overflow-hidden pt-16 pb-10 text-center px-5">
-    <div class="absolute inset-0 pointer-events-none" style="background:radial-gradient(ellipse 600px 300px at 50% -60px,rgba(201,155,14,0.09),transparent)"></div>
-    <span class="inline-block px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-widest text-gold mb-5" style="background:rgba(201,155,14,0.1);border:1px solid rgba(201,155,14,0.3)">Équipe Douala</span>
+    <div class="absolute inset-0 pointer-events-none" style="background:radial-gradient(ellipse 600px 300px at 50% -60px,rgba(245,158,11,0.09),transparent)"></div>
+    <span class="inline-block px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-widest text-gold mb-5" style="background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.30)">Équipe Douala</span>
     <h1 class="text-3xl md:text-5xl font-black leading-tight">Parlons de votre <span class="text-gold">comptabilité</span></h1>
     <p class="text-white/60 mt-4 max-w-xl mx-auto text-base leading-relaxed">Une question sur OPESBooks, une démo, un tarif Enterprise ou un problème à résoudre ? Notre équipe à Douala vous répond sous 24h en jours ouvrés.</p>
 </section>
@@ -68,7 +68,7 @@
                     <div class="flex flex-wrap gap-2 mb-6">
                         @foreach(['general'=>'Question générale','demo'=>'Demander une démo','support'=>'Support technique','enterprise'=>'Plan Enterprise','partnership'=>'Partenariat'] as $val => $label)
                         <button type="button" @click="form.subject='{{ $val }}'"
-                                :class="form.subject==='{{ $val }}' ? 'bg-gold text-[#010048]' : 'glass text-white/60 hover:text-white'"
+                                :class="form.subject==='{{ $val }}' ? 'bg-gold text-navy' : 'glass text-white/60 hover:text-white'"
                                 class="px-3 py-1.5 rounded-lg text-xs font-bold transition">{{ $label }}</button>
                         @endforeach
                     </div>
@@ -104,7 +104,7 @@
                         </div>
                         <p x-show="error" x-cloak class="text-red-400 text-xs font-bold p-3 rounded-lg bg-red-900/20" x-text="error"></p>
                         <button :disabled="sending" type="submit"
-                                class="w-full px-4 py-3.5 rounded-xl text-sm font-black text-[#010048] bg-gold hover:bg-gold-light transition disabled:opacity-50"
+                                class="w-full px-4 py-3.5 rounded-xl text-sm font-black text-navy bg-gold hover:bg-gold-light transition disabled:opacity-50"
                                 x-text="sending ? 'Envoi en cours…' : 'Envoyer le message →'"></button>
                         <p class="text-white/25 text-xs text-center">En soumettant ce formulaire, vous acceptez d'être contacté par l'équipe Opesware.</p>
                     </form>
@@ -118,7 +118,7 @@
                     </div>
                     <h3 class="text-xl font-black text-emerald-400">Message envoyé !</h3>
                     <p class="text-white/55 text-sm mt-3 leading-relaxed">Merci pour votre message. Notre équipe à Douala vous répondra sous 24h en jours ouvrés.<br><br>En attendant, vous pouvez nous écrire directement à <a href="mailto:contact@opesware.com" class="text-gold hover:underline">contact@opesware.com</a> ou nous appeler au <a href="tel:+237670416238" class="text-gold hover:underline">+237 670 416 238</a>.</p>
-                    <a href="/login" class="inline-block mt-6 px-6 py-3 rounded-xl text-sm font-black text-[#010048] bg-gold hover:bg-gold-light transition">Essayer OPESBooks gratuitement →</a>
+                    <a href="/login" class="inline-block mt-6 px-6 py-3 rounded-xl text-sm font-black text-navy bg-gold hover:bg-gold-light transition">Essayer OPESBooks gratuitement →</a>
                 </div>
             </template>
         </div>

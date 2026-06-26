@@ -56,7 +56,7 @@ $groups = [
 
 @section('content')
 <section class="max-w-3xl mx-auto px-5 pt-16 pb-8 text-center">
-    <span class="inline-block px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-widest text-gold mb-5" style="background:rgba(201,155,14,0.1);border:1px solid rgba(201,155,14,0.3)">Aide & réponses</span>
+    <span class="inline-block px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-widest text-gold mb-5" style="background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.30)">Aide & réponses</span>
     <h1 class="text-3xl md:text-5xl font-black leading-tight">Questions fréquentes</h1>
     <p class="text-white/60 mt-4">Comptabilité et fiscalité au Cameroun et en zone CEMAC — et tout sur OPESBooks.</p>
 </section>
@@ -79,11 +79,11 @@ $groups = [
     </div>
     @endforeach
 
-    <div class="glass rounded-2xl p-8 text-center" style="background:linear-gradient(145deg,rgba(201,155,14,0.08),rgba(255,255,255,0.03))">
+    <div class="glass rounded-2xl p-8 text-center" style="background:linear-gradient(145deg,rgba(245,158,11,0.08),rgba(255,255,255,0.03))">
         <h2 class="text-xl md:text-2xl font-black">Une autre question ?</h2>
         <p class="text-white/60 mt-2 text-sm">Notre équipe à Douala vous répond.</p>
         <div class="flex flex-wrap justify-center gap-3 mt-5">
-            <a href="{{ route('m.contact') }}" class="px-6 py-3 rounded-xl text-sm font-black text-[#010048] bg-gold hover:bg-gold-light transition">Nous contacter</a>
+            <a href="{{ route('m.contact') }}" class="px-6 py-3 rounded-xl text-sm font-black text-navy bg-gold hover:bg-gold-light transition">Nous contacter</a>
             <a href="/login" class="px-6 py-3 rounded-xl text-sm font-bold text-white glass hover:bg-white/10 transition">Essayer gratuitement</a>
         </div>
     </div>

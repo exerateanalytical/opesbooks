@@ -9,9 +9,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        tailwind.config = { theme: { extend: { colors: { amber: {
-            300:'#E3B420', 400:'#C99B0E', 500:'#B5890C', 600:'#A07C08', 700:'#866709'
-        } } } } };
+        tailwind.config = { theme: { extend: { colors: {
+            gold: '#F59E0B', 'gold-light': '#FCD34D', 'gold-dim': '#D97706',
+            surface: '#1E293B', navy: '#0F172A', border: '#334155'
+        } } } };
     </script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
@@ -19,7 +20,7 @@
         * { box-sizing: border-box; }
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
-            background: radial-gradient(ellipse 120% 80% at 20% -5%, #1a2d4f 0%, #010048 35%, #050d1a 65%, #0f0a1e 100%);
+            background: #0F172A;
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
         }
@@ -29,22 +30,17 @@
             inset: 0;
             pointer-events: none;
             background:
-                radial-gradient(ellipse 60% 40% at 10% 15%, rgba(201,155,14,0.09) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 40% at 10% 15%, rgba(245,158,11,0.09) 0%, transparent 60%),
                 radial-gradient(ellipse 50% 35% at 90% 80%, rgba(16,185,129,0.07) 0%, transparent 55%);
         }
         .glass-card {
-            background: linear-gradient(145deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.04) 100%);
-            backdrop-filter: blur(32px) saturate(200%);
-            -webkit-backdrop-filter: blur(32px) saturate(200%);
-            border: 1px solid rgba(255,255,255,0.14);
-            border-top-color: rgba(255,255,255,0.24);
-            box-shadow: 0 8px 48px rgba(0,0,0,0.6), 0 1px 0 rgba(255,255,255,0.14) inset;
+            background: #1E293B;
+            border: 1px solid #334155;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
         }
         .glass-input {
-            background: rgba(255,255,255,0.06);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border: 1px solid rgba(255,255,255,0.14);
+            background: #293548;
+            border: 1px solid #334155;
             color: #f1f5f9;
             transition: border-color 0.2s, box-shadow 0.2s;
             width: 100%;
@@ -52,29 +48,28 @@
             padding: 0.625rem 1rem;
             font-size: 0.875rem;
         }
-        .glass-input::placeholder { color: rgba(148,163,184,0.55); }
+        .glass-input::placeholder { color: #64748B; }
         .glass-input:focus {
             outline: none;
-            border-color: rgba(201,155,14,0.6);
-            box-shadow: 0 0 0 3px rgba(201,155,14,0.12);
+            border-color: rgba(245,158,11,0.7);
+            box-shadow: 0 0 0 3px rgba(245,158,11,0.12);
         }
-        select.glass-input option { background: #010048; }
+        select.glass-input option { background: #1E293B; }
         .glass-btn-amber {
-            background: linear-gradient(135deg, rgba(201,155,14,0.95) 0%, rgba(160,124,8,0.95) 100%);
-            border: 1px solid rgba(201,155,14,0.5);
-            box-shadow: 0 4px 20px rgba(201,155,14,0.3), 0 1px 0 rgba(255,255,255,0.2) inset;
-            color: #010048;
+            background: #F59E0B;
+            border: 1px solid rgba(245,158,11,0.5);
+            box-shadow: 0 2px 12px rgba(245,158,11,0.25);
+            color: #0F172A;
             font-weight: 900;
             transition: all 0.2s;
         }
-        .glass-btn-amber:hover { box-shadow: 0 6px 28px rgba(201,155,14,0.4), 0 1px 0 rgba(255,255,255,0.25) inset; }
+        .glass-btn-amber:hover { background: #D97706; box-shadow: 0 4px 18px rgba(245,158,11,0.35); }
         .glass-btn-amber:active { transform: scale(0.98); }
         .glass-btn-dark {
-            background: linear-gradient(135deg, rgba(30,58,100,0.9) 0%, rgba(15,30,58,0.95) 100%);
-            border: 1px solid rgba(255,255,255,0.14);
-            box-shadow: 0 4px 16px rgba(0,0,0,0.5), 0 1px 0 rgba(255,255,255,0.1) inset;
+            background: #293548;
+            border: 1px solid #334155;
             color: white;
-            font-weight: 900;
+            font-weight: 700;
             transition: all 0.2s;
         }
         .glass-btn-dark:hover { border-color: rgba(255,255,255,0.22); }
@@ -92,7 +87,7 @@
         {{-- Brand --}}
         <div class="text-center mb-8 float-in">
             <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4"
-                 style="background:linear-gradient(145deg,rgba(201,155,14,0.2),rgba(201,155,14,0.08));border:1px solid rgba(201,155,14,0.3);box-shadow:0 0 40px rgba(201,155,14,0.15)">
+                 style="background:linear-gradient(145deg,rgba(245,158,11,0.2),rgba(245,158,11,0.08));border:1px solid rgba(245,158,11,0.3);box-shadow:0 0 40px rgba(245,158,11,0.15)">
                 <span class="text-amber-400 font-black text-lg tracking-widest">OB</span>
             </div>
             <h1 class="text-3xl font-black text-white tracking-tight">
@@ -112,7 +107,7 @@
                 <button @click="tab = 'login'; error=''"
                         class="flex-1 py-4 text-xs font-black uppercase tracking-wider transition-all"
                         :style="tab === 'login'
-                            ? 'color:rgb(201,155,14);border-bottom:2px solid rgb(201,155,14)'
+                            ? 'color:rgb(245,158,11);border-bottom:2px solid rgb(245,158,11)'
                             : 'color:rgba(148,163,184,0.7)'">
                     <span x-show="lang === 'FR'">Connexion</span>
                     <span x-show="lang === 'EN'" x-cloak>Login</span>
@@ -120,7 +115,7 @@
                 <button @click="tab = 'register'; error=''"
                         class="flex-1 py-4 text-xs font-black uppercase tracking-wider transition-all"
                         :style="tab === 'register'
-                            ? 'color:rgb(201,155,14);border-bottom:2px solid rgb(201,155,14)'
+                            ? 'color:rgb(245,158,11);border-bottom:2px solid rgb(245,158,11)'
                             : 'color:rgba(148,163,184,0.7)'">
                     <span x-show="lang === 'FR'">Créer un Compte</span>
                     <span x-show="lang === 'EN'" x-cloak>Register</span>
@@ -144,7 +139,7 @@
                         <button type="button"
                                 @click="loginForm.email='owner@testco.cm'; loginForm.password='password123'"
                                 class="px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider text-left transition-all"
-                                style="background:rgba(201,155,14,0.08);border:1px solid rgba(201,155,14,0.2)">
+                                style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2)">
                             <div class="text-amber-400 flex items-center gap-1.5">
                                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7z"/><path d="M5 20h14"/></svg>
                                 Owner

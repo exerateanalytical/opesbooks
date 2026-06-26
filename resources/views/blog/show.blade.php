@@ -17,12 +17,12 @@
     .article-body code{background:rgba(255,255,255,0.08);padding:.1rem .4rem;border-radius:.3rem;font-size:.9em}
     .article-body table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.9rem}
     .article-body th,.article-body td{border:1px solid rgba(255,255,255,0.12);padding:.5rem .75rem;text-align:left}
-    .article-body th{background:rgba(201,155,14,0.1);color:#fff}
+    .article-body th{background:rgba(245,158,11,0.12);color:#fff}
     .article-body hr{border:none;border-top:1px solid rgba(255,255,255,0.1);margin:2rem 0}
 </style>
 <article class="max-w-3xl mx-auto px-5 py-16">
     <a href="{{ route('blog.index') }}" class="text-gold text-xs font-black uppercase tracking-widest">← Tous les articles</a>
-    @if($post->tags)<div class="flex flex-wrap gap-2 mt-5">@foreach($post->tags as $t)<span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider text-gold" style="background:rgba(201,155,14,0.1);border:1px solid rgba(201,155,14,0.25)">{{ $t }}</span>@endforeach</div>@endif
+    @if($post->tags)<div class="flex flex-wrap gap-2 mt-5">@foreach($post->tags as $t)<span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider text-gold" style="background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.22)">{{ $t }}</span>@endforeach</div>@endif
     <h1 class="text-3xl md:text-4xl font-black mt-4 leading-tight">{{ $post->title }}</h1>
     <div class="text-white/40 text-xs mt-3">{{ optional($post->published_at)->translatedFormat('d F Y') }} · {{ $post->reading_time_minutes }} min de lecture</div>
     @if($post->excerpt)<p class="text-white/70 text-lg mt-6 leading-relaxed">{{ $post->excerpt }}</p>@endif

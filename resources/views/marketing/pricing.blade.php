@@ -6,8 +6,8 @@
 
 <!-- Hero -->
 <section class="relative overflow-hidden pt-20 pb-12 text-center px-5">
-    <div class="absolute inset-0 pointer-events-none" style="background:radial-gradient(ellipse 700px 350px at 50% -80px,rgba(201,155,14,0.1),transparent)"></div>
-    <span class="inline-block px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-widest text-gold mb-6" style="background:rgba(201,155,14,0.1);border:1px solid rgba(201,155,14,0.3)">Tarifs simples en XAF</span>
+    <div class="absolute inset-0 pointer-events-none" style="background:radial-gradient(ellipse 700px 350px at 50% -80px,rgba(245,158,11,0.12),transparent)"></div>
+    <span class="inline-block px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-widest text-gold mb-6" style="background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.30)">Tarifs simples en XAF</span>
     <h1 class="text-4xl md:text-6xl font-black leading-tight max-w-4xl mx-auto">Commencez gratuitement.<br><span class="text-gold">Grandissez à votre rythme.</span></h1>
     <p class="text-white/60 mt-6 max-w-xl mx-auto text-base leading-relaxed">Pas de carte bancaire internationale. Payez en Orange Money, MTN MoMo ou virement. Sans engagement.</p>
     <div class="flex flex-wrap justify-center gap-6 mt-8 text-sm text-white/50">
@@ -25,7 +25,7 @@
         @php $popular = $p->slug === 'growth' || $p->slug === 'business'; @endphp
         <div class="glass rounded-2xl p-6 flex flex-col relative {{ $popular ? 'ring-1 ring-gold' : '' }}">
             @if($popular)
-            <span class="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest text-[#010048] bg-gold whitespace-nowrap">⭐ Populaire</span>
+            <span class="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest text-navy bg-gold whitespace-nowrap">⭐ Populaire</span>
             @endif
             <div class="text-[11px] font-black uppercase tracking-widest text-gold mb-3">{{ $p->name }}</div>
             <div class="flex items-end gap-1 mb-1">
@@ -64,7 +64,7 @@
 
             <a href="{{ $p->slug==='enterprise' ? route('m.contact') : '/login' }}"
                class="block text-center px-4 py-3 rounded-xl text-sm font-black transition
-               {{ $popular ? 'bg-gold hover:bg-gold-light text-[#010048]' : 'glass hover:bg-white/10 text-white' }}">
+               {{ $popular ? 'bg-gold hover:bg-gold-light text-navy' : 'glass hover:bg-white/10 text-white' }}">
                 @if($p->slug==='free') Commencer gratuitement
                 @elseif($p->slug==='enterprise') Nous contacter
                 @else Choisir {{ $p->name }} →
@@ -191,11 +191,11 @@
         @endforeach
     </div>
 
-    <div class="glass rounded-2xl p-8 mt-10 text-center" style="background:linear-gradient(145deg,rgba(201,155,14,0.08),rgba(255,255,255,0.02))">
+    <div class="glass rounded-2xl p-8 mt-10 text-center" style="background:linear-gradient(145deg,rgba(245,158,11,0.08),rgba(255,255,255,0.02))">
         <h2 class="text-xl font-black">Encore des questions ?</h2>
         <p class="text-white/55 text-sm mt-2">Notre équipe à Douala vous répond sous 24h.</p>
         <div class="flex flex-wrap justify-center gap-3 mt-5">
-            <a href="/login" class="px-6 py-3 rounded-xl text-sm font-black text-[#010048] bg-gold hover:bg-gold-light transition">Commencer gratuitement →</a>
+            <a href="/login" class="px-6 py-3 rounded-xl text-sm font-black text-navy bg-gold hover:bg-gold-light transition">Commencer gratuitement →</a>
             <a href="{{ route('m.contact') }}" class="px-6 py-3 rounded-xl text-sm font-bold text-white glass hover:bg-white/10 transition">Parler à un conseiller</a>
         </div>
     </div>

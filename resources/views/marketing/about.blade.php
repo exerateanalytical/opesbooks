@@ -6,8 +6,8 @@
 
 <!-- Hero -->
 <section class="relative overflow-hidden pt-20 pb-14 text-center px-5">
-    <div class="absolute inset-0 pointer-events-none" style="background:radial-gradient(ellipse 800px 400px at 50% -80px,rgba(201,155,14,0.1),transparent)"></div>
-    <span class="inline-block px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-widest text-gold mb-6" style="background:rgba(201,155,14,0.1);border:1px solid rgba(201,155,14,0.3)">Notre histoire</span>
+    <div class="absolute inset-0 pointer-events-none" style="background:radial-gradient(ellipse 800px 400px at 50% -80px,rgba(245,158,11,0.12),transparent)"></div>
+    <span class="inline-block px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-widest text-gold mb-6" style="background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.30)">Notre histoire</span>
     <h1 class="text-4xl md:text-6xl font-black leading-tight max-w-4xl mx-auto">Le bouclier fiscal des<br><span class="text-gold">PME camerounaises</span></h1>
     <p class="text-white/60 mt-6 max-w-2xl mx-auto text-base md:text-lg leading-relaxed">Nous avons fondé OPESBooks parce que les PME africaines méritent des outils comptables conçus pour leur réalité — pas des logiciels occidentaux mal adaptés.</p>
 </section>
@@ -16,14 +16,14 @@
 <section class="max-w-5xl mx-auto px-5 pb-16">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div class="glass rounded-2xl p-8 space-y-4">
-            <div class="w-12 h-12 rounded-xl flex items-center justify-center text-gold" style="background:rgba(201,155,14,0.1);border:1px solid rgba(201,155,14,0.25)">
+            <div class="w-12 h-12 rounded-xl flex items-center justify-center text-gold" style="background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.22)">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
             </div>
             <h2 class="text-xl font-black">Notre mission</h2>
             <p class="text-white/65 text-sm leading-relaxed">Donner à chaque PME camerounaise — qu'elle soit à Douala, Yaoundé, Bafoussam ou Garoua — les mêmes outils de gestion financière que les grandes entreprises, à un prix accessible, en Francs CFA, avec un support en français et depuis le Cameroun.</p>
         </div>
         <div class="glass rounded-2xl p-8 space-y-4">
-            <div class="w-12 h-12 rounded-xl flex items-center justify-center text-gold" style="background:rgba(201,155,14,0.1);border:1px solid rgba(201,155,14,0.25)">
+            <div class="w-12 h-12 rounded-xl flex items-center justify-center text-gold" style="background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.22)">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
             </div>
             <h2 class="text-xl font-black">Notre vision</h2>
@@ -54,7 +54,7 @@
 
 <!-- Stats -->
 <section class="max-w-5xl mx-auto px-5 pb-16">
-    <div class="glass rounded-3xl p-8 md:p-10" style="background:linear-gradient(145deg,rgba(201,155,14,0.07),rgba(255,255,255,0.02))">
+    <div class="glass rounded-3xl p-8 md:p-10" style="background:linear-gradient(145deg,rgba(245,158,11,0.07),rgba(255,255,255,0.02))">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             @foreach([['2023','Année de création'],['Douala','Siège social'],['CEMAC','Zone couverte'],['XAF','Devise native']] as $s)
             <div>
@@ -102,7 +102,7 @@
             ['Conformité continue','Les règles fiscales évoluent. Nous mettons à jour OPESBooks dès chaque nouvelle loi de finances — vous restez conforme sans rien faire.','M4 4v5h.582m15.356 2A8.001 8.001 0 0 0 4.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 0 1-15.357-2m15.357 2H15'],
         ] as [$title, $desc, $icon])
         <div class="glass rounded-xl p-5 flex gap-4">
-            <div class="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 mt-0.5" style="background:rgba(201,155,14,0.1);border:1px solid rgba(201,155,14,0.25)">
+            <div class="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 mt-0.5" style="background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.22)">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2"><path d="{{ $icon }}"/></svg>
             </div>
             <div>
@@ -121,7 +121,7 @@
             <h2 class="text-xl md:text-2xl font-black">Vous voulez en savoir plus ?</h2>
             <p class="text-white/60 text-sm mt-2 leading-relaxed">Parlez à notre équipe depuis Douala. Nous répondons en français et en anglais, sous 24h en jours ouvrés.</p>
             <div class="flex flex-wrap gap-3 mt-6">
-                <a href="{{ route('m.contact') }}" class="px-6 py-3 rounded-xl text-sm font-black text-[#010048] bg-gold hover:bg-gold-light transition">Nous contacter →</a>
+                <a href="{{ route('m.contact') }}" class="px-6 py-3 rounded-xl text-sm font-black text-navy bg-gold hover:bg-gold-light transition">Nous contacter →</a>
                 <a href="/login" class="px-6 py-3 rounded-xl text-sm font-bold text-white glass hover:bg-white/10 transition">Essai gratuit 30 jours</a>
             </div>
         </div>

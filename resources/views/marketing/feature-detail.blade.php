@@ -42,7 +42,7 @@ $c = $colors[$module['color']];
             </div>
         </div>
         <div class="flex flex-wrap gap-3 mt-8">
-            <a href="/login" class="px-6 py-3 rounded-xl text-sm font-black text-[#010048] bg-gold hover:bg-gold-light transition">Essayer gratuitement →</a>
+            <a href="/login" class="px-6 py-3 rounded-xl text-sm font-black text-navy bg-gold hover:bg-gold-light transition">Essayer gratuitement →</a>
             <a href="{{ route('m.features') }}" class="px-6 py-3 rounded-xl text-sm font-bold text-white glass hover:bg-white/10 transition">← Toutes les fonctionnalités</a>
         </div>
     </div>
@@ -104,11 +104,11 @@ $c = $colors[$module['color']];
 
 <!-- CTA -->
 <section class="max-w-4xl mx-auto px-5 pb-20 text-center">
-    <div class="glass rounded-3xl p-10" style="background:linear-gradient(145deg,rgba(201,155,14,0.08),rgba(255,255,255,0.03))">
+    <div class="glass rounded-3xl p-10" style="background:linear-gradient(145deg,rgba(245,158,11,0.08),rgba(255,255,255,0.03))">
         <h2 class="text-2xl md:text-3xl font-black">Commencez avec {{ $module['title'] }}</h2>
         <p class="text-white/60 mt-3 text-sm">Essai gratuit 30 jours · Sans carte bancaire · Support en français</p>
         <div class="flex flex-wrap justify-center gap-3 mt-6">
-            <a href="/login" class="px-7 py-3.5 rounded-xl text-sm font-black text-[#010048] bg-gold hover:bg-gold-light transition">Démarrer l'essai gratuit →</a>
+            <a href="/login" class="px-7 py-3.5 rounded-xl text-sm font-black text-navy bg-gold hover:bg-gold-light transition">Démarrer l'essai gratuit →</a>
             <a href="{{ route('m.contact') }}" class="px-7 py-3.5 rounded-xl text-sm font-bold text-white glass hover:bg-white/10 transition">Demander une démo</a>
         </div>
     </div>
