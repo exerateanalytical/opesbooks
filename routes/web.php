@@ -16,6 +16,7 @@ Route::get('/fonctionnalites', [\App\Http\Controllers\MarketingController::class
 Route::get('/tarifs',          [\App\Http\Controllers\MarketingController::class, 'pricing'])->name('m.pricing');
 Route::get('/contact',         [\App\Http\Controllers\MarketingController::class, 'contact'])->name('m.contact');
 Route::get('/a-propos',        [\App\Http\Controllers\MarketingController::class, 'about'])->name('m.about');
+Route::get('/faq',             [\App\Http\Controllers\MarketingController::class, 'faq'])->name('m.faq');
 Route::get('/blog',            [\App\Http\Controllers\BlogController::class, 'index'])->name('blog.index');
 Route::get('/blog/{post}',     [\App\Http\Controllers\BlogController::class, 'show'])->name('blog.show');
 

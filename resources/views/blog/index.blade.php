@@ -10,14 +10,17 @@
     </div>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
         @forelse($posts as $post)
-        <a href="{{ route('blog.show', $post) }}" class="glass rounded-2xl overflow-hidden hover:border-gold/30 transition block">
-            <div class="h-36 bg-gradient-to-br from-[#01006e] to-[#010048] flex items-center justify-center">
-                <span class="font-black tracking-widest text-gold/40">OPESBOOKS</span>
+        @php $tag = is_array($post->tags) ? ($post->tags[0] ?? 'GUIDE') : 'GUIDE'; @endphp
+        <a href="{{ route('blog.show', $post) }}" class="glass rounded-2xl overflow-hidden hover:border-gold/30 transition flex flex-col">
+            <div class="h-36 relative flex items-end p-4" style="background:linear-gradient(135deg,#01006e 0%,#010048 60%,#0a0820 100%)">
+                <div class="absolute inset-0 opacity-30" style="background:radial-gradient(ellipse 80% 70% at 80% 10%,rgba(201,155,14,0.5),transparent 60%)"></div>
+                <span class="relative px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider text-[#010048] bg-gold">{{ $tag }}</span>
             </div>
-            <div class="p-5">
+            <div class="p-5 flex-1 flex flex-col">
                 <div class="text-[10px] uppercase tracking-widest text-gold mb-2">{{ optional($post->published_at)->translatedFormat('d M Y') }} · {{ $post->reading_time_minutes }} min</div>
                 <div class="font-black text-white leading-snug">{{ $post->title }}</div>
-                <p class="text-white/50 text-xs mt-2 leading-relaxed">{{ \Illuminate\Support\Str::limit($post->excerpt, 110) }}</p>
+                <p class="text-white/50 text-xs mt-2 leading-relaxed flex-1">{{ \Illuminate\Support\Str::limit($post->excerpt, 110) }}</p>
+                <span class="text-gold text-xs font-bold mt-3">Lire l'article →</span>
             </div>
         </a>
         @empty

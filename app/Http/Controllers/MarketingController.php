@@ -32,4 +32,9 @@ class MarketingController extends Controller
     {
         return view('marketing.about');
     }
+
+    public function faq()
+    {
+        return view('marketing.faq');
+    }
 }
