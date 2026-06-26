@@ -12,7 +12,8 @@ Route::get('/about', fn () => view('pages.about'))->name('about');
 
 // Public marketing site (conversion funnel)
 Route::get('/',                [\App\Http\Controllers\MarketingController::class, 'home'])->name('home');
-Route::get('/fonctionnalites', [\App\Http\Controllers\MarketingController::class, 'features'])->name('m.features');
+Route::get('/fonctionnalites',        [\App\Http\Controllers\MarketingController::class, 'features'])->name('m.features');
+Route::get('/fonctionnalites/{slug}', [\App\Http\Controllers\MarketingController::class, 'feature'])->name('m.feature');
 Route::get('/tarifs',          [\App\Http\Controllers\MarketingController::class, 'pricing'])->name('m.pricing');
 Route::get('/contact',         [\App\Http\Controllers\MarketingController::class, 'contact'])->name('m.contact');
 Route::get('/a-propos',        [\App\Http\Controllers\MarketingController::class, 'about'])->name('m.about');
