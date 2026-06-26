@@ -394,7 +394,7 @@
                     localStorage.setItem('opes_token', json.token);
                     localStorage.setItem('opes_user', JSON.stringify(json.user));
                     if (json.company) localStorage.setItem('opes_company', JSON.stringify(json.company));
-                    window.location.href = '/app';
+                    window.location.href = json.user?.role === 'SUPER_ADMIN' ? '/admin' : '/app';
                 } catch (e) {
                     this.error = e.message;
                 } finally {

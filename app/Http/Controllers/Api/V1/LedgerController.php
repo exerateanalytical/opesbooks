@@ -16,7 +16,7 @@ class LedgerController extends Controller
     {
         $request->validate([
             'from'     => 'nullable|date_format:Y-m-d',
-            'to'       => 'nullable|date_format:Y-m-d',
+            'to'       => 'nullable|date_format:Y-m-d|after_or_equal:from',
             'pipeline' => 'nullable|in:AUTOMATED_MOMO,AUTOMATED_ORANGE,MANUAL_CASH,MANUAL_BANK,MANUAL_INVOICE',
             'per_page' => 'nullable|integer|min:5|max:200',
         ]);

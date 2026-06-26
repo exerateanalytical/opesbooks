@@ -35,7 +35,7 @@ class PayrollController extends Controller
             'name'             => 'required|string|max:255',
             'cnps_number'      => 'nullable|string|max:30',
             'position'         => 'nullable|string|max:100',
-            'gross_salary_xaf' => 'required|numeric|min:36270', // SMIG Cameroun
+            'gross_salary_xaf' => 'required|numeric|min:' . config('opes.smig_xaf', 36270),
             'hire_date'        => 'required|date',
         ]);
         $employee = Employee::create(['company_id' => $company->id, ...$data]);
@@ -49,7 +49,7 @@ class PayrollController extends Controller
             'name'             => 'sometimes|string|max:255',
             'cnps_number'      => 'nullable|string|max:30',
             'position'         => 'nullable|string|max:100',
-            'gross_salary_xaf' => 'sometimes|numeric|min:36270',
+            'gross_salary_xaf' => 'sometimes|numeric|min:' . config('opes.smig_xaf', 36270),
             'termination_date' => 'nullable|date',
             'is_active'        => 'sometimes|boolean',
         ]);

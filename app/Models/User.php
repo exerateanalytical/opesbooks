@@ -80,6 +80,6 @@ class User extends Authenticatable
 
     public function activeCaisseCode(): string
     {
-        return $this->assigned_caisse_code ?? '571100';
+        return $this->assigned_caisse_code ?? config('opes.default_caisse_code', '571100');
     }
 }

@@ -12,11 +12,10 @@ use Illuminate\Validation\Rule;
 
 class SubscriptionController extends Controller
 {
-    private const PLAN_PRICES_XAF = [
-        'STARTER'    => 5000.00,
-        'GROWTH'     => 15000.00,
-        'ENTERPRISE' => 45000.00,
-    ];
+    private static function planPrices(): array
+    {
+        return config('opes.plans', ['STARTER' => 5000, 'GROWTH' => 15000, 'ENTERPRISE' => 45000]);
+    }
 
     /**
      * POST /api/v1/companies/{company}/subscriptions/initiate
@@ -32,7 +31,7 @@ class SubscriptionController extends Controller
             'billing_phone' => 'required|string|regex:/^\+?[0-9]{9,15}$/',
         ]);
 
-        $amountXaf = self::PLAN_PRICES_XAF[$data['plan']];
+        $amountXaf = self::planPrices()[$data['plan']];
 
         // Create a PENDING subscription record
         $subscription = Subscription::create([

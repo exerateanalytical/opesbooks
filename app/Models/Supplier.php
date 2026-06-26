@@ -17,5 +17,9 @@ class Supplier extends Model
 
     protected $casts = ['is_active' => 'boolean'];
 
-    public function company() { return $this->belongsTo(Company::class); }
+    public function company()        { return $this->belongsTo(Company::class); }
+    public function invoices()       { return $this->hasMany(SupplierInvoice::class); }
+    public function creditNotes()    { return $this->hasMany(SupplierCreditNote::class); }
+    public function purchaseOrders() { return $this->hasMany(PurchaseOrder::class); }
+    public function deliveryNotes()  { return $this->hasMany(DeliveryNote::class); }
 }

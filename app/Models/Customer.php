@@ -17,6 +17,9 @@ class Customer extends Model
 
     protected $casts = ['is_active' => 'boolean', 'credit_limit_xaf' => 'float'];
 
-    public function company()    { return $this->belongsTo(Company::class); }
-    public function invoices()   { return $this->hasMany(CustomerInvoice::class); }
+    public function company()       { return $this->belongsTo(Company::class); }
+    public function invoices()      { return $this->hasMany(CustomerInvoice::class); }
+    public function creditNotes()   { return $this->hasMany(CustomerCreditNote::class); }
+    public function quotations()    { return $this->hasMany(CustomerQuotation::class); }
+    public function deliveryNotes() { return $this->hasMany(DeliveryNote::class); }
 }
