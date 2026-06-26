@@ -16,14 +16,7 @@
     <meta name="apple-mobile-web-app-title" content="OPESBooks">
     <link rel="apple-touch-icon" href="/icon.svg">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = { theme: { extend: { colors: {
-            gold: '#F59E0B', 'gold-light': '#FCD34D', 'gold-dim': '#D97706',
-            surface: '#1E293B', 'surface-raised': '#293548', border: '#334155', navy: '#0F172A'
-        } } } };
-    </script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         /* ── Design tokens ────────────────────────────────────────────────
            Aligned with marketing site. Edit here to retheme the whole app. */

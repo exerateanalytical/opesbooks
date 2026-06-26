@@ -77,35 +77,26 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs mb-1.5 font-medium" style="color:var(--c-muted)">Votre nom *</label>
-                                <input x-model="form.name" required placeholder="Jean Dupont"
-                                       class="w-full rounded-xl px-4 py-3 text-white text-sm focus:outline-none transition"
-                                       style="background:#293548;border:1px solid #334155" onfocus="this.style.borderColor='rgba(245,158,11,0.7)'" onblur="this.style.borderColor='#334155'">
+                                <input x-model="form.name" required placeholder="Jean Dupont" class="form-input">
                             </div>
                             <div>
                                 <label class="block text-xs mb-1.5 font-medium" style="color:var(--c-muted)">Email *</label>
-                                <input x-model="form.email" type="email" required placeholder="jean@example.cm"
-                                       class="w-full rounded-xl px-4 py-3 text-white text-sm focus:outline-none transition"
-                                       style="background:#293548;border:1px solid #334155" onfocus="this.style.borderColor='rgba(245,158,11,0.7)'" onblur="this.style.borderColor='#334155'">
+                                <input x-model="form.email" type="email" required placeholder="jean@example.cm" class="form-input">
                             </div>
                             <div>
                                 <label class="block text-xs mb-1.5 font-medium" style="color:var(--c-muted)">Entreprise</label>
-                                <input x-model="form.company" placeholder="Nom de votre entreprise"
-                                       class="w-full rounded-xl px-4 py-3 text-white text-sm focus:outline-none transition"
-                                       style="background:#293548;border:1px solid #334155" onfocus="this.style.borderColor='rgba(245,158,11,0.7)'" onblur="this.style.borderColor='#334155'">
+                                <input x-model="form.company" placeholder="Nom de votre entreprise" class="form-input">
                             </div>
                             <div>
                                 <label class="block text-xs mb-1.5 font-medium" style="color:var(--c-muted)">Téléphone / WhatsApp</label>
-                                <input x-model="form.phone" placeholder="+237 6XX XXX XXX"
-                                       class="w-full rounded-xl px-4 py-3 text-white text-sm focus:outline-none transition"
-                                       style="background:#293548;border:1px solid #334155" onfocus="this.style.borderColor='rgba(245,158,11,0.7)'" onblur="this.style.borderColor='#334155'">
+                                <input x-model="form.phone" placeholder="+237 6XX XXX XXX" class="form-input">
                             </div>
                         </div>
                         <div>
                             <label class="block text-xs mb-1.5 font-medium" style="color:var(--c-muted)">Votre message *</label>
                             <textarea x-model="form.message" required rows="5"
                                       placeholder="Décrivez votre besoin, votre activité, le nombre d'utilisateurs…"
-                                      class="w-full rounded-xl px-4 py-3 text-white text-sm focus:outline-none transition resize-none"
-                                      style="background:#293548;border:1px solid #334155" onfocus="this.style.borderColor='rgba(245,158,11,0.7)'" onblur="this.style.borderColor='#334155'"></textarea>
+                                      class="form-input resize-none" style="min-height:8rem"></textarea>
                         </div>
                         <p x-show="error" x-cloak class="text-red-400 text-xs font-bold p-3 rounded-lg bg-red-900/20" x-text="error"></p>
                         <button :disabled="sending" type="submit"

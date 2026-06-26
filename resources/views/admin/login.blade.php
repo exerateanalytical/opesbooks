@@ -4,29 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OpesBooks — Admin Login</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = { theme: { extend: { colors: { amber: {
-            300:'#E3B420', 400:'#F59E0B', 500:'#B5890C', 600:'#A07C08', 700:'#866709'
-        } } } } };
-    </script>
+    <script>tailwind.config={theme:{extend:{colors:{gold:'#F59E0B','gold-dim':'#D97706',navy:'#0B1120',surface:'#151F2E','surface-raised':'#1C2A3A',border:'#253347'}}}};</script>
+    <style>
+        :root{--c-bg:#0B1120;--c-surface:#151F2E;--c-raised:#1C2A3A;--c-border:#253347;--c-border-strong:#334155;--c-accent:#F59E0B;--c-text:#F0F4FA;--c-muted:#8B9EC0;--c-faint:#4E647E}
+        *{box-sizing:border-box}
+        body{font-family:'Inter',sans-serif;background:var(--c-bg);color:var(--c-text);-webkit-font-smoothing:antialiased}
+        .field{width:100%;background:var(--c-raised);border:1.5px solid var(--c-border);color:var(--c-text);border-radius:0.75rem;padding:0.625rem 1rem;font-size:0.875rem;font-family:inherit;transition:border-color .15s,box-shadow .15s;outline:none}
+        .field::placeholder{color:var(--c-faint)}
+        .field:focus{border-color:var(--c-accent);box-shadow:0 0 0 3px rgba(245,158,11,.12)}
+    </style>
 </head>
-<body class="bg-slate-950 text-slate-200 min-h-screen flex items-center justify-center">
+<body class="min-h-screen flex items-center justify-center p-4">
 
     <div class="w-full max-w-sm">
         <div class="text-center mb-8">
             <div class="inline-flex items-center gap-2 mb-3">
-                <div class="w-9 h-9 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-[11px] font-black text-amber-400">OB</div>
-                <span class="text-white font-black text-lg tracking-widest">OPES<span class="text-amber-400">ADMIN</span></span>
+                <div class="w-9 h-9 rounded-xl flex items-center justify-center text-[11px] font-black" style="background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.3);color:#F59E0B">OB</div>
+                <span class="text-white font-black text-lg tracking-widest">OPES<span style="color:#F59E0B">ADMIN</span></span>
             </div>
-            <p class="text-slate-500 text-xs uppercase tracking-widest font-bold">Platform Console</p>
+            <p class="text-xs font-bold uppercase tracking-widest" style="color:var(--c-faint)">Platform Console</p>
         </div>
 
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-8 shadow-2xl">
+        <div class="rounded-2xl p-8" style="background:var(--c-surface);border:1px solid var(--c-border);box-shadow:0 4px 24px rgba(0,0,0,0.5)">
             <h1 class="text-lg font-black text-white mb-6 text-center">Sign In</h1>
 
             @if($errors->any())
-                <div class="mb-5 px-4 py-3 rounded-xl bg-red-500/15 border border-red-500/30 text-red-300 text-sm font-semibold">
+                <div class="mb-5 px-4 py-3 rounded-xl text-sm font-semibold" style="background:rgba(244,63,94,0.1);border:1px solid rgba(244,63,94,0.25);color:rgb(252,165,165)">
                     {{ $errors->first() }}
                 </div>
             @endif
@@ -34,26 +40,23 @@
             <form method="POST" action="{{ route('admin.login.post') }}" class="space-y-4">
                 @csrf
                 <div>
-                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Email</label>
+                    <label class="block text-[10px] font-black uppercase tracking-widest mb-1.5" style="color:var(--c-muted)">Email</label>
                     <input type="email" name="email" value="{{ old('email') }}" required autofocus
-                           class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-amber-500/60 focus:ring-2 focus:ring-amber-500/10 transition-all"
-                           placeholder="admin@opesbooks.cm">
+                           class="field" placeholder="admin@opesbooks.cm">
                 </div>
                 <div>
-                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Password</label>
-                    <input type="password" name="password" required
-                           class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-amber-500/60 focus:ring-2 focus:ring-amber-500/10 transition-all"
-                           placeholder="••••••••">
+                    <label class="block text-[10px] font-black uppercase tracking-widest mb-1.5" style="color:var(--c-muted)">Password</label>
+                    <input type="password" name="password" required class="field" placeholder="••••••••">
                 </div>
                 <button type="submit"
-                        class="w-full mt-2 py-2.5 rounded-xl text-sm font-black uppercase tracking-widest text-slate-900 transition-all
-                               bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 shadow-lg shadow-amber-500/20">
+                        class="w-full mt-2 py-2.5 rounded-xl text-sm font-black uppercase tracking-widest transition-all"
+                        style="background:#F59E0B;color:#0B1120;box-shadow:0 2px 8px rgba(245,158,11,0.3)">
                     Access Admin Panel
                 </button>
             </form>
         </div>
 
-        <p class="text-center text-slate-600 text-[10px] mt-6 uppercase tracking-widest">
+        <p class="text-center text-xs mt-6 uppercase tracking-widest" style="color:var(--c-faint)">
             Restricted to SUPER_ADMIN accounts only
         </p>
     </div>

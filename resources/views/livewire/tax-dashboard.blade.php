@@ -59,8 +59,7 @@
         <div class="lg:col-span-2 space-y-4">
 
             {{-- Turnover panel --}}
-            <div class="glass-shimmer rounded-2xl p-5"
-                 style="background:rgba(255,255,255,0.055);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);border:1px solid rgba(41,53,72,1);box-shadow:0 4px 24px rgba(0,0,0,0.4)">
+            <div class="glass rounded-2xl p-5" style="box-shadow:0 4px 24px rgba(0,0,0,0.4)">
                 <h2 class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">
                     {{ $language === 'FR' ? 'Chiffre d\'Affaires' : 'Turnover' }}
                 </h2>
@@ -82,8 +81,7 @@
             </div>
 
             {{-- Output taxes --}}
-            <div class="glass-shimmer rounded-2xl p-5"
-                 style="background:rgba(255,255,255,0.055);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);border:1px solid rgba(41,53,72,1);box-shadow:0 4px 24px rgba(0,0,0,0.4)">
+            <div class="glass rounded-2xl p-5" style="box-shadow:0 4px 24px rgba(0,0,0,0.4)">
                 <h2 class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">
                     {{ $language === 'FR' ? 'Taxes Collectées (Sortie)' : 'Output Taxes Collected' }}
                 </h2>
@@ -102,7 +100,7 @@
                         <p class="text-xl font-black text-white font-mono">{{ number_format((float) $taxMetrics['output_cac_collected'], 2) }}</p>
                         <p class="text-[9px] text-slate-500 mt-1 font-mono">XAF · Cpte 448600</p>
                     </div>
-                    <div class="rounded-xl p-4" style="background:rgba(30,41,59,0.9);border:1px solid rgba(41,53,72,1)">
+                    <div class="rounded-xl p-4" style="background:#1C2A3A;border:1px solid #253347">
                         <p class="text-[10px] text-slate-400 font-black uppercase tracking-wider mb-2">
                             {{ $language === 'FR' ? 'Total Taxes Sortie' : 'Total Output Tax' }}
                         </p>
@@ -113,13 +111,12 @@
             </div>
 
             {{-- Input VAT --}}
-            <div class="glass-shimmer rounded-2xl p-5"
-                 style="background:rgba(255,255,255,0.055);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);border:1px solid rgba(41,53,72,1);box-shadow:0 4px 24px rgba(0,0,0,0.4)">
+            <div class="glass rounded-2xl p-5" style="box-shadow:0 4px 24px rgba(0,0,0,0.4)">
                 <h2 class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">
                     {{ $language === 'FR' ? 'TVA Déductible (Entrée)' : 'Input VAT Recovery' }}
                 </h2>
                 <div class="grid grid-cols-3 gap-3">
-                    <div class="rounded-xl p-4" style="background:rgba(30,41,59,0.6);border:1px solid rgba(41,53,72,1)">
+                    <div class="rounded-xl p-4" style="background:#1C2A3A;border:1px solid #253347">
                         <p class="text-[10px] text-slate-400 font-black uppercase tracking-wider mb-2">
                             {{ $language === 'FR' ? 'TVA Brute Payée' : 'Gross Input VAT' }}
                         </p>
@@ -133,7 +130,7 @@
                         <p class="text-xl font-black text-emerald-400 font-mono">{{ number_format((float) $taxMetrics['input_vat_recoverable'], 2) }}</p>
                         <p class="text-[9px] text-slate-500 mt-1 font-mono">XAF ({{ $taxMetrics['prorata_coefficient'] }}%)</p>
                     </div>
-                    <div class="rounded-xl p-4" style="background:rgba(30,41,59,0.6);border:1px solid rgba(41,53,72,1)">
+                    <div class="rounded-xl p-4" style="background:#1C2A3A;border:1px solid #253347">
                         <p class="text-[10px] text-slate-400 font-black uppercase tracking-wider mb-2">
                             {{ $language === 'FR' ? 'Charges Déduct. HT' : 'Deductible Expenses' }}
                         </p>
@@ -149,8 +146,7 @@
         <div class="space-y-4">
 
             {{-- Net VAT to remit --}}
-            <div class="glass-shimmer rounded-2xl p-5"
-                 style="background:rgba(255,255,255,0.055);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);border:1px solid rgba(41,53,72,1);box-shadow:0 4px 24px rgba(0,0,0,0.4)">
+            <div class="glass rounded-2xl p-5" style="box-shadow:0 4px 24px rgba(0,0,0,0.4)">
                 <h2 class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">
                     {{ $language === 'FR' ? 'TVA Nette à Reverser' : 'Net VAT to Remit' }}
                 </h2>
@@ -167,7 +163,7 @@
                         <span>{{ $language === 'FR' ? '− TVA Récupérable' : '− Input VAT' }}</span>
                         <span class="font-mono font-bold">{{ number_format((float) $taxMetrics['input_vat_recoverable'], 2) }}</span>
                     </div>
-                    <div class="border-t pt-1.5 flex justify-between font-black" style="border-color:rgba(41,53,72,1);color:rgb(252,165,165)">
+                    <div class="border-t pt-1.5 flex justify-between font-black" style="border-color:#253347;color:rgb(252,165,165)">
                         <span>Net DGI</span>
                         <span class="font-mono">{{ number_format((float) $taxMetrics['net_vat_to_remit'], 2) }}</span>
                     </div>
@@ -175,8 +171,7 @@
             </div>
 
             {{-- Monthly IS Installment --}}
-            <div class="glass-shimmer rounded-2xl p-5"
-                 style="background:rgba(255,255,255,0.055);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);border:1px solid rgba(41,53,72,1);box-shadow:0 4px 24px rgba(0,0,0,0.4)">
+            <div class="glass rounded-2xl p-5" style="box-shadow:0 4px 24px rgba(0,0,0,0.4)">
                 <h2 class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">
                     {{ $language === 'FR' ? 'Acompte IS Mensuel' : 'Monthly IS Installment' }}
                 </h2>
