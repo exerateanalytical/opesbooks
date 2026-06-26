@@ -456,6 +456,14 @@ Route::prefix('v1')->name('v1.')->group(function () {
             // Cashflow projection (30/60/90 days)
             Route::get('cashflow/projection', [CashflowProjectionController::class, 'projection'])->name('cashflow.projection');
 
+            // Tenant API key self-service (OWNER only)
+            Route::middleware(\App\Http\Middleware\RequireRole::class . ':OWNER')->group(function () {
+                Route::get('api-keys',                    [\App\Http\Controllers\Api\V1\ApiKeyController::class, 'index'])->name('api-keys.index');
+                Route::post('api-keys',                   [\App\Http\Controllers\Api\V1\ApiKeyController::class, 'store'])->name('api-keys.store');
+                Route::delete('api-keys/{apiKey}',        [\App\Http\Controllers\Api\V1\ApiKeyController::class, 'revoke'])->name('api-keys.revoke');
+                Route::get('api-keys/{apiKey}/logs',      [\App\Http\Controllers\Api\V1\ApiKeyController::class, 'logs'])->name('api-keys.logs');
+            });
+
             // Subscription receipt PDF
             Route::get('subscriptions/receipt', [SubscriptionController::class, 'receipt'])->name('subscriptions.receipt');
 

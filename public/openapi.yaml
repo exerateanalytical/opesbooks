@@ -1,0 +1,482 @@
+openapi: 3.1.0
+info:
+  title: OPESBooks API
+  version: "1.0.0"
+  description: |
+    The OPESBooks REST API gives third-party applications access to accounting,
+    invoicing, and tax data for Cameroonian SMEs.
+
+    ## Authentication
+    All integration endpoints use API key authentication.
+    Include the key in the `Authorization` header:
+    ```
+    Authorization: Bearer ob_live_sk_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    ```
+    Keys are issued per-company via the OPESBooks dashboard (Settings → API Keys).
+
+    ## Rate Limiting
+    Each API key allows **1 000 requests/hour** by default.
+    Responses include `X-RateLimit-Limit`, `X-RateLimit-Remaining`, and `X-RateLimit-Reset` headers.
+
+    ## Versioning
+    The current stable version is `v1`. Breaking changes increment the major version.
+
+    ## Webhooks
+    Register webhook endpoints to receive real-time event notifications.
+    Each delivery includes an `X-OPESBooks-Signature` header (HMAC-SHA256 of the payload
+    using your endpoint secret) for verification.
+
+    ### Available events
+    | Event | Fired when |
+    |---|---|
+    | `invoice.created` | A new customer invoice is created |
+    | `invoice.paid` | An invoice status changes to PAID |
+    | `invoice.certified_mecef` | Invoice certified by MECEF/DGI |
+    | `payment.received` | A Mobile Money payment is ingested |
+    | `journal.entry.posted` | A journal entry is posted |
+    | `webhook.test` | Manual test ping |
+
+  contact:
+    name: Opesware Support
+    email: support@opesbooks.cm
+    url: https://opesbooks.cm
+  license:
+    name: Proprietary
+    url: https://opesbooks.cm/terms
+
+servers:
+  - url: https://opesbooks.cm/api/v1
+    description: Production
+  - url: http://127.0.0.1:8000/api/v1
+    description: Local development
+
+security:
+  - ApiKeyAuth: []
+
+tags:
+  - name: Auth
+    description: Register, login, profile
+  - name: Invoices
+    description: Customer invoices (integration surface)
+  - name: Journal
+    description: Read-only access to the general journal
+  - name: Tax
+    description: VAT / CAC summaries
+  - name: Reports
+    description: Profit & Loss and other financial reports
+  - name: Webhooks
+    description: Manage webhook endpoints and deliveries
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: http
+      scheme: bearer
+      description: "Bearer ob_live_sk_… or ob_test_sk_…"
+    SanctumAuth:
+      type: http
+      scheme: bearer
+      description: "Sanctum token from POST /api/v1/auth/login"
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        message: { type: string }
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items: { type: string }
+
+    Invoice:
+      type: object
+      properties:
+        id:             { type: integer }
+        invoice_number: { type: string, example: "API-2026-AB12CD" }
+        invoice_date:   { type: string, format: date }
+        due_date:       { type: string, format: date }
+        amount_ht:      { type: number, format: float }
+        tva_amount:     { type: number, format: float }
+        cac_amount:     { type: number, format: float }
+        amount_ttc:     { type: number, format: float }
+        status:
+          type: string
+          enum: [DRAFT, SENT, PAID, OVERDUE, CREDIT_NOTE]
+        customer:
+          type: object
+          properties:
+            id:   { type: integer }
+            name: { type: string }
+            niu:  { type: string, nullable: true }
+        notes:      { type: string, nullable: true }
+        created_at: { type: string, format: date-time }
+
+    JournalEntry:
+      type: object
+      properties:
+        id:            { type: integer }
+        reference_id:  { type: string }
+        posting_date:  { type: string, format: date }
+        memo:          { type: string }
+        status:        { type: string, enum: [DRAFT, POSTED, REVERSED] }
+        lines:
+          type: array
+          items:
+            type: object
+            properties:
+              account_code: { type: string, example: "411100" }
+              label:        { type: string }
+              debit:        { type: number }
+              credit:       { type: number }
+
+    VatSummary:
+      type: object
+      properties:
+        period:           { type: string, example: "2026-06" }
+        total_ht:         { type: number }
+        total_tva:        { type: number }
+        total_cac:        { type: number }
+        total_ttc:        { type: number }
+        invoices_count:   { type: integer }
+
+    ProfitAndLoss:
+      type: object
+      properties:
+        revenue:      { type: number }
+        expenses:     { type: number }
+        gross_profit: { type: number }
+        net_profit:   { type: number }
+        period_from:  { type: string, format: date }
+        period_to:    { type: string, format: date }
+
+    WebhookEndpoint:
+      type: object
+      properties:
+        id:        { type: integer }
+        url:       { type: string, format: uri }
+        events:    { type: array, items: { type: string } }
+        is_active: { type: boolean }
+        created_at:{ type: string, format: date-time }
+
+    Paginated:
+      type: object
+      properties:
+        data:          { type: array, items: {} }
+        current_page:  { type: integer }
+        last_page:     { type: integer }
+        per_page:      { type: integer }
+        total:         { type: integer }
+
+paths:
+
+  # ── AUTH ──────────────────────────────────────────────────────────────────
+
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Login and get a Sanctum token
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:    { type: string, format: email }
+                password: { type: string }
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:   { type: string }
+                  user:    { type: object }
+                  company: { type: object }
+        "422":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+
+  /auth/me:
+    get:
+      tags: [Auth]
+      summary: Get current authenticated user
+      security:
+        - SanctumAuth: []
+      responses:
+        "200":
+          description: Current user + company
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:    { type: object }
+                  company: { type: object }
+
+  # ── INVOICES ──────────────────────────────────────────────────────────────
+
+  /integration/invoices:
+    get:
+      tags: [Invoices]
+      summary: List customer invoices
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [DRAFT, SENT, PAID, OVERDUE, CREDIT_NOTE]
+        - in: query
+          name: per_page
+          schema: { type: integer, default: 25, maximum: 100 }
+        - in: query
+          name: page
+          schema: { type: integer, default: 1 }
+      responses:
+        "200":
+          description: Paginated invoice list
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Paginated'
+                  - properties:
+                      data:
+                        type: array
+                        items: { $ref: '#/components/schemas/Invoice' }
+        "401":
+          description: Missing or invalid API key
+
+    post:
+      tags: [Invoices]
+      summary: Create a customer invoice
+      description: Requires scope `invoices:write`
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [client_id, invoice_date, items]
+              properties:
+                client_id:
+                  type: integer
+                  description: ID of an existing customer in this company
+                invoice_date: { type: string, format: date }
+                due_date:     { type: string, format: date }
+                notes:        { type: string }
+                items:
+                  type: array
+                  minItems: 1
+                  items:
+                    type: object
+                    required: [description, quantity, unit_price]
+                    properties:
+                      description: { type: string }
+                      quantity:    { type: number, minimum: 0.01 }
+                      unit_price:  { type: number, minimum: 0 }
+      responses:
+        "201":
+          description: Invoice created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Invoice' }
+        "402":
+          description: Plan invoice limit reached
+        "422":
+          description: Validation error
+
+  /integration/invoices/{id}:
+    get:
+      tags: [Invoices]
+      summary: Get a single invoice
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Invoice detail
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Invoice' }
+        "404":
+          description: Not found
+
+  /integration/invoices/{id}/void:
+    post:
+      tags: [Invoices]
+      summary: Void an invoice
+      description: Requires scope `invoices:write`. Only DRAFT or SENT invoices can be voided.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Invoice voided
+        "422":
+          description: Invoice cannot be voided in its current status
+
+  # ── JOURNAL ───────────────────────────────────────────────────────────────
+
+  /integration/journal:
+    get:
+      tags: [Journal]
+      summary: List posted journal entries
+      description: Requires scope `journal:read`
+      parameters:
+        - in: query
+          name: from
+          schema: { type: string, format: date }
+        - in: query
+          name: to
+          schema: { type: string, format: date }
+        - in: query
+          name: per_page
+          schema: { type: integer, default: 25, maximum: 100 }
+      responses:
+        "200":
+          description: Paginated journal entries
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Paginated'
+                  - properties:
+                      data:
+                        type: array
+                        items: { $ref: '#/components/schemas/JournalEntry' }
+
+  # ── TAX ───────────────────────────────────────────────────────────────────
+
+  /integration/tax/vat-summary:
+    get:
+      tags: [Tax]
+      summary: Monthly TVA + CAC summary
+      description: Requires scope `tax:read`
+      parameters:
+        - in: query
+          name: year
+          schema: { type: integer, example: 2026 }
+        - in: query
+          name: month
+          schema: { type: integer, minimum: 1, maximum: 12 }
+      responses:
+        "200":
+          description: VAT summary
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/VatSummary' }
+
+  # ── REPORTS ───────────────────────────────────────────────────────────────
+
+  /integration/reports/pl:
+    get:
+      tags: [Reports]
+      summary: Profit & Loss statement
+      description: Requires scope `reports:read`
+      parameters:
+        - in: query
+          name: from
+          required: true
+          schema: { type: string, format: date }
+        - in: query
+          name: to
+          required: true
+          schema: { type: string, format: date }
+      responses:
+        "200":
+          description: P&L figures
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ProfitAndLoss' }
+
+  # ── WEBHOOKS ──────────────────────────────────────────────────────────────
+
+  /integration/webhooks:
+    get:
+      tags: [Webhooks]
+      summary: List webhook endpoints
+      description: Requires scope `webhooks:manage`
+      responses:
+        "200":
+          description: Endpoint list
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/WebhookEndpoint' }
+
+    post:
+      tags: [Webhooks]
+      summary: Register a webhook endpoint
+      description: Requires scope `webhooks:manage`
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [url, events]
+              properties:
+                url:
+                  type: string
+                  format: uri
+                  example: https://your-app.com/webhooks/opesbooks
+                events:
+                  type: array
+                  items:
+                    type: string
+                    enum:
+                      - invoice.created
+                      - invoice.paid
+                      - invoice.certified_mecef
+                      - payment.received
+                      - journal.entry.posted
+                secret:
+                  type: string
+                  description: Used to sign deliveries (HMAC-SHA256). Generate a strong random string.
+      responses:
+        "201":
+          description: Endpoint registered
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/WebhookEndpoint' }
+
+  /integration/webhooks/{id}:
+    delete:
+      tags: [Webhooks]
+      summary: Delete a webhook endpoint
+      description: Requires scope `webhooks:manage`
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Deleted
+
+  /integration/webhooks/{id}/test:
+    post:
+      tags: [Webhooks]
+      summary: Send a test event to the endpoint
+      description: Requires scope `webhooks:manage`
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Test event dispatched

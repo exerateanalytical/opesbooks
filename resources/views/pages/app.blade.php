@@ -615,6 +615,15 @@
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.14 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"/></svg>
                 <span x-text="lang==='FR' ? 'Suivi DGI' : 'DGI Monitor'"></span>
             </a>
+            <button @click="setPage('api-keys')" :class="page==='api-keys' ? 'nav-item active' : 'nav-item'"
+                    x-show="user?.role === 'OWNER'">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+                <span x-text="lang==='FR' ? 'Clés API' : 'API Keys'"></span>
+            </button>
+            <a href="/developer" target="_blank" class="nav-item" x-show="user?.role === 'OWNER'">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+                <span x-text="lang==='FR' ? 'Docs API' : 'API Docs'"></span>
+            </a>
             <a href="/about" class="nav-item">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 <span x-text="lang==='FR' ? 'À Propos' : 'About'"></span>
@@ -4313,6 +4322,151 @@
             </div>
         </div>
 
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!-- API KEYS PAGE                                              -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <div x-show="page==='api-keys'" x-cloak class="p-6 space-y-5 float-in" x-data="apiKeysPanel()" x-init="init()">
+            <div class="flex items-center justify-between gap-3 flex-wrap">
+                <div class="flex items-center gap-2">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+                    <h2 class="text-2xl font-black text-white uppercase tracking-wide" x-text="lang==='FR' ? 'Clés API' : 'API Keys'"></h2>
+                </div>
+                <div class="flex gap-2">
+                    <a href="/developer" target="_blank" class="glass-btn px-4 py-2 rounded-xl text-xs uppercase tracking-widest" x-text="lang==='FR' ? 'Docs API' : 'API Docs'"></a>
+                    <button @click="showCreate=!showCreate" class="glass-btn-amber px-4 py-2 rounded-xl text-xs uppercase tracking-widest font-bold" x-text="lang==='FR' ? '+ Nouvelle Clé' : '+ New Key'"></button>
+                </div>
+            </div>
+
+            <div x-show="err" class="text-red-400 text-xs p-3 rounded-xl bg-red-900/20" x-text="err"></div>
+            <div x-show="success" class="text-emerald-400 text-xs p-3 rounded-xl bg-emerald-900/20" x-text="success"></div>
+
+            <!-- New key created — show once -->
+            <div x-show="newKey" class="glass-card rounded-2xl p-5 border border-amber-500/40 bg-amber-900/10 space-y-3">
+                <div class="flex items-center gap-2">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    <span class="text-amber-400 text-xs font-bold uppercase tracking-widest" x-text="lang==='FR' ? 'Copiez cette clé maintenant — elle ne sera plus visible' : 'Copy this key now — it will not be shown again'"></span>
+                </div>
+                <div class="flex gap-2 items-center">
+                    <code class="flex-1 font-mono text-xs bg-black/30 px-4 py-3 rounded-xl text-amber-300 break-all" x-text="newKey"></code>
+                    <button @click="copyKey(newKey)" class="glass-btn px-4 py-2 rounded-xl text-xs whitespace-nowrap" x-text="copied ? '✔' : (lang==='FR' ? 'Copier' : 'Copy')"></button>
+                </div>
+                <button @click="newKey=null;copied=false" class="text-xs text-slate-400 hover:text-white" x-text="lang==='FR' ? 'Fermer' : 'Dismiss'"></button>
+            </div>
+
+            <!-- Create form -->
+            <div x-show="showCreate" class="glass-card rounded-2xl p-5 space-y-4">
+                <h3 class="text-sm font-bold uppercase tracking-widest" x-text="lang==='FR' ? 'Créer une clé API' : 'Create API Key'"></h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs opacity-60 mb-1" x-text="lang==='FR' ? 'Nom' : 'Name'"></label>
+                        <input x-model="form.name" class="input-field w-full" :placeholder="lang==='FR' ? 'ex. Intégration ERP' : 'e.g. ERP Integration'">
+                    </div>
+                    <div>
+                        <label class="block text-xs opacity-60 mb-1">Environnement</label>
+                        <select x-model="form.environment" class="input-field w-full">
+                            <option value="live">Live (Production)</option>
+                            <option value="test">Test (Sandbox)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs opacity-60 mb-1" x-text="lang==='FR' ? 'Expiration (optionnel)' : 'Expires (optional)'"></label>
+                        <input x-model="form.expires_at" type="date" class="input-field w-full">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs opacity-60 mb-2">Scopes / Permissions</label>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
+                        <template x-for="scope in availableScopes" :key="scope">
+                            <label class="flex items-center gap-2 text-xs cursor-pointer">
+                                <input type="checkbox" :value="scope" x-model="form.scopes" class="accent-amber-500">
+                                <span x-text="scope"></span>
+                            </label>
+                        </template>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <button @click="createKey()" :disabled="creating" class="glass-btn-amber px-5 py-2 rounded-xl text-xs uppercase tracking-widest disabled:opacity-40" x-text="creating ? '…' : (lang==='FR' ? 'Créer' : 'Create')"></button>
+                    <button @click="showCreate=false" class="glass-btn px-5 py-2 rounded-xl text-xs uppercase tracking-widest" x-text="lang==='FR' ? 'Annuler' : 'Cancel'"></button>
+                </div>
+            </div>
+
+            <!-- Keys table -->
+            <div x-show="loading" class="text-center py-8 text-slate-400 text-xs" x-text="lang==='FR' ? 'Chargement…' : 'Loading…'"></div>
+            <div x-show="!loading && keys.length===0 && !showCreate" class="text-center py-12 text-slate-500 text-sm" x-text="lang==='FR' ? 'Aucune clé API. Créez-en une pour commencer.' : 'No API keys yet. Create one to get started.'"></div>
+
+            <div x-show="keys.length>0" class="glass-card rounded-2xl overflow-hidden">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="border-b border-white/10 text-xs opacity-50">
+                            <th class="px-4 py-3 text-left" x-text="lang==='FR' ? 'Nom' : 'Name'"></th>
+                            <th class="px-4 py-3 text-left">Clé</th>
+                            <th class="px-4 py-3 text-left">Env.</th>
+                            <th class="px-4 py-3 text-left">Scopes</th>
+                            <th class="px-4 py-3 text-left" x-text="lang==='FR' ? 'Dernière utilisation' : 'Last used'"></th>
+                            <th class="px-4 py-3 text-left" x-text="lang==='FR' ? 'Expiration' : 'Expires'"></th>
+                            <th class="px-4 py-3 text-left">Status</th>
+                            <th class="px-4 py-3"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template x-for="k in keys" :key="k.id">
+                            <tr class="border-b border-white/5 hover:bg-white/5">
+                                <td class="px-4 py-3 font-semibold" x-text="k.name"></td>
+                                <td class="px-4 py-3"><code class="font-mono text-xs text-amber-300" x-text="k.key_preview"></code></td>
+                                <td class="px-4 py-3">
+                                    <span class="text-xs px-2 py-0.5 rounded-full font-bold"
+                                          :class="k.environment==='live' ? 'bg-emerald-900/40 text-emerald-400' : 'bg-slate-700 text-slate-300'"
+                                          x-text="k.environment==='live' ? 'Live' : 'Test'"></span>
+                                </td>
+                                <td class="px-4 py-3 text-xs text-slate-400" x-text="(k.scopes??[]).join(', ') || 'all'"></td>
+                                <td class="px-4 py-3 text-xs text-slate-400" x-text="k.last_used_at ? new Date(k.last_used_at).toLocaleDateString('fr-CM') : '—'"></td>
+                                <td class="px-4 py-3 text-xs text-slate-400" x-text="k.expires_at ? new Date(k.expires_at).toLocaleDateString('fr-CM') : '∞'"></td>
+                                <td class="px-4 py-3">
+                                    <span class="text-xs px-2 py-0.5 rounded-full font-bold"
+                                          :class="k.status==='ACTIVE' ? 'bg-emerald-900/40 text-emerald-400' : 'bg-red-900/30 text-red-400'"
+                                          x-text="k.status"></span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <button x-show="k.status==='ACTIVE'" @click="revokeKey(k)" class="text-xs text-red-400 hover:text-red-300 uppercase tracking-widest" x-text="lang==='FR' ? 'Révoquer' : 'Revoke'"></button>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Request logs -->
+            <div x-show="selectedKey" class="glass-card rounded-2xl p-5 space-y-3">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-sm font-bold" x-text="(lang==='FR' ? 'Logs — ' : 'Logs — ') + selectedKey?.name"></h3>
+                    <button @click="selectedKey=null;logs=[]" class="text-xs text-slate-400 hover:text-white">✕</button>
+                </div>
+                <div x-show="logs.length===0" class="text-xs text-slate-500" x-text="lang==='FR' ? 'Aucun appel enregistré.' : 'No calls logged.'"></div>
+                <div x-show="logs.length>0" class="overflow-x-auto">
+                    <table class="w-full text-xs">
+                        <thead><tr class="border-b border-white/10 text-slate-400">
+                            <th class="px-3 py-2 text-left">Date</th>
+                            <th class="px-3 py-2 text-left">Method</th>
+                            <th class="px-3 py-2 text-left">Path</th>
+                            <th class="px-3 py-2 text-left">Status</th>
+                            <th class="px-3 py-2 text-left">IP</th>
+                        </tr></thead>
+                        <tbody>
+                            <template x-for="(log,i) in logs" :key="i">
+                                <tr class="border-b border-white/5">
+                                    <td class="px-3 py-1.5 text-slate-400" x-text="new Date(log.created_at).toLocaleString('fr-CM')"></td>
+                                    <td class="px-3 py-1.5 font-mono font-bold text-amber-400" x-text="log.method"></td>
+                                    <td class="px-3 py-1.5 font-mono text-slate-300" x-text="log.path"></td>
+                                    <td class="px-3 py-1.5" :class="log.status_code<400?'text-emerald-400':'text-red-400'" x-text="log.status_code"></td>
+                                    <td class="px-3 py-1.5 text-slate-400" x-text="log.ip_address"></td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
     </main>
 </div>
 
@@ -4665,7 +4819,7 @@ function opesApp() {
         setPage(p) {
             // RBAC guard — redirect unauthorized access to dashboard
             const role = this.user?.role;
-            const ownerOnly = ['team','settings','subscription','audit-log','fiscal-year'];
+            const ownerOnly = ['team','settings','subscription','audit-log','fiscal-year','api-keys'];
             const ownerAccountant = ['journal','ledger','import','subledgers','suppliers','reports','recurring',
                 'payroll','supplier-invoices','fixed-assets','reconciliation','budget','dsf-export',
                 'accounts','purchase-orders','credit-notes','patente','cashflow'];
@@ -6470,6 +6624,74 @@ function deliveryNotesPanel() {
                 body: JSON.stringify({status})
             });
             if(r.ok) await this.load();
+        },
+    };
+}
+
+function apiKeysPanel() {
+    return {
+        keys: [], loading: false, err: '', success: '',
+        showCreate: false, creating: false,
+        newKey: null, copied: false,
+        selectedKey: null, logs: [],
+        availableScopes: ['invoices:read','invoices:write','journal:read','tax:read','reports:read','webhooks:manage'],
+        form: { name: '', environment: 'live', scopes: [], expires_at: '' },
+        _cid: null,
+
+        async init() {
+            const token = localStorage.getItem('opes_token');
+            const me = await fetch('/api/v1/auth/me', {headers:{Authorization:'Bearer '+token}}).then(r=>r.json());
+            this._cid = me.company?.id;
+            await this.load();
+        },
+
+        async load() {
+            this.loading = true; this.err = '';
+            const token = localStorage.getItem('opes_token');
+            const r = await fetch(`/api/v1/companies/${this._cid}/api-keys`, {headers:{Authorization:'Bearer '+token}});
+            const d = await r.json();
+            if (r.ok) { this.keys = d.data ?? d; }
+            else { this.err = extractError(d); }
+            this.loading = false;
+        },
+
+        async createKey() {
+            this.creating = true; this.err = ''; this.success = ''; this.newKey = null;
+            const token = localStorage.getItem('opes_token');
+            const r = await fetch(`/api/v1/companies/${this._cid}/api-keys`, {
+                method: 'POST',
+                headers: {'Content-Type':'application/json', Authorization:'Bearer '+token},
+                body: JSON.stringify(this.form),
+            });
+            const d = await r.json();
+            if (r.ok) {
+                this.newKey = d.key;
+                this.showCreate = false;
+                this.form = { name:'', environment:'live', scopes:[], expires_at:'' };
+                await this.load();
+            } else { this.err = extractError(d); }
+            this.creating = false;
+        },
+
+        async revokeKey(k) {
+            if (!confirm(this.lang==='FR' ? `Révoquer la clé "${k.name}" ?` : `Revoke key "${k.name}"?`)) return;
+            const token = localStorage.getItem('opes_token');
+            const r = await fetch(`/api/v1/companies/${this._cid}/api-keys/${k.id}/revoke`, {
+                method: 'POST', headers: {Authorization:'Bearer '+token},
+            });
+            if (r.ok) { this.success = this.lang==='FR' ? 'Clé révoquée.' : 'Key revoked.'; await this.load(); }
+            else { const d = await r.json(); this.err = extractError(d); }
+        },
+
+        async viewLogs(k) {
+            this.selectedKey = k; this.logs = [];
+            const token = localStorage.getItem('opes_token');
+            const r = await fetch(`/api/v1/companies/${this._cid}/api-keys/${k.id}/logs`, {headers:{Authorization:'Bearer '+token}});
+            if (r.ok) { const d = await r.json(); this.logs = d.data ?? d; }
+        },
+
+        async copyKey(val) {
+            try { await navigator.clipboard.writeText(val); this.copied = true; setTimeout(()=>this.copied=false,2000); } catch(e) {}
         },
     };
 }

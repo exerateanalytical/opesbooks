@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Jobs\DeliverWebhookJob;
 use App\Models\Company;
 use App\Models\WebhookDelivery;
 use App\Models\WebhookEndpoint;
@@ -9,11 +10,6 @@ use Illuminate\Support\Str;
 
 class WebhookService
 {
-    /**
-     * Queue a webhook event for every subscribed endpoint of the company.
-     * Deliveries are stored as 'pending' and dispatched by the
-     * scheduled `webhooks:deliver` command (cron-friendly on shared hosting).
-     */
     public function dispatch(string $event, array $payload, ?Company $company): void
     {
         if (! $company) {
@@ -26,7 +22,7 @@ class WebhookService
             ->get();
 
         foreach ($endpoints as $endpoint) {
-            WebhookDelivery::create([
+            $delivery = WebhookDelivery::create([
                 'webhook_endpoint_id' => $endpoint->id,
                 'company_id'          => $company->id,
                 'event_type'          => $event,
@@ -39,6 +35,8 @@ class WebhookService
                 'status'              => 'pending',
                 'next_attempt_at'     => now(),
             ]);
+
+            DeliverWebhookJob::dispatch($delivery->id);
         }
     }
 
