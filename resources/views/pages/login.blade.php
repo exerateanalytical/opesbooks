@@ -311,10 +311,23 @@
                             <input type="email" x-model="regForm.email" required
                                    class="glass-input" placeholder="Email">
                             <div class="grid grid-cols-2 gap-2.5">
-                                <input type="password" x-model="regForm.password" required
+                                <input type="password" x-model="regForm.password" required autocomplete="new-password"
                                        class="glass-input" placeholder="Mot de passe">
-                                <input type="password" x-model="regForm.password_confirmation" required
+                                <input type="password" x-model="regForm.password_confirmation" required autocomplete="new-password"
                                        class="glass-input" placeholder="Confirmer">
+                            </div>
+                            {{-- Password strength meter --}}
+                            <div x-show="regForm.password.length > 0" x-cloak class="pt-0.5"
+                                 x-data="{ get score(){ let s=0,p=regForm.password; if(p.length>=8)s++; if(/[A-Z]/.test(p))s++; if(/[0-9]/.test(p))s++; if(/[^A-Za-z0-9]/.test(p))s++; return s; },
+                                          get label(){ return ['','Très faible','Faible','Moyen','Fort'][this.score]; } }">
+                                <div class="flex gap-1">
+                                    <template x-for="i in 4" :key="i">
+                                        <div class="h-1 flex-1 rounded transition-colors"
+                                             :style="score>=i ? (score<=1?'background:#ef4444':score===2?'background:#f59e0b':score===3?'background:#facc15':'background:#10b981') : 'background:rgba(255,255,255,0.1)'"></div>
+                                    </template>
+                                </div>
+                                <p class="text-[10px] mt-1 font-bold" :style="score<=1?'color:#f87171':score===2?'color:#fbbf24':score===3?'color:#facc15':'color:#34d399'" x-text="label"></p>
+                                <p class="text-[10px] text-slate-500 mt-0.5" x-show="score<4" x-text="lang==='FR'?'8+ caractères, majuscule, chiffre, symbole.':'8+ chars, uppercase, number, symbol.'"></p>
                             </div>
                         </div>
                     </div>

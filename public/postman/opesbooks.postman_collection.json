@@ -1,0 +1,64 @@
+{
+  "info": {
+    "name": "OPESBooks API",
+    "description": "Integration API for OPESBooks. Set the `base_url` and `api_key` collection variables. Auth: Bearer ob_live_sk_…",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "https://opesbooks.cm/api/v1" },
+    { "key": "api_key", "value": "ob_live_sk_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" }
+  ],
+  "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{api_key}}", "type": "string" } ] },
+  "item": [
+    {
+      "name": "Health",
+      "request": { "method": "GET", "url": "{{base_url}}/health", "auth": { "type": "noauth" } }
+    },
+    {
+      "name": "List invoices",
+      "request": { "method": "GET", "url": "{{base_url}}/integration/invoices?per_page=25" }
+    },
+    {
+      "name": "Get invoice",
+      "request": { "method": "GET", "url": "{{base_url}}/integration/invoices/1" }
+    },
+    {
+      "name": "Create invoice",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "url": "{{base_url}}/integration/invoices",
+        "body": { "mode": "raw", "raw": "{\n  \"client_id\": 1,\n  \"invoice_date\": \"2026-06-26\",\n  \"items\": [\n    { \"description\": \"Conseil comptable\", \"quantity\": 1, \"unit_price\": 150000 }\n  ]\n}" }
+      }
+    },
+    {
+      "name": "Void invoice",
+      "request": { "method": "POST", "url": "{{base_url}}/integration/invoices/1/void" }
+    },
+    {
+      "name": "List journal entries",
+      "request": { "method": "GET", "url": "{{base_url}}/integration/journal" }
+    },
+    {
+      "name": "VAT summary",
+      "request": { "method": "GET", "url": "{{base_url}}/integration/tax/vat-summary?from=2026-01-01&to=2026-12-31" }
+    },
+    {
+      "name": "P&L report",
+      "request": { "method": "GET", "url": "{{base_url}}/integration/reports/pl" }
+    },
+    {
+      "name": "List webhooks",
+      "request": { "method": "GET", "url": "{{base_url}}/integration/webhooks" }
+    },
+    {
+      "name": "Create webhook",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "url": "{{base_url}}/integration/webhooks",
+        "body": { "mode": "raw", "raw": "{\n  \"url\": \"https://example.com/hook\",\n  \"events\": [\"invoice.created\", \"invoice.paid\"]\n}" }
+      }
+    }
+  ]
+}

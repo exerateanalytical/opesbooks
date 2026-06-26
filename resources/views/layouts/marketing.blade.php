@@ -37,6 +37,7 @@
             <a href="{{ route('m.features') }}" class="hover:text-white transition">Fonctionnalités</a>
             <a href="{{ route('m.pricing') }}" class="hover:text-white transition">Tarifs</a>
             <a href="{{ route('blog.index') }}" class="hover:text-white transition">Blog</a>
+            <a href="{{ route('m.about') }}" class="hover:text-white transition">À propos</a>
             <a href="{{ route('m.contact') }}" class="hover:text-white transition">Contact</a>
         </nav>
         <div class="flex items-center gap-3">
@@ -50,6 +51,7 @@
     <a href="{{ route('m.features') }}" class="text-white/80">Fonctionnalités</a>
     <a href="{{ route('m.pricing') }}" class="text-white/80">Tarifs</a>
     <a href="{{ route('blog.index') }}" class="text-white/80">Blog</a>
+    <a href="{{ route('m.about') }}" class="text-white/80">À propos</a>
     <a href="{{ route('m.contact') }}" class="text-white/80">Contact</a>
     <a href="/login" class="text-gold font-bold">Se connecter</a>
 </div>
@@ -77,6 +79,8 @@
             <div class="text-white/40 text-xs font-black uppercase tracking-widest mb-3">Ressources</div>
             <ul class="space-y-2 text-white/60 text-xs">
                 <li><a href="{{ route('blog.index') }}" class="hover:text-white">Blog</a></li>
+                <li><a href="{{ route('m.about') }}" class="hover:text-white">À propos</a></li>
+                <li><a href="{{ route('developer.postman') }}" class="hover:text-white">Collection Postman</a></li>
                 <li><a href="{{ route('m.contact') }}" class="hover:text-white">Contact</a></li>
             </ul>
         </div>
