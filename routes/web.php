@@ -17,6 +17,9 @@ Route::get('/tarifs',          [\App\Http\Controllers\MarketingController::class
 Route::get('/contact',         [\App\Http\Controllers\MarketingController::class, 'contact'])->name('m.contact');
 Route::get('/a-propos',        [\App\Http\Controllers\MarketingController::class, 'about'])->name('m.about');
 Route::get('/faq',             [\App\Http\Controllers\MarketingController::class, 'faq'])->name('m.faq');
+Route::get('/conditions',      [\App\Http\Controllers\MarketingController::class, 'terms'])->name('m.terms');
+Route::get('/confidentialite', [\App\Http\Controllers\MarketingController::class, 'privacy'])->name('m.privacy');
+Route::post('/contact',        [\App\Http\Controllers\MarketingController::class, 'contactSubmit'])->name('m.contact.submit');
 Route::get('/blog',            [\App\Http\Controllers\BlogController::class, 'index'])->name('blog.index');
 Route::get('/blog/{post}',     [\App\Http\Controllers\BlogController::class, 'show'])->name('blog.show');
 

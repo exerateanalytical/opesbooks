@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'OPESBooks — Logiciel Comptable pour PME Camerounaises | SYSCOHADA & DGI')</title>
     <meta name="description" content="@yield('description', 'Logiciel de comptabilité en ligne conçu pour les PME camerounaises. SYSCOHADA, TVA 19,25%, DSF, DGI, Paie CNPS/DIPE. Essai gratuit 30 jours.')">
     <meta property="og:title" content="OPESBooks — Votre Bouclier Fiscal Camerounais">
@@ -90,8 +91,9 @@
         <div>
             <div class="text-white/40 text-xs font-black uppercase tracking-widest mb-3">Légal</div>
             <ul class="space-y-2 text-white/60 text-xs">
-                <li><a href="#" class="hover:text-white">CGU</a></li>
-                <li><a href="#" class="hover:text-white">Confidentialité</a></li>
+                <li><a href="{{ route('m.terms') }}" class="hover:text-white">CGU</a></li>
+                <li><a href="{{ route('m.privacy') }}" class="hover:text-white">Confidentialité</a></li>
+                <li><a href="{{ route('m.faq') }}" class="hover:text-white">FAQ</a></li>
             </ul>
         </div>
     </div>
