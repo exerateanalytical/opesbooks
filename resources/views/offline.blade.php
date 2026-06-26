@@ -4,12 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Opes Books — Hors ligne</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>tailwind.config={theme:{extend:{colors:{amber:{400:'#F59E0B'}}}}};</script>
-    <style>body{font-family:'Inter',sans-serif;background:radial-gradient(ellipse 120% 80% at 20% -5%,#1a2d4f,#0B1120 35%,#050d1a 65%,#0f0a1e);min-height:100vh}
-    .glass-card{background:rgba(255,255,255,0.05);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.1)}</style>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <style>
+        body { font-family: 'Inter', -apple-system, sans-serif; background: #0B1120; min-height: 100vh; }
+        .glass-card { background: #151F2E; border: 1px solid #253347; border-radius: 0.75rem; }
+    </style>
 </head>
 <body class="text-slate-200 flex items-center justify-center p-6">
     <div class="text-center max-w-md">

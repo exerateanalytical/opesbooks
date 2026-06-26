@@ -5,13 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>OpesBooks Admin — @yield('title', 'Dashboard')</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = { theme: { extend: { colors: { amber: {
-            300:'#E3B420', 400:'#F59E0B', 500:'#B5890C', 600:'#A07C08', 700:'#866709'
-        } } } } };
-    </script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         [x-cloak] { display: none !important; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif; }

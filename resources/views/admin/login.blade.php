@@ -4,10 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OpesBooks — Admin Login</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>tailwind.config={theme:{extend:{colors:{gold:'#F59E0B','gold-dim':'#D97706',navy:'#0B1120',surface:'#151F2E','surface-raised':'#1C2A3A',border:'#253347'}}}};</script>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         :root{--c-bg:#0B1120;--c-surface:#151F2E;--c-raised:#1C2A3A;--c-border:#253347;--c-border-strong:#334155;--c-accent:#F59E0B;--c-text:#F0F4FA;--c-muted:#8B9EC0;--c-faint:#4E647E}
         *{box-sizing:border-box}

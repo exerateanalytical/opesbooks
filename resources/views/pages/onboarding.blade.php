@@ -4,22 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Opes Books — Bienvenue</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>tailwind.config={theme:{extend:{colors:{amber:{300:'#E3B420',400:'#F59E0B',500:'#B5890C',600:'#A07C08'}}}}};</script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
-        [x-cloak]{display:none!important}*{box-sizing:border-box}
-        body{font-family:'Inter',-apple-system,sans-serif;background:radial-gradient(ellipse 120% 80% at 20% -5%,#1a2d4f 0%,#0F172A 35%,#050d1a 65%,#0f0a1e 100%);min-height:100vh;color:#e2e8f0}
-        .glass-card{background:linear-gradient(145deg,rgba(41,53,72,1),rgba(30,41,59,0.4));backdrop-filter:blur(24px);border:1px solid rgba(41,53,72,1);box-shadow:0 8px 40px rgba(0,0,0,0.5)}
-        .glass-input{background:rgba(30,41,59,0.9);border:1px solid rgba(41,53,72,1);color:#f1f5f9;width:100%;border-radius:0.75rem;padding:0.6rem 1rem;font-size:0.875rem}
-        .glass-input:focus{outline:none;border-color:rgba(245,158,11,0.6);box-shadow:0 0 0 3px rgba(245,158,11,0.12)}
-        select.glass-input option{background:#0F172A}
-        .glass-btn-amber{background:linear-gradient(135deg,rgba(245,158,11,0.95),rgba(160,124,8,0.95));border:1px solid rgba(245,158,11,0.5);color:#0F172A;font-weight:900}
-        @keyframes pop{0%{transform:scale(0)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
-        .pop{animation:pop .5s cubic-bezier(.34,1.56,.64,1) both}
+        [x-cloak] { display: none !important; }
+        body { font-family: 'Inter', -apple-system, sans-serif; background: #0B1120; min-height: 100vh; color: #F0F4FA; }
+        .glass-card { background: #151F2E; border: 1px solid #253347; box-shadow: 0 8px 40px rgba(0,0,0,0.5); }
+        .glass-input { background: #1C2A3A; border: 1.5px solid #253347; color: #F0F4FA; width: 100%; border-radius: 0.75rem; padding: 0.6rem 1rem; font-size: 0.875rem; font-family: inherit; }
+        .glass-input:focus { outline: none; border-color: #F59E0B; box-shadow: 0 0 0 3px rgba(245,158,11,0.12); }
+        select.glass-input option { background: #151F2E; }
+        .glass-btn-amber { background: #F59E0B; border: 1px solid rgba(245,158,11,0.5); color: #0B1120; font-weight: 900; }
+        .glass-btn-amber:hover { background: #D97706; }
+        @keyframes pop { 0%{transform:scale(0)} 70%{transform:scale(1.15)} 100%{transform:scale(1)} }
+        .pop { animation: pop .5s cubic-bezier(.34,1.56,.64,1) both; }
     </style>
 </head>
 <body class="flex items-center justify-center p-4" x-data="onboardingApp()" x-init="init()" x-cloak>
@@ -33,10 +29,10 @@
         <template x-for="i in 5" :key="i">
             <div class="flex items-center">
                 <div class="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-black transition-all"
-                     :style="i < step ? 'background:#F59E0B;color:#0F172A' : i===step ? 'background:rgba(245,158,11,0.25);color:#E3B420;border:1px solid #F59E0B' : 'background:rgba(30,41,59,0.9);color:rgba(148,163,184,0.6)'">
+                     :style="i < step ? 'background:#F59E0B;color:#0F172A' : i===step ? 'background:rgba(245,158,11,0.25);color:#E3B420;border:1px solid #F59E0B' : 'background:rgba(28,42,58,0.9);color:rgba(148,163,184,0.6)'">
                     <span x-show="i < step">✓</span><span x-show="i >= step" x-text="i"></span>
                 </div>
-                <div x-show="i < 5" class="w-8 h-0.5 mx-1" :style="i < step ? 'background:#F59E0B' : 'background:rgba(41,53,72,1)'"></div>
+                <div x-show="i < 5" class="w-8 h-0.5 mx-1" :style="i < step ? 'background:#F59E0B' : 'background:#253347'"></div>
             </div>
         </template>
     </div>
@@ -103,8 +99,8 @@
                 <input x-model="invoice.description" class="glass-input" placeholder="Prestation / Article">
                 <input x-model.number="invoice.amount_ht" type="number" class="glass-input" placeholder="Montant HT (XAF)">
                 <div class="grid grid-cols-2 gap-2 text-xs">
-                    <div class="px-3 py-2 rounded-lg" style="background:rgba(30,41,59,0.4)">TVA 19,25% : <strong x-text="fmt((invoice.amount_ht||0)*0.1925)"></strong></div>
-                    <div class="px-3 py-2 rounded-lg" style="background:rgba(30,41,59,0.4)">TTC : <strong class="text-amber-400" x-text="fmt((invoice.amount_ht||0)*1.1925)"></strong></div>
+                    <div class="px-3 py-2 rounded-lg" style="background:rgba(28,42,58,0.4)">TVA 19,25% : <strong x-text="fmt((invoice.amount_ht||0)*0.1925)"></strong></div>
+                    <div class="px-3 py-2 rounded-lg" style="background:rgba(28,42,58,0.4)">TTC : <strong class="text-amber-400" x-text="fmt((invoice.amount_ht||0)*1.1925)"></strong></div>
                 </div>
             </div>
             <div class="flex justify-between mt-5">

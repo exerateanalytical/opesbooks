@@ -5,224 +5,77 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ?? 'Opes Books' }} — Plateforme Comptable Camerounaise</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: { extend: {
-                colors: {
-                    'opes-navy':  '#0A192F',
-                    'opes-amber': '#F59E0B',
-                    'opes-green': '#10B981',
-                },
-                backdropBlur: {
-                    'xs': '2px',
-                    '4xl': '72px',
-                }
-            }}
-        }
-    </script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         [x-cloak] { display: none !important; }
-
-        /* ── Liquid Glass System ─────────────────────────────────────── */
-        :root {
-            --glass-white:     rgba(255,255,255,0.07);
-            --glass-white-mid: rgba(255,255,255,0.12);
-            --glass-white-hi:  rgba(255,255,255,0.18);
-            --glass-border:    rgba(255,255,255,0.14);
-            --glass-border-hi: rgba(255,255,255,0.28);
-            --glass-shadow:    0 8px 40px rgba(0,0,0,0.55), 0 2px 8px rgba(0,0,0,0.35);
-            --glass-inset:     inset 0 1px 0 rgba(255,255,255,0.18), inset 0 -1px 0 rgba(0,0,0,0.15);
-            --glass-glow-amber: 0 0 40px rgba(245,158,11,0.18);
-            --glass-glow-green: 0 0 40px rgba(16,185,129,0.18);
-        }
-
-        * { box-sizing: border-box; }
-
         html, body { height: 100%; margin: 0; }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
-            background: radial-gradient(ellipse 120% 80% at 20% -5%, #1a2d4f 0%, #0a192f 35%, #050d1a 65%, #0f0a1e 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+            background: var(--c-bg);
             background-attachment: fixed;
             min-height: 100vh;
-            color: #e2e8f0;
+            color: var(--c-text);
             -webkit-font-smoothing: antialiased;
         }
-
-        /* Ambient light orbs */
         body::before {
             content: '';
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            z-index: 0;
+            position: fixed; inset: 0; pointer-events: none; z-index: 0;
             background:
-                radial-gradient(ellipse 60% 40% at 10% 15%, rgba(245,158,11,0.07) 0%, transparent 60%),
-                radial-gradient(ellipse 50% 35% at 90% 80%, rgba(16,185,129,0.06) 0%, transparent 55%),
-                radial-gradient(ellipse 40% 30% at 50% 50%, rgba(99,102,241,0.04) 0%, transparent 60%);
+                radial-gradient(ellipse 60% 40% at 10% 15%, rgba(245,158,11,0.06) 0%, transparent 60%),
+                radial-gradient(ellipse 50% 35% at 90% 80%, rgba(16,185,129,0.04) 0%, transparent 55%);
         }
-
-        /* Glass panel */
-        .glass {
-            background: var(--glass-white);
-            backdrop-filter: blur(28px) saturate(180%) brightness(1.05);
-            -webkit-backdrop-filter: blur(28px) saturate(180%) brightness(1.05);
-            border: 1px solid var(--glass-border);
-            box-shadow: var(--glass-shadow), var(--glass-inset);
-        }
-
-        .glass-mid {
-            background: var(--glass-white-mid);
-            backdrop-filter: blur(20px) saturate(160%);
-            -webkit-backdrop-filter: blur(20px) saturate(160%);
-            border: 1px solid var(--glass-border);
-            box-shadow: var(--glass-shadow), var(--glass-inset);
-        }
-
-        .glass-hi {
-            background: var(--glass-white-hi);
-            backdrop-filter: blur(32px) saturate(200%) brightness(1.08);
-            -webkit-backdrop-filter: blur(32px) saturate(200%) brightness(1.08);
-            border: 1px solid var(--glass-border-hi);
-            box-shadow: var(--glass-shadow), var(--glass-inset), 0 0 0 0.5px rgba(255,255,255,0.06) inset;
-        }
-
-        /* Glass nav header */
         .glass-nav {
-            background: rgba(10,25,47,0.72);
-            backdrop-filter: blur(40px) saturate(200%) brightness(1.1);
-            -webkit-backdrop-filter: blur(40px) saturate(200%) brightness(1.1);
-            border-bottom: 1px solid rgba(255,255,255,0.10);
-            box-shadow: 0 1px 0 rgba(255,255,255,0.06), 0 4px 32px rgba(0,0,0,0.5);
+            background: rgba(11,17,32,0.92);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-bottom: 1px solid var(--c-border);
+            box-shadow: 0 1px 0 var(--c-border), 0 4px 24px rgba(0,0,0,0.4);
         }
-
-        /* Glass card — floating surface */
         .glass-card {
-            background: linear-gradient(145deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.04) 100%);
-            backdrop-filter: blur(24px) saturate(180%);
-            -webkit-backdrop-filter: blur(24px) saturate(180%);
-            border: 1px solid rgba(255,255,255,0.14);
-            border-top-color: rgba(255,255,255,0.24);
-            box-shadow:
-                0 4px 24px rgba(0,0,0,0.45),
-                0 1px 0 rgba(255,255,255,0.12) inset,
-                0 -1px 0 rgba(0,0,0,0.12) inset;
-            transition: box-shadow 0.25s ease, border-color 0.25s ease, transform 0.2s ease;
+            background: var(--c-surface);
+            border: 1px solid var(--c-border);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.4), 0 4px 16px rgba(0,0,0,0.25);
+            transition: box-shadow 0.2s, border-color 0.2s;
         }
-        .glass-card:hover {
-            border-color: rgba(255,255,255,0.22);
-            box-shadow:
-                0 8px 40px rgba(0,0,0,0.55),
-                0 1px 0 rgba(255,255,255,0.16) inset,
-                0 -1px 0 rgba(0,0,0,0.12) inset;
-        }
-
-        /* Glass input */
+        .glass-card:hover { border-color: var(--c-border-strong); }
         .glass-input {
-            background: rgba(255,255,255,0.06);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border: 1px solid rgba(255,255,255,0.14);
-            color: #f1f5f9;
-            transition: border-color 0.2s, box-shadow 0.2s;
+            background: var(--c-raised);
+            border: 1.5px solid var(--c-border);
+            color: var(--c-text);
+            transition: border-color 0.15s, box-shadow 0.15s;
         }
-        .glass-input::placeholder { color: rgba(148,163,184,0.6); }
+        .glass-input::placeholder { color: var(--c-faint); }
         .glass-input:focus {
             outline: none;
-            border-color: rgba(245,158,11,0.6);
-            box-shadow: 0 0 0 3px rgba(245,158,11,0.12), 0 0 20px rgba(245,158,11,0.08);
+            border-color: var(--c-accent);
+            box-shadow: 0 0 0 3px rgba(245,158,11,0.12);
         }
-
-        /* Glass button — primary */
         .glass-btn {
-            background: linear-gradient(135deg, rgba(245,158,11,0.9) 0%, rgba(160,124,8,0.9) 100%);
+            background: var(--c-accent);
             border: 1px solid rgba(245,158,11,0.5);
-            box-shadow: 0 4px 16px rgba(245,158,11,0.25), 0 1px 0 rgba(255,255,255,0.2) inset;
-            transition: all 0.2s ease;
+            color: #0B1120; font-weight: 900;
+            box-shadow: 0 2px 8px rgba(245,158,11,0.3);
+            transition: background 0.15s, box-shadow 0.15s;
         }
-        .glass-btn:hover {
-            background: linear-gradient(135deg, rgba(251,191,36,0.95) 0%, rgba(245,158,11,0.95) 100%);
-            box-shadow: 0 6px 24px rgba(245,158,11,0.35), 0 1px 0 rgba(255,255,255,0.25) inset;
-        }
+        .glass-btn:hover { background: var(--c-accent-dim); box-shadow: 0 4px 16px rgba(245,158,11,0.4); }
         .glass-btn:active { transform: scale(0.98); }
-
-        /* Glass button — dark/navy */
-        .glass-btn-dark {
-            background: linear-gradient(135deg, rgba(30,58,100,0.85) 0%, rgba(15,30,58,0.9) 100%);
-            border: 1px solid rgba(255,255,255,0.14);
-            box-shadow: 0 4px 16px rgba(0,0,0,0.4), 0 1px 0 rgba(255,255,255,0.1) inset;
-            transition: all 0.2s ease;
-        }
-        .glass-btn-dark:hover {
-            background: linear-gradient(135deg, rgba(45,75,130,0.9) 0%, rgba(25,50,90,0.95) 100%);
-            border-color: rgba(255,255,255,0.2);
-            box-shadow: 0 6px 24px rgba(0,0,0,0.5), 0 1px 0 rgba(255,255,255,0.14) inset;
-        }
-        .glass-btn-dark:active { transform: scale(0.98); }
-
-        /* Shimmer highlight line at top of panels */
-        .glass-shimmer::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.35) 30%, rgba(255,255,255,0.5) 50%, rgba(255,255,255,0.35) 70%, transparent 100%);
-            border-radius: inherit;
-        }
-
-        /* Nav link */
-        .nav-link {
-            color: rgba(148,163,184,0.9);
-            transition: color 0.2s, background 0.2s;
-        }
-        .nav-link:hover {
-            color: #fff;
-            background: rgba(255,255,255,0.08);
-        }
-        .nav-link.active {
-            color: #fff;
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.14);
-        }
-
-        /* Status badge pill */
-        .glass-pill {
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-radius: 9999px;
-        }
-
-        /* Animations */
+        .nav-link { color: var(--c-muted); transition: color 0.15s, background 0.15s; }
+        .nav-link:hover { color: var(--c-text); background: var(--c-raised); }
         @keyframes heartbeat  { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.25);opacity:.7} }
         @keyframes spin-frame { to{transform:rotate(360deg)} }
         @keyframes float-in   { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
-        @keyframes shimmer    { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
-
         .heartbeat  { animation: heartbeat  1.6s ease-in-out infinite; }
         .spin-pulse { animation: spin-frame 1.2s linear infinite; }
         .float-in   { animation: float-in 0.35s cubic-bezier(0.34,1.56,0.64,1) both; }
-
-        /* Scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: rgba(255,255,255,0.03); }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 99px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
     </style>
 </head>
 <body class="h-full antialiased relative">
 
-    <!-- GLASS NAV HEADER -->
     <header class="glass-nav sticky top-0 z-50">
-        <div class="max-w-screen-2xl mx-auto px-5 h-15 py-0 flex items-center justify-between gap-4" style="height:56px">
-
-            <!-- Brand -->
+        <div class="max-w-screen-2xl mx-auto px-5 flex items-center justify-between gap-4" style="height:56px">
             <a href="/" class="flex items-center gap-3 flex-shrink-0 group">
-                <div class="relative">
-                    <div class="w-9 h-9 rounded-xl glass-card flex items-center justify-center group-hover:scale-105 transition-transform">
-                        <span class="text-amber-400 font-black text-xs tracking-widest">OB</span>
-                    </div>
+                <div class="w-9 h-9 rounded-xl glass-card flex items-center justify-center group-hover:scale-105 transition-transform">
+                    <span class="text-amber-400 font-black text-xs tracking-widest">OB</span>
                 </div>
                 <div class="leading-none">
                     <span class="text-white font-black text-sm tracking-widest uppercase">OPES<span class="text-amber-400">BOOKS</span></span>
@@ -230,29 +83,25 @@
                 </div>
             </a>
 
-            <!-- Nav -->
             <nav class="hidden md:flex items-center gap-0.5 text-[11px] font-black uppercase tracking-wider flex-1 justify-center">
-                <a href="/" class="nav-link px-3.5 py-2 rounded-xl text-[11px] font-bold uppercase tracking-wider">
+                <a href="/app"              class="nav-link px-3.5 py-2 rounded-xl font-bold uppercase tracking-wider text-[11px]">
                     <span x-show="lang==='FR'">Tableau de Bord</span><span x-show="lang==='EN'" x-cloak>Dashboard</span>
                 </a>
-                <a href="/app?page=journal" class="nav-link px-3.5 py-2 rounded-xl text-[11px] font-bold uppercase tracking-wider">
-                    <span x-show="lang==='FR'">Transactions</span><span x-show="lang==='EN'" x-cloak>Transactions</span>
-                </a>
-                <a href="/app?page=ledger" class="nav-link px-3.5 py-2 rounded-xl text-[11px] font-bold uppercase tracking-wider">
+                <a href="/app?page=journal" class="nav-link px-3.5 py-2 rounded-xl font-bold uppercase tracking-wider text-[11px]">Transactions</a>
+                <a href="/app?page=ledger"  class="nav-link px-3.5 py-2 rounded-xl font-bold uppercase tracking-wider text-[11px]">
                     <span x-show="lang==='FR'">Grand Livre</span><span x-show="lang==='EN'" x-cloak>Ledger</span>
                 </a>
-                <a href="/dgi-monitor" class="nav-link px-3.5 py-2 rounded-xl text-[11px] font-bold uppercase tracking-wider">
+                <a href="/dgi-monitor"      class="nav-link px-3.5 py-2 rounded-xl font-bold uppercase tracking-wider text-[11px]">
                     <span x-show="lang==='FR'">Suivi DGI</span><span x-show="lang==='EN'" x-cloak>DGI Monitor</span>
                 </a>
-                <a href="/tax-dashboard" class="nav-link px-3.5 py-2 rounded-xl text-[11px] font-bold uppercase tracking-wider">
+                <a href="/tax-dashboard"    class="nav-link px-3.5 py-2 rounded-xl font-bold uppercase tracking-wider text-[11px]">
                     <span x-show="lang==='FR'">Fiscalité</span><span x-show="lang==='EN'" x-cloak>Tax</span>
                 </a>
-                <a href="/about" class="nav-link px-3.5 py-2 rounded-xl text-[11px] font-bold uppercase tracking-wider">
+                <a href="/about"            class="nav-link px-3.5 py-2 rounded-xl font-bold uppercase tracking-wider text-[11px]">
                     <span x-show="lang==='FR'">À Propos</span><span x-show="lang==='EN'" x-cloak>About</span>
                 </a>
             </nav>
 
-            <!-- Controls -->
             <div class="flex items-center gap-2 flex-shrink-0">
                 <button @click="lang = lang==='FR' ? 'EN' : 'FR'"
                         class="glass-card text-[10px] font-black text-slate-300 hover:text-white px-3 py-1.5 rounded-lg transition-all uppercase tracking-widest w-10 text-center">
@@ -260,11 +109,9 @@
                 </button>
                 <x-connectivity-badge />
             </div>
-
         </div>
     </header>
 
-    <!-- MAIN CONTENT -->
     <main class="relative z-10 max-w-screen-2xl mx-auto px-5 py-6">
         {{ $slot }}
     </main>

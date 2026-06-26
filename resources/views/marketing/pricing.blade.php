@@ -191,7 +191,7 @@
         @endforeach
     </div>
 
-    <div class="glass rounded-2xl p-8 mt-10 text-center" style="background:linear-gradient(145deg,rgba(245,158,11,0.08),rgba(41,53,72,0.5))">
+    <div class="glass rounded-2xl p-8 mt-10 text-center" style="background:linear-gradient(145deg,rgba(245,158,11,0.08),rgba(37,51,71,0.5))">
         <h2 class="text-xl font-black">Encore des questions ?</h2>
         <p class="text-slate-400 text-sm mt-2">Notre équipe à Douala vous répond sous 24h.</p>
         <div class="flex flex-wrap justify-center gap-3 mt-5">

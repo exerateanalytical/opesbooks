@@ -42,7 +42,7 @@
             ['Le résultat','Des PME qui arrivent sereines à chaque déclaration DGI, qui génèrent des factures certifiables MECeF en un clic, et qui peuvent se concentrer sur leur croissance plutôt que sur leur conformité.','text-emerald-400','M9 12l2 2 4-4 M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z'],
         ] as [$title, $text, $col, $icon])
         <div class="glass rounded-2xl p-6 flex flex-col gap-4">
-            <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background:rgba(30,41,59,0.6);border:1px solid rgba(41,53,72,1)">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background:rgba(28,42,58,0.6);border:1px solid #253347">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="{{ $col }}"><path d="{{ $icon }}"/></svg>
             </div>
             <h3 class="font-black text-white">{{ $title }}</h3>
@@ -54,7 +54,7 @@
 
 <!-- Stats -->
 <section class="max-w-5xl mx-auto px-5 pb-16">
-    <div class="glass rounded-3xl p-8 md:p-10" style="background:linear-gradient(145deg,rgba(245,158,11,0.07),rgba(41,53,72,0.5))">
+    <div class="glass rounded-3xl p-8 md:p-10" style="background:linear-gradient(145deg,rgba(245,158,11,0.07),rgba(37,51,71,0.5))">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             @foreach([['2023','Année de création'],['Douala','Siège social'],['CEMAC','Zone couverte'],['XAF','Devise native']] as $s)
             <div>
@@ -80,7 +80,7 @@
         </div>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-8">
             @foreach([['SYSCOHADA','Plan OHADA révisé 2017'],['TVA 19,25 %','TVA + CAC exact'],['DGI Live-Link','Fiscalis/SIGIT'],['MECeF 2026','Loi de Finances']] as $b)
-            <div class="text-center p-4 rounded-xl" style="background:rgba(30,41,59,0.4);border:1px solid rgba(41,53,72,0.8)">
+            <div class="text-center p-4 rounded-xl" style="background:rgba(28,42,58,0.4);border:1px solid rgba(37,51,71,0.8)">
                 <div class="text-gold font-black text-xs uppercase tracking-wider">{{ $b[0] }}</div>
                 <div class="text-slate-500 text-[11px] mt-1">{{ $b[1] }}</div>
             </div>

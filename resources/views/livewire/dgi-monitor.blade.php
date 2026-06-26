@@ -42,7 +42,7 @@
 
     {{-- Filter bar --}}
     <div class="glass-shimmer rounded-2xl p-4 mb-5 flex flex-wrap justify-between items-center gap-4"
-         style="border:1px solid rgba(41,53,72,1);box-shadow:0 4px 24px rgba(0,0,0,0.4)">
+         style="border:1px solid #253347;box-shadow:0 4px 24px rgba(0,0,0,0.4)">
 
         <div class="w-full md:w-72">
             <input wire:model.live.debounce.300ms="searchQuery"
@@ -51,7 +51,7 @@
                    class="glass-input w-full rounded-xl py-2.5 px-4 text-xs font-medium">
         </div>
 
-        <div class="flex items-center gap-1.5 p-1 rounded-xl" style="background:rgba(0,0,0,0.2);border:1px solid rgba(41,53,72,0.8)">
+        <div class="flex items-center gap-1.5 p-1 rounded-xl" style="background:rgba(0,0,0,0.2);border:1px solid rgba(37,51,71,0.8)">
             @foreach ([
                 'ALL'      => ($language === 'FR' ? 'Tous' : 'All'),
                 'APPROVED' => ($language === 'FR' ? 'Approuvés' : 'Approved'),
@@ -78,12 +78,12 @@
 
     {{-- Table --}}
     <div class="glass-shimmer rounded-2xl overflow-hidden"
-         style="border:1px solid rgba(41,53,72,1);box-shadow:0 8px 40px rgba(0,0,0,0.5)">
+         style="border:1px solid #253347;box-shadow:0 8px 40px rgba(0,0,0,0.5)">
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="text-[10px] font-black uppercase text-slate-500 tracking-widest border-b"
-                        style="border-color:rgba(41,53,72,0.8);background:rgba(0,0,0,0.18)">
+                        style="border-color:rgba(37,51,71,0.8);background:rgba(0,0,0,0.18)">
                         <th class="py-3 px-5 whitespace-nowrap">{{ $language === 'FR' ? 'Référence' : 'Reference' }}</th>
                         <th class="py-3 px-5 whitespace-nowrap">{{ $language === 'FR' ? 'Date & Mémo' : 'Date & Memo' }}</th>
                         <th class="py-3 px-5 text-center whitespace-nowrap">{{ $language === 'FR' ? 'Statut DGI' : 'DGI Status' }}</th>
@@ -94,8 +94,8 @@
                 <tbody class="text-xs font-medium">
                     @forelse ($entries as $entry)
                         <tr class="border-b transition-colors"
-                            style="border-color:rgba(30,41,59,0.6);{{ $entry->dgi_sync_status === 'REJECTED' ? 'background:rgba(244,63,94,0.04)' : '' }}"
-                            onmouseenter="this.style.background='rgba(30,41,59,0.4)'"
+                            style="border-color:rgba(28,42,58,0.6);{{ $entry->dgi_sync_status === 'REJECTED' ? 'background:rgba(244,63,94,0.04)' : '' }}"
+                            onmouseenter="this.style.background='rgba(28,42,58,0.4)'"
                             onmouseleave="this.style.background='{{ $entry->dgi_sync_status === 'REJECTED' ? 'rgba(244,63,94,0.04)' : 'transparent' }}'">
 
                             <td class="py-3.5 px-5 font-mono whitespace-nowrap">
@@ -172,7 +172,7 @@
                             <td colspan="5" class="py-16 text-center">
                                 <div class="flex flex-col items-center gap-3">
                                     <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl"
-                                         style="background:rgba(30,41,59,0.6);border:1px solid rgba(41,53,72,0.8)">
+                                         style="background:rgba(28,42,58,0.6);border:1px solid rgba(37,51,71,0.8)">
                                         📡
                                     </div>
                                     <div class="text-slate-500 text-[11px] font-bold uppercase tracking-widest">
@@ -187,7 +187,7 @@
         </div>
 
         @if ($entries->hasPages())
-            <div class="px-5 py-3 border-t" style="border-color:rgba(41,53,72,0.8);background:rgba(0,0,0,0.1)">
+            <div class="px-5 py-3 border-t" style="border-color:rgba(37,51,71,0.8);background:rgba(0,0,0,0.1)">
                 {{ $entries->links() }}
             </div>
         @endif

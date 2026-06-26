@@ -14,11 +14,11 @@
     .article-body a{color:#F59E0B;text-decoration:underline}
     .article-body strong{color:#fff;font-weight:700}
     .article-body blockquote{border-left:3px solid #F59E0B;padding:.25rem 0 .25rem 1rem;margin:1rem 0;color:rgba(226,232,240,0.7);font-style:italic}
-    .article-body code{background:rgba(41,53,72,0.8);padding:.1rem .4rem;border-radius:.3rem;font-size:.9em}
+    .article-body code{background:rgba(37,51,71,0.8);padding:.1rem .4rem;border-radius:.3rem;font-size:.9em}
     .article-body table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.9rem}
-    .article-body th,.article-body td{border:1px solid rgba(41,53,72,1);padding:.5rem .75rem;text-align:left}
+    .article-body th,.article-body td{border:1px solid #253347;padding:.5rem .75rem;text-align:left}
     .article-body th{background:rgba(245,158,11,0.12);color:#fff}
-    .article-body hr{border:none;border-top:1px solid rgba(41,53,72,1);margin:2rem 0}
+    .article-body hr{border:none;border-top:1px solid #253347;margin:2rem 0}
 </style>
 <article class="max-w-3xl mx-auto px-5 py-16">
     <a href="{{ route('blog.index') }}" class="text-gold text-xs font-black uppercase tracking-widest">← Tous les articles</a>

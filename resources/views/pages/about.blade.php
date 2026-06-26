@@ -25,7 +25,7 @@
                 <span class="glass-pill px-3 py-1 text-[10px] font-black uppercase tracking-widest text-indigo-400"
                       style="background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.28)">DGI Live-Link 2026</span>
                 <span class="glass-pill px-3 py-1 text-[10px] font-black uppercase tracking-widest text-slate-300"
-                      style="background:#293548;border:1px solid #334155">Loi Finance 2026</span>
+                      style="background:#1C2A3A;border:1px solid #334155">Loi Finance 2026</span>
             </div>
             <div class="mt-7">
                 <a href="/app"

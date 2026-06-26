@@ -187,7 +187,7 @@ $colors = [
 
 <!-- Bottom CTA -->
 <section class="max-w-4xl mx-auto px-5 pb-20 text-center">
-    <div class="glass rounded-3xl p-10" style="background:linear-gradient(145deg,rgba(245,158,11,0.08),rgba(41,53,72,0.5))">
+    <div class="glass rounded-3xl p-10" style="background:linear-gradient(145deg,rgba(245,158,11,0.08),rgba(37,51,71,0.5))">
         <h2 class="text-2xl md:text-3xl font-black">Prêt à simplifier votre comptabilité ?</h2>
         <p class="text-slate-400 mt-3 text-sm">Essai gratuit 30 jours · Sans carte bancaire · Support en français</p>
         <div class="flex flex-wrap justify-center gap-3 mt-6">
