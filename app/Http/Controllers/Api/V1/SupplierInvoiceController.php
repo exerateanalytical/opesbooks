@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Company;
 use App\Models\Supplier;
 use App\Models\SupplierInvoice;
+use App\Services\CryptographicInvoiceService;
 use App\Services\SupplierInvoiceService;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
 class SupplierInvoiceController extends Controller
@@ -65,6 +67,68 @@ class SupplierInvoiceController extends Controller
     {
         abort_if($invoice->company_id !== $company->id, 404);
         return response()->json($invoice->load('supplier'));
+    }
+
+    public function update(Request $request, Company $company, SupplierInvoice $invoice)
+    {
+        abort_if($invoice->company_id !== $company->id, 404);
+        abort_if($invoice->status !== 'DRAFT', 422, 'Only DRAFT invoices can be edited.');
+
+        $data = $request->validate([
+            'supplier_id'     => 'sometimes|exists:suppliers,id',
+            'invoice_number'  => 'sometimes|string|max:100',
+            'supplier_ref'    => 'nullable|string|max:100',
+            'invoice_date'    => 'sometimes|date',
+            'due_date'        => 'sometimes|date',
+            'amount_ht'       => 'sometimes|numeric|min:0',
+            'tva_amount'      => 'sometimes|numeric|min:0',
+            'cac_amount'      => 'nullable|numeric|min:0',
+            'notes'           => 'nullable|string',
+        ]);
+
+        if (isset($data['amount_ht']) || isset($data['tva_amount']) || isset($data['cac_amount'])) {
+            $ht  = $data['amount_ht']  ?? $invoice->amount_ht;
+            $tva = $data['tva_amount'] ?? $invoice->tva_amount;
+            $cac = $data['cac_amount'] ?? $invoice->cac_amount;
+            $data['amount_ttc'] = $ht + $tva + $cac;
+            $data['net_payable'] = $data['amount_ttc'];
+        }
+
+        $invoice->update($data);
+        return response()->json($invoice->load('supplier'));
+    }
+
+    public function pdf(Request $request, Company $company, SupplierInvoice $invoice)
+    {
+        abort_if($invoice->company_id !== $company->id, 404);
+        $invoice->loadMissing('supplier');
+
+        $crypto    = app(CryptographicInvoiceService::class);
+        $timestamp = $invoice->created_at?->toIso8601String() ?? now()->toIso8601String();
+        $hash      = $crypto->generateHash($company, (string) $invoice->amount_ttc, $timestamp);
+        $qr        = $crypto->generateVerificationQr($hash, config('app.url'));
+
+        $lang = $request->query('lang', 'FR');
+
+        $pdf = Pdf::loadView('invoices.supplier_invoice', [
+            'company'       => $company,
+            'invoice'       => $invoice,
+            'supplier'      => $invoice->supplier,
+            'invoiceNumber' => $invoice->invoice_number,
+            'invoiceDate'   => $invoice->invoice_date,
+            'dueDate'       => $invoice->due_date,
+            'amountHt'      => $invoice->amount_ht,
+            'tvaAmount'     => $invoice->tva_amount,
+            'cacAmount'     => $invoice->cac_amount,
+            'amountTtc'     => $invoice->amount_ttc,
+            'notes'         => $invoice->notes,
+            'hash'          => $hash,
+            'isoTimestamp'  => $timestamp,
+            'qrBase64'      => $qr,
+            'lang'          => $lang,
+        ])->setPaper('a4');
+
+        return $pdf->download("facture-fournisseur-{$invoice->invoice_number}.pdf");
     }
 
     public function pay(Request $request, Company $company, SupplierInvoice $invoice)

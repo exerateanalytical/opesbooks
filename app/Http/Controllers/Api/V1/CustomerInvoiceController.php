@@ -7,7 +7,9 @@ use App\Models\Company;
 use App\Models\Customer;
 use App\Models\CustomerInvoice;
 use App\Services\CameroonTaxEngine;
+use App\Services\CryptographicInvoiceService;
 use App\Services\JournalPostingService;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -85,6 +87,73 @@ class CustomerInvoiceController extends Controller
         ]);
 
         return response()->json($invoice->load('customer'), 201);
+    }
+
+    public function show(Company $company, CustomerInvoice $invoice): JsonResponse
+    {
+        abort_if($invoice->company_id !== $company->id, 404);
+        return response()->json($invoice->load('customer'));
+    }
+
+    public function update(Request $request, Company $company, CustomerInvoice $invoice): JsonResponse
+    {
+        abort_if($invoice->company_id !== $company->id, 404);
+        abort_if($invoice->status !== 'DRAFT', 422, 'Only DRAFT invoices can be edited.');
+
+        $data = $request->validate([
+            'customer_id'  => 'sometimes|integer|exists:customers,id',
+            'invoice_date' => 'sometimes|date',
+            'due_date'     => 'sometimes|date|after_or_equal:invoice_date',
+            'amount_ht'    => 'sometimes|numeric|min:0',
+            'notes'        => 'nullable|string|max:1000',
+        ]);
+
+        if (isset($data['amount_ht'])) {
+            $taxed = $this->tax->compute($data['amount_ht']);
+            $data['tva_amount']  = $taxed['base_vat'];
+            $data['cac_amount']  = $taxed['cac'];
+            $data['amount_ttc']  = $taxed['amount_ttc'];
+        }
+
+        $invoice->update($data);
+        return response()->json($invoice->load('customer'));
+    }
+
+    public function pdf(Request $request, Company $company, CustomerInvoice $invoice)
+    {
+        abort_if($invoice->company_id !== $company->id, 404);
+        $invoice->loadMissing('customer');
+
+        $crypto    = app(CryptographicInvoiceService::class);
+        $timestamp = $invoice->created_at?->toIso8601String() ?? now()->toIso8601String();
+        $hash      = $crypto->generateHash($company, (string) $invoice->amount_ttc, $timestamp);
+        $qr        = $crypto->generateVerificationQr($hash, config('app.url'));
+
+        $lang = $request->query('lang', 'FR');
+
+        $pdf = Pdf::loadView('invoices.customer_invoice', [
+            'company'       => $company,
+            'invoice'       => $invoice,
+            'client'        => [
+                'name'    => $invoice->customer->name,
+                'niu'     => $invoice->customer->niu ?? null,
+                'address' => $invoice->customer->address ?? null,
+            ],
+            'invoiceNumber' => $invoice->invoice_number,
+            'invoiceDate'   => $invoice->invoice_date,
+            'dueDate'       => $invoice->due_date,
+            'amountHt'      => $invoice->amount_ht,
+            'tvaAmount'     => $invoice->tva_amount,
+            'cacAmount'     => $invoice->cac_amount,
+            'amountTtc'     => $invoice->amount_ttc,
+            'notes'         => $invoice->notes,
+            'hash'          => $hash,
+            'isoTimestamp'  => $timestamp,
+            'qrBase64'      => $qr,
+            'lang'          => $lang,
+        ])->setPaper('a4');
+
+        return $pdf->download("facture-{$invoice->invoice_number}.pdf");
     }
 
     public function markSent(Company $company, CustomerInvoice $invoice): JsonResponse

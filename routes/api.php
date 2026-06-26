@@ -310,8 +310,10 @@ Route::prefix('v1')->name('v1.')->group(function () {
             // Customer invoices
             Route::get('customer-invoices',                              [CustomerInvoiceController::class, 'index'])->name('customer-invoices.index');
             Route::get('customer-invoices/{invoice}',                    [CustomerInvoiceController::class, 'show'])->name('customer-invoices.show');
+            Route::get('customer-invoices/{invoice}/pdf',                [CustomerInvoiceController::class, 'pdf'])->name('customer-invoices.pdf');
             Route::middleware(\App\Http\Middleware\RequireRole::class . ':OWNER,ACCOUNTANT')->group(function () {
                 Route::post('customer-invoices',                         [CustomerInvoiceController::class, 'store'])->name('customer-invoices.store');
+                Route::put('customer-invoices/{invoice}',                [CustomerInvoiceController::class, 'update'])->name('customer-invoices.update');
                 Route::post('customer-invoices/{invoice}/send',          [CustomerInvoiceController::class, 'markSent'])->name('customer-invoices.send');
                 Route::post('customer-invoices/{invoice}/pay',           [CustomerInvoiceController::class, 'markPaid'])->name('customer-invoices.pay');
                 Route::post('customer-invoices/{invoice}/credit-note',         [CustomerInvoiceController::class, 'creditNote'])->name('customer-invoices.credit-note');
@@ -333,8 +335,10 @@ Route::prefix('v1')->name('v1.')->group(function () {
             // Supplier invoices (OWNER/ACCOUNTANT)
             Route::get('supplier-invoices',                          [SupplierInvoiceController::class, 'index'])->name('supplier-invoices.index');
             Route::get('supplier-invoices/{invoice}',                [SupplierInvoiceController::class, 'show'])->name('supplier-invoices.show');
+            Route::get('supplier-invoices/{invoice}/pdf',            [SupplierInvoiceController::class, 'pdf'])->name('supplier-invoices.pdf');
             Route::middleware(\App\Http\Middleware\RequireRole::class . ':OWNER,ACCOUNTANT')->group(function () {
                 Route::post('supplier-invoices',                     [SupplierInvoiceController::class, 'store'])->name('supplier-invoices.store');
+                Route::put('supplier-invoices/{invoice}',            [SupplierInvoiceController::class, 'update'])->name('supplier-invoices.update');
                 Route::post('supplier-invoices/{invoice}/pay',       [SupplierInvoiceController::class, 'pay'])->name('supplier-invoices.pay');
                 Route::delete('supplier-invoices/{invoice}',         [SupplierInvoiceController::class, 'destroy'])->name('supplier-invoices.destroy');
             });
