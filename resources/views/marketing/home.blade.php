@@ -22,6 +22,18 @@
     </div>
 </section>
 
+<!-- Trust / stats band -->
+<section class="max-w-5xl mx-auto px-5 pb-4">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+        @foreach([['19,25 %','TVA + CAC calculés'],['6 pays','Zone CEMAC'],['30 jours','Essai gratuit'],['Hors ligne','Avec ou sans Internet']] as $s)
+        <div class="glass rounded-xl p-4 text-center">
+            <div class="text-xl md:text-2xl font-black text-gold">{{ $s[0] }}</div>
+            <div class="text-white/50 text-[11px] mt-1">{{ $s[1] }}</div>
+        </div>
+        @endforeach
+    </div>
+</section>
+
 <!-- Features grid -->
 <section class="max-w-7xl mx-auto px-5 py-16">
     <h2 class="text-2xl md:text-3xl font-black text-center">Tout ce dont votre PME a besoin</h2>
@@ -47,6 +59,7 @@
         </div>
         @endforeach
     </div>
+    <div class="text-center mt-8"><a href="{{ route('m.features') }}" class="text-gold text-sm font-black hover:underline">Voir les 45+ fonctionnalités →</a></div>
 </section>
 
 <!-- Comparison -->
@@ -82,6 +95,57 @@
         </div>
         @endforeach
     </div>
+</section>
+
+<!-- How it works -->
+<section class="max-w-5xl mx-auto px-5 py-16">
+    <h2 class="text-2xl md:text-3xl font-black text-center">Démarrez en 3 étapes</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-10">
+        @foreach([
+            ['1','Créez votre compte','Renseignez votre profil fiscal : NIU, RCCM, centre fiscal et régime d\'imposition.'],
+            ['2','Saisissez ou importez','Importez vos clients, fournisseurs et écritures par CSV, ou saisissez au quotidien — même hors ligne.'],
+            ['3','Déclarez sereinement','Générez factures, DSF, bulletins de paie et suivez vos échéances DGI en temps réel.'],
+        ] as $st)
+        <div class="glass rounded-2xl p-6">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center font-black text-[#010048] bg-gold">{{ $st[0] }}</div>
+            <div class="font-black text-white mt-4">{{ $st[1] }}</div>
+            <p class="text-white/50 text-sm mt-1.5 leading-relaxed">{{ $st[2] }}</p>
+        </div>
+        @endforeach
+    </div>
+</section>
+
+<!-- CEMAC coverage -->
+<section class="max-w-5xl mx-auto px-5 py-16">
+    <div class="glass rounded-3xl p-8 md:p-10 text-center">
+        <span class="inline-block px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-widest text-gold mb-4" style="background:rgba(201,155,14,0.1);border:1px solid rgba(201,155,14,0.3)">Zone CEMAC · OHADA</span>
+        <h2 class="text-2xl md:text-3xl font-black">Conçu pour le Cameroun, prêt pour l'Afrique centrale</h2>
+        <p class="text-white/60 mt-3 max-w-2xl mx-auto text-sm">Base comptable SYSCOHADA commune, monnaie XAF, et configurations fiscales par pays — développez votre activité au-delà des frontières sans changer d'outil.</p>
+        <div class="flex flex-wrap justify-center gap-2 mt-6">
+            @foreach(['Cameroun','Gabon','Congo','Tchad','RCA','Guinée Équatoriale'] as $pays)
+            <span class="px-3 py-1.5 rounded-lg text-xs font-bold text-white/80 glass">{{ $pays }}</span>
+            @endforeach
+        </div>
+    </div>
+</section>
+
+<!-- FAQ teaser -->
+<section class="max-w-3xl mx-auto px-5 py-16">
+    <h2 class="text-2xl md:text-3xl font-black text-center">Vos questions, nos réponses</h2>
+    <p class="text-white/50 text-center mt-2 text-sm">Tout sur la fiscalité camerounaise et OPESBooks.</p>
+    <div class="mt-8 space-y-2">
+        @foreach([
+            ['Quel est le taux de TVA au Cameroun ?','17,5 % de TVA + 10 % de CAC sur la TVA, soit 19,25 % TTC. OPESBooks calcule tout automatiquement.'],
+            ['OPESBooks fonctionne-t-il sans Internet ?','Oui. Saisie hors ligne, stockage local et synchronisation automatique dès le retour du réseau.'],
+            ['Comment payer mon abonnement ?','Orange Money, MTN Mobile Money ou virement bancaire, en XAF.'],
+        ] as $faq)
+        <div x-data="{open:false}" class="glass rounded-xl">
+            <button @click="open=!open" class="w-full text-left px-5 py-4 flex justify-between items-center gap-4 text-sm font-bold"><span>{{ $faq[0] }}</span><span x-text="open?'−':'+'" class="text-gold text-lg shrink-0"></span></button>
+            <div x-show="open" x-cloak class="px-5 pb-4 text-sm text-white/60 leading-relaxed">{{ $faq[1] }}</div>
+        </div>
+        @endforeach
+    </div>
+    <div class="text-center mt-6"><a href="{{ route('m.faq') }}" class="text-gold text-sm font-black hover:underline">Voir toutes les questions →</a></div>
 </section>
 
 <!-- Final CTA -->
