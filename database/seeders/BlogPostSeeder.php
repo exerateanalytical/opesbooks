@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\BlogPost;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
+use Illuminate\Support\Carbon;
 
 class BlogPostSeeder extends Seeder
 {
@@ -12,317 +12,105 @@ class BlogPostSeeder extends Seeder
     {
         $posts = [
             [
-                'title' => 'Guide complet du plan comptable SYSCOHADA révisé pour les PME camerounaises',
-                'tags'  => ['SYSCOHADA', 'Comptabilité', 'OHADA'],
-                'excerpt' => "Le référentiel SYSCOHADA structure toute la comptabilité dans l'espace OHADA. Voici comment l'aborder concrètement quand on dirige une PME au Cameroun.",
-                'body' => <<<MD
-Le **Système Comptable OHADA (SYSCOHADA) révisé** est le référentiel comptable obligatoire dans les 17 États membres de l'OHADA, dont le Cameroun. Il définit le plan de comptes, les états financiers et les règles d'évaluation. Le maîtriser, c'est éviter les redressements et préparer sereinement sa DSF.
-
-## Les 9 classes de comptes
-
-Le plan comptable est organisé en neuf classes :
-
-- **Classe 1** — Comptes de ressources durables (capital, emprunts)
-- **Classe 2** — Comptes d'actif immobilisé (immobilisations)
-- **Classe 3** — Comptes de stocks
-- **Classe 4** — Comptes de tiers (clients, fournisseurs, État)
-- **Classe 5** — Comptes de trésorerie (banque, caisse, Mobile Money)
-- **Classe 6** — Charges des activités ordinaires
-- **Classe 7** — Produits des activités ordinaires
-- **Classe 8** — Autres charges et produits (HAO)
-- **Classe 9** — Comptabilité analytique et engagements
-
-Pour une PME, l'essentiel des opérations se joue dans les classes **6 (charges)** et **7 (produits)**, avec les comptes de tiers (4) et de trésorerie (5) pour le suivi de la caisse et de la banque.
-
-## Les journaux indispensables
-
-Une comptabilité bien tenue repose sur quelques journaux :
-
-1. **Journal des achats** — factures fournisseurs
-2. **Journal des ventes** — factures clients
-3. **Journal de banque** et **journal de caisse**
-4. **Journal des opérations diverses (OD)** — paie, amortissements, régularisations
-
-## La partie double, sans douleur
-
-Chaque écriture doit être **équilibrée** : total des débits = total des crédits. OPESBooks refuse toute écriture déséquilibrée et résout automatiquement les comptes par leur numéro SYSCOHADA, ce qui supprime une grande source d'erreurs.
-
-## Bonnes pratiques
-
-- Saisissez vos opérations **au quotidien**, pas en fin d'exercice.
-- **Rapprochez votre banque** chaque mois.
-- Préparez votre **DSF en continu** grâce au tableau de bord et aux contrôles automatiques.
-
-> Avec OPESBooks, le plan SYSCOHADA est pré-chargé et les écritures sont guidées : vous vous concentrez sur votre activité, pas sur la mécanique comptable.
-MD,
+                'title'                => 'TVA au Cameroun : tout comprendre sur le taux de 19,25 %',
+                'slug'                 => 'tva-cameroun-taux-19-25-percent',
+                'excerpt'              => 'En pratique, la TVA camerounaise n\'est pas 17,5 % mais 19,25 %. Explications sur le Centime Additionnel Communal (CAC) et comment calculer vos factures correctement.',
+                'tags'                 => ['TVA', 'FISCALITÉ', 'CAMEROUN'],
+                'reading_time_minutes' => 5,
+                'published_at'         => Carbon::now()->subDays(3),
+                'is_published'         => true,
+                'meta_title'           => 'TVA Cameroun 19,25 % : TVA 17,5 % + CAC expliqués',
+                'meta_description'     => 'Comprendre la TVA camerounaise : taux de 17,5 % + CAC 10 % = 19,25 % TTC. Exemples de calcul HT/TTC pour PME.',
+                'body'                 => "## Pourquoi 19,25 % et non 17,5 % ?\n\nEn République du Cameroun, le taux légal de la Taxe sur la Valeur Ajoutée (TVA) est de **17,5 %**. Mais la quasi-totalité des factures affichent **19,25 %** : c'est parce qu'il faut y ajouter le **Centime Additionnel Communal (CAC)**.\n\nLe CAC est une taxe locale reversée aux communes, égale à **10 % du montant de la TVA** (et non 10 % du HT). Ainsi :\n\n| Composante | Taux sur le HT |\n|---|---|\n| TVA | 17,5 % |\n| CAC (10 % de la TVA) | 1,75 % |\n| **Total TTC** | **19,25 %** |\n\n## Exemple concret\n\nPour une facture de **500 000 XAF HT** :\n\n- TVA : 500 000 × 17,5 % = **87 500 XAF**\n- CAC : 87 500 × 10 % = **8 750 XAF**\n- **Total TTC : 596 250 XAF**\n\n## Opérations exonérées\n\nCertains biens et services sont exonérés de TVA : produits de première nécessité (certains aliments), médicaments, activités agricoles, exportations, et services financiers. Vérifiez toujours le statut fiscal de votre activité auprès de votre Centre des Impôts.\n\n## Comment OPESBooks gère ce calcul\n\nOPESBooks intègre la formule exacte grâce à la bibliothèque `Brick\\Math\\BigDecimal`, qui évite les erreurs d'arrondi en virgule flottante. Chaque facture affiche :\n- Le montant HT\n- La ligne TVA (17,5 %)\n- La ligne CAC (10 % de la TVA)\n- Le total TTC\n\n> Le taux effectif global à appliquer est **1,1925 × HT**. OPESBooks l'applique automatiquement — aucun calcul manuel n'est nécessaire.",
             ],
             [
-                'title' => 'TVA au Cameroun : comprendre le taux effectif de 19,25 %',
-                'tags'  => ['TVA', 'Fiscalité', 'DGI'],
-                'excerpt' => "TVA à 17,5 %, plus le Centime Additionnel Communal à 10 % de la TVA : le taux effectif est de 19,25 %. Décryptage et exemples de calcul.",
-                'body' => <<<MD
-La TVA est l'un des impôts les plus fréquents — et l'une des premières sources d'erreur dans les factures des PME camerounaises. Voici comment elle se calcule réellement.
-
-## 17,5 % de TVA + 10 % de CAC
-
-Au Cameroun, le taux de **TVA est de 17,5 %**. À cela s'ajoute le **Centime Additionnel Communal (CAC)**, égal à **10 % du montant de la TVA**, soit 1,75 % du montant hors taxes. Le taux effectif appliqué au HT est donc :
-
-> **17,5 % + 1,75 % = 19,25 %**
-
-## Exemple chiffré
-
-Pour une prestation de **1 000 000 XAF HT** :
-
-| Élément | Calcul | Montant (XAF) |
-|---|---|---|
-| Base HT | — | 1 000 000 |
-| TVA (17,5 %) | 1 000 000 × 0,175 | 175 000 |
-| CAC (10 % de la TVA) | 175 000 × 0,10 | 17 500 |
-| **Total TTC** | — | **1 192 500** |
-
-Pour retrouver le HT à partir d'un TTC, on divise par **1,1925**.
-
-## Pourquoi l'automatiser
-
-Calculer la TVA et le CAC à la main, facture après facture, finit toujours par produire des écarts. OPESBooks applique le **multiplicateur 1,1925** automatiquement, gère les arrondis avec une précision décimale (bibliothèque `Brick\Math`) et ventile correctement la TVA collectée et le CAC dans les bons comptes SYSCOHADA.
-
-## TVA collectée, TVA déductible
-
-N'oubliez pas que la TVA que vous **collectez** sur vos ventes peut être diminuée de la TVA **déductible** sur vos achats professionnels. Le solde est ce que vous reversez à l'État. Une comptabilité à jour est la clé pour ne pas payer plus que nécessaire.
-MD,
+                'title'                => 'SYSCOHADA révisé : le plan comptable des PME camerounaises expliqué',
+                'slug'                 => 'syscohada-revise-plan-comptable-pme-cameroun',
+                'excerpt'              => 'Le plan comptable SYSCOHADA révisé structure la comptabilité de toute entreprise en zone OHADA. Découvrez les 9 classes de comptes, leur logique et leur application pratique pour une PME camerounaise.',
+                'tags'                 => ['SYSCOHADA', 'COMPTABILITÉ', 'OHADA'],
+                'reading_time_minutes' => 7,
+                'published_at'         => Carbon::now()->subDays(10),
+                'is_published'         => true,
+                'meta_title'           => 'SYSCOHADA révisé : plan comptable OHADA pour PME camerounaises',
+                'meta_description'     => 'Guide pratique du plan comptable SYSCOHADA révisé 2017 pour les PME camerounaises : 9 classes de comptes, logique OHADA, exemples d\'écritures.',
+                'body'                 => "## Qu'est-ce que SYSCOHADA ?\n\nLe **Système Comptable OHADA (SYSCOHADA)** est le référentiel comptable commun aux 17 États membres de l'OHADA. Sa version révisée, en vigueur depuis le **1er janvier 2018**, modernise le plan comptable et aligne les états financiers sur les standards internationaux.\n\n## Les 9 classes de comptes\n\n| Classe | Intitulé | Exemples |\n|---|---|---|\n| 1 | Ressources durables | Capital, dettes LT |\n| 2 | Actif immobilisé | Matériel, bâtiments |\n| 3 | Stocks | Marchandises, MP |\n| 4 | Comptes de tiers | Clients (411), Fourn. (401) |\n| 5 | Trésorerie | Banque (521), Caisse (571) |\n| 6 | Charges | Achats (601), Salaires (661) |\n| 7 | Produits | Ventes (701) |\n| 8 | HAO | Hors activités ordinaires |\n| 9 | Analytique | Par projet, département |\n\n## L'écriture d'une vente (500 000 XAF HT)\n\n```\nDébit  411 – Client XYZ            596 250\n  Crédit  701 – Ventes              500 000\n  Crédit  443 – TVA collectée        87 500\n  Crédit  4452 – CAC collecté         8 750\n```\n\nOPESBooks génère cette écriture automatiquement lors de la création d'une facture.\n\n## Mobile Money et comptes 571x\n\nOPESBooks crée des sous-comptes auxiliaires dédiés :\n- **5711** : MTN Mobile Money\n- **5712** : Orange Money (Flooz)\n\n> OPESBooks intègre le plan comptable SYSCOHADA révisé 2017 complet : plus de 600 comptes pré-chargés, modifiables selon votre secteur d'activité.",
             ],
             [
-                'title' => 'Comment préparer et déposer votre DSF sans stress',
-                'tags'  => ['DSF', 'DGI', 'Fiscalité'],
-                'excerpt' => "La Déclaration Statistique et Fiscale est l'obligation annuelle clé au Cameroun. Voici la méthode pour l'aborder en continu plutôt qu'en urgence.",
-                'body' => <<<MD
-La **Déclaration Statistique et Fiscale (DSF)** est la déclaration annuelle déposée auprès de la Direction Générale des Impôts (DGI). Elle synthétise vos comptes de l'exercice : bilan, compte de résultat et tableaux annexes conformes au SYSCOHADA.
-
-## Quand la déposer ?
-
-Pour les entreprises dont l'exercice coïncide avec l'année civile (clôture au 31 décembre), la DSF est généralement attendue **au plus tard le 15 mars** de l'année suivante. Le retard expose à des pénalités — d'où l'intérêt d'anticiper.
-
-## La méthode « en continu »
-
-Plutôt que de tout reconstituer en février, adoptez une routine :
-
-1. **Tenez votre comptabilité à jour** chaque semaine.
-2. **Rapprochez la banque** chaque mois.
-3. Lancez le **contrôle DSF assisté par IA** pour repérer les anomalies (comptes déséquilibrés, écritures suspectes).
-4. Générez l'**export DSF / D10** prêt à transmettre.
-
-## Le rôle du moniteur DGI
-
-Le moniteur DGI d'OPESBooks suit vos **échéances** et l'**état de vos télétransmissions** vers les plateformes Fiscalis / SIGIT. Vous savez en un coup d'œil ce qui est déclaré, en attente, ou à corriger.
-
-## Erreurs fréquentes à éviter
-
-- Oublier d'enregistrer des charges payées en espèces ou en Mobile Money.
-- Ne pas amortir les immobilisations.
-- Confondre dépenses personnelles et professionnelles.
-
-> Une DSF se prépare toute l'année. Avec un logiciel qui tient les comptes au fil de l'eau, le 15 mars devient une formalité.
-MD,
+                'title'                => 'DSF au Cameroun : comment préparer votre déclaration statistique et fiscale',
+                'slug'                 => 'dsf-cameroun-declaration-statistique-fiscale-guide',
+                'excerpt'              => 'La DSF est la déclaration annuelle obligatoire pour toute entreprise au Cameroun. Ce guide explique ce qu\'elle contient, les délais à respecter et comment OPESBooks la génère automatiquement.',
+                'tags'                 => ['DSF', 'DGI', 'DÉCLARATION'],
+                'reading_time_minutes' => 6,
+                'published_at'         => Carbon::now()->subDays(18),
+                'is_published'         => true,
+                'meta_title'           => 'DSF Cameroun : guide complet de la Déclaration Statistique et Fiscale',
+                'meta_description'     => 'Tout savoir sur la DSF au Cameroun : contenu, délais, format DGI, export depuis OPESBooks. Guide PME 2026.',
+                'body'                 => "## Qu'est-ce que la DSF ?\n\nLa **Déclaration Statistique et Fiscale (DSF)** est la déclaration annuelle obligatoire que toute entreprise soumise au régime réel au Cameroun doit déposer auprès de la **DGI**. Elle synthétise l'ensemble des données comptables et fiscales de l'exercice.\n\n## Délais de dépôt\n\n| Clôture | Délai DSF |\n|---|---|\n| 31 décembre | **15 mars** N+1 |\n| Autre date | 75 jours après clôture |\n\n## Contenu de la DSF\n\n1. Bilan comptable (actif et passif)\n2. Compte de résultat\n3. Tableau des flux de trésorerie\n4. Notes annexes (immobilisations, dettes)\n5. État des salaires (IRPP, CNPS)\n6. Déclaration TVA annuelle (D10)\n7. Calcul de l'IS ou de l'IRPP\n\n## Comment OPESBooks prépare votre DSF\n\n- **Balance comptable** SYSCOHADA à jour en temps réel\n- **Export DSF/D10** formaté selon le modèle DGI Cameroun\n- **Bilan et compte de résultat** OHADA en un clic\n- **Intégration Fiscalis** pour la télétransmission directe\n\n## Erreurs fréquentes à éviter\n\n- Déséquilibre entre actif et passif du bilan\n- Discordance entre TVA déclarée mensuellement et DSF annuelle\n- Oubli des écritures de clôture (amortissements, provisions)\n- Montants en XAF entiers (pas en milliers)\n\n> Conseil : ne préparez pas votre DSF la dernière semaine de février. Avec OPESBooks, elle est constituée progressivement tout au long de l'exercice.",
             ],
             [
-                'title' => 'La patente au Cameroun : ce que toute entreprise doit savoir',
-                'tags'  => ['Patente', 'Fiscalité', 'PME'],
-                'excerpt' => "La contribution des patentes est une taxe professionnelle annuelle. Qui la paie, comment elle se calcule, et comment la suivre.",
-                'body' => <<<MD
-La **contribution des patentes** est une taxe professionnelle due par les personnes physiques et morales exerçant une activité commerciale, industrielle ou de prestation de services au Cameroun.
-
-## Qui est concerné ?
-
-La plupart des entreprises sont assujetties à la patente, sauf exonérations spécifiques prévues par le Code Général des Impôts. Elle conditionne souvent l'obtention de marchés et la régularité administrative.
-
-## Comment est-elle calculée ?
-
-Le montant dépend principalement du **chiffre d'affaires** et de la **nature de l'activité**, selon un barème. La patente comporte généralement une part proportionnelle au chiffre d'affaires. Le montant exact se détermine en fonction de votre situation et de votre commune.
-
-## Pourquoi la suivre dans votre comptabilité
-
-La patente est une charge déductible qui doit figurer correctement dans vos comptes (classe 6). L'oublier fausse votre résultat et votre DSF. OPESBooks intègre le **calcul et le suivi de la patente** pour que cette obligation ne passe pas à la trappe.
-
-## Conseil pratique
-
-Conservez votre **attestation de patente** : elle est souvent exigée lors d'appels d'offres et de démarches bancaires. Anticipez son paiement en début d'exercice pour éviter les pénalités de retard.
-MD,
+                'title'                => 'Mobile Money en comptabilité SYSCOHADA : MTN MoMo et Orange Money',
+                'slug'                 => 'mobile-money-comptabilite-syscohada-mtn-orange-money',
+                'excerpt'              => 'Au Cameroun, la majorité des paiements PME transitent par MTN Mobile Money et Orange Money. Voici comment les intégrer correctement dans votre comptabilité SYSCOHADA avec les comptes auxiliaires 571x.',
+                'tags'                 => ['MOBILE MONEY', 'TRÉSORERIE', 'MTN'],
+                'reading_time_minutes' => 5,
+                'published_at'         => Carbon::now()->subDays(25),
+                'is_published'         => true,
+                'meta_title'           => 'Comptabilité Mobile Money au Cameroun : MTN MoMo et Orange Money en SYSCOHADA',
+                'meta_description'     => 'Intégrer MTN MoMo et Orange Money dans votre comptabilité SYSCOHADA : comptes 571x, écritures, rapprochement. Guide PME camerounaise.',
+                'body'                 => "## La réalité du terrain camerounais\n\nAu Cameroun, **plus de 60 % des transactions B2B des PME** transitent par Mobile Money. Pourtant, la plupart des logiciels n'ont pas de traitement natif — les montants sont souvent passés en vrac dans un seul compte de caisse.\n\n## Les comptes 571x — la solution SYSCOHADA\n\n| Compte | Portefeuille |\n|---|---|\n| 5711 | MTN Mobile Money |\n| 5712 | Orange Money (Flooz) |\n| 5713 | Wave |\n| 5714 | Autres wallets |\n\n## Exemple : encaissement par MTN MoMo (119 250 XAF TTC)\n\n```\nDébit  5711 – MTN Mobile Money     119 250\n  Crédit  411 – Client XYZ          119 250\n```\n\n## Frais de transaction MTN (1 %, soit 1 193 XAF)\n\n```\nDébit  627 – Frais bancaires         1 193\n  Crédit  5711 – MTN Mobile Money     1 193\n```\n\n## Ce qu'OPESBooks apporte\n\n- Comptes auxiliaires 571x pré-créés pour MTN et Orange\n- Ingestion des callbacks API MTN MoMo : l'écriture est créée automatiquement\n- Module de rapprochement : importez le CSV et lettrez en un clic\n- Vue consolidée de tous vos wallets\n\n> Ne mélangez jamais votre portefeuille Mobile Money personnel et votre compte professionnel — c'est une obligation de séparation des patrimoines OHADA.",
             ],
             [
-                'title' => 'Paie au Cameroun : CNPS, IRPP et DIPE expliqués simplement',
-                'tags'  => ['Paie', 'CNPS', 'IRPP'],
-                'excerpt' => "Salaires, cotisations sociales et impôts sur traitements : le guide de la paie conforme pour les employeurs camerounais.",
-                'body' => <<<MD
-Gérer la paie au Cameroun, c'est articuler trois dimensions : le **salaire**, les **cotisations sociales (CNPS)** et la **fiscalité salariale (IRPP, DIPE)**.
-
-## La CNPS
-
-La **Caisse Nationale de Prévoyance Sociale** collecte les cotisations couvrant notamment :
-
-- les **pensions** (vieillesse, invalidité, décès) ;
-- les **prestations familiales** ;
-- les **risques professionnels** (accidents du travail).
-
-Ces cotisations comportent une **part patronale** et une **part salariale**, calculées sur le salaire cotisable dans la limite d'un plafond. L'employeur établit chaque mois un **bordereau** à reverser à la CNPS.
-
-## L'IRPP
-
-L'**Impôt sur le Revenu des Personnes Physiques** s'applique aux traitements et salaires, selon un barème progressif après abattements. Il est retenu à la source par l'employeur.
-
-## Le DIPE
-
-La **Déclaration des Informations sur le Personnel Employé** regroupe les éléments d'impôts et cotisations sur salaires à déclarer périodiquement à l'administration.
-
-## Automatiser pour fiabiliser
-
-La paie cumule les sources d'erreur : plafonds, taux, arrondis, bulletins. OPESBooks génère les **bulletins de paie**, calcule les **cotisations CNPS** et l'**IRPP**, et produit les **bordereaux** et éléments DIPE — puis passe automatiquement les écritures correspondantes en comptabilité.
-
-> Une paie juste, c'est la sérénité sociale et fiscale. Laissez le calcul au logiciel et concentrez-vous sur vos équipes.
-MD,
+                'title'                => 'Facturation électronique MECeF : ce que les PME camerounaises doivent savoir en 2026',
+                'slug'                 => 'facturation-electronique-mecef-cameroun-2026',
+                'excerpt'              => 'La Loi de Finances 2026 impose la facturation électronique certifiée MECeF. Ce guide explique les obligations, les délais et comment s\'y conformer.',
+                'tags'                 => ['MECEF', 'FACTURATION ÉLECTRONIQUE', 'LOI FINANCES 2026'],
+                'reading_time_minutes' => 6,
+                'published_at'         => Carbon::now()->subDays(35),
+                'is_published'         => true,
+                'meta_title'           => 'MECeF Cameroun 2026 : facturation électronique certifiée pour PME',
+                'meta_description'     => 'Obligations MECeF Cameroun 2026 : QR code DGI, SHA-256, certification des factures. Guide conformité Loi de Finances.',
+                'body'                 => "## Qu'est-ce que la MECeF ?\n\nLa **Machine Électronique de Contrôle et de Facturation (MECeF)** est le dispositif de facturation électronique imposé par la **Loi de Finances 2026**. Son objectif : certifier chaque facture émise en temps réel.\n\n## Comment fonctionne la MECeF ?\n\n1. Les données sont **envoyées en temps réel** au serveur DGI\n2. La DGI génère un **numéro de certification** unique\n3. Un **QR code** est ajouté à la facture\n4. Une **empreinte SHA-256** garantit l'intégrité du document\n\n## Ce que doit afficher une facture MECeF conforme\n\n- Le NIU de l'émetteur\n- Le numéro MECeF attribué par la DGI\n- Le QR code de vérification\n- La date et l'heure de certification\n- L'empreinte numérique de la facture\n\n## Sanctions en cas de non-conformité\n\nL'émission d'une facture non certifiée est passible d'amendes. La DGI peut refuser la déductibilité de la TVA lors d'un contrôle.\n\n## OPESBooks et la conformité MECeF\n\n- Calcul SHA-256 de chaque facture émise\n- QR code DGI intégré dans le PDF\n- Synchronisation avec le portail DGI via API\n- Moniteur MECeF : suivi des certifications et des erreurs\n\n> Une facture non certifiée MECeF est considérée non conforme par la DGI Cameroun. Assurez-vous que votre logiciel supporte ce dispositif avant 2026.",
             ],
             [
-                'title' => 'Facturation électronique MECeF : préparez la Loi de Finances 2026',
-                'tags'  => ['MECeF', 'DGI', 'Facturation'],
-                'excerpt' => "La facture électronique certifiée devient incontournable. Voici ce que cela change pour les PME et comment s'y préparer dès maintenant.",
-                'body' => <<<MD
-La digitalisation de l'administration fiscale camerounaise se poursuit. Dans le sillage de la **Loi de Finances 2026**, la **facturation électronique certifiée (MECeF)** s'impose progressivement comme un standard.
-
-## Qu'est-ce que la facturation électronique certifiée ?
-
-Il s'agit d'émettre des factures dont l'authenticité et l'intégrité sont garanties et **transmises / certifiées** auprès de la DGI, via les plateformes dédiées. L'objectif : lutter contre la fraude et fiabiliser la TVA.
-
-## Ce que cela change pour votre PME
-
-- Vos factures doivent comporter les **mentions obligatoires** (NIU, RCCM, centre fiscal, numérotation séquentielle).
-- L'émission doit pouvoir être **certifiée** et tracée.
-- La cohérence entre facturation et déclarations devient plus étroitement contrôlée.
-
-## Comment OPESBooks vous prépare
-
-OPESBooks est conçu pour :
-
-1. produire des factures **conformes** (mentions légales, TVA 19,25 %, numérotation) ;
-2. générer un **hash d'intégrité** par facture ;
-3. se **synchroniser** avec le portail DGI une fois vos identifiants configurés.
-
-## Anticiper, c'est gagner
-
-Mieux vaut adopter dès aujourd'hui des factures conformes que de devoir tout reprendre dans l'urgence. En structurant votre facturation maintenant, la bascule vers la certification devient transparente.
-MD,
+                'title'                => 'Paie au Cameroun : guide CNPS, IRPP et DIPE pour les PME',
+                'slug'                 => 'paie-cameroun-cnps-irpp-dipe-guide-pme',
+                'excerpt'              => 'Calculer les salaires au Cameroun implique CNPS, IRPP et déclaration DIPE. Ce guide pratique explique les taux, les délais et les obligations des employeurs.',
+                'tags'                 => ['PAIE', 'CNPS', 'IRPP', 'DIPE'],
+                'reading_time_minutes' => 7,
+                'published_at'         => Carbon::now()->subDays(45),
+                'is_published'         => true,
+                'meta_title'           => 'Paie Cameroun : CNPS, IRPP, DIPE — Guide complet pour PME',
+                'meta_description'     => 'Guide pratique de la paie au Cameroun : taux CNPS, calcul IRPP, déclaration DIPE, SMIG 36 270 XAF, bulletins conformes.',
+                'body'                 => "## Le SMIG au Cameroun\n\nLe **Salaire Minimum Interprofessionnel Garanti (SMIG)** au Cameroun est fixé à **36 270 XAF brut par mois**.\n\n## Cotisations CNPS\n\n| Branche | Part employeur | Part salarié |\n|---|---|---|\n| Vieillesse / Invalidité | 4,2 % | 4,2 % |\n| Allocations familiales | 7,0 % | — |\n| Accidents du travail | 1,75 % | — |\n| FNE | 1,0 % | — |\n| **Total indicatif** | **≈ 13,95 %** | **4,2 %** |\n\n## L'IRPP\n\nL'IRPP est calculé sur le revenu imposable net selon un barème progressif de **0 % à 35 %**. Des parts fiscales pour les enfants à charge réduisent la base imposable.\n\n## La déclaration DIPE\n\nLa DIPE doit être déposée avant le **15 du mois suivant** le versement des salaires.\n\n## Exemple de bulletin (salaire brut 150 000 XAF)\n\n| Rubrique | Montant |\n|---|---|\n| Salaire brut | 150 000 |\n| Cotisation salariale CNPS (4,2 %) | − 6 300 |\n| IRPP retenu | ≈ − 4 500 |\n| **Net à payer** | **≈ 139 200** |\n\n## Ce qu'OPESBooks automatise\n\n- Calcul du net à payer et de toutes les cotisations\n- Bulletins PDF avec toutes les rubriques\n- Bordereaux CNPS mensuels et trimestriels\n- Export DIPE pour télétransmission à la DGI\n- Passation automatique des écritures de paie dans le journal SYSCOHADA\n- Vérification du SMIG à chaque fiche de paie",
             ],
             [
-                'title' => 'Réel, simplifié ou libératoire : quel régime fiscal pour votre activité ?',
-                'tags'  => ['Fiscalité', 'Régimes', 'PME'],
-                'excerpt' => "Le régime d'imposition dépend de votre chiffre d'affaires et conditionne vos obligations. Tour d'horizon pour bien se situer.",
-                'body' => <<<MD
-Au Cameroun, vos obligations déclaratives dépendent de votre **régime d'imposition**, lui-même lié à votre **chiffre d'affaires** et à la nature de votre activité.
-
-## L'impôt libératoire
-
-Destiné aux **très petites activités**, l'impôt libératoire est un montant forfaitaire qui « libère » des principaux impôts pour les plus petits chiffres d'affaires. Les obligations comptables y sont allégées.
-
-## Le régime simplifié
-
-Pour les entreprises de taille intermédiaire, le **régime simplifié** impose une comptabilité plus complète et des déclarations périodiques, tout en restant moins lourd que le régime réel.
-
-## Le régime réel
-
-Au-delà d'un certain seuil de chiffre d'affaires, le **régime réel** s'applique : comptabilité SYSCOHADA complète, TVA, DSF détaillée, et obligations déclaratives régulières.
-
-## Comment bien se situer
-
-- Estimez votre **chiffre d'affaires annuel**.
-- Vérifiez le **seuil** correspondant à votre activité auprès de votre centre fiscal.
-- Adaptez votre **organisation comptable** en conséquence.
-
-OPESBooks s'adapte à votre régime : vous renseignez votre profil fiscal (régime, centre fiscal, NIU, RCCM) et la plateforme ajuste les déclarations et les calculs.
-
-> En cas de doute, parlez-en à votre centre des impôts ou à votre comptable : le bon régime, c'est moins d'impôt et moins de risques.
-MD,
+                'title'                => 'Comment choisir son logiciel de comptabilité pour une PME camerounaise',
+                'slug'                 => 'choisir-logiciel-comptabilite-pme-camerounaise',
+                'excerpt'              => 'Sage, QuickBooks, Odoo ou OPESBooks ? Ce guide compare les critères décisifs : conformité DGI, prix en XAF, support local, SYSCOHADA et Mobile Money.',
+                'tags'                 => ['GUIDE', 'CHOIX LOGICIEL', 'PME'],
+                'reading_time_minutes' => 6,
+                'published_at'         => Carbon::now()->subDays(55),
+                'is_published'         => true,
+                'meta_title'           => 'Quel logiciel de comptabilité pour PME camerounaise ? Comparatif 2026',
+                'meta_description'     => 'Comparatif logiciels comptabilité PME Cameroun 2026 : Sage, QuickBooks, Odoo, OPESBooks. Critères : DGI, TVA 19,25%, SYSCOHADA, Mobile Money, XAF.',
+                'body'                 => "## Les 7 critères décisifs\n\n### 1. Conformité DGI Cameroun\nLe logiciel génère-t-il nativement l'export **DSF/D10** ? Supporte-t-il la **MECeF** (Loi de Finances 2026) ?\n\n### 2. Calcul TVA camerounaise\nLe taux est-il **19,25 %** (17,5 % TVA + 1,75 % CAC) ? Le CAC est-il une ligne séparée ?\n\n### 3. Plan comptable SYSCOHADA\nLe plan OHADA révisé 2017 est-il **pré-chargé** ?\n\n### 4. Prix en XAF\nY a-t-il un abonnement en **Francs CFA** payable par **Mobile Money** ?\n\n### 5. Fonctionnement hors ligne\nLe logiciel fonctionne-t-il **offline** avec synchronisation auto ?\n\n### 6. Intégration Mobile Money\nLes flux **MTN MoMo** et **Orange Money** sont-ils gérés nativement ?\n\n### 7. Conformité paie locale\nCNPS, **IRPP** et bordereau **DIPE** sont-ils calculés correctement ?\n\n## Comparatif rapide\n\n| Critère | Sage | QuickBooks | Odoo | **OPESBooks** |\n|---|---|---|---|---|\n| DSF / DGI natif | ✗ | ✗ | ✗ | **✓** |\n| TVA 19,25 % (CAC) | Partiel | ✗ | Paramétrable | **✓** |\n| SYSCOHADA pré-chargé | Partiel | ✗ | Paramétrable | **✓** |\n| Prix en XAF | ✗ | ✗ | ✗ | **✓** |\n| Paiement Mobile Money | ✗ | ✗ | ✗ | **✓** |\n| Hors ligne | ✗ | ✗ | ✗ | **✓** |\n| MECeF 2026 | ✗ | ✗ | ✗ | **✓** |\n\n> OPESBooks est conçu de zéro pour les PME camerounaises — pas adapté, **conçu nativement**. Essayez gratuitement pendant 30 jours.",
             ],
             [
-                'title' => "Comptabilité hors ligne : pourquoi c'est vital au Cameroun",
-                'tags'  => ['Hors ligne', 'Plateforme', 'PME'],
-                'excerpt' => "Coupures de réseau, connexions instables : une comptabilité qui s'arrête dès que l'Internet flanche n'est pas une option. Voici l'approche hors ligne d'abord.",
-                'body' => <<<MD
-Sur le terrain camerounais, la connexion Internet est précieuse — mais pas toujours fiable. Une solution comptable qui exige une connexion permanente devient vite un frein. C'est pourquoi OPESBooks est pensé **hors ligne d'abord**.
-
-## Le problème des logiciels « tout en ligne »
-
-Avec une application 100 % en ligne, la moindre coupure bloque la saisie : impossible d'émettre une facture, d'enregistrer une vente ou de consulter un solde. Pour un commerce ou une PME, c'est du chiffre d'affaires perdu.
-
-## L'approche hors ligne d'abord
-
-OPESBooks vous laisse **travailler sans réseau** :
-
-- vos saisies sont **enregistrées localement** instantanément ;
-- une **file d'attente de synchronisation** conserve les opérations effectuées hors ligne ;
-- dès que la connexion revient, tout se **synchronise automatiquement** vers le cloud.
-
-Un indicateur vous montre en permanence l'état : connecté, hors ligne, ou nombre d'opérations en attente.
-
-## Application de bureau et mobile
-
-Au-delà du web, une **application de bureau** (Windows, macOS, Linux) et une **application installable** sur mobile (PWA) vous permettent d'ouvrir OPESBooks comme une vraie application — et de travailler avec ou sans Internet, avec vos identifiants cloud.
-
-## Le meilleur des deux mondes
-
-Vous gardez la **disponibilité du local** et la **sécurité du cloud** (sauvegardes, accès multi-appareils, collaboration). La connexion n'est plus une condition pour travailler : elle sert à synchroniser.
-MD,
-            ],
-            [
-                'title' => 'Faire des affaires en zone CEMAC : fiscalité et SYSCOHADA dans 6 pays',
-                'tags'  => ['CEMAC', 'OHADA', 'International'],
-                'excerpt' => "Cameroun, Gabon, Congo, Tchad, RCA, Guinée Équatoriale : une base comptable commune, des spécificités fiscales locales. Ce qu'il faut savoir pour se développer.",
-                'body' => <<<MD
-La **CEMAC** (Communauté Économique et Monétaire de l'Afrique Centrale) regroupe six pays partageant une monnaie commune et un cadre comptable harmonisé. Pour une entreprise qui se développe, c'est un marché régional cohérent.
-
-## Les six pays
-
-- Cameroun
-- Gabon
-- Congo
-- Tchad
-- République Centrafricaine
-- Guinée Équatoriale
-
-## Une monnaie commune : le XAF
-
-Tous ces pays utilisent le **Franc CFA BEAC (XAF)**, ce qui simplifie les échanges et la facturation régionale. Les tarifs et montants d'OPESBooks sont d'ailleurs en XAF.
-
-## Un socle comptable commun : SYSCOHADA
-
-Les pays de la CEMAC appartiennent à l'espace **OHADA** : ils partagent le **plan comptable SYSCOHADA révisé** et des états financiers harmonisés. Une entreprise qui maîtrise le SYSCOHADA au Cameroun retrouve la même logique chez ses voisins.
-
-## Des spécificités fiscales locales
-
-Si la base comptable est commune, **la fiscalité reste nationale** : taux de TVA, déclarations, cotisations sociales et obligations varient d'un pays à l'autre. C'est pourquoi OPESBooks propose des **configurations fiscales par pays**.
-
-## Se développer sereinement
-
-Avec une plateforme qui parle déjà SYSCOHADA et gère le multi-pays, étendre son activité dans la CEMAC devient un paramétrage plutôt qu'une refonte. Vous pilotez plusieurs entités, dans plusieurs pays, depuis un seul outil.
-MD,
+                'title'                => 'Clôture d\'exercice comptable SYSCOHADA : guide pas-à-pas pour les PME',
+                'slug'                 => 'cloture-exercice-comptable-syscohada-guide',
+                'excerpt'              => 'La clôture de l\'exercice comptable est une étape critique. Ce guide couvre les à-nouveaux, les amortissements, les provisions et la préparation de la DSF.',
+                'tags'                 => ['CLÔTURE', 'SYSCOHADA', 'EXERCICE'],
+                'reading_time_minutes' => 8,
+                'published_at'         => Carbon::now()->subDays(78),
+                'is_published'         => true,
+                'meta_title'           => 'Clôture d\'exercice SYSCOHADA : guide complet pour PME camerounaises',
+                'meta_description'     => 'Comment clôturer son exercice SYSCOHADA : à-nouveaux, amortissements, provisions, inventaire, DSF. Guide PME Cameroun.',
+                'body'                 => "## Pourquoi la clôture est-elle importante ?\n\nLa clôture annuelle est le moment où vous photographiez la situation financière de votre entreprise. Elle sert de base à la **DSF**, au calcul de l'**IS** et à l'évaluation de votre entreprise.\n\n## Les étapes de la clôture\n\n### 1. Inventaire des stocks\nComptez physiquement et comparez avec les quantités comptables. Les écarts sont passés en charges (6031) ou produits (7031).\n\n### 2. Amortissements\n```\nDébit  6811 – Dotations aux amortissements   XXX\n  Crédit  281x – Amortissements               XXX\n```\n\n### 3. Provisions\n- Créances douteuses\n- Risques et charges connus\n- Congés payés acquis\n\n### 4. Régularisations\nPassez les charges à payer et produits à recevoir pour rattacher à la bonne période.\n\n### 5. Vérification de l'équilibre\nTotal débit = total crédit avant les écritures de clôture.\n\n### 6. Écritures de clôture\nSoldez tous les comptes 6xx et 7xx vers le compte de résultat (130).\n\n### 7. À-nouveaux\nReportez les soldes de bilan en début de nouvel exercice.\n\n## Ce qu'OPESBooks automatise\n\n- Calcul des amortissements et passation automatique\n- Balance avant et après clôture\n- Export DSF basé sur les comptes clôturés\n- Verrouillage de la période après clôture\n- À-nouveaux automatiques en début de nouvel exercice\n\n> Commencez votre clôture en novembre — pas en mars. Avec OPESBooks, elle est constituée progressivement tout au long de l'exercice.",
             ],
         ];
 
-        // Retire earlier short stub posts superseded by the in-depth versions.
-        BlogPost::whereIn('slug', [
-            'comment-preparer-votre-dsf-avec-opesbooks',
-            'tva-au-cameroun-tout-ce-que-vous-devez-savoir',
-            'guide-complet-syscohada-pour-les-pme-camerounaises',
-        ])->delete();
-
-        foreach ($posts as $i => $p) {
-            BlogPost::updateOrCreate(['slug' => Str::slug($p['title'])], [
-                'title'                => $p['title'],
-                'excerpt'              => $p['excerpt'],
-                'body'                 => $p['body'],
-                'is_published'         => true,
-                'published_at'         => now()->subDays(($i + 1) * 4),
-                'reading_time_minutes' => max(3, (int) ceil(str_word_count(strip_tags($p['body'])) / 200)),
-                'tags'                 => $p['tags'],
-                'meta_description'     => $p['excerpt'],
-            ]);
+        foreach ($posts as $data) {
+            BlogPost::updateOrCreate(['slug' => $data['slug']], $data);
         }
     }
 }

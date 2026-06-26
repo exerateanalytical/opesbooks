@@ -450,18 +450,24 @@ HTML;
         $data = $request->validate([
             'name'    => 'required|string|max:120',
             'email'   => 'required|email|max:180',
+            'company' => 'nullable|string|max:120',
+            'phone'   => 'nullable|string|max:30',
+            'subject' => 'nullable|string|max:60',
             'message' => 'required|string|max:3000',
         ]);
 
         try {
             \Illuminate\Support\Facades\Mail::to('contact@opesware.com')->send(new \App\Mail\TransactionalMail(
-                subjectLine: "Contact site — {$data['name']}",
+                subjectLine: "[Contact site] " . ($data['subject'] ?? 'Général') . " — {$data['name']}",
                 heading: 'Nouveau message depuis le site',
-                lines: [
+                lines: array_filter([
                     "<strong>Nom :</strong> {$data['name']}",
                     "<strong>Email :</strong> {$data['email']}",
+                    $data['company'] ? "<strong>Entreprise :</strong> {$data['company']}" : null,
+                    $data['phone']   ? "<strong>Téléphone :</strong> {$data['phone']}"   : null,
+                    $data['subject'] ? "<strong>Sujet :</strong> {$data['subject']}"     : null,
                     "<strong>Message :</strong><br>" . nl2br(e($data['message'])),
-                ],
+                ]),
             ));
         } catch (\Throwable $e) { /* never block the user on mail errors */ }
 

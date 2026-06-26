@@ -1,43 +1,162 @@
 @extends('layouts.marketing')
-@section('title', 'Contact — OPESBooks')
+@section('title', 'Contact OPESBooks — Parlez à notre équipe depuis Douala')
+@section('description', 'Contactez l\'équipe OPESBooks à Douala. Support en français et anglais. Email, téléphone, WhatsApp. Réponse sous 24h en jours ouvrés.')
 
 @section('content')
-<section class="max-w-2xl mx-auto px-5 py-16">
-    <div class="text-center">
-        <h1 class="text-3xl md:text-5xl font-black">Contactez-nous</h1>
-        <p class="text-white/60 mt-4">Une question ? L'équipe Opesware vous répond depuis Douala.</p>
-    </div>
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-10 text-center">
-        <div class="glass rounded-xl p-5"><div class="text-gold font-black text-xs uppercase tracking-widest">Email</div><div class="text-sm text-white/80 mt-2">contact@opesware.com</div></div>
-        <div class="glass rounded-xl p-5"><div class="text-gold font-black text-xs uppercase tracking-widest">Téléphone</div><div class="text-sm text-white/80 mt-2">+237 670 416 238</div></div>
-        <div class="glass rounded-xl p-5"><div class="text-gold font-black text-xs uppercase tracking-widest">Adresse</div><div class="text-sm text-white/80 mt-2">Petite Terrain, Bonamoussadi<br>Douala, Cameroun</div></div>
-    </div>
-    <div class="glass rounded-2xl p-6 mt-8"
-         x-data="{ sent:false, sending:false, error:'', name:'', email:'', message:'',
-            async submit(){
-                this.sending=true; this.error='';
-                try{
-                    const res=await fetch('{{ route('m.contact.submit') }}',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content},body:JSON.stringify({name:this.name,email:this.email,message:this.message})});
-                    const d=await res.json();
-                    if(!res.ok) throw new Error(d.message||Object.values(d.errors||{}).flat().join(' '));
-                    this.sent=true;
-                }catch(e){ this.error=e.message; }finally{ this.sending=false; }
-            } }">
-        <template x-if="!sent">
-            <form @submit.prevent="submit()" class="space-y-3">
-                <input x-model="name" required placeholder="Votre nom" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-gold/50">
-                <input x-model="email" type="email" required placeholder="Votre email" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-gold/50">
-                <textarea x-model="message" required rows="4" placeholder="Votre message" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-gold/50"></textarea>
-                <p x-show="error" x-cloak class="text-red-400 text-xs font-bold" x-text="error"></p>
-                <button :disabled="sending" class="w-full px-4 py-3 rounded-xl text-sm font-black text-[#010048] bg-gold hover:bg-gold-light transition disabled:opacity-50" x-text="sending?'Envoi…':'Envoyer'"></button>
-            </form>
-        </template>
-        <template x-if="sent">
-            <div class="text-center py-6">
-                <div class="text-emerald-400 font-black">✓ Message envoyé</div>
-                <p class="text-white/50 text-sm mt-2">Nous vous répondrons sous 24h. Vous pouvez aussi écrire à contact@opesware.com.</p>
+
+<!-- Hero -->
+<section class="relative overflow-hidden pt-16 pb-10 text-center px-5">
+    <div class="absolute inset-0 pointer-events-none" style="background:radial-gradient(ellipse 600px 300px at 50% -60px,rgba(201,155,14,0.09),transparent)"></div>
+    <span class="inline-block px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-widest text-gold mb-5" style="background:rgba(201,155,14,0.1);border:1px solid rgba(201,155,14,0.3)">Équipe Douala</span>
+    <h1 class="text-3xl md:text-5xl font-black leading-tight">Parlons de votre <span class="text-gold">comptabilité</span></h1>
+    <p class="text-white/60 mt-4 max-w-xl mx-auto text-base leading-relaxed">Une question sur OPESBooks, une démo, un tarif Enterprise ou un problème à résoudre ? Notre équipe à Douala vous répond sous 24h en jours ouvrés.</p>
+</section>
+
+<!-- Contact channels -->
+<section class="max-w-5xl mx-auto px-5 pb-12">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        @foreach([
+            ['✉️','Email','contact@opesware.com','mailto:contact@opesware.com','Réponse sous 24h'],
+            ['📞','Téléphone','+237 670 416 238','tel:+237670416238','Lun–Ven 8h–17h WAT'],
+            ['💬','WhatsApp','+237 670 416 238','https://wa.me/237670416238','Discussion rapide'],
+            ['📍','Adresse','Petite Terrain, Bonamoussadi — Douala, CMR','https://maps.google.com/?q=Bonamoussadi+Douala+Cameroun','Sur rendez-vous'],
+        ] as [$icon, $label, $value, $href, $sub])
+        <a href="{{ $href }}" target="{{ str_starts_with($href,'http') ? '_blank' : '_self' }}"
+           class="glass rounded-xl p-5 hover:border-white/20 hover:bg-white/5 transition group flex flex-col gap-3">
+            <span class="text-2xl">{{ $icon }}</span>
+            <div>
+                <div class="text-[10px] font-black uppercase tracking-widest text-gold">{{ $label }}</div>
+                <div class="text-white/80 text-sm font-semibold mt-1 group-hover:text-white transition">{{ $value }}</div>
+                <div class="text-white/35 text-[11px] mt-1">{{ $sub }}</div>
             </div>
-        </template>
+        </a>
+        @endforeach
+    </div>
+</section>
+
+<!-- Form + sidebar -->
+<section class="max-w-5xl mx-auto px-5 pb-20 grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+    <!-- Form -->
+    <div class="lg:col-span-2">
+        <div class="glass rounded-2xl p-8"
+             x-data="{
+                sent: false, sending: false, error: '',
+                subject: 'general',
+                form: { name:'', email:'', company:'', phone:'', subject:'general', message:'' },
+                async submit() {
+                    this.sending = true; this.error = '';
+                    try {
+                        const res = await fetch('{{ route('m.contact.submit') }}', {
+                            method: 'POST',
+                            headers: {'Content-Type':'application/json','Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content},
+                            body: JSON.stringify(this.form)
+                        });
+                        const d = await res.json();
+                        if (!res.ok) throw new Error(d.message || Object.values(d.errors||{}).flat().join(' '));
+                        this.sent = true;
+                    } catch(e) { this.error = e.message; }
+                    finally { this.sending = false; }
+                }
+             }">
+
+            <template x-if="!sent">
+                <div>
+                    <h2 class="text-xl font-black mb-6">Envoyez-nous un message</h2>
+
+                    <!-- Subject tabs -->
+                    <div class="flex flex-wrap gap-2 mb-6">
+                        @foreach(['general'=>'Question générale','demo'=>'Demander une démo','support'=>'Support technique','enterprise'=>'Plan Enterprise','partnership'=>'Partenariat'] as $val => $label)
+                        <button type="button" @click="form.subject='{{ $val }}'"
+                                :class="form.subject==='{{ $val }}' ? 'bg-gold text-[#010048]' : 'glass text-white/60 hover:text-white'"
+                                class="px-3 py-1.5 rounded-lg text-xs font-bold transition">{{ $label }}</button>
+                        @endforeach
+                    </div>
+
+                    <form @submit.prevent="submit()" class="space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs text-white/50 mb-1.5">Votre nom *</label>
+                                <input x-model="form.name" required placeholder="Jean Dupont"
+                                       class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-white/25 focus:outline-none focus:border-gold/50 transition">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-white/50 mb-1.5">Email *</label>
+                                <input x-model="form.email" type="email" required placeholder="jean@example.cm"
+                                       class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-white/25 focus:outline-none focus:border-gold/50 transition">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-white/50 mb-1.5">Entreprise</label>
+                                <input x-model="form.company" placeholder="Nom de votre entreprise"
+                                       class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-white/25 focus:outline-none focus:border-gold/50 transition">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-white/50 mb-1.5">Téléphone / WhatsApp</label>
+                                <input x-model="form.phone" placeholder="+237 6XX XXX XXX"
+                                       class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-white/25 focus:outline-none focus:border-gold/50 transition">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-white/50 mb-1.5">Votre message *</label>
+                            <textarea x-model="form.message" required rows="5"
+                                      placeholder="Décrivez votre besoin, votre activité, le nombre d'utilisateurs…"
+                                      class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-white/25 focus:outline-none focus:border-gold/50 transition resize-none"></textarea>
+                        </div>
+                        <p x-show="error" x-cloak class="text-red-400 text-xs font-bold p-3 rounded-lg bg-red-900/20" x-text="error"></p>
+                        <button :disabled="sending" type="submit"
+                                class="w-full px-4 py-3.5 rounded-xl text-sm font-black text-[#010048] bg-gold hover:bg-gold-light transition disabled:opacity-50"
+                                x-text="sending ? 'Envoi en cours…' : 'Envoyer le message →'"></button>
+                        <p class="text-white/25 text-xs text-center">En soumettant ce formulaire, vous acceptez d'être contacté par l'équipe Opesware.</p>
+                    </form>
+                </div>
+            </template>
+
+            <template x-if="sent">
+                <div class="text-center py-10">
+                    <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-5 bg-emerald-900/30 border border-emerald-500/30">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2.5"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+                    </div>
+                    <h3 class="text-xl font-black text-emerald-400">Message envoyé !</h3>
+                    <p class="text-white/55 text-sm mt-3 leading-relaxed">Merci pour votre message. Notre équipe à Douala vous répondra sous 24h en jours ouvrés.<br><br>En attendant, vous pouvez nous écrire directement à <a href="mailto:contact@opesware.com" class="text-gold hover:underline">contact@opesware.com</a> ou nous appeler au <a href="tel:+237670416238" class="text-gold hover:underline">+237 670 416 238</a>.</p>
+                    <a href="/login" class="inline-block mt-6 px-6 py-3 rounded-xl text-sm font-black text-[#010048] bg-gold hover:bg-gold-light transition">Essayer OPESBooks gratuitement →</a>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="space-y-5">
+        <!-- Hours -->
+        <div class="glass rounded-xl p-5">
+            <h3 class="text-sm font-black mb-4 uppercase tracking-widest text-gold">Horaires</h3>
+            @foreach([['Lundi – Vendredi','8h00 – 17h30 WAT'],['Samedi','9h00 – 13h00 WAT'],['Dimanche','Fermé']] as $h)
+            <div class="flex justify-between text-xs text-white/65 py-1.5 border-b border-white/5 last:border-0">
+                <span>{{ $h[0] }}</span><span class="font-semibold">{{ $h[1] }}</span>
+            </div>
+            @endforeach
+        </div>
+
+        <!-- Common topics -->
+        <div class="glass rounded-xl p-5">
+            <h3 class="text-sm font-black mb-4 uppercase tracking-widest text-gold">Sujets fréquents</h3>
+            <ul class="space-y-2">
+                @foreach(['Démo personnalisée','Configuration MECeF/DGI','Migration depuis Sage','Plan Enterprise multi-société','Intégration API/ERP','Formation comptable SYSCOHADA'] as $t)
+                <li class="flex items-center gap-2 text-xs text-white/60">
+                    <span class="text-gold">→</span> {{ $t }}
+                </li>
+                @endforeach
+            </ul>
+        </div>
+
+        <!-- Quick links -->
+        <div class="glass rounded-xl p-5">
+            <h3 class="text-sm font-black mb-4 uppercase tracking-widest text-gold">Ressources</h3>
+            <ul class="space-y-2">
+                @foreach([[route('m.faq'),'FAQ — Questions fréquentes'],[route('m.pricing'),'Tarifs & Plans'],[route('m.features'),'Toutes les fonctionnalités'],['/developer','Documentation API']] as $l)
+                <li><a href="{{ $l[0] }}" class="flex items-center gap-2 text-xs text-white/60 hover:text-gold transition"><span>→</span>{{ $l[1] }}</a></li>
+                @endforeach
+            </ul>
+        </div>
     </div>
 </section>
 @endsection
