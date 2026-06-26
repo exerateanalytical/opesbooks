@@ -1,0 +1,40 @@
+{
+  "name": "opesbooks-desktop",
+  "productName": "OPESBooks",
+  "version": "1.0.0",
+  "description": "OPESBooks desktop — offline-first accounting & tax compliance for Cameroonian SMEs",
+  "author": "Opesware <contact@opesbooks.cm>",
+  "license": "UNLICENSED",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "cross-env OPES_APP_URL=http://127.0.0.1:8000 electron .",
+    "build:win": "electron-builder --win",
+    "build:mac": "electron-builder --mac",
+    "build:linux": "electron-builder --linux"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "electron": "^31.0.0",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "cm.opesbooks.desktop",
+    "productName": "OPESBooks",
+    "directories": { "output": "dist" },
+    "files": ["main.js", "preload.js", "offline.html", "config.json", "build/**"],
+    "win": {
+      "target": ["nsis"],
+      "icon": "build/icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "shortcutName": "OPESBooks"
+    },
+    "mac": { "target": ["dmg"], "category": "public.app-category.finance", "icon": "build/icon.png" },
+    "linux": { "target": ["AppImage", "deb"], "category": "Office", "icon": "build/icon.png" }
+  }
+}
