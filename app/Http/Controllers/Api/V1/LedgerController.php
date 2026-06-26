@@ -57,7 +57,7 @@ class LedgerController extends Controller
             ->leftJoin('journal_entries', function ($join) use ($company, $request) {
                 $join->on('journal_entries.id', '=', 'journal_lines.journal_entry_id')
                     ->where('journal_entries.company_id', $company->id)
-                    ->where('journal_entries.status', 'POSTED');
+                    ->where('journal_entries.transaction_status', 'SUCCESSFUL');
 
                 if ($request->filled('from')) {
                     $join->whereDate('journal_entries.posting_date', '>=', $request->input('from'));
