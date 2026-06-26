@@ -10,7 +10,7 @@
         .page { padding: 28px 32px; }
         .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; border-bottom: 3px solid #dc2626; padding-bottom: 16px; }
         .brand-name { font-size: 18pt; font-weight: 900; color: #0A192F; }
-        .brand-name span { color: #C99B0E; }
+        .brand-name span { color: #F59E0B; }
         .brand-meta { font-size: 7.5pt; color: #64748b; margin-top: 3px; }
         .doc-label { text-align: right; }
         .doc-label h1 { font-size: 14pt; font-weight: 900; color: #dc2626; text-transform: uppercase; letter-spacing: 1px; }

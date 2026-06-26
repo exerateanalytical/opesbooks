@@ -64,7 +64,7 @@
                         'APPROVED' => 'background:rgba(16,185,129,0.2);border:1px solid rgba(16,185,129,0.4);color:rgb(110,231,183)',
                         'PENDING'  => 'background:rgba(245,158,11,0.2);border:1px solid rgba(245,158,11,0.4);color:rgb(252,211,77)',
                         'REJECTED' => 'background:rgba(244,63,94,0.2);border:1px solid rgba(244,63,94,0.4);color:rgb(252,165,165)',
-                        default    => 'background:#1E293B;border:1px solid rgba(255,255,255,0.2);color:white',
+                        default    => 'background:#151F2E;border:1px solid #253347;color:white',
                     };
                 @endphp
                 <button wire:click="$set('statusFilter', '{{ $val }}')"

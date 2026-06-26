@@ -13,8 +13,8 @@
             La seule plateforme comptable conçue nativement pour les PME camerounaises. SYSCOHADA, DGI, TVA 19,25% et DSF — tout en un.
         </p>
         <div class="flex flex-wrap items-center justify-center gap-3 mt-8">
-            <a href="/login" class="px-6 py-3.5 rounded-xl text-sm font-black transition" style="background:var(--c-accent);color:#0F172A">Commencer gratuitement — 30 jours</a>
-            <a href="{{ route('m.features') }}" class="px-6 py-3.5 rounded-xl text-sm font-semibold text-white transition glass hover:bg-slate-800">Voir les fonctionnalités →</a>
+            <a href="/login" class="btn-primary">Commencer gratuitement — 30 jours</a>
+            <a href="{{ route('m.features') }}" class="btn-secondary">Voir les fonctionnalités →</a>
         </div>
         <div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 mt-7 text-xs" style="color:var(--c-faint)">
             <span>✓ Aucune carte bancaire requise</span><span>✓ SYSCOHADA certifié</span><span>✓ Fonctionne hors ligne</span>
@@ -158,9 +158,9 @@
 <!-- Final CTA -->
 <section class="py-16 text-center">
 <div class="max-w-4xl mx-auto px-5">
-    <div class="glass rounded-3xl p-10" style="background:linear-gradient(145deg,rgba(245,158,11,0.07),rgba(30,41,59,0.5))">
+    <div class="glass rounded-3xl p-10" style="background:linear-gradient(145deg,rgba(245,158,11,0.08),rgba(21,31,46,0.6))">
         <h2 class="text-2xl md:text-3xl font-black">Prêt à simplifier votre comptabilité ?</h2>
-        <a href="/login" class="inline-block mt-6 px-8 py-4 rounded-xl text-sm font-black transition" style="background:var(--c-accent);color:#0F172A">Commencer gratuitement →</a>
+        <a href="/login" class="btn-primary mt-6 inline-flex">Commencer gratuitement →</a>
         <p class="text-xs mt-4" style="color:var(--c-faint)">30 jours gratuits · Aucune carte requise · Annulez à tout moment</p>
     </div>
 </div></section>

@@ -20,7 +20,7 @@
         * { box-sizing: border-box; }
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
-            background: #0F172A;
+            background: #0B1120;
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
         }
@@ -34,13 +34,13 @@
                 radial-gradient(ellipse 50% 35% at 90% 80%, rgba(16,185,129,0.07) 0%, transparent 55%);
         }
         .glass-card {
-            background: #1E293B;
-            border: 1px solid #334155;
+            background: #151F2E;
+            border: 1px solid #253347;
             box-shadow: 0 8px 32px rgba(0,0,0,0.4);
         }
         .glass-input {
-            background: #293548;
-            border: 1px solid #334155;
+            background: #1C2A3A;
+            border: 1px solid #253347;
             color: #f1f5f9;
             transition: border-color 0.2s, box-shadow 0.2s;
             width: 100%;
@@ -54,7 +54,7 @@
             border-color: rgba(245,158,11,0.7);
             box-shadow: 0 0 0 3px rgba(245,158,11,0.12);
         }
-        select.glass-input option { background: #1E293B; }
+        select.glass-input option { background: #151F2E; }
         .glass-btn-amber {
             background: #F59E0B;
             border: 1px solid rgba(245,158,11,0.5);
@@ -66,8 +66,8 @@
         .glass-btn-amber:hover { background: #D97706; box-shadow: 0 4px 18px rgba(245,158,11,0.35); }
         .glass-btn-amber:active { transform: scale(0.98); }
         .glass-btn-dark {
-            background: #293548;
-            border: 1px solid #334155;
+            background: #1C2A3A;
+            border: 1px solid #253347;
             color: white;
             font-weight: 700;
             transition: all 0.2s;
@@ -103,7 +103,7 @@
         <div class="glass-card rounded-3xl overflow-hidden float-in" style="animation-delay:0.05s">
 
             {{-- Tab header --}}
-            <div class="flex border-b" style="border-color:#334155">
+            <div class="flex border-b" style="border-color:#253347">
                 <button @click="tab = 'login'; error=''"
                         class="flex-1 py-4 text-xs font-black uppercase tracking-wider transition-all"
                         :style="tab === 'login'
@@ -216,7 +216,7 @@
                                 <span x-show="lang === 'EN'" x-cloak>Forgot password?</span>
                             </button>
                         </div>
-                        <div x-show="showForgot" x-cloak class="mt-3 p-3 rounded-xl" style="background:#293548;border:1px solid #334155">
+                        <div x-show="showForgot" x-cloak class="mt-3 p-3 rounded-xl" style="background:#1C2A3A;border:1px solid #253347">
                             <p class="text-[10px] text-slate-400 mb-2">
                                 <span x-show="lang === 'FR'">Entrez votre email pour recevoir un lien de réinitialisation.</span>
                                 <span x-show="lang === 'EN'" x-cloak>Enter your email to receive a reset link.</span>
@@ -295,7 +295,7 @@
                                class="glass-input" placeholder="Centre fiscal">
                     </div>
 
-                    <div class="border-t pt-3" style="border-color:#334155">
+                    <div class="border-t pt-3" style="border-color:#253347">
                         <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">
                             <span x-show="lang === 'FR'">Votre Compte Administrateur</span>
                             <span x-show="lang === 'EN'" x-cloak>Owner Account</span>
@@ -318,7 +318,7 @@
                                 <div class="flex gap-1">
                                     <template x-for="i in 4" :key="i">
                                         <div class="h-1 flex-1 rounded transition-colors"
-                                             :style="score>=i ? (score<=1?'background:#ef4444':score===2?'background:#f59e0b':score===3?'background:#facc15':'background:#10b981') : 'background:#334155'"></div>
+                                             :style="score>=i ? (score<=1?'background:#ef4444':score===2?'background:#f59e0b':score===3?'background:#facc15':'background:#10b981') : 'background:#253347'"></div>
                                     </template>
                                 </div>
                                 <p class="text-[10px] mt-1 font-bold" :style="score<=1?'color:#f87171':score===2?'color:#fbbf24':score===3?'color:#facc15':'color:#34d399'" x-text="label"></p>

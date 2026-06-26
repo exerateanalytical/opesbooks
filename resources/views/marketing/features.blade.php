@@ -10,8 +10,8 @@
     <h1 class="text-4xl md:text-6xl font-black leading-tight max-w-4xl mx-auto">Tout ce qu'il faut pour <span class="text-gold">gérer une PME</span><br>au Cameroun et en CEMAC</h1>
     <p class="text-slate-400 mt-6 max-w-2xl mx-auto text-base md:text-lg leading-relaxed">De la première écriture à la télédéclaration DGI — comptabilité SYSCOHADA, facturation électronique MECeF, paie, trésorerie Mobile Money, CRM et IA, conçu nativement pour l'environnement fiscal camerounais.</p>
     <div class="flex flex-wrap justify-center gap-3 mt-8">
-        <a href="/login" class="px-6 py-3.5 rounded-xl text-sm font-black text-navy bg-gold hover:bg-gold-light transition">Essai gratuit 30 jours →</a>
-        <a href="{{ route('m.pricing') }}" class="px-6 py-3.5 rounded-xl text-sm font-bold text-white glass hover:bg-slate-700 transition">Voir les tarifs</a>
+        <a href="/login" class="btn-primary">Essai gratuit 30 jours →</a>
+        <a href="{{ route('m.pricing') }}" class="btn-secondary">Voir les tarifs</a>
     </div>
     <!-- Stat bar -->
     <div class="flex flex-wrap justify-center gap-8 mt-14 text-center">
@@ -191,8 +191,8 @@ $colors = [
         <h2 class="text-2xl md:text-3xl font-black">Prêt à simplifier votre comptabilité ?</h2>
         <p class="text-slate-400 mt-3 text-sm">Essai gratuit 30 jours · Sans carte bancaire · Support en français</p>
         <div class="flex flex-wrap justify-center gap-3 mt-6">
-            <a href="/login" class="px-7 py-3.5 rounded-xl text-sm font-black text-navy bg-gold hover:bg-gold-light transition">Commencer gratuitement →</a>
-            <a href="{{ route('m.contact') }}" class="px-7 py-3.5 rounded-xl text-sm font-bold text-white glass hover:bg-slate-700 transition">Parler à un conseiller</a>
+            <a href="/login" class="btn-primary">Commencer gratuitement →</a>
+            <a href="{{ route('m.contact') }}" class="btn-secondary">Parler à un conseiller</a>
         </div>
     </div>
 </section>

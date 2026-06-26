@@ -6,14 +6,14 @@
         * { font-family: DejaVu Sans, sans-serif; }
         body { color: #1f2937; font-size: 12px; }
         .brand { font-size: 22px; font-weight: 900; letter-spacing: 2px; }
-        .brand span { color: #C99B0E; }
+        .brand span { color: #F59E0B; }
         .muted { color: #6b7280; }
         .box { border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; margin-top: 16px; }
         table { width: 100%; border-collapse: collapse; margin-top: 12px; }
         td { padding: 8px 0; border-bottom: 1px solid #f1f5f9; }
         .label { color: #6b7280; }
         .right { text-align: right; }
-        .total { font-size: 16px; font-weight: 900; color: #C99B0E; }
+        .total { font-size: 16px; font-weight: 900; color: #F59E0B; }
         .pill { display: inline-block; background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; border-radius: 9999px; padding: 2px 10px; font-size: 10px; font-weight: 700; }
     </style>
 </head>

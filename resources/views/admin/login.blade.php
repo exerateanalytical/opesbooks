@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = { theme: { extend: { colors: { amber: {
-            300:'#E3B420', 400:'#C99B0E', 500:'#B5890C', 600:'#A07C08', 700:'#866709'
+            300:'#E3B420', 400:'#F59E0B', 500:'#B5890C', 600:'#A07C08', 700:'#866709'
         } } } } };
     </script>
 </head>

@@ -10,7 +10,7 @@
         .page { padding: 28px 32px; }
         .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; border-bottom: 3px solid #0A192F; padding-bottom: 16px; }
         .brand-name { font-size: 18pt; font-weight: 900; color: #0A192F; }
-        .brand-name span { color: #C99B0E; }
+        .brand-name span { color: #F59E0B; }
         .brand-meta { font-size: 7.5pt; color: #64748b; margin-top: 3px; }
         .doc-label { text-align: right; }
         .doc-label h1 { font-size: 14pt; font-weight: 900; color: #0A192F; text-transform: uppercase; letter-spacing: 1px; }
@@ -35,7 +35,7 @@
         .summary-row.total { border-top: 2px solid #0A192F; margin-top: 6px; padding-top: 6px; font-size: 11pt; font-weight: 900; }
         .footer { margin-top: 24px; font-size: 7pt; color: #94a3b8; text-align: center; border-top: 1px solid #e2e8f0; padding-top: 8px; }
         .xaf { font-size: 7pt; opacity: 0.6; }
-        .note { font-size: 7pt; color: #64748b; background: #f8fafc; border-left: 3px solid #C99B0E; padding: 6px 10px; margin-bottom: 16px; }
+        .note { font-size: 7pt; color: #64748b; background: #f8fafc; border-left: 3px solid #F59E0B; padding: 6px 10px; margin-bottom: 16px; }
     </style>
 </head>
 <body>

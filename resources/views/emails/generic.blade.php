@@ -9,6 +9,6 @@
 
 @if(!empty($cta))
     @section('action')
-        <a href="{{ $cta['url'] }}" style="display:inline-block;padding:12px 22px;background:#C99B0E;color:#010048;font-weight:800;font-size:14px;border-radius:8px;text-decoration:none;">{{ $cta['label'] }}</a>
+        <a href="{{ $cta['url'] }}" style="display:inline-block;padding:12px 22px;background:#F59E0B;color:#0B1120;font-weight:800;font-size:14px;border-radius:8px;text-decoration:none;">{{ $cta['label'] }}</a>
     @endsection
 @endif

@@ -109,8 +109,7 @@
                         </div>
                         <p x-show="error" x-cloak class="text-red-400 text-xs font-bold p-3 rounded-lg bg-red-900/20" x-text="error"></p>
                         <button :disabled="sending" type="submit"
-                                class="w-full px-4 py-3.5 rounded-xl text-sm font-black transition disabled:opacity-50"
-                                style="background:#F59E0B;color:#0F172A"
+                                class="btn-primary w-full disabled:opacity-50"
                                 x-text="sending ? 'Envoi en cours…' : 'Envoyer le message →'"></button>
                         <p class="text-xs text-center" style="color:var(--c-faint)">En soumettant ce formulaire, vous acceptez d'être contacté par l'équipe Opesware.</p>
                     </form>
@@ -124,7 +123,7 @@
                     </div>
                     <h3 class="text-xl font-black text-emerald-400">Message envoyé !</h3>
                     <p class="text-slate-400 text-sm mt-3 leading-relaxed">Merci pour votre message. Notre équipe à Douala vous répondra sous 24h en jours ouvrés.<br><br>En attendant, vous pouvez nous écrire directement à <a href="mailto:contact@opesware.com" class="text-gold hover:underline">contact@opesware.com</a> ou nous appeler au <a href="tel:+237670416238" class="text-gold hover:underline">+237 670 416 238</a>.</p>
-                    <a href="/login" class="inline-block mt-6 px-6 py-3 rounded-xl text-sm font-black text-navy bg-gold hover:bg-gold-light transition">Essayer OPESBooks gratuitement →</a>
+                    <a href="/login" class="btn-primary mt-6 inline-flex">Essayer OPESBooks gratuitement →</a>
                 </div>
             </template>
         </div>

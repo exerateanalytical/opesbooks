@@ -83,8 +83,8 @@ $groups = [
         <h2 class="text-xl md:text-2xl font-black">Une autre question ?</h2>
         <p class="text-slate-400 mt-2 text-sm">Notre équipe à Douala vous répond.</p>
         <div class="flex flex-wrap justify-center gap-3 mt-5">
-            <a href="{{ route('m.contact') }}" class="px-6 py-3 rounded-xl text-sm font-black text-navy bg-gold hover:bg-gold-light transition">Nous contacter</a>
-            <a href="/login" class="px-6 py-3 rounded-xl text-sm font-bold text-white glass hover:bg-slate-700 transition">Essayer gratuitement</a>
+            <a href="{{ route('m.contact') }}" class="btn-primary">Nous contacter</a>
+            <a href="/login" class="btn-secondary">Essayer gratuitement</a>
         </div>
     </div>
 </section>

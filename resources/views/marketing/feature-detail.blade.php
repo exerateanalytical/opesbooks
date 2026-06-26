@@ -42,8 +42,8 @@ $c = $colors[$module['color']];
             </div>
         </div>
         <div class="flex flex-wrap gap-3 mt-8">
-            <a href="/login" class="px-6 py-3 rounded-xl text-sm font-black text-navy bg-gold hover:bg-gold-light transition">Essayer gratuitement →</a>
-            <a href="{{ route('m.features') }}" class="px-6 py-3 rounded-xl text-sm font-bold text-white glass hover:bg-slate-700 transition">← Toutes les fonctionnalités</a>
+            <a href="/login" class="btn-primary">Essayer gratuitement →</a>
+            <a href="{{ route('m.features') }}" class="btn-secondary">← Toutes les fonctionnalités</a>
         </div>
     </div>
 </section>
@@ -108,8 +108,8 @@ $c = $colors[$module['color']];
         <h2 class="text-2xl md:text-3xl font-black">Commencez avec {{ $module['title'] }}</h2>
         <p class="text-slate-400 mt-3 text-sm">Essai gratuit 30 jours · Sans carte bancaire · Support en français</p>
         <div class="flex flex-wrap justify-center gap-3 mt-6">
-            <a href="/login" class="px-7 py-3.5 rounded-xl text-sm font-black text-navy bg-gold hover:bg-gold-light transition">Démarrer l'essai gratuit →</a>
-            <a href="{{ route('m.contact') }}" class="px-7 py-3.5 rounded-xl text-sm font-bold text-white glass hover:bg-slate-700 transition">Demander une démo</a>
+            <a href="/login" class="btn-primary">Démarrer l'essai gratuit →</a>
+            <a href="{{ route('m.contact') }}" class="btn-secondary">Demander une démo</a>
         </div>
     </div>
 </section>

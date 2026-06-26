@@ -11,7 +11,7 @@
             theme: { extend: {
                 colors: {
                     'opes-navy':  '#0A192F',
-                    'opes-amber': '#C99B0E',
+                    'opes-amber': '#F59E0B',
                     'opes-green': '#10B981',
                 },
                 backdropBlur: {

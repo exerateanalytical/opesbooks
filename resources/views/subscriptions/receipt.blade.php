@@ -10,7 +10,7 @@
         .page { padding: 28px 32px; max-width: 420px; margin: auto; }
         .header { text-align: center; margin-bottom: 24px; border-bottom: 3px solid #0A192F; padding-bottom: 16px; }
         .brand-name { font-size: 20pt; font-weight: 900; color: #0A192F; }
-        .brand-name span { color: #C99B0E; }
+        .brand-name span { color: #F59E0B; }
         .tagline { font-size: 8pt; color: #64748b; margin-top: 2px; }
         .check { font-size: 32pt; text-align: center; margin: 16px 0; color: #16a34a; }
         .receipt-box { border: 2px solid #0A192F; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
@@ -22,7 +22,7 @@
         .amount-big { text-align: center; background: #f0fdf4; border: 2px solid #16a34a; border-radius: 8px; padding: 14px; margin: 16px 0; }
         .amount-big .label { font-size: 8pt; color: #64748b; }
         .amount-big .value { font-size: 18pt; font-weight: 900; color: #16a34a; margin-top: 4px; }
-        .plan-badge { display: inline-block; background: #C99B0E; color: #0A192F; font-weight: 900; padding: 4px 14px; border-radius: 20px; font-size: 9pt; margin: 8px auto; text-align: center; }
+        .plan-badge { display: inline-block; background: #F59E0B; color: #0A192F; font-weight: 900; padding: 4px 14px; border-radius: 20px; font-size: 9pt; margin: 8px auto; text-align: center; }
         .footer { margin-top: 20px; font-size: 7pt; color: #94a3b8; text-align: center; border-top: 1px solid #e2e8f0; padding-top: 8px; }
     </style>
 </head>

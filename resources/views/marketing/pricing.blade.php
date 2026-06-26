@@ -195,8 +195,8 @@
         <h2 class="text-xl font-black">Encore des questions ?</h2>
         <p class="text-slate-400 text-sm mt-2">Notre équipe à Douala vous répond sous 24h.</p>
         <div class="flex flex-wrap justify-center gap-3 mt-5">
-            <a href="/login" class="px-6 py-3 rounded-xl text-sm font-black text-navy bg-gold hover:bg-gold-light transition">Commencer gratuitement →</a>
-            <a href="{{ route('m.contact') }}" class="px-6 py-3 rounded-xl text-sm font-bold text-white glass hover:bg-slate-700 transition">Parler à un conseiller</a>
+            <a href="/login" class="btn-primary">Commencer gratuitement →</a>
+            <a href="{{ route('m.contact') }}" class="btn-secondary">Parler à un conseiller</a>
         </div>
     </div>
 </section>

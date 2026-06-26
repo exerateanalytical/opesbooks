@@ -121,8 +121,8 @@
             <h2 class="text-xl md:text-2xl font-black">Vous voulez en savoir plus ?</h2>
             <p class="text-slate-400 text-sm mt-2 leading-relaxed">Parlez à notre équipe depuis Douala. Nous répondons en français et en anglais, sous 24h en jours ouvrés.</p>
             <div class="flex flex-wrap gap-3 mt-6">
-                <a href="{{ route('m.contact') }}" class="px-6 py-3 rounded-xl text-sm font-black text-navy bg-gold hover:bg-gold-light transition">Nous contacter →</a>
-                <a href="/login" class="px-6 py-3 rounded-xl text-sm font-bold text-white glass hover:bg-slate-700 transition">Essai gratuit 30 jours</a>
+                <a href="{{ route('m.contact') }}" class="btn-primary">Nous contacter →</a>
+                <a href="/login" class="btn-secondary">Essai gratuit 30 jours</a>
             </div>
         </div>
         <div class="space-y-3 text-sm">
