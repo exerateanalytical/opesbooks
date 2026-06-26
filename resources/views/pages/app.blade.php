@@ -443,6 +443,10 @@
             <span class="w-1.5 h-1.5 rounded-full pulse-dot flex-shrink-0"
                   :class="connStatus==='ONLINE' ? 'bg-emerald-400' : connStatus==='SYNCING' ? 'bg-indigo-400' : 'bg-amber-400'"></span>
             <span x-text="connStatus==='ONLINE' ? (lang==='FR'?'Connecté':'Online') : connStatus==='SYNCING' ? 'Sync…' : (lang==='FR'?'Hors ligne':'Offline')"></span>
+            <span x-show="pendingSync>0" x-cloak @click="flushOutbox()" title="Changements en attente"
+                  class="ml-auto cursor-pointer px-1.5 py-0.5 rounded-full text-[9px]"
+                  style="background:rgba(201,155,14,0.25);color:rgb(252,211,77)"
+                  x-text="pendingSync + (lang==='FR'?' en attente':' pending')"></span>
         </div>
 
         <!-- Nav -->
@@ -4365,11 +4369,15 @@ function opesApp() {
         async init() {
             const token = localStorage.getItem('opes_token');
             if (!token) { window.location.href = '/login'; return; }
-            window.addEventListener('online',  () => { this.connStatus='SYNCING'; setTimeout(()=>this.connStatus='ONLINE', 2800); });
+            window.addEventListener('online',  () => { this.flushOutbox(); });
             window.addEventListener('offline', () => { this.connStatus='OFFLINE'; });
+            this.pendingSync = this._outbox().length;
             this.$watch('lang', v => localStorage.setItem('opes_lang', v));
             this.loading = true;
             await this.loadMe();
+            // Replay any writes queued while offline, on load + every 30s.
+            this.flushOutbox();
+            setInterval(() => this.flushOutbox(), 30000);
             this.loading = false;
             this.loadAnnouncements();
             this.loadCompanies();
@@ -4471,12 +4479,54 @@ function opesApp() {
 
         async api(path, opts={}) {
             const token = localStorage.getItem('opes_token');
-            const res = await fetch('/api/v1/' + path, {
-                headers: { 'Authorization':'Bearer '+token, 'Accept':'application/json', 'Content-Type':'application/json', ...opts.headers },
-                ...opts,
-            });
-            if (res.status===401) { localStorage.clear(); window.location.href='/login'; }
-            return res.json();
+            const method = (opts.method || 'GET').toUpperCase();
+            const isMutation = ['POST','PUT','PATCH','DELETE'].includes(method);
+            try {
+                const res = await fetch('/api/v1/' + path, {
+                    headers: { 'Authorization':'Bearer '+token, 'Accept':'application/json', 'Content-Type':'application/json', ...opts.headers },
+                    ...opts,
+                });
+                if (res.status===401) { localStorage.clear(); window.location.href='/login'; }
+                return res.json();
+            } catch (e) {
+                // Network failure → offline. Queue mutations to replay on reconnect.
+                if (isMutation) {
+                    this._enqueue({ path, method, body: opts.body || null });
+                    this.connStatus = 'OFFLINE';
+                    window.opesToast && window.opesToast('warning', this.lang==='FR'?'Hors ligne':'Offline', this.lang==='FR'?'Enregistré localement — synchro à la reconnexion.':'Saved locally — will sync when back online.');
+                    return { queued: true, offline: true };
+                }
+                throw e;
+            }
+        },
+
+        /* ── Offline-first outbox ─────────────────────────────────────────── */
+        pendingSync: 0,
+        _outbox() { try { return JSON.parse(localStorage.getItem('opes_outbox') || '[]'); } catch(e) { return []; } },
+        _saveOutbox(q) { localStorage.setItem('opes_outbox', JSON.stringify(q)); this.pendingSync = q.length; },
+        _enqueue(item) { const q = this._outbox(); q.push({ ...item, ts: Date.now() }); this._saveOutbox(q); },
+        async flushOutbox() {
+            if (!navigator.onLine) return;
+            let q = this._outbox();
+            if (!q.length) { this.pendingSync = 0; return; }
+            this.connStatus = 'SYNCING';
+            const token = localStorage.getItem('opes_token');
+            while (q.length) {
+                const item = q[0];
+                try {
+                    const res = await fetch('/api/v1/' + item.path, {
+                        method: item.method,
+                        headers: { 'Authorization':'Bearer '+token, 'Accept':'application/json', 'Content-Type':'application/json' },
+                        body: item.body,
+                    });
+                    if (!res.ok && res.status >= 500) break;   // transient server error → retry later
+                } catch (e) { break; }                          // still offline → stop
+                q.shift(); this._saveOutbox(q);
+            }
+            this.connStatus = navigator.onLine ? 'ONLINE' : 'OFFLINE';
+            if (this._outbox().length === 0 && this.pendingSync === 0) {
+                window.opesToast && window.opesToast('success', this.lang==='FR'?'Synchronisé':'Synced', this.lang==='FR'?'Vos modifications hors ligne ont été envoyées.':'Your offline changes were sent.');
+            }
         },
 
         mustEnable2fa: false,
