@@ -69,7 +69,7 @@
         <div class="col-span-2 md:col-span-1">
             <span class="font-black tracking-widest">OPES<span class="text-gold">BOOKS</span></span>
             <p class="text-white/40 mt-3 text-xs leading-relaxed">Votre bouclier fiscal camerounais. SYSCOHADA · DGI · Douala, Cameroun.</p>
-            <p class="text-white/40 mt-3 text-xs leading-relaxed">Édité par Opesware · <a href="https://opesware.com" class="hover:text-white">opesware.com</a><br><a href="mailto:contact@opesware.com" class="hover:text-white">contact@opesware.com</a> · +237 670 416 238</p>
+            <p class="text-white/40 mt-3 text-xs leading-relaxed">Édité par Opesware · <a href="https://opesware.com" class="hover:text-white">opesware.com</a><br>Petite Terrain, Bonamoussadi — Douala, Cameroun<br><a href="mailto:contact@opesware.com" class="hover:text-white">contact@opesware.com</a> · +237 670 416 238</p>
         </div>
         <div>
             <div class="text-white/40 text-xs font-black uppercase tracking-widest mb-3">Produit</div>

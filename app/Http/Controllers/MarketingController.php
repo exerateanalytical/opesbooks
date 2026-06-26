@@ -117,7 +117,7 @@ HTML;
 <p>Vous disposez d'un droit d'accès, de rectification, d'export et de suppression de vos données. L'export est disponible depuis votre espace ; pour toute demande, écrivez à <a href="mailto:contact@opesware.com">contact@opesware.com</a>.</p>
 
 <h2>8. Contact</h2>
-<p>Opesware — Douala, Cameroun — <a href="mailto:contact@opesware.com">contact@opesware.com</a>.</p>
+<p>Opesware — Petite Terrain, Bonamoussadi, Douala, Cameroun — <a href="mailto:contact@opesware.com">contact@opesware.com</a> — +237 670 416 238.</p>
 HTML;
 
         return view('marketing.legal', ['title' => 'Politique de Confidentialité', 'content' => $content]);

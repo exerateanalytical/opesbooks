@@ -10,7 +10,7 @@
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-10 text-center">
         <div class="glass rounded-xl p-5"><div class="text-gold font-black text-xs uppercase tracking-widest">Email</div><div class="text-sm text-white/80 mt-2">contact@opesware.com</div></div>
         <div class="glass rounded-xl p-5"><div class="text-gold font-black text-xs uppercase tracking-widest">Téléphone</div><div class="text-sm text-white/80 mt-2">+237 670 416 238</div></div>
-        <div class="glass rounded-xl p-5"><div class="text-gold font-black text-xs uppercase tracking-widest">Adresse</div><div class="text-sm text-white/80 mt-2">Douala, Cameroun</div></div>
+        <div class="glass rounded-xl p-5"><div class="text-gold font-black text-xs uppercase tracking-widest">Adresse</div><div class="text-sm text-white/80 mt-2">Petite Terrain, Bonamoussadi<br>Douala, Cameroun</div></div>
     </div>
     <div class="glass rounded-2xl p-6 mt-8"
          x-data="{ sent:false, sending:false, error:'', name:'', email:'', message:'',

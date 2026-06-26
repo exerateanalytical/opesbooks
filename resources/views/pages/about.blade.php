@@ -128,7 +128,7 @@
                 </div>
                 <div class="rounded-xl p-3" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08)">
                     <div class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Siège</div>
-                    <div class="text-slate-300 text-xs font-medium">Douala, Cameroun</div>
+                    <div class="text-slate-300 text-xs font-medium">Petite Terrain, Bonamoussadi — Douala, Cameroun</div>
                 </div>
                 <div class="rounded-xl p-3" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08)">
                     <div class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Année</div>
