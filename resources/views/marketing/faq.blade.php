@@ -58,7 +58,7 @@ $groups = [
 <section class="max-w-3xl mx-auto px-5 pt-16 pb-8 text-center">
     <span class="inline-block px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-widest text-gold mb-5" style="background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.30)">Aide & réponses</span>
     <h1 class="text-3xl md:text-5xl font-black leading-tight">Questions fréquentes</h1>
-    <p class="text-white/60 mt-4">Comptabilité et fiscalité au Cameroun et en zone CEMAC — et tout sur OPESBooks.</p>
+    <p class="text-slate-400 mt-4">Comptabilité et fiscalité au Cameroun et en zone CEMAC — et tout sur OPESBooks.</p>
 </section>
 
 <section class="max-w-3xl mx-auto px-5 pb-16 space-y-10">
@@ -72,7 +72,7 @@ $groups = [
                     <span class="text-sm font-bold text-white">{{ $qa[0] }}</span>
                     <span x-text="open?'−':'+'" class="text-gold text-lg shrink-0"></span>
                 </button>
-                <div x-show="open" x-cloak class="px-5 pb-4 text-sm text-white/65 leading-relaxed">{!! $qa[1] !!}</div>
+                <div x-show="open" x-cloak class="px-5 pb-4 text-sm text-slate-400 leading-relaxed">{!! $qa[1] !!}</div>
             </div>
             @endforeach
         </div>
@@ -81,10 +81,10 @@ $groups = [
 
     <div class="glass rounded-2xl p-8 text-center" style="background:linear-gradient(145deg,rgba(245,158,11,0.08),rgba(255,255,255,0.03))">
         <h2 class="text-xl md:text-2xl font-black">Une autre question ?</h2>
-        <p class="text-white/60 mt-2 text-sm">Notre équipe à Douala vous répond.</p>
+        <p class="text-slate-400 mt-2 text-sm">Notre équipe à Douala vous répond.</p>
         <div class="flex flex-wrap justify-center gap-3 mt-5">
             <a href="{{ route('m.contact') }}" class="px-6 py-3 rounded-xl text-sm font-black text-navy bg-gold hover:bg-gold-light transition">Nous contacter</a>
-            <a href="/login" class="px-6 py-3 rounded-xl text-sm font-bold text-white glass hover:bg-white/10 transition">Essayer gratuitement</a>
+            <a href="/login" class="px-6 py-3 rounded-xl text-sm font-bold text-white glass hover:bg-slate-700 transition">Essayer gratuitement</a>
         </div>
     </div>
 </section>

@@ -29,6 +29,17 @@
     .bg-gold-light{background-color:var(--c-accent-dim)}
     .border-gold{border-color:var(--c-accent)}
     .ring-gold{--tw-ring-color:var(--c-accent)}
+    /* Section rhythm — alternate bg to create visual separation */
+    .section-alt{background:var(--c-surface)}
+    /* Consistent placeholder color for all inputs */
+    ::placeholder{color:var(--c-faint)!important}
+    /* Tailwind prose overrides for blog */
+    .prose{color:var(--c-text)}
+    .prose h2,.prose h3,.prose h4{color:var(--c-text)}
+    .prose a{color:var(--c-accent)}
+    .prose strong{color:var(--c-text)}
+    .prose code{background:var(--c-raised);border:1px solid var(--c-border);padding:0.1em 0.4em;border-radius:0.3em;font-size:0.85em}
+    .prose blockquote{border-left:3px solid var(--c-accent);color:var(--c-muted);background:var(--c-surface);padding:0.75rem 1rem;border-radius:0 0.5rem 0.5rem 0}
     </style>
     @verbatim
     <script type="application/ld+json">

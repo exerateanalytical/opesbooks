@@ -24,14 +24,14 @@
     <a href="{{ route('blog.index') }}" class="text-gold text-xs font-black uppercase tracking-widest">← Tous les articles</a>
     @if($post->tags)<div class="flex flex-wrap gap-2 mt-5">@foreach($post->tags as $t)<span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider text-gold" style="background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.22)">{{ $t }}</span>@endforeach</div>@endif
     <h1 class="text-3xl md:text-4xl font-black mt-4 leading-tight">{{ $post->title }}</h1>
-    <div class="text-white/40 text-xs mt-3">{{ optional($post->published_at)->translatedFormat('d F Y') }} · {{ $post->reading_time_minutes }} min de lecture</div>
-    @if($post->excerpt)<p class="text-white/70 text-lg mt-6 leading-relaxed">{{ $post->excerpt }}</p>@endif
+    <div class="text-slate-500 text-xs mt-3">{{ optional($post->published_at)->translatedFormat('d F Y') }} · {{ $post->reading_time_minutes }} min de lecture</div>
+    @if($post->excerpt)<p class="text-slate-300 text-lg mt-6 leading-relaxed">{{ $post->excerpt }}</p>@endif
     <div class="article-body max-w-none mt-8">
         {!! \Illuminate\Support\Str::of($post->body)->markdown() !!}
     </div>
     <div class="glass rounded-2xl p-6 mt-12 text-center">
         <div class="font-black">Essayez OPESBooks gratuitement</div>
-        <p class="text-white/50 text-sm mt-1">30 jours · Aucune carte requise</p>
+        <p class="text-slate-400 text-sm mt-1">30 jours · Aucune carte requise</p>
         <a href="/login" class="inline-block mt-4 px-6 py-3 rounded-xl text-sm font-black text-[#010048] bg-gold hover:bg-gold-light transition">Commencer →</a>
     </div>
 </article>

@@ -9,7 +9,7 @@
     <div class="absolute inset-0 pointer-events-none" style="background:radial-gradient(ellipse 800px 400px at 50% -80px,rgba(245,158,11,0.12),transparent)"></div>
     <span class="inline-block px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-widest text-gold mb-6" style="background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.30)">Notre histoire</span>
     <h1 class="text-4xl md:text-6xl font-black leading-tight max-w-4xl mx-auto">Le bouclier fiscal des<br><span class="text-gold">PME camerounaises</span></h1>
-    <p class="text-white/60 mt-6 max-w-2xl mx-auto text-base md:text-lg leading-relaxed">Nous avons fondé OPESBooks parce que les PME africaines méritent des outils comptables conçus pour leur réalité — pas des logiciels occidentaux mal adaptés.</p>
+    <p class="text-slate-400 mt-6 max-w-2xl mx-auto text-base md:text-lg leading-relaxed">Nous avons fondé OPESBooks parce que les PME africaines méritent des outils comptables conçus pour leur réalité — pas des logiciels occidentaux mal adaptés.</p>
 </section>
 
 <!-- Mission -->
@@ -20,14 +20,14 @@
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
             </div>
             <h2 class="text-xl font-black">Notre mission</h2>
-            <p class="text-white/65 text-sm leading-relaxed">Donner à chaque PME camerounaise — qu'elle soit à Douala, Yaoundé, Bafoussam ou Garoua — les mêmes outils de gestion financière que les grandes entreprises, à un prix accessible, en Francs CFA, avec un support en français et depuis le Cameroun.</p>
+            <p class="text-slate-400 text-sm leading-relaxed">Donner à chaque PME camerounaise — qu'elle soit à Douala, Yaoundé, Bafoussam ou Garoua — les mêmes outils de gestion financière que les grandes entreprises, à un prix accessible, en Francs CFA, avec un support en français et depuis le Cameroun.</p>
         </div>
         <div class="glass rounded-2xl p-8 space-y-4">
             <div class="w-12 h-12 rounded-xl flex items-center justify-center text-gold" style="background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.22)">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
             </div>
             <h2 class="text-xl font-black">Notre vision</h2>
-            <p class="text-white/65 text-sm leading-relaxed">Un Cameroun et une zone CEMAC où chaque entrepreneur peut se concentrer sur son métier, en sachant que sa comptabilité est exacte, ses déclarations DGI à jour et ses factures conformes MECeF — automatiquement.</p>
+            <p class="text-slate-400 text-sm leading-relaxed">Un Cameroun et une zone CEMAC où chaque entrepreneur peut se concentrer sur son métier, en sachant que sa comptabilité est exacte, ses déclarations DGI à jour et ses factures conformes MECeF — automatiquement.</p>
         </div>
     </div>
 </section>
@@ -46,7 +46,7 @@
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="{{ $col }}"><path d="{{ $icon }}"/></svg>
             </div>
             <h3 class="font-black text-white">{{ $title }}</h3>
-            <p class="text-white/55 text-sm leading-relaxed">{{ $text }}</p>
+            <p class="text-slate-400 text-sm leading-relaxed">{{ $text }}</p>
         </div>
         @endforeach
     </div>
@@ -59,7 +59,7 @@
             @foreach([['2023','Année de création'],['Douala','Siège social'],['CEMAC','Zone couverte'],['XAF','Devise native']] as $s)
             <div>
                 <div class="text-2xl md:text-3xl font-black text-gold">{{ $s[0] }}</div>
-                <div class="text-white/40 text-xs mt-1">{{ $s[1] }}</div>
+                <div class="text-slate-500 text-xs mt-1">{{ $s[1] }}</div>
             </div>
             @endforeach
         </div>
@@ -74,15 +74,15 @@
             <div class="w-20 h-20 rounded-2xl flex items-center justify-center font-black text-2xl text-indigo-300 shrink-0" style="background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3)">OW</div>
             <div class="flex-1 min-w-0">
                 <div class="font-black text-white text-xl">OPESWARE</div>
-                <div class="text-white/50 text-sm mt-0.5">Software Engineering · Douala, Cameroun</div>
-                <p class="text-white/65 text-sm mt-4 leading-relaxed max-w-2xl">Opesware est une société camerounaise d'ingénierie logicielle spécialisée dans les solutions de gestion financière, de conformité fiscale et de transformation numérique pour les entreprises de la zone OHADA. Nous construisons des outils qui comprennent le terrain : connexion instable, paiements Mobile Money, fiscalité évolutive et besoins bilingues français/anglais.</p>
+                <div class="text-slate-400 text-sm mt-0.5">Software Engineering · Douala, Cameroun</div>
+                <p class="text-slate-400 text-sm mt-4 leading-relaxed max-w-2xl">Opesware est une société camerounaise d'ingénierie logicielle spécialisée dans les solutions de gestion financière, de conformité fiscale et de transformation numérique pour les entreprises de la zone OHADA. Nous construisons des outils qui comprennent le terrain : connexion instable, paiements Mobile Money, fiscalité évolutive et besoins bilingues français/anglais.</p>
             </div>
         </div>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-8">
             @foreach([['SYSCOHADA','Plan OHADA révisé 2017'],['TVA 19,25 %','TVA + CAC exact'],['DGI Live-Link','Fiscalis/SIGIT'],['MECeF 2026','Loi de Finances']] as $b)
             <div class="text-center p-4 rounded-xl" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08)">
                 <div class="text-gold font-black text-xs uppercase tracking-wider">{{ $b[0] }}</div>
-                <div class="text-white/40 text-[11px] mt-1">{{ $b[1] }}</div>
+                <div class="text-slate-500 text-[11px] mt-1">{{ $b[1] }}</div>
             </div>
             @endforeach
         </div>
@@ -107,7 +107,7 @@
             </div>
             <div>
                 <div class="font-bold text-white text-sm mb-1">{{ $title }}</div>
-                <p class="text-white/50 text-xs leading-relaxed">{{ $desc }}</p>
+                <p class="text-slate-400 text-xs leading-relaxed">{{ $desc }}</p>
             </div>
         </div>
         @endforeach
@@ -119,15 +119,15 @@
     <div class="glass rounded-2xl p-8 md:p-10 grid grid-cols-1 md:grid-cols-3 gap-6">
         <div class="col-span-1 md:col-span-2">
             <h2 class="text-xl md:text-2xl font-black">Vous voulez en savoir plus ?</h2>
-            <p class="text-white/60 text-sm mt-2 leading-relaxed">Parlez à notre équipe depuis Douala. Nous répondons en français et en anglais, sous 24h en jours ouvrés.</p>
+            <p class="text-slate-400 text-sm mt-2 leading-relaxed">Parlez à notre équipe depuis Douala. Nous répondons en français et en anglais, sous 24h en jours ouvrés.</p>
             <div class="flex flex-wrap gap-3 mt-6">
                 <a href="{{ route('m.contact') }}" class="px-6 py-3 rounded-xl text-sm font-black text-navy bg-gold hover:bg-gold-light transition">Nous contacter →</a>
-                <a href="/login" class="px-6 py-3 rounded-xl text-sm font-bold text-white glass hover:bg-white/10 transition">Essai gratuit 30 jours</a>
+                <a href="/login" class="px-6 py-3 rounded-xl text-sm font-bold text-white glass hover:bg-slate-700 transition">Essai gratuit 30 jours</a>
             </div>
         </div>
         <div class="space-y-3 text-sm">
             @foreach([['📍','Petite Terrain, Bonamoussadi, Douala'],['✉️','contact@opesware.com'],['📞','+237 670 416 238'],['🌐','opesware.com']] as $c)
-            <div class="flex items-start gap-3 text-white/65">
+            <div class="flex items-start gap-3 text-slate-400">
                 <span>{{ $c[0] }}</span><span>{{ $c[1] }}</span>
             </div>
             @endforeach

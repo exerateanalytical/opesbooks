@@ -14,7 +14,7 @@
         </p>
         <div class="flex flex-wrap items-center justify-center gap-3 mt-8">
             <a href="/login" class="px-6 py-3.5 rounded-xl text-sm font-black transition" style="background:var(--c-accent);color:#0F172A">Commencer gratuitement — 30 jours</a>
-            <a href="{{ route('m.features') }}" class="px-6 py-3.5 rounded-xl text-sm font-semibold text-white transition glass hover:bg-white/5">Voir les fonctionnalités →</a>
+            <a href="{{ route('m.features') }}" class="px-6 py-3.5 rounded-xl text-sm font-semibold text-white transition glass hover:bg-slate-800">Voir les fonctionnalités →</a>
         </div>
         <div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 mt-7 text-xs" style="color:var(--c-faint)">
             <span>✓ Aucune carte bancaire requise</span><span>✓ SYSCOHADA certifié</span><span>✓ Fonctionne hors ligne</span>
@@ -63,7 +63,8 @@
 </section>
 
 <!-- Comparison -->
-<section class="max-w-4xl mx-auto px-5 py-16">
+<section class="section-alt py-16" style="border-top:1px solid var(--c-border);border-bottom:1px solid var(--c-border)">
+<div class="max-w-4xl mx-auto px-5">
     <h2 class="text-2xl md:text-3xl font-black text-center">La seule solution 100% camerounaise</h2>
     <p class="text-center mt-2 text-sm" style="color:var(--c-muted)">Contrairement aux logiciels importés, OPESBooks épouse votre quotidien.</p>
     <div class="glass rounded-2xl overflow-hidden mt-8">
@@ -74,7 +75,7 @@
             <tbody style="border-color:var(--c-border)">
                 @foreach(['DGI Cameroun intégré','DSF / D10 export','Patente camerounaise','Fonctionne hors ligne','Prix en XAF','SYSCOHADA natif','Support local'] as $row)
                 <tr style="border-bottom:1px solid rgba(51,65,85,0.5)">
-                    <td class="p-4 text-white/80">{{ $row }}</td>
+                    <td class="p-4 text-slate-200">{{ $row }}</td>
                     <td class="p-4 text-center text-emerald-400 font-black">✓</td>
                     <td class="p-4 text-center text-red-400 font-black">✗</td>
                 </tr>
@@ -82,10 +83,11 @@
             </tbody>
         </table>
     </div>
-</section>
+</div></section>
 
 <!-- Pricing teaser -->
-<section class="max-w-7xl mx-auto px-5 py-16">
+<section class="py-16">
+<div class="max-w-7xl mx-auto px-5">
     <h2 class="text-2xl md:text-3xl font-black text-center">À partir de 5 000 XAF/mois</h2>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-10">
         @foreach($plans as $p)
@@ -97,10 +99,11 @@
         </div>
         @endforeach
     </div>
-</section>
+</div></section>
 
 <!-- How it works -->
-<section class="max-w-5xl mx-auto px-5 py-16">
+<section class="section-alt py-16" style="border-top:1px solid var(--c-border);border-bottom:1px solid var(--c-border)">
+<div class="max-w-5xl mx-auto px-5">
     <h2 class="text-2xl md:text-3xl font-black text-center">Démarrez en 3 étapes</h2>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-10">
         @foreach([
@@ -115,24 +118,26 @@
         </div>
         @endforeach
     </div>
-</section>
+</div></section>
 
 <!-- CEMAC coverage -->
-<section class="max-w-5xl mx-auto px-5 py-16">
+<section class="py-16">
+<div class="max-w-5xl mx-auto px-5">
     <div class="glass rounded-3xl p-8 md:p-10 text-center" style="background:linear-gradient(145deg,rgba(245,158,11,0.06),rgba(30,41,59,0.4))">
         <span class="inline-block px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest text-gold mb-4" style="background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.28)">Zone CEMAC · OHADA</span>
         <h2 class="text-2xl md:text-3xl font-black">Conçu pour le Cameroun, prêt pour l'Afrique centrale</h2>
         <p class="mt-3 max-w-2xl mx-auto text-sm leading-relaxed" style="color:var(--c-muted)">Base comptable SYSCOHADA commune, monnaie XAF, et configurations fiscales par pays — développez votre activité au-delà des frontières sans changer d'outil.</p>
         <div class="flex flex-wrap justify-center gap-2 mt-6">
             @foreach(['Cameroun','Gabon','Congo','Tchad','RCA','Guinée Équatoriale'] as $pays)
-            <span class="px-3 py-1.5 rounded-lg text-xs font-semibold text-white/80 glass">{{ $pays }}</span>
+            <span class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-200 glass">{{ $pays }}</span>
             @endforeach
         </div>
     </div>
-</section>
+</div></section>
 
 <!-- FAQ teaser -->
-<section class="max-w-3xl mx-auto px-5 py-16">
+<section class="section-alt py-16" style="border-top:1px solid var(--c-border);border-bottom:1px solid var(--c-border)">
+<div class="max-w-3xl mx-auto px-5">
     <h2 class="text-2xl md:text-3xl font-black text-center">Vos questions, nos réponses</h2>
     <p class="text-center mt-2 text-sm" style="color:var(--c-muted)">Tout sur la fiscalité camerounaise et OPESBooks.</p>
     <div class="mt-8 space-y-2">
@@ -148,14 +153,15 @@
         @endforeach
     </div>
     <div class="text-center mt-6"><a href="{{ route('m.faq') }}" class="text-gold text-sm font-bold hover:underline">Voir toutes les questions →</a></div>
-</section>
+</div></section>
 
 <!-- Final CTA -->
-<section class="max-w-4xl mx-auto px-5 py-16 text-center">
+<section class="py-16 text-center">
+<div class="max-w-4xl mx-auto px-5">
     <div class="glass rounded-3xl p-10" style="background:linear-gradient(145deg,rgba(245,158,11,0.07),rgba(30,41,59,0.5))">
         <h2 class="text-2xl md:text-3xl font-black">Prêt à simplifier votre comptabilité ?</h2>
         <a href="/login" class="inline-block mt-6 px-8 py-4 rounded-xl text-sm font-black transition" style="background:var(--c-accent);color:#0F172A">Commencer gratuitement →</a>
         <p class="text-xs mt-4" style="color:var(--c-faint)">30 jours gratuits · Aucune carte requise · Annulez à tout moment</p>
     </div>
-</section>
+</div></section>
 @endsection

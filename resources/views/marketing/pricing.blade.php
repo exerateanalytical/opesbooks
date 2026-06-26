@@ -9,8 +9,8 @@
     <div class="absolute inset-0 pointer-events-none" style="background:radial-gradient(ellipse 700px 350px at 50% -80px,rgba(245,158,11,0.12),transparent)"></div>
     <span class="inline-block px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-widest text-gold mb-6" style="background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.30)">Tarifs simples en XAF</span>
     <h1 class="text-4xl md:text-6xl font-black leading-tight max-w-4xl mx-auto">Commencez gratuitement.<br><span class="text-gold">Grandissez à votre rythme.</span></h1>
-    <p class="text-white/60 mt-6 max-w-xl mx-auto text-base leading-relaxed">Pas de carte bancaire internationale. Payez en Orange Money, MTN MoMo ou virement. Sans engagement.</p>
-    <div class="flex flex-wrap justify-center gap-6 mt-8 text-sm text-white/50">
+    <p class="text-slate-400 mt-6 max-w-xl mx-auto text-base leading-relaxed">Pas de carte bancaire internationale. Payez en Orange Money, MTN MoMo ou virement. Sans engagement.</p>
+    <div class="flex flex-wrap justify-center gap-6 mt-8 text-sm text-slate-400">
         <span>✓ 30 jours gratuits</span>
         <span>✓ Aucune carte requise</span>
         <span>✓ Annulez à tout moment</span>
@@ -32,11 +32,11 @@
                 <span class="text-4xl font-black text-white leading-none">
                     {{ $p->price_xaf_monthly ? number_format($p->price_xaf_monthly,0,',',' ') : ($p->slug==='enterprise' ? 'Sur devis' : 'Gratuit') }}
                 </span>
-                @if($p->price_xaf_monthly)<span class="text-white/40 text-sm pb-1">XAF</span>@endif
+                @if($p->price_xaf_monthly)<span class="text-slate-500 text-sm pb-1">XAF</span>@endif
             </div>
-            @if($p->price_xaf_monthly)<div class="text-white/30 text-xs mb-4">par mois, HT</div>@else<div class="mb-4"></div>@endif
+            @if($p->price_xaf_monthly)<div class="text-slate-500 text-xs mb-4">par mois, HT</div>@else<div class="mb-4"></div>@endif
 
-            <p class="text-white/55 text-xs leading-relaxed mb-5">
+            <p class="text-slate-400 text-xs leading-relaxed mb-5">
                 @if($p->slug==='free') Idéal pour démarrer et tester la plateforme, sans engagement.
                 @elseif($p->slug==='starter') Pour les indépendants et très petites entreprises qui facturent régulièrement.
                 @elseif($p->slug==='growth' || $p->slug==='business') La solution complète pour une PME en croissance — comptabilité, paie, DGI et IA.
@@ -56,7 +56,7 @@
                 $list = $features[$p->slug] ?? $features['growth'];
                 @endphp
                 @foreach($list as $feat)
-                <li class="flex items-start gap-2 text-xs text-white/70">
+                <li class="flex items-start gap-2 text-xs text-slate-300">
                     <span class="text-gold mt-0.5 shrink-0">✓</span>{{ $feat }}
                 </li>
                 @endforeach
@@ -64,7 +64,7 @@
 
             <a href="{{ $p->slug==='enterprise' ? route('m.contact') : '/login' }}"
                class="block text-center px-4 py-3 rounded-xl text-sm font-black transition
-               {{ $popular ? 'bg-gold hover:bg-gold-light text-navy' : 'glass hover:bg-white/10 text-white' }}">
+               {{ $popular ? 'bg-gold hover:bg-gold-light text-navy' : 'glass hover:bg-slate-700 text-white' }}">
                 @if($p->slug==='free') Commencer gratuitement
                 @elseif($p->slug==='enterprise') Nous contacter
                 @else Choisir {{ $p->name }} →
@@ -73,7 +73,7 @@
         </div>
         @endforeach
     </div>
-    <p class="text-center text-white/30 text-xs mt-6">Tous les prix sont HT. TVA 19,25 % applicable sur facture si assujetti.</p>
+    <p class="text-center text-slate-500 text-xs mt-6">Tous les prix sont HT. TVA 19,25 % applicable sur facture si assujetti.</p>
 </section>
 
 <!-- Feature comparison table -->
@@ -83,10 +83,10 @@
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
                 <thead>
-                    <tr class="border-b border-white/10">
-                        <th class="text-left px-5 py-4 text-white/40 text-xs font-black uppercase tracking-widest w-1/2">Fonctionnalité</th>
+                    <tr class="border-b border-slate-700">
+                        <th class="text-left px-5 py-4 text-slate-500 text-xs font-black uppercase tracking-widest w-1/2">Fonctionnalité</th>
                         @foreach(['Gratuit','Starter','Growth','Enterprise'] as $h)
-                        <th class="px-4 py-4 text-center text-xs font-black uppercase tracking-widest {{ $h==='Growth' ? 'text-gold' : 'text-white/50' }}">{{ $h }}</th>
+                        <th class="px-4 py-4 text-center text-xs font-black uppercase tracking-widest {{ $h==='Growth' ? 'text-gold' : 'text-slate-400' }}">{{ $h }}</th>
                         @endforeach
                     </tr>
                 </thead>
@@ -132,13 +132,13 @@
                     @foreach($rows as $row)
                     @if($row[1]==='' && $row[2]==='' && $row[3]==='' && $row[4]==='')
                     <tr class="bg-white/[0.02]">
-                        <td colspan="5" class="px-5 py-2.5 text-[11px] font-black uppercase tracking-widest text-white/30">{{ $row[0] }}</td>
+                        <td colspan="5" class="px-5 py-2.5 text-[11px] font-black uppercase tracking-widest text-slate-500">{{ $row[0] }}</td>
                     </tr>
                     @else
                     <tr class="hover:bg-white/[0.02]">
-                        <td class="px-5 py-3 text-white/70">{{ $row[0] }}</td>
+                        <td class="px-5 py-3 text-slate-300">{{ $row[0] }}</td>
                         @foreach(array_slice($row,1) as $i => $v)
-                        <td class="px-4 py-3 text-center {{ $v==='✓'?'text-emerald-400 font-bold':($v==='—'?'text-white/20':($i===2?'text-gold font-bold':'text-white/70')) }}">{{ $v }}</td>
+                        <td class="px-4 py-3 text-center {{ $v==='✓'?'text-emerald-400 font-bold':($v==='—'?'text-slate-600':($i===2?'text-gold font-bold':'text-slate-300')) }}">{{ $v }}</td>
                         @endforeach
                     </tr>
                     @endif
@@ -162,7 +162,7 @@
             <div class="w-10 h-10 rounded-lg shrink-0 flex items-center justify-center font-black text-xs" style="background:{{ $color }}22;border:1px solid {{ $color }}44;color:{{ $color }}">{{ substr($name,0,2) }}</div>
             <div>
                 <div class="font-bold text-white text-sm">{{ $name }}</div>
-                <p class="text-white/50 text-xs mt-1 leading-relaxed">{{ $desc }}</p>
+                <p class="text-slate-400 text-xs mt-1 leading-relaxed">{{ $desc }}</p>
             </div>
         </div>
         @endforeach
@@ -186,17 +186,17 @@
                 <span class="text-sm font-bold text-white">{{ $faq[0] }}</span>
                 <span x-text="open?'−':'+'" class="text-gold text-lg shrink-0"></span>
             </button>
-            <div x-show="open" x-cloak class="px-5 pb-4 text-sm text-white/60 leading-relaxed">{{ $faq[1] }}</div>
+            <div x-show="open" x-cloak class="px-5 pb-4 text-sm text-slate-400 leading-relaxed">{{ $faq[1] }}</div>
         </div>
         @endforeach
     </div>
 
     <div class="glass rounded-2xl p-8 mt-10 text-center" style="background:linear-gradient(145deg,rgba(245,158,11,0.08),rgba(255,255,255,0.02))">
         <h2 class="text-xl font-black">Encore des questions ?</h2>
-        <p class="text-white/55 text-sm mt-2">Notre équipe à Douala vous répond sous 24h.</p>
+        <p class="text-slate-400 text-sm mt-2">Notre équipe à Douala vous répond sous 24h.</p>
         <div class="flex flex-wrap justify-center gap-3 mt-5">
             <a href="/login" class="px-6 py-3 rounded-xl text-sm font-black text-navy bg-gold hover:bg-gold-light transition">Commencer gratuitement →</a>
-            <a href="{{ route('m.contact') }}" class="px-6 py-3 rounded-xl text-sm font-bold text-white glass hover:bg-white/10 transition">Parler à un conseiller</a>
+            <a href="{{ route('m.contact') }}" class="px-6 py-3 rounded-xl text-sm font-bold text-white glass hover:bg-slate-700 transition">Parler à un conseiller</a>
         </div>
     </div>
 </section>

@@ -8,17 +8,17 @@
     <div class="absolute inset-0 pointer-events-none" style="background:radial-gradient(ellipse 900px 400px at 50% -80px,rgba(245,158,11,0.12),transparent)"></div>
     <span class="inline-block px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-widest text-gold mb-6" style="background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.30)">Une plateforme, tout votre back-office</span>
     <h1 class="text-4xl md:text-6xl font-black leading-tight max-w-4xl mx-auto">Tout ce qu'il faut pour <span class="text-gold">gérer une PME</span><br>au Cameroun et en CEMAC</h1>
-    <p class="text-white/60 mt-6 max-w-2xl mx-auto text-base md:text-lg leading-relaxed">De la première écriture à la télédéclaration DGI — comptabilité SYSCOHADA, facturation électronique MECeF, paie, trésorerie Mobile Money, CRM et IA, conçu nativement pour l'environnement fiscal camerounais.</p>
+    <p class="text-slate-400 mt-6 max-w-2xl mx-auto text-base md:text-lg leading-relaxed">De la première écriture à la télédéclaration DGI — comptabilité SYSCOHADA, facturation électronique MECeF, paie, trésorerie Mobile Money, CRM et IA, conçu nativement pour l'environnement fiscal camerounais.</p>
     <div class="flex flex-wrap justify-center gap-3 mt-8">
         <a href="/login" class="px-6 py-3.5 rounded-xl text-sm font-black text-navy bg-gold hover:bg-gold-light transition">Essai gratuit 30 jours →</a>
-        <a href="{{ route('m.pricing') }}" class="px-6 py-3.5 rounded-xl text-sm font-bold text-white glass hover:bg-white/10 transition">Voir les tarifs</a>
+        <a href="{{ route('m.pricing') }}" class="px-6 py-3.5 rounded-xl text-sm font-bold text-white glass hover:bg-slate-700 transition">Voir les tarifs</a>
     </div>
     <!-- Stat bar -->
     <div class="flex flex-wrap justify-center gap-8 mt-14 text-center">
         @foreach([['45+','Modules métier'],['176+','Endpoints API'],['SYSCOHADA','Plan OHADA révisé'],['TVA 19,25%','Calcul exact CFA']] as $s)
         <div>
             <div class="text-2xl md:text-3xl font-black text-gold">{{ $s[0] }}</div>
-            <div class="text-xs text-white/40 mt-0.5">{{ $s[1] }}</div>
+            <div class="text-xs text-slate-500 mt-0.5">{{ $s[1] }}</div>
         </div>
         @endforeach
     </div>
@@ -156,7 +156,7 @@ $colors = [
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         @foreach($modules as $m)
         @php $c = $colors[$m['color']]; @endphp
-        <a href="{{ route('m.feature', $m['slug']) }}" class="group glass rounded-2xl p-6 flex flex-col gap-4 hover:border-white/20 transition-all duration-200 hover:scale-[1.01]">
+        <a href="{{ route('m.feature', $m['slug']) }}" class="group glass rounded-2xl p-6 flex flex-col gap-4 hover:border-slate-600 transition-all duration-200 hover:scale-[1.01]">
             <div class="flex items-start justify-between">
                 <div class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0" style="background:{{ $c['bg'] }};border:1px solid {{ $c['border'] }}">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="{{ $c['text'] }}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="{{ $m['icon'] }}"/></svg>
@@ -165,11 +165,11 @@ $colors = [
             </div>
             <div>
                 <h2 class="text-lg font-black text-white mb-2">{{ $m['title'] }}</h2>
-                <p class="text-white/50 text-sm leading-relaxed">{{ $m['desc'] }}</p>
+                <p class="text-slate-400 text-sm leading-relaxed">{{ $m['desc'] }}</p>
             </div>
             <ul class="space-y-1.5 flex-1">
                 @foreach(array_slice($m['highlights'],0,4) as $h)
-                <li class="flex items-center gap-2 text-xs text-white/60">
+                <li class="flex items-center gap-2 text-xs text-slate-400">
                     <span style="color:{{ $c['text'] }}">✓</span> {{ $h }}
                 </li>
                 @endforeach
@@ -189,10 +189,10 @@ $colors = [
 <section class="max-w-4xl mx-auto px-5 pb-20 text-center">
     <div class="glass rounded-3xl p-10" style="background:linear-gradient(145deg,rgba(245,158,11,0.08),rgba(255,255,255,0.03))">
         <h2 class="text-2xl md:text-3xl font-black">Prêt à simplifier votre comptabilité ?</h2>
-        <p class="text-white/60 mt-3 text-sm">Essai gratuit 30 jours · Sans carte bancaire · Support en français</p>
+        <p class="text-slate-400 mt-3 text-sm">Essai gratuit 30 jours · Sans carte bancaire · Support en français</p>
         <div class="flex flex-wrap justify-center gap-3 mt-6">
             <a href="/login" class="px-7 py-3.5 rounded-xl text-sm font-black text-navy bg-gold hover:bg-gold-light transition">Commencer gratuitement →</a>
-            <a href="{{ route('m.contact') }}" class="px-7 py-3.5 rounded-xl text-sm font-bold text-white glass hover:bg-white/10 transition">Parler à un conseiller</a>
+            <a href="{{ route('m.contact') }}" class="px-7 py-3.5 rounded-xl text-sm font-bold text-white glass hover:bg-slate-700 transition">Parler à un conseiller</a>
         </div>
     </div>
 </section>

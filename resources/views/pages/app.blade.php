@@ -227,7 +227,7 @@
                 padding: 0.625rem 1rem; height: 52px;
                 background: rgba(1,0,87,0.92);
                 -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
-                border-bottom: 1px solid rgba(255,255,255,0.09);
+                border-bottom: 1px solid #334155;
             }
             .glass-sidebar {
                 position: fixed; top: 0; left: 0; bottom: 0;
@@ -270,7 +270,7 @@
                 error:'background:rgba(244,63,94,0.18);border:1px solid rgba(244,63,94,0.35);color:rgb(252,165,165)',
                 warning:'background:rgba(245,158,11,0.18);border:1px solid rgba(245,158,11,0.35);color:#E3B420',
                 info:'background:rgba(99,102,241,0.18);border:1px solid rgba(99,102,241,0.35);color:rgb(165,180,252)'
-             })[t.type] || 'background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#fff'">
+             })[t.type] || 'background:#293548;border:1px solid #334155;color:#fff'">
             <div class="flex-1 min-w-0">
                 <p class="font-black text-sm" x-text="t.title"></p>
                 <p x-show="t.message" class="text-xs opacity-80 mt-0.5" x-text="t.message"></p>
@@ -321,14 +321,14 @@
                         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
                         <span x-show="notifUnread>0" x-cloak class="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[8px] font-black rounded-full min-w-[14px] h-[14px] px-0.5 flex items-center justify-center" x-text="notifUnread>9?'9+':notifUnread"></span>
                     </button>
-                    <div x-show="notifOpen" x-cloak class="absolute left-0 mt-2 w-72 rounded-xl overflow-hidden z-[90]" style="background:rgba(13,29,51,0.99);border:1px solid rgba(255,255,255,0.12);box-shadow:0 12px 40px rgba(0,0,0,0.6)">
-                        <div class="flex items-center justify-between px-3 py-2.5 border-b" style="border-color:rgba(255,255,255,0.08)">
+                    <div x-show="notifOpen" x-cloak class="absolute left-0 mt-2 w-72 rounded-xl overflow-hidden z-[90]" style="background:#1E293B;border:1px solid #334155;box-shadow:0 12px 40px rgba(0,0,0,0.6)">
+                        <div class="flex items-center justify-between px-3 py-2.5 border-b" style="border-color:#334155">
                             <span class="text-xs font-black text-white uppercase tracking-wider">Notifications</span>
                             <button @click="markAllNotifsRead()" x-show="notifUnread>0" class="text-[10px] text-amber-400 font-bold uppercase">Tout lire</button>
                         </div>
                         <div class="max-h-72 overflow-y-auto">
                             <template x-for="n in notifications" :key="n.id">
-                                <a :href="n.action_url || '#'" class="flex items-start gap-2.5 px-3 py-2.5 hover:bg-white/5 transition-colors border-b" style="border-color:rgba(255,255,255,0.05)" :style="!n.read_at ? 'background:rgba(245,158,11,0.05)' : ''">
+                                <a :href="n.action_url || '#'" class="flex items-start gap-2.5 px-3 py-2.5 hover:bg-slate-800 transition-colors border-b" style="border-color:#334155" :style="!n.read_at ? 'background:rgba(245,158,11,0.05)' : ''">
                                     <span class="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" :style="!n.read_at ? 'background:#F59E0B' : 'background:transparent'"></span>
                                     <div class="min-w-0 flex-1">
                                         <div class="text-xs font-bold text-slate-200 truncate" x-text="n.title"></div>
@@ -343,7 +343,7 @@
             </div>
             <!-- User chip -->
             <div class="px-2.5 py-1.5 rounded-xl text-[10px] font-bold"
-                 style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09)">
+                 style="background:#1E293B;border:1px solid #334155">
                 <div class="text-slate-300 font-black truncate" x-text="user?.name ?? '—'"></div>
                 <!-- Role badge -->
                 <div class="mt-1 mb-0.5">
@@ -369,10 +369,10 @@
                     <!-- Switcher dropdown -->
                     <div x-show="companySwitcherOpen" x-cloak x-transition.opacity
                          class="absolute left-0 right-0 mt-2 z-50 rounded-xl overflow-hidden"
-                         style="background:rgba(13,29,51,0.98);border:1px solid rgba(255,255,255,0.12);box-shadow:0 12px 40px rgba(0,0,0,0.6)">
+                         style="background:#1E293B;border:1px solid #334155;box-shadow:0 12px 40px rgba(0,0,0,0.6)">
                         <template x-for="c in companies" :key="c.id">
                             <button type="button" @click="switchCompany(c.id)"
-                                    class="w-full flex items-center gap-2 px-3 py-2.5 text-left hover:bg-white/5 transition-colors"
+                                    class="w-full flex items-center gap-2 px-3 py-2.5 text-left hover:bg-slate-800 transition-colors"
                                     :class="c.is_active ? 'bg-white/5' : ''">
                                 <svg x-show="c.is_active" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgb(245,158,11)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><polyline points="20 6 9 17 4 12"/></svg>
                                 <span x-show="!c.is_active" class="w-[13px] shrink-0"></span>
@@ -383,8 +383,8 @@
                             </button>
                         </template>
                         <button type="button" @click="companySwitcherOpen=false; showAddCompany=true"
-                                class="w-full flex items-center gap-2 px-3 py-2.5 text-left border-t hover:bg-white/5 transition-colors text-amber-400"
-                                style="border-color:rgba(255,255,255,0.08)">
+                                class="w-full flex items-center gap-2 px-3 py-2.5 text-left border-t hover:bg-slate-800 transition-colors text-amber-400"
+                                style="border-color:#334155">
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                             <span class="text-[10px] font-black uppercase tracking-wider normal-case" x-text="lang==='FR' ? 'Ajouter une entreprise' : 'Add company'"></span>
                         </button>
@@ -494,7 +494,7 @@
                 <span x-text="lang==='FR' ? 'Mon Profil' : 'My Profile'"></span>
             </button>
 
-            <div class="my-1" style="height:1px;background:rgba(255,255,255,0.07)"></div>
+            <div class="my-1" style="height:1px;background:#334155"></div>
 
             <button @click="setPage('customer-invoices')" :class="page==='customer-invoices' ? 'nav-item active' : 'nav-item'">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
@@ -590,7 +590,7 @@
                 <span x-text="lang==='FR' ? 'Trésorerie Prev.' : 'Cashflow Forecast'"></span>
             </button>
 
-            <div class="my-2" style="height:1px;background:rgba(255,255,255,0.07)"></div>
+            <div class="my-2" style="height:1px;background:#334155"></div>
 
             <a href="/tax-dashboard" class="nav-item" x-show="user?.role === 'OWNER' || user?.role === 'ACCOUNTANT'">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
@@ -616,7 +616,7 @@
         </nav>
 
         <!-- Footer -->
-        <div class="space-y-0.5 mt-4 pt-4" style="border-top:1px solid rgba(255,255,255,0.07)">
+        <div class="space-y-0.5 mt-4 pt-4" style="border-top:1px solid #334155">
             <button @click="toggleLang()" class="nav-item">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/></svg>
                 <span x-text="lang==='FR' ? 'English' : 'Français'"></span>
@@ -635,7 +635,7 @@
         <div class="mobile-topbar">
             <button @click="sidebarOpen = !sidebarOpen" aria-label="Menu"
                     class="w-9 h-9 flex items-center justify-center rounded-lg text-slate-300 hover:text-white"
-                    style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1)">
+                    style="background:#293548;border:1px solid #334155">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
             </button>
             <span class="text-white font-black text-sm tracking-widest uppercase">OPES<span class="text-amber-400">BOOKS</span></span>
@@ -660,7 +660,7 @@
                         WARNING:     'background:rgba(245,158,11,0.10);border:1px solid rgba(245,158,11,0.30)',
                         MAINTENANCE: 'background:rgba(244,63,94,0.10);border:1px solid rgba(244,63,94,0.30)',
                         FEATURE:     'background:rgba(16,185,129,0.10);border:1px solid rgba(16,185,129,0.30)'
-                     })[a.type] || 'background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12)'">
+                     })[a.type] || 'background:#1E293B;border:1px solid #334155'">
                     <div class="flex-1">
                         <div class="font-black uppercase tracking-wider text-white" x-text="a.title"></div>
                         <div class="text-slate-300 mt-0.5 leading-relaxed" x-text="a.body"></div>
@@ -697,7 +697,7 @@
                     <p class="text-xs text-slate-400 mt-1" x-text="today"></p>
                 </div>
                 <div class="text-[10px] font-black text-slate-400 px-3 py-1.5 rounded-xl uppercase tracking-widest"
-                     style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1)"
+                     style="background:#293548;border:1px solid #334155"
                      x-text="(company?.tax_regime ?? '—') + ' · NIU: ' + (company?.niu ?? '—')"></div>
             </div>
 
@@ -710,7 +710,7 @@
                     </div>
                     <button @click="dismissChecklist()" class="text-[10px] text-slate-500 hover:text-slate-300 uppercase tracking-wider" x-text="lang==='FR'?'Fermer':'Dismiss'"></button>
                 </div>
-                <div class="h-2 rounded-full overflow-hidden mb-4" style="background:rgba(255,255,255,0.08)">
+                <div class="h-2 rounded-full overflow-hidden mb-4" style="background:#293548">
                     <div class="h-full rounded-full transition-all" :style="'width:'+(((onboarding?.checklist_done||0)/(onboarding?.checklist_total||5))*100)+'%;background:#F59E0B'"></div>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -722,9 +722,9 @@
                         {k:'report',  fr:'Rapport consulté',   en:'Report viewed',    page:'reports'}
                     ]" :key="item.k">
                         <button @click="setPage(item.page)" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-left transition-all"
-                                :style="onboarding?.checklist?.[item.k] ? 'background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2)' : 'background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08)'">
+                                :style="onboarding?.checklist?.[item.k] ? 'background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2)' : 'background:#1E293B;border:1px solid #334155'">
                             <span class="w-5 h-5 rounded-full flex items-center justify-center shrink-0"
-                                  :style="onboarding?.checklist?.[item.k] ? 'background:rgb(16,185,129);color:#0F172A' : 'background:rgba(255,255,255,0.08);color:rgba(148,163,184,0.6)'">
+                                  :style="onboarding?.checklist?.[item.k] ? 'background:rgb(16,185,129);color:#0F172A' : 'background:#334155;color:#94a3b8'">
                                 <svg x-show="onboarding?.checklist?.[item.k]" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>
                             </span>
                             <span class="text-xs font-bold" :class="onboarding?.checklist?.[item.k] ? 'text-slate-300 line-through opacity-60' : 'text-white'" x-text="lang==='FR'?item.fr:item.en"></span>
@@ -777,9 +777,9 @@
                     <template x-for="action in quickActions" :key="action.labelEn">
                         <button @click="action.href ? (window.location.href = action.href) : setPage(action.page)"
                                 class="flex flex-col items-center gap-2 p-4 rounded-xl transition-all text-center group active:scale-95"
-                                style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09)"
-                                @mouseenter="$el.style.background='rgba(255,255,255,0.09)';$el.style.borderColor='rgba(245,158,11,0.3)'"
-                                @mouseleave="$el.style.background='rgba(255,255,255,0.04)';$el.style.borderColor='rgba(255,255,255,0.09)'">
+                                style="background:#1E293B;border:1px solid #334155"
+                                @mouseenter="$el.style.background='#334155';$el.style.borderColor='rgba(245,158,11,0.3)'"
+                                @mouseleave="$el.style.background='#1E293B';$el.style.borderColor='#334155'">
                             <span class="text-amber-400 group-hover:scale-110 transition-transform"
                                   x-html="`<svg width='26' height='26' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'>${action.icon}</svg>`"></span>
                             <span class="text-[10px] font-black text-slate-300 uppercase tracking-wide leading-tight"
@@ -813,7 +813,7 @@
             </div>
 
             <div class="glass rounded-2xl overflow-hidden">
-                <div class="px-5 py-3 flex items-center justify-between border-b" style="border-color:rgba(255,255,255,0.07);background:rgba(0,0,0,0.15)">
+                <div class="px-5 py-3 flex items-center justify-between border-b" style="border-color:#334155;background:#0F172A">
                     <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest"
                           x-text="lang==='FR' ? 'Écritures Comptables' : 'Journal Entries'"></span>
                     <span class="text-[10px] font-mono font-black px-2.5 py-0.5 rounded-full"
@@ -824,7 +824,7 @@
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="text-[10px] font-black uppercase text-slate-500 tracking-widest border-b"
-                                style="border-color:rgba(255,255,255,0.06);background:rgba(0,0,0,0.1)">
+                                style="border-color:#334155;background:#0F172A">
                                 <th class="py-3 px-5 whitespace-nowrap" x-text="lang==='FR' ? 'Référence' : 'Reference'"></th>
                                 <th class="py-3 px-5 whitespace-nowrap" x-text="lang==='FR' ? 'Date' : 'Date'"></th>
                                 <th class="py-3 px-5 whitespace-nowrap" x-text="lang==='FR' ? 'Mémo' : 'Memo'"></th>
@@ -857,7 +857,7 @@
                                     <td class="py-3 px-5 text-[11px] text-slate-300 max-w-xs truncate" x-text="txn.memo"></td>
                                     <td class="py-3 px-5">
                                         <span class="text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider"
-                                              style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);color:rgb(148,163,184)"
+                                              style="background:#293548;border:1px solid #334155;color:rgb(148,163,184)"
                                               x-text="txn.source_pipeline?.replace('_', ' ')"></span>
                                     </td>
                                     <td class="py-3 px-5 text-center">
@@ -897,7 +897,7 @@
                 <!-- Pagination -->
                 <div x-show="journalMeta.last_page > 1"
                      class="px-5 py-3 flex items-center justify-between border-t text-[11px]"
-                     style="border-color:rgba(255,255,255,0.07);background:rgba(0,0,0,0.08)">
+                     style="border-color:#334155;background:#0F172A">
                     <span class="text-slate-500"
                           x-text="(lang==='FR'?'Page ':'Page ') + journalMeta.current_page + ' / ' + journalMeta.last_page"></span>
                     <div class="flex gap-1.5">
@@ -932,7 +932,7 @@
                         </div>
                     </template>
                 </div>
-                <div class="border-t pt-4" style="border-color:rgba(255,255,255,0.07)">
+                <div class="border-t pt-4" style="border-color:#334155">
                     <label class="block text-xs opacity-60 mb-2" x-text="lang==='FR'?'Ajouter une pièce jointe':'Add attachment'"></label>
                     <input type="file" @change="attachFile=$event.target.files[0]"
                            accept=".pdf,.jpg,.jpeg,.png,.webp,.xlsx,.csv,.doc,.docx"
@@ -985,7 +985,7 @@
             </div>
 
             <div class="glass rounded-2xl overflow-hidden">
-                <div class="px-5 py-3 border-b" style="border-color:rgba(255,255,255,0.07);background:rgba(0,0,0,0.15)">
+                <div class="px-5 py-3 border-b" style="border-color:#334155;background:#0F172A">
                     <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest"
                           x-text="lang==='FR' ? 'Comptes SYSCOHADA Révisé' : 'SYSCOHADA Revised Accounts'"></span>
                 </div>
@@ -993,7 +993,7 @@
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="text-[10px] font-black uppercase text-slate-500 tracking-widest border-b"
-                                style="border-color:rgba(255,255,255,0.06);background:rgba(0,0,0,0.1)">
+                                style="border-color:#334155;background:#0F172A">
                                 <th class="py-3 px-5 whitespace-nowrap">Code</th>
                                 <th class="py-3 px-5 whitespace-nowrap">Libellé / Label</th>
                                 <th class="py-3 px-5 text-right whitespace-nowrap">Débit / Debit</th>
@@ -1098,7 +1098,7 @@
                 </div>
 
                 <!-- Totals -->
-                <div class="rounded-xl p-4" style="background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.07)">
+                <div class="rounded-xl p-4" style="background:#0F172A;border:1px solid #334155">
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center text-[11px]">
                         <div>
                             <div class="text-slate-500 font-black uppercase tracking-widest text-[9px] mb-1">Base HT</div>
@@ -1148,7 +1148,7 @@
 
                 <div class="glass rounded-2xl p-6 space-y-5">
                     <!-- Mode toggle -->
-                    <div class="flex gap-2 p-1 rounded-xl" style="background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.07)">
+                    <div class="flex gap-2 p-1 rounded-xl" style="background:#0F172A;border:1px solid #334155">
                         <button @click="mode='ht'" class="flex-1 py-2 rounded-lg text-[11px] font-black uppercase tracking-wider transition-all"
                                 :style="mode==='ht' ? 'background:rgba(245,158,11,0.2);border:1px solid rgba(245,158,11,0.35);color:rgb(252,211,77)' : 'color:rgba(148,163,184,0.7);border:1px solid transparent'"
                                 x-text="lang==='FR' ? 'À partir du HT' : 'From HT'"></button>
@@ -1170,17 +1170,17 @@
 
                     <!-- Result -->
                     <div x-show="result" x-cloak class="rounded-xl p-4 space-y-3 float-in"
-                         style="background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.08)">
-                        <div class="flex justify-between items-center py-1.5 border-b" style="border-color:rgba(255,255,255,0.06)">
+                         style="background:#0F172A;border:1px solid #334155">
+                        <div class="flex justify-between items-center py-1.5 border-b" style="border-color:#334155">
                             <span class="text-[11px] font-black text-slate-400 uppercase tracking-wider"
                                   x-text="lang==='FR' ? 'Base HT' : 'Amount HT'"></span>
                             <span class="font-mono font-black text-white" x-text="fmtXaf(result?.amount_ht)"></span>
                         </div>
-                        <div class="flex justify-between items-center py-1.5 border-b" style="border-color:rgba(255,255,255,0.06)">
+                        <div class="flex justify-between items-center py-1.5 border-b" style="border-color:#334155">
                             <span class="text-[11px] font-black text-slate-400 uppercase tracking-wider">TVA (17.5%)</span>
                             <span class="font-mono font-black text-indigo-400" x-text="fmtXaf(result?.base_vat)"></span>
                         </div>
-                        <div class="flex justify-between items-center py-1.5 border-b" style="border-color:rgba(255,255,255,0.06)">
+                        <div class="flex justify-between items-center py-1.5 border-b" style="border-color:#334155">
                             <span class="text-[11px] font-black text-slate-400 uppercase tracking-wider">CAC (10% TVA)</span>
                             <span class="font-mono font-black text-purple-400" x-text="fmtXaf(result?.cac)"></span>
                         </div>
@@ -1218,7 +1218,7 @@
                            x-text="lang==='FR' ? 'Fichier CSV (.csv ou .txt)' : 'CSV File (.csv or .txt)'"></label>
                     <input type="file" accept=".csv,.txt" @change="onFileChange($event)"
                            class="block text-xs text-slate-400 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-[10px] file:font-black file:uppercase file:tracking-wider file:cursor-pointer"
-                           style="file:background:rgba(255,255,255,0.09);file:color:rgb(226,232,240);file:border:1px solid rgba(255,255,255,0.15)">
+                           style="file:background:#293548;file:color:rgb(226,232,240);file:border:1px solid #334155">
                     <p x-show="importFile" class="text-[10px] text-slate-400 mt-1.5" x-text="importFile?.name + ' — ' + Math.round((importFile?.size||0)/1024) + ' KB'"></p>
                 </div>
 
@@ -1321,7 +1321,7 @@
                 <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3"
                    x-text="lang==='FR' ? 'Exemple de Format CSV Attendu' : 'Expected CSV Format Example'"></p>
                 <pre class="text-[10px] text-slate-400 font-mono leading-relaxed overflow-x-auto"
-                     style="background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.07);padding:0.75rem;border-radius:0.5rem">Date,Reference,Memo,Debit,Credit
+                     style="background:#0F172A;border:1px solid #334155;padding:0.75rem;border-radius:0.5rem">Date,Reference,Memo,Debit,Credit
 2026-01-15,VIR-001234,Paiement fournisseur SARL ABC,150000,
 2026-01-16,REC-005678,Encaissement client XYZ,,320000
 2026-01-17,VIR-001299,Salaires janvier 2026,850000,</pre>
@@ -1361,7 +1361,7 @@
 
             <div class="glass rounded-2xl overflow-hidden">
                 <div class="px-5 py-3 border-b flex items-center justify-between"
-                     style="border-color:rgba(255,255,255,0.07);background:rgba(0,0,0,0.15)">
+                     style="border-color:#334155;background:#0F172A">
                     <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest"
                           x-text="lang==='FR' ? 'Comptes Auxiliaires Actifs' : 'Active Auxiliary Accounts'"></span>
                     <span class="text-[10px] font-mono font-black px-2.5 py-0.5 rounded-full"
@@ -1380,7 +1380,7 @@
                         </div>
                     </div>
                 </template>
-                <div class="divide-y" style="border-color:rgba(255,255,255,0.06)">
+                <div class="divide-y" style="border-color:#334155">
                     <template x-for="acc in subAccounts" :key="acc.id">
                         <div class="px-5 py-3.5 flex items-center justify-between glass-row">
                             <div class="flex items-center gap-3">
@@ -1426,7 +1426,7 @@
                 <template x-for="(s,i) in steps" :key="i">
                     <div class="flex items-center gap-2">
                         <span class="w-6 h-6 rounded-full flex items-center justify-center"
-                              :style="step>=i+1 ? 'background:#F59E0B;color:#0F172A' : 'background:rgba(255,255,255,0.1);color:#94a3b8'" x-text="i+1"></span>
+                              :style="step>=i+1 ? 'background:#F59E0B;color:#0F172A' : 'background:#293548;color:#94a3b8'" x-text="i+1"></span>
                         <span :class="step>=i+1?'text-amber-300':'text-slate-500'" x-text="lang==='FR'?s.fr:s.en"></span>
                         <span x-show="i<3" class="w-6 h-px bg-white/15"></span>
                     </div>
@@ -1440,7 +1440,7 @@
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         <template x-for="t in types" :key="t.key">
                             <button @click="type=t.key" class="text-left p-4 rounded-xl border transition"
-                                    :style="type===t.key ? 'border-color:#F59E0B;background:rgba(245,158,11,0.08)' : 'border-color:rgba(255,255,255,0.12)'">
+                                    :style="type===t.key ? 'border-color:#F59E0B;background:rgba(245,158,11,0.08)' : 'border-color:#334155'">
                                 <div class="font-black text-white text-sm" x-text="lang==='FR'?t.fr:t.en"></div>
                                 <div class="text-[11px] text-slate-400 mt-1" x-text="lang==='FR'?t.descFr:t.descEn"></div>
                             </button>
@@ -1470,7 +1470,7 @@
                         <span class="px-3 py-1.5 rounded-lg font-bold" style="background:rgba(16,185,129,0.15);color:#6ee7b7"><span x-text="report?.valid_count"></span> <span x-text="lang==='FR'?'valides':'valid'"></span></span>
                         <span x-show="report?.error_count>0" class="px-3 py-1.5 rounded-lg font-bold" style="background:rgba(244,63,94,0.15);color:#fca5a5"><span x-text="report?.error_count"></span> <span x-text="lang==='FR'?'en erreur':'with errors'"></span></span>
                     </div>
-                    <div class="overflow-auto rounded-xl border border-white/10 max-h-80">
+                    <div class="overflow-auto rounded-xl border border-slate-700 max-h-80">
                         <table class="w-full text-[11px]">
                             <thead class="sticky top-0" style="background:#1E293B">
                                 <tr><th class="px-2 py-2 text-left text-slate-400">#</th>
@@ -1479,7 +1479,7 @@
                             </thead>
                             <tbody>
                                 <template x-for="r in report.rows" :key="r.line">
-                                    <tr :style="r.errors.length ? 'background:rgba(244,63,94,0.06)' : ''" class="border-t border-white/5">
+                                    <tr :style="r.errors.length ? 'background:rgba(244,63,94,0.06)' : ''" class="border-t border-slate-800">
                                         <td class="px-2 py-1.5 text-slate-500" x-text="r.line"></td>
                                         <template x-for="h in report.headers" :key="h"><td class="px-2 py-1.5 text-slate-300" x-text="r.data[h]"></td></template>
                                         <td class="px-2 py-1.5 text-red-300" x-text="r.errors.join('; ')"></td>
@@ -1581,11 +1581,11 @@
 
             <!-- Pending items list -->
             <div x-show="syncQueue.length > 0" class="glass rounded-2xl overflow-hidden">
-                <div class="px-5 py-3 border-b" style="border-color:rgba(255,255,255,0.07);background:rgba(0,0,0,0.15)">
+                <div class="px-5 py-3 border-b" style="border-color:#334155;background:#0F172A">
                     <span class="text-[10px] font-black text-amber-400 uppercase tracking-widest"
                           x-text="lang==='FR' ? 'File d\'Attente de Synchronisation' : 'Sync Queue'"></span>
                 </div>
-                <div class="divide-y" style="border-color:rgba(255,255,255,0.06)">
+                <div class="divide-y" style="border-color:#334155">
                     <template x-for="item in syncQueue" :key="item.id">
                         <div class="px-5 py-3 flex items-center justify-between glass-row">
                             <div>
@@ -1665,7 +1665,7 @@
             <!-- Members list -->
             <div class="glass rounded-2xl overflow-hidden">
                 <div class="px-5 py-3 border-b flex items-center justify-between"
-                     style="border-color:rgba(255,255,255,0.07);background:rgba(0,0,0,0.15)">
+                     style="border-color:#334155;background:#0F172A">
                     <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest"
                           x-text="lang==='FR' ? 'Membres de l\'Entreprise' : 'Company Members'"></span>
                     <span class="text-[10px] font-mono font-black px-2.5 py-0.5 rounded-full"
@@ -1702,7 +1702,7 @@
                                         ? 'background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);color:rgb(252,211,77)'
                                         : member.role==='ACCOUNTANT'
                                         ? 'background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3);color:rgb(165,180,252)'
-                                        : 'background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);color:rgb(148,163,184)'"
+                                        : 'background:#293548;border:1px solid #334155;color:#94a3b8'"
                                       x-text="member.role"></span>
                                 <span class="text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider"
                                       :style="member.id===user?.id
@@ -1842,7 +1842,7 @@
                         <span class="block text-[10px] font-black text-amber-400 uppercase tracking-widest" x-text="lang==='FR'?'Sécurité de l\'équipe':'Team security'"></span>
                         <span class="block text-xs text-slate-400 mt-1" x-text="lang==='FR'?'Exiger la 2FA pour tous les membres':'Require 2FA for all members'"></span>
                     </span>
-                    <button type="button" @click="toggle()" :disabled="busy" class="relative w-12 h-6 rounded-full transition-colors shrink-0" :style="on ? 'background:#F59E0B' : 'background:rgba(255,255,255,0.15)'">
+                    <button type="button" @click="toggle()" :disabled="busy" class="relative w-12 h-6 rounded-full transition-colors shrink-0" :style="on ? 'background:#F59E0B' : 'background:#334155'">
                         <span class="absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform" :class="on ? 'translate-x-6' : ''"></span>
                     </button>
                 </label>
@@ -1855,7 +1855,7 @@
                 <div class="flex items-center gap-5">
                     <!-- Logo preview -->
                     <div class="w-20 h-20 rounded-2xl flex items-center justify-center overflow-hidden flex-shrink-0"
-                         style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12)">
+                         style="background:#293548;border:1px solid #334155">
                         <template x-if="logoPreview || settingsData.logo_url">
                             <img :src="logoPreview || settingsData.logo_url" class="w-full h-full object-contain p-1">
                         </template>
@@ -2146,7 +2146,7 @@
                     <div class="space-y-2">
                         <p class="text-xs text-amber-300 font-bold" x-text="lang==='FR'?'Sauvegardez ces codes de récupération — ils ne seront plus affichés.':'Save these recovery codes — they won\'t be shown again.'"></p>
                         <div class="grid grid-cols-2 gap-2 font-mono text-sm">
-                            <template x-for="c in recovery" :key="c"><div class="px-3 py-1.5 rounded-lg text-amber-400" style="background:rgba(255,255,255,0.04)" x-text="c"></div></template>
+                            <template x-for="c in recovery" :key="c"><div class="px-3 py-1.5 rounded-lg text-amber-400" style="background:#1E293B" x-text="c"></div></template>
                         </div>
                         <button @click="step='idle'" class="glass-btn-dark px-4 py-2 rounded-xl text-xs uppercase tracking-widest mt-1" x-text="lang==='FR'?'J\'ai sauvegardé':'Done'"></button>
                     </div>
@@ -2291,10 +2291,10 @@
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                             <span x-text="lang==='FR'?'Exporter':'Export'"></span>
                         </button>
-                        <div x-show="open" x-cloak class="absolute right-0 mt-1 z-20 rounded-xl overflow-hidden min-w-36" style="background:rgba(13,29,51,0.98);border:1px solid rgba(255,255,255,0.12)">
+                        <div x-show="open" x-cloak class="absolute right-0 mt-1 z-20 rounded-xl overflow-hidden min-w-36" style="background:#1E293B;border:1px solid #334155">
                             <template x-for="f in [['xlsx','Excel'],['csv','CSV'],['pdf','PDF']]" :key="f[0]">
                                 <button type="button" @click="open=false; exportDownload('invoices', f[0])"
-                                   class="block w-full text-left px-4 py-2.5 text-xs text-slate-300 hover:bg-white/5 hover:text-white" x-text="f[1]"></button>
+                                   class="block w-full text-left px-4 py-2.5 text-xs text-slate-300 hover:bg-slate-800 hover:text-white" x-text="f[1]"></button>
                             </template>
                         </div>
                     </div>
@@ -2333,7 +2333,7 @@
 
             <div class="glass-card rounded-2xl overflow-hidden">
                 <table class="w-full text-sm">
-                    <thead><tr style="background:rgba(255,255,255,0.04);border-bottom:1px solid rgba(255,255,255,0.07)">
+                    <thead><tr style="background:#1E293B;border-bottom:1px solid #334155">
                         <th class="text-left px-4 py-3 text-xs uppercase tracking-widest opacity-50" x-text="lang==='FR'?'N° Facture':'Invoice #'"></th>
                         <th class="text-left px-4 py-3 text-xs uppercase tracking-widest opacity-50" x-text="lang==='FR'?'Client':'Customer'"></th>
                         <th class="text-right px-4 py-3 text-xs uppercase tracking-widest opacity-50">TTC</th>
@@ -2351,7 +2351,7 @@
                             </td></tr>
                         </template>
                         <template x-for="inv in invoices" :key="inv.id">
-                            <tr style="border-bottom:1px solid rgba(255,255,255,0.04)" class="hover:bg-white/5 transition-colors">
+                            <tr style="border-bottom:1px solid #1E293B" class="hover:bg-slate-800 transition-colors">
                                 <td class="px-4 py-3 font-mono text-amber-400 text-xs" x-text="inv.invoice_number"></td>
                                 <td class="px-4 py-3 font-medium" x-text="inv.customer?.name??'—'"></td>
                                 <td class="px-4 py-3 text-right font-bold" x-text="fmtXaf(inv.amount_ttc)"></td>
@@ -2426,7 +2426,7 @@
 
             <div class="glass-card rounded-2xl overflow-hidden">
                 <table class="w-full text-sm">
-                    <thead><tr style="background:rgba(255,255,255,0.04);border-bottom:1px solid rgba(255,255,255,0.07)">
+                    <thead><tr style="background:#1E293B;border-bottom:1px solid #334155">
                         <th class="text-left px-4 py-3 text-xs uppercase tracking-widest opacity-50" x-text="lang==='FR' ? 'Nom' : 'Name'"></th>
                         <th class="text-left px-4 py-3 text-xs uppercase tracking-widest opacity-50">NIU</th>
                         <th class="text-left px-4 py-3 text-xs uppercase tracking-widest opacity-50">Email</th>
@@ -2443,7 +2443,7 @@
                             </td></tr>
                         </template>
                         <template x-for="c in customers" :key="c.id">
-                            <tr style="border-bottom:1px solid rgba(255,255,255,0.04)" class="hover:bg-white/5 transition-colors">
+                            <tr style="border-bottom:1px solid #1E293B" class="hover:bg-slate-800 transition-colors">
                                 <td class="px-4 py-3 font-medium" x-text="c.name"></td>
                                 <td class="px-4 py-3 opacity-70" x-text="c.niu||'—'"></td>
                                 <td class="px-4 py-3 opacity-70" x-text="c.email||'—'"></td>
@@ -2486,7 +2486,7 @@
 
             <div class="glass-card rounded-2xl overflow-hidden">
                 <table class="w-full text-sm">
-                    <thead><tr style="background:rgba(255,255,255,0.04);border-bottom:1px solid rgba(255,255,255,0.07)">
+                    <thead><tr style="background:#1E293B;border-bottom:1px solid #334155">
                         <th class="text-left px-4 py-3 text-xs uppercase tracking-widest opacity-50" x-text="lang==='FR' ? 'Nom' : 'Name'"></th>
                         <th class="text-left px-4 py-3 text-xs uppercase tracking-widest opacity-50">NIU</th>
                         <th class="text-left px-4 py-3 text-xs uppercase tracking-widest opacity-50">Email</th>
@@ -2502,7 +2502,7 @@
                             </td></tr>
                         </template>
                         <template x-for="s in suppliers" :key="s.id">
-                            <tr style="border-bottom:1px solid rgba(255,255,255,0.04)" class="hover:bg-white/5 transition-colors">
+                            <tr style="border-bottom:1px solid #1E293B" class="hover:bg-slate-800 transition-colors">
                                 <td class="px-4 py-3 font-medium" x-text="s.name"></td>
                                 <td class="px-4 py-3 opacity-70" x-text="s.niu||'—'"></td>
                                 <td class="px-4 py-3 opacity-70" x-text="s.email||'—'"></td>
@@ -2583,7 +2583,7 @@
                 <div>
                     <div class="text-xs opacity-60 mb-2 font-semibold uppercase tracking-widest" x-text="lang==='FR' ? 'Articles / Lignes' : 'Items / Lines'"></div>
                     <table class="w-full text-xs mb-2">
-                        <thead><tr class="text-left opacity-50 border-b border-white/10">
+                        <thead><tr class="text-left opacity-50 border-b border-slate-700">
                             <th class="pb-1 pr-2" x-text="lang==='FR' ? 'Désignation *' : 'Description *'"></th>
                             <th class="pb-1 pr-2 w-24" x-text="lang==='FR' ? 'Réf.' : 'Ref.'"></th>
                             <th class="pb-1 pr-2 w-20" x-text="lang==='FR' ? 'Qté *' : 'Qty *'"></th>
@@ -2592,7 +2592,7 @@
                         </tr></thead>
                         <tbody>
                             <template x-for="(line, i) in form.lines" :key="i">
-                                <tr class="border-b border-white/5">
+                                <tr class="border-b border-slate-800">
                                     <td class="py-1 pr-2"><input x-model="line.description" class="w-full input-field text-xs" :placeholder="lang==='FR' ? 'Désignation' : 'Description'"></td>
                                     <td class="py-1 pr-2"><input x-model="line.product_code" class="w-full input-field text-xs font-mono" placeholder="PROD-001"></td>
                                     <td class="py-1 pr-2"><input x-model.number="line.quantity" type="number" min="0.001" step="0.001" class="w-full input-field text-xs text-right"></td>
@@ -2613,7 +2613,7 @@
             <div class="glass-card rounded-2xl overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm">
-                        <thead><tr class="border-b border-white/10 text-xs opacity-50 uppercase tracking-widest">
+                        <thead><tr class="border-b border-slate-700 text-xs opacity-50 uppercase tracking-widest">
                             <th class="px-4 py-3 text-left" x-text="lang==='FR' ? 'Numéro' : 'Number'"></th>
                             <th class="px-4 py-3 text-left" x-text="lang==='FR' ? 'Type' : 'Type'"></th>
                             <th class="px-4 py-3 text-left" x-text="lang==='FR' ? 'Date' : 'Date'"></th>
@@ -2624,7 +2624,7 @@
                         <tbody>
                             <template x-if="loading"><tr><td colspan="6" class="px-4 py-8 text-center opacity-40" x-text="lang==='FR' ? 'Chargement…' : 'Loading…'"></td></tr></template>
                             <template x-for="dn in items" :key="dn.id">
-                                <tr class="border-b border-white/5 hover:bg-white/5 transition">
+                                <tr class="border-b border-slate-800 hover:bg-slate-800 transition">
                                     <td class="px-4 py-3 font-mono text-xs" x-text="dn.dn_number"></td>
                                     <td class="px-4 py-3"><span :class="dn.dn_type==='OUT' ? 'badge-blue' : 'badge-amber'" x-text="dn.dn_type"></span></td>
                                     <td class="px-4 py-3 text-xs opacity-70" x-text="dn.delivery_date"></td>
@@ -2695,7 +2695,7 @@
                         <div class="text-xs font-bold uppercase tracking-widest opacity-60" x-text="(lang==='FR' ? 'Jours ' : 'Days ') + key"></div>
                         <div class="flex justify-between text-xs"><span class="text-emerald-400" x-text="lang==='FR' ? 'Entrées' : 'In'"></span><span x-text="fmtXaf(bucket.inflow)"></span></div>
                         <div class="flex justify-between text-xs"><span class="text-red-400" x-text="lang==='FR' ? 'Sorties' : 'Out'"></span><span x-text="fmtXaf(bucket.outflow)"></span></div>
-                        <div class="flex justify-between text-xs font-bold border-t border-white/10 pt-2"><span x-text="lang==='FR' ? 'Net' : 'Net'"></span><span :class="bucket.net>=0 ? 'text-emerald-400' : 'text-red-400'" x-text="fmtXaf(bucket.net)"></span></div>
+                        <div class="flex justify-between text-xs font-bold border-t border-slate-700 pt-2"><span x-text="lang==='FR' ? 'Net' : 'Net'"></span><span :class="bucket.net>=0 ? 'text-emerald-400' : 'text-red-400'" x-text="fmtXaf(bucket.net)"></span></div>
                     </div>
                 </template>
             </div>
@@ -2705,13 +2705,13 @@
                 <div class="px-4 py-3 text-xs font-bold uppercase tracking-widest opacity-60" x-text="lang==='FR' ? 'Créances Clients à Recevoir' : 'Receivables Due'"></div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm">
-                        <thead><tr class="border-b border-white/10 text-xs opacity-50">
+                        <thead><tr class="border-b border-slate-700 text-xs opacity-50">
                             <th class="px-4 py-2 text-left">N° Facture</th><th class="px-4 py-2 text-left">Client</th>
                             <th class="px-4 py-2 text-left">Échéance</th><th class="px-4 py-2 text-right">Montant</th>
                         </tr></thead>
                         <tbody>
                             <template x-for="r in (data?.receivables ?? [])" :key="r.invoice_number">
-                                <tr class="border-b border-white/5 hover:bg-white/5">
+                                <tr class="border-b border-slate-800 hover:bg-slate-800">
                                     <td class="px-4 py-2 font-mono text-xs" x-text="r.invoice_number"></td>
                                     <td class="px-4 py-2 text-xs" x-text="r.counterparty"></td>
                                     <td class="px-4 py-2 text-xs" x-text="r.due_date"></td>
@@ -2776,7 +2776,7 @@
                     <div>
                         <div class="text-xs uppercase tracking-widest opacity-50 mb-2" x-text="lang==='FR' ? 'Produits (Classe 7)' : 'Income (Class 7)'"></div>
                         <template x-for="row in (result?.revenue_lines??[])" :key="row.code">
-                            <div class="flex justify-between py-1 border-b border-white/5 text-sm">
+                            <div class="flex justify-between py-1 border-b border-slate-800 text-sm">
                                 <span x-text="row.code+' '+row.label" class="opacity-70"></span>
                                 <span class="text-emerald-400" x-text="fmtXaf(row.net)"></span>
                             </div>
@@ -2785,7 +2785,7 @@
                     <div>
                         <div class="text-xs uppercase tracking-widest opacity-50 mb-2" x-text="lang==='FR' ? 'Charges (Classe 6)' : 'Expenses (Class 6)'"></div>
                         <template x-for="row in (result?.expense_lines??[])" :key="row.code">
-                            <div class="flex justify-between py-1 border-b border-white/5 text-sm">
+                            <div class="flex justify-between py-1 border-b border-slate-800 text-sm">
                                 <span x-text="row.code+' '+row.label" class="opacity-70"></span>
                                 <span class="text-red-400" x-text="fmtXaf(row.net)"></span>
                             </div>
@@ -2814,7 +2814,7 @@
                     <div>
                         <div class="text-xs uppercase tracking-widest opacity-50 mb-2" x-text="lang==='FR' ? 'Actif' : 'Assets'"></div>
                         <template x-for="row in (result?.assets??[])" :key="row.code">
-                            <div class="flex justify-between py-1 border-b border-white/5 text-sm">
+                            <div class="flex justify-between py-1 border-b border-slate-800 text-sm">
                                 <span x-text="row.code+' '+row.label" class="opacity-70"></span>
                                 <span x-text="fmtXaf(row.balance)"></span>
                             </div>
@@ -2823,7 +2823,7 @@
                     <div>
                         <div class="text-xs uppercase tracking-widest opacity-50 mb-2" x-text="lang==='FR' ? 'Passif' : 'Liabilities'"></div>
                         <template x-for="row in (result?.liabilities??[])" :key="row.code">
-                            <div class="flex justify-between py-1 border-b border-white/5 text-sm">
+                            <div class="flex justify-between py-1 border-b border-slate-800 text-sm">
                                 <span x-text="row.code+' '+row.label" class="opacity-70"></span>
                                 <span x-text="fmtXaf(row.balance)"></span>
                             </div>
@@ -2847,7 +2847,7 @@
                 <div>
                     <div class="text-xs uppercase tracking-widest opacity-50 mb-2" x-text="lang==='FR' ? 'Détail Comptes 5xx' : 'Class 5 Detail'"></div>
                     <template x-for="row in (result?.treasury_lines??[])" :key="row.code">
-                        <div class="flex justify-between py-1 border-b border-white/5 text-sm">
+                        <div class="flex justify-between py-1 border-b border-slate-800 text-sm">
                             <span x-text="row.code+' '+row.label" class="opacity-70"></span>
                             <span :class="(row.balance??0)>=0 ? 'text-emerald-400' : 'text-red-400'" x-text="fmtXaf(row.balance)"></span>
                         </div>
@@ -2880,7 +2880,7 @@
                     </div>
                 </div>
                 <table class="w-full text-sm mt-2">
-                    <thead><tr style="border-bottom:1px solid rgba(255,255,255,0.07)">
+                    <thead><tr style="border-bottom:1px solid #334155">
                         <th class="text-left px-3 py-2 text-xs opacity-50" x-text="lang==='FR' ? 'Client' : 'Customer'"></th>
                         <th class="text-left px-3 py-2 text-xs opacity-50" x-text="lang==='FR' ? 'Facture' : 'Invoice'"></th>
                         <th class="text-right px-3 py-2 text-xs opacity-50" x-text="lang==='FR' ? 'Montant TTC' : 'Amount TTC'"></th>
@@ -2889,7 +2889,7 @@
                     </tr></thead>
                     <tbody>
                         <template x-for="inv in (result?.invoices??[])" :key="inv.id">
-                            <tr style="border-bottom:1px solid rgba(255,255,255,0.04)" class="hover:bg-white/5">
+                            <tr style="border-bottom:1px solid #1E293B" class="hover:bg-slate-800">
                                 <td class="px-3 py-2 font-medium" x-text="inv.customer?.name??'—'"></td>
                                 <td class="px-3 py-2 opacity-70" x-text="inv.invoice_number"></td>
                                 <td class="px-3 py-2 text-right" x-text="fmtXaf(inv.amount_ttc)"></td>
@@ -2948,7 +2948,7 @@
 
             <div class="glass-card rounded-2xl overflow-hidden">
                 <table class="w-full text-sm">
-                    <thead><tr style="background:rgba(255,255,255,0.04);border-bottom:1px solid rgba(255,255,255,0.07)">
+                    <thead><tr style="background:#1E293B;border-bottom:1px solid #334155">
                         <th class="text-left px-4 py-3 text-xs uppercase tracking-widest opacity-50" x-text="lang==='FR' ? 'Nom' : 'Name'"></th>
                         <th class="text-left px-4 py-3 text-xs uppercase tracking-widest opacity-50" x-text="lang==='FR' ? 'Fréquence' : 'Frequency'"></th>
                         <th class="text-right px-4 py-3 text-xs uppercase tracking-widest opacity-50" x-text="lang==='FR' ? 'Montant' : 'Amount'"></th>
@@ -2965,7 +2965,7 @@
                             </td></tr>
                         </template>
                         <template x-for="rt in items" :key="rt.id">
-                            <tr style="border-bottom:1px solid rgba(255,255,255,0.04)" class="hover:bg-white/5 transition-colors">
+                            <tr style="border-bottom:1px solid #1E293B" class="hover:bg-slate-800 transition-colors">
                                 <td class="px-4 py-3 font-medium" x-text="rt.name"></td>
                                 <td class="px-4 py-3 opacity-70 text-xs" x-text="rt.frequency"></td>
                                 <td class="px-4 py-3 text-right" x-text="fmtXaf(rt.amount_xaf)"></td>
@@ -3015,7 +3015,7 @@
                 </div>
                 <div class="glass-card rounded-2xl overflow-hidden">
                     <table class="w-full text-sm">
-                        <thead><tr style="background:rgba(255,255,255,0.04);border-bottom:1px solid rgba(255,255,255,0.07)">
+                        <thead><tr style="background:#1E293B;border-bottom:1px solid #334155">
                             <th class="text-left px-4 py-3 text-xs uppercase tracking-widest opacity-50" x-text="lang==='FR' ? 'Nom' : 'Name'"></th>
                             <th class="text-left px-4 py-3 text-xs uppercase tracking-widest opacity-50" x-text="lang==='FR' ? 'Poste' : 'Position'"></th>
                             <th class="text-right px-4 py-3 text-xs uppercase tracking-widest opacity-50" x-text="lang==='FR' ? 'Salaire Brut' : 'Gross Salary'"></th>
@@ -3032,7 +3032,7 @@
                                 </td></tr>
                             </template>
                             <template x-for="e in employees" :key="e.id">
-                                <tr style="border-bottom:1px solid rgba(255,255,255,0.04)" class="hover:bg-white/5 transition-colors">
+                                <tr style="border-bottom:1px solid #1E293B" class="hover:bg-slate-800 transition-colors">
                                     <td class="px-4 py-3 font-medium" x-text="e.name"></td>
                                     <td class="px-4 py-3 opacity-70" x-text="e.position||'—'"></td>
                                     <td class="px-4 py-3 text-right" x-text="fmtXaf(e.gross_salary_xaf)"></td>
@@ -3091,7 +3091,7 @@
                         </div>
                         <div x-show="p.lines && p.lines.length">
                             <table class="w-full text-xs mt-2">
-                                <thead><tr style="border-bottom:1px solid rgba(255,255,255,0.07)">
+                                <thead><tr style="border-bottom:1px solid #334155">
                                     <th class="text-left px-3 py-1.5 opacity-50" x-text="lang==='FR' ? 'Employé' : 'Employee'"></th>
                                     <th class="text-right px-3 py-1.5 opacity-50" x-text="lang==='FR' ? 'Brut' : 'Gross'"></th>
                                     <th class="text-right px-3 py-1.5 opacity-50">CNPS Sal.</th>
@@ -3100,7 +3100,7 @@
                                 </tr></thead>
                                 <tbody>
                                     <template x-for="l in p.lines" :key="l.id">
-                                        <tr style="border-bottom:1px solid rgba(255,255,255,0.04)">
+                                        <tr style="border-bottom:1px solid #1E293B">
                                             <td class="px-3 py-1.5 font-medium" x-text="l.employee?.name??'—'"></td>
                                             <td class="px-3 py-1.5 text-right opacity-70" x-text="fmtXaf(l.gross_salary)"></td>
                                             <td class="px-3 py-1.5 text-right text-red-400" x-text="fmtXaf(l.cnps_employee)"></td>
@@ -3155,7 +3155,7 @@
             <div x-show="loading" class="text-center opacity-50 py-6">...</div>
             <div x-show="!loading" class="glass rounded-2xl overflow-hidden">
                 <table class="w-full text-xs">
-                    <thead><tr style="border-bottom:1px solid rgba(255,255,255,0.07)">
+                    <thead><tr style="border-bottom:1px solid #334155">
                         <th class="text-left px-4 py-2.5 opacity-50" x-text="lang==='FR' ? 'Fournisseur' : 'Supplier'"></th>
                         <th class="text-left px-4 py-2.5 opacity-50">Nº</th>
                         <th class="text-right px-4 py-2.5 opacity-50">HT</th>
@@ -3165,7 +3165,7 @@
                     </tr></thead>
                     <tbody>
                         <template x-for="inv in invoices" :key="inv.id">
-                            <tr style="border-bottom:1px solid rgba(255,255,255,0.04)" class="hover:bg-white/5">
+                            <tr style="border-bottom:1px solid #1E293B" class="hover:bg-slate-800">
                                 <td class="px-4 py-2.5 font-medium" x-text="inv.supplier?.name ?? '—'"></td>
                                 <td class="px-4 py-2.5 opacity-70" x-text="inv.invoice_number"></td>
                                 <td class="px-4 py-2.5 text-right opacity-70" x-text="fmtXaf(inv.amount_ht)"></td>
@@ -3229,7 +3229,7 @@
 
             <div x-show="!loading" class="glass rounded-2xl overflow-hidden">
                 <table class="w-full text-xs">
-                    <thead><tr style="border-bottom:1px solid rgba(255,255,255,0.07)">
+                    <thead><tr style="border-bottom:1px solid #334155">
                         <th class="text-left px-4 py-2.5 opacity-50" x-text="lang==='FR' ? 'Immobilisation' : 'Asset'"></th>
                         <th class="text-left px-4 py-2.5 opacity-50" x-text="lang==='FR' ? 'Catégorie' : 'Category'"></th>
                         <th class="text-right px-4 py-2.5 opacity-50" x-text="lang==='FR' ? 'Coût' : 'Cost'"></th>
@@ -3239,7 +3239,7 @@
                     </tr></thead>
                     <tbody>
                         <template x-for="a in assets" :key="a.id">
-                            <tr style="border-bottom:1px solid rgba(255,255,255,0.04)" class="hover:bg-white/5">
+                            <tr style="border-bottom:1px solid #1E293B" class="hover:bg-slate-800">
                                 <td class="px-4 py-2.5 font-medium" x-text="a.name"></td>
                                 <td class="px-4 py-2.5 opacity-70" x-text="a.category"></td>
                                 <td class="px-4 py-2.5 text-right opacity-70" x-text="fmtXaf(a.acquisition_cost)"></td>
@@ -3284,7 +3284,7 @@
 
             <div class="glass rounded-2xl overflow-hidden">
                 <template x-for="s in sessions" :key="s.id">
-                    <div class="px-4 py-3 flex items-center justify-between" style="border-bottom:1px solid rgba(255,255,255,0.05)">
+                    <div class="px-4 py-3 flex items-center justify-between" style="border-bottom:1px solid #334155">
                         <div>
                             <div class="text-sm font-medium" x-text="s.bank_account_code + ' — ' + s.statement_date"></div>
                             <div class="text-xs opacity-50 mt-0.5" x-text="fmtXaf(s.statement_balance) + ' | Diff: ' + fmtXaf(s.difference)"></div>
@@ -3327,7 +3327,7 @@
                 </div>
                 <div x-show="variance" class="overflow-x-auto">
                     <table class="w-full text-xs">
-                        <thead><tr style="border-bottom:1px solid rgba(255,255,255,0.07)">
+                        <thead><tr style="border-bottom:1px solid #334155">
                             <th class="text-left px-3 py-1.5 opacity-50" x-text="lang==='FR' ? 'Compte' : 'Account'"></th>
                             <th class="text-right px-3 py-1.5 opacity-50" x-text="lang==='FR' ? 'Budgété' : 'Budgeted'"></th>
                             <th class="text-right px-3 py-1.5 opacity-50" x-text="lang==='FR' ? 'Réel' : 'Actual'"></th>
@@ -3336,7 +3336,7 @@
                         </tr></thead>
                         <tbody>
                             <template x-for="l in variance?.lines ?? []" :key="l.account_code">
-                                <tr style="border-bottom:1px solid rgba(255,255,255,0.04)">
+                                <tr style="border-bottom:1px solid #1E293B">
                                     <td class="px-3 py-1.5 font-mono" x-text="l.account_code"></td>
                                     <td class="px-3 py-1.5 text-right opacity-70" x-text="fmtXaf(l.total_budgeted)"></td>
                                     <td class="px-3 py-1.5 text-right opacity-70" x-text="fmtXaf(l.total_actual)"></td>
@@ -3351,7 +3351,7 @@
 
             <div class="glass rounded-2xl overflow-hidden">
                 <template x-for="b in budgets" :key="b.id">
-                    <div class="px-4 py-3 flex items-center justify-between cursor-pointer hover:bg-white/5" @click="loadVariance(b)" style="border-bottom:1px solid rgba(255,255,255,0.05)">
+                    <div class="px-4 py-3 flex items-center justify-between cursor-pointer hover:bg-slate-800" @click="loadVariance(b)" style="border-bottom:1px solid #334155">
                         <div>
                             <div class="text-sm font-medium" x-text="b.name"></div>
                             <div class="text-xs opacity-50 mt-0.5" x-text="b.fiscal_year + ' — ' + b.status"></div>
@@ -3406,7 +3406,7 @@
                     <div x-show="tvaData" class="text-xs space-y-1">
                         <div class="flex justify-between"><span class="opacity-50">TVA Collectée</span><span class="text-yellow-400 font-bold" x-text="fmtXaf(tvaData?.tva_collectee)"></span></div>
                         <div class="flex justify-between"><span class="opacity-50">TVA Déductible</span><span class="text-emerald-400 font-bold" x-text="fmtXaf(tvaData?.tva_deductible)"></span></div>
-                        <div class="flex justify-between border-t pt-1" style="border-color:rgba(255,255,255,0.1)"><span class="font-bold" x-text="lang==='FR' ? 'TVA Nette Due' : 'Net TVA Due'"></span><span class="text-red-400 font-bold" x-text="fmtXaf(tvaData?.tva_nette_due)"></span></div>
+                        <div class="flex justify-between border-t pt-1" style="border-color:#334155"><span class="font-bold" x-text="lang==='FR' ? 'TVA Nette Due' : 'Net TVA Due'"></span><span class="text-red-400 font-bold" x-text="fmtXaf(tvaData?.tva_nette_due)"></span></div>
                         <div class="flex justify-between"><span class="opacity-50">CAC (10% TVA)</span><span class="text-red-400" x-text="fmtXaf(tvaData?.cac_net_du)"></span></div>
                         <div class="flex justify-between bg-white/5 rounded-lg px-2 py-1 mt-1"><span class="font-bold">Total à Payer</span><span class="text-red-400 font-bold text-sm" x-text="fmtXaf(tvaData?.total_a_payer)"></span></div>
                     </div>
@@ -3424,7 +3424,7 @@
             </div>
             <div class="glass rounded-2xl overflow-hidden">
                 <table class="w-full text-xs">
-                    <thead><tr style="border-bottom:1px solid rgba(255,255,255,0.07)">
+                    <thead><tr style="border-bottom:1px solid #334155">
                         <th class="text-left px-4 py-2.5 opacity-50" x-text="lang==='FR' ? 'Date' : 'Date'"></th>
                         <th class="text-left px-4 py-2.5 opacity-50" x-text="lang==='FR' ? 'Utilisateur' : 'User'"></th>
                         <th class="text-left px-4 py-2.5 opacity-50" x-text="lang==='FR' ? 'Action' : 'Action'"></th>
@@ -3432,7 +3432,7 @@
                     </tr></thead>
                     <tbody>
                         <template x-for="log in logs" :key="log.id">
-                            <tr style="border-bottom:1px solid rgba(255,255,255,0.04)" class="hover:bg-white/5">
+                            <tr style="border-bottom:1px solid #1E293B" class="hover:bg-slate-800">
                                 <td class="px-4 py-2 opacity-60 whitespace-nowrap" x-text="log.created_at?.substring(0,19).replace('T',' ')"></td>
                                 <td class="px-4 py-2 font-medium" x-text="log.user?.name ?? '—'"></td>
                                 <td class="px-4 py-2 font-mono text-sky-300" x-text="log.action"></td>
@@ -3527,14 +3527,14 @@
 
             <div class="glass rounded-2xl overflow-hidden" style="max-height:60vh;overflow-y:auto">
                 <table class="w-full text-xs">
-                    <thead class="sticky top-0" style="background:rgba(15,23,42,0.95)"><tr style="border-bottom:1px solid rgba(255,255,255,0.07)">
+                    <thead class="sticky top-0" style="background:rgba(15,23,42,0.95)"><tr style="border-bottom:1px solid #334155">
                         <th class="text-left px-4 py-2.5 opacity-50" x-text="lang==='FR' ? 'Code' : 'Code'"></th>
                         <th class="text-left px-4 py-2.5 opacity-50" x-text="lang==='FR' ? 'Intitulé' : 'Label'"></th>
                         <th class="text-center px-4 py-2.5 opacity-50" x-text="lang==='FR' ? 'Cl.' : 'Cl.'"></th>
                     </tr></thead>
                     <tbody>
                         <template x-for="a in filtered" :key="a.id">
-                            <tr style="border-bottom:1px solid rgba(255,255,255,0.03)" class="hover:bg-white/5">
+                            <tr style="border-bottom:1px solid #1E293B" class="hover:bg-slate-800">
                                 <td class="px-4 py-1.5 font-mono text-sky-300" x-text="a.code"></td>
                                 <td class="px-4 py-1.5 opacity-80" x-text="a.label"></td>
                                 <td class="px-4 py-1.5 text-center opacity-50" x-text="a.class_digit"></td>
@@ -3599,7 +3599,7 @@
                     </tr></thead>
                     <tbody>
                         <template x-for="q in quotations" :key="q.id">
-                            <tr style="border-bottom:1px solid rgba(255,255,255,0.04)" class="hover:bg-white/5">
+                            <tr style="border-bottom:1px solid #1E293B" class="hover:bg-slate-800">
                                 <td class="px-4 py-2 font-mono text-sky-300 text-xs" x-text="q.quotation_number"></td>
                                 <td class="px-4 py-2 text-xs" x-text="q.customer?.name ?? '—'"></td>
                                 <td class="px-4 py-2 text-xs opacity-70" x-text="q.quotation_date"></td>
@@ -3672,7 +3672,7 @@
                     </tr></thead>
                     <tbody>
                         <template x-for="po in orders" :key="po.id">
-                            <tr style="border-bottom:1px solid rgba(255,255,255,0.04)" class="hover:bg-white/5">
+                            <tr style="border-bottom:1px solid #1E293B" class="hover:bg-slate-800">
                                 <td class="px-4 py-2 font-mono text-sky-300 text-xs" x-text="po.po_number"></td>
                                 <td class="px-4 py-2 text-xs" x-text="po.supplier?.name ?? '—'"></td>
                                 <td class="px-4 py-2 text-xs opacity-70" x-text="po.order_date"></td>
@@ -3768,7 +3768,7 @@
                     </tr></thead>
                     <tbody>
                         <template x-for="p in records" :key="p.id">
-                            <tr style="border-bottom:1px solid rgba(255,255,255,0.04)" class="hover:bg-white/5">
+                            <tr style="border-bottom:1px solid #1E293B" class="hover:bg-slate-800">
                                 <td class="px-4 py-2 font-semibold" x-text="p.tax_year"></td>
                                 <td class="px-4 py-2 text-xs font-mono opacity-70" x-text="p.patente_number ?? '—'"></td>
                                 <td class="px-4 py-2 text-right text-xs" x-text="Number(p.amount_due_xaf).toLocaleString('fr-CM') + ' XAF'"></td>
@@ -3863,7 +3863,7 @@
                 </div>
                 <div style="overflow-x:auto">
                     <table class="w-full text-sm">
-                        <thead><tr style="border-bottom:1px solid rgba(255,255,255,0.07)">
+                        <thead><tr style="border-bottom:1px solid #334155">
                             <th class="text-left px-3 py-2 opacity-50" x-text="lang==='FR' ? 'Code' : 'Code'"></th>
                             <th class="text-left px-3 py-2 opacity-50" x-text="lang==='FR' ? 'Désignation' : 'Product'"></th>
                             <th class="text-left px-3 py-2 opacity-50" x-text="lang==='FR' ? 'Compte' : 'Account'"></th>
@@ -3872,7 +3872,7 @@
                         </tr></thead>
                         <tbody>
                             <template x-for="item in valuation" :key="item.product_code">
-                                <tr style="border-bottom:1px solid rgba(255,255,255,0.03)" class="hover:bg-white/5 cursor-pointer" @click="loadLedger(item.product_code)">
+                                <tr style="border-bottom:1px solid #1E293B" class="hover:bg-slate-800 cursor-pointer" @click="loadLedger(item.product_code)">
                                     <td class="px-3 py-1.5 font-mono text-sky-300" x-text="item.product_code"></td>
                                     <td class="px-3 py-1.5" x-text="item.product_name"></td>
                                     <td class="px-3 py-1.5 font-mono opacity-60" x-text="item.account_code"></td>
@@ -3901,7 +3901,7 @@
                 </div>
                 <div style="overflow-x:auto">
                     <table class="w-full text-xs">
-                        <thead><tr style="border-bottom:1px solid rgba(255,255,255,0.07)">
+                        <thead><tr style="border-bottom:1px solid #334155">
                             <th class="text-left px-3 py-2 opacity-50">Date</th>
                             <th class="text-left px-3 py-2 opacity-50">Type</th>
                             <th class="text-left px-3 py-2 opacity-50">Réf.</th>
@@ -3912,7 +3912,7 @@
                         </tr></thead>
                         <tbody>
                             <template x-for="m in ledger.movements" :key="m.id">
-                                <tr style="border-bottom:1px solid rgba(255,255,255,0.03)">
+                                <tr style="border-bottom:1px solid #1E293B">
                                     <td class="px-3 py-1" x-text="m.movement_date"></td>
                                     <td class="px-3 py-1" :class="m.movement_type==='IN' ? 'text-emerald-400' : m.movement_type==='OUT' ? 'text-rose-400' : 'text-amber-400'" x-text="m.movement_type"></td>
                                     <td class="px-3 py-1 opacity-60" x-text="m.reference ?? '—'"></td>
@@ -3971,7 +3971,7 @@
                 <template x-for="v in [['pipeline','Pipeline'],['list', lang==='FR'?'Liste':'List'],['activities', lang==='FR'?'Activités':'Activities']]" :key="v[0]">
                     <button @click="view=v[0]"
                             class="px-4 py-2 rounded-xl text-[11px] font-black uppercase tracking-wider transition-all"
-                            :style="view===v[0] ? 'background:rgba(245,158,11,0.15);color:#F59E0B;border:1px solid rgba(245,158,11,0.4)' : 'background:rgba(255,255,255,0.04);color:rgba(148,163,184,0.85);border:1px solid rgba(255,255,255,0.1)'"
+                            :style="view===v[0] ? 'background:rgba(245,158,11,0.15);color:#F59E0B;border:1px solid rgba(245,158,11,0.4)' : 'background:#293548;color:#94a3b8;border:1px solid #334155'"
                             x-text="v[1]"></button>
                 </template>
             </div>
@@ -4000,7 +4000,7 @@
                                                     <option :value="c.key" x-show="c.key!==lead.status" x-text="c.label"></option>
                                                 </template>
                                             </select>
-                                            <button @click="openActivity(lead)" :title="lang==='FR'?'Activité':'Activity'" class="p-1.5 rounded-lg text-slate-400 hover:text-white" style="background:rgba(255,255,255,0.05)">
+                                            <button @click="openActivity(lead)" :title="lang==='FR'?'Activité':'Activity'" class="p-1.5 rounded-lg text-slate-400 hover:text-white" style="background:#1E293B">
                                                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                                             </button>
                                             <a :href="waLink(lead)" target="_blank" x-show="lead.contact_phone" title="WhatsApp" class="p-1.5 rounded-lg text-emerald-400 hover:text-emerald-300" style="background:rgba(16,185,129,0.1)">
@@ -4021,7 +4021,7 @@
 
             <!-- LIST -->
             <div x-show="view==='list'" class="glass-card rounded-2xl overflow-hidden">
-                <div class="flex flex-wrap gap-2 p-3 border-b" style="border-color:rgba(255,255,255,0.08)">
+                <div class="flex flex-wrap gap-2 p-3 border-b" style="border-color:#334155">
                     <input x-model="search" @input.debounce.400ms="load()" class="input-field text-xs flex-1 min-w-[160px]" :placeholder="lang==='FR'?'Rechercher…':'Search…'">
                     <select x-model="filterStatus" @change="load()" class="input-field text-xs">
                         <option value="" x-text="lang==='FR'?'Tous statuts':'All statuses'"></option>
@@ -4030,7 +4030,7 @@
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-xs">
-                        <thead><tr class="text-[9px] font-black uppercase tracking-widest text-slate-500" style="border-bottom:1px solid rgba(255,255,255,0.08)">
+                        <thead><tr class="text-[9px] font-black uppercase tracking-widest text-slate-500" style="border-bottom:1px solid #334155">
                             <th class="py-2.5 px-4">Contact</th><th class="py-2.5 px-3" x-text="lang==='FR'?'Entreprise':'Company'"></th>
                             <th class="py-2.5 px-3" x-text="lang==='FR'?'Valeur':'Value'"></th><th class="py-2.5 px-3">Source</th>
                             <th class="py-2.5 px-3" x-text="lang==='FR'?'Statut':'Status'"></th><th class="py-2.5 px-3"></th>
@@ -4058,7 +4058,7 @@
             <!-- ACTIVITIES -->
             <div x-show="view==='activities'" class="glass-card rounded-2xl p-5 space-y-3">
                 <template x-for="a in activities" :key="a.id">
-                    <div class="flex items-start gap-3 pb-3 border-b" style="border-color:rgba(255,255,255,0.06)">
+                    <div class="flex items-start gap-3 pb-3 border-b" style="border-color:#334155">
                         <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 text-amber-400" style="background:rgba(245,158,11,0.1)">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                         </div>
@@ -4160,7 +4160,7 @@
                                 <span x-text="lang==='FR'?'Coûts / Budget':'Costs / Budget'"></span>
                                 <span x-text="fmtXaf(p.costs)+' / '+fmtXaf(p.budget_amount)"></span>
                             </div>
-                            <div class="h-2 rounded-full overflow-hidden" style="background:rgba(255,255,255,0.08)">
+                            <div class="h-2 rounded-full overflow-hidden" style="background:#293548">
                                 <div class="h-full rounded-full" :style="'width:'+Math.min(100,(p.budget_amount? p.costs/p.budget_amount*100:0))+'%;background:'+(p.costs>p.budget_amount?'rgb(244,63,94)':'rgb(245,158,11)')"></div>
                             </div>
                         </div>
@@ -4212,12 +4212,12 @@
                     </div>
                     <!-- KPIs -->
                     <div class="grid grid-cols-3 gap-3">
-                        <div class="rounded-xl p-3" style="background:rgba(255,255,255,0.04)"><div class="text-[9px] uppercase tracking-widest text-slate-500" x-text="lang==='FR'?'Revenus':'Revenue'"></div><div class="text-sm font-black text-white" x-text="fmtXaf(detail?.project?.revenue)"></div></div>
-                        <div class="rounded-xl p-3" style="background:rgba(255,255,255,0.04)"><div class="text-[9px] uppercase tracking-widest text-slate-500" x-text="lang==='FR'?'Coûts':'Costs'"></div><div class="text-sm font-black text-white" x-text="fmtXaf(detail?.project?.costs)"></div></div>
-                        <div class="rounded-xl p-3" style="background:rgba(255,255,255,0.04)"><div class="text-[9px] uppercase tracking-widest text-slate-500" x-text="lang==='FR'?'Bénéfice':'Profit'"></div><div class="text-sm font-black" :class="(detail?.project?.profit>=0)?'text-emerald-400':'text-red-400'" x-text="fmtXaf(detail?.project?.profit)+' ('+(detail?.project?.margin)+'%)'"></div></div>
+                        <div class="rounded-xl p-3" style="background:#1E293B"><div class="text-[9px] uppercase tracking-widest text-slate-500" x-text="lang==='FR'?'Revenus':'Revenue'"></div><div class="text-sm font-black text-white" x-text="fmtXaf(detail?.project?.revenue)"></div></div>
+                        <div class="rounded-xl p-3" style="background:#1E293B"><div class="text-[9px] uppercase tracking-widest text-slate-500" x-text="lang==='FR'?'Coûts':'Costs'"></div><div class="text-sm font-black text-white" x-text="fmtXaf(detail?.project?.costs)"></div></div>
+                        <div class="rounded-xl p-3" style="background:#1E293B"><div class="text-[9px] uppercase tracking-widest text-slate-500" x-text="lang==='FR'?'Bénéfice':'Profit'"></div><div class="text-sm font-black" :class="(detail?.project?.profit>=0)?'text-emerald-400':'text-red-400'" x-text="fmtXaf(detail?.project?.profit)+' ('+(detail?.project?.margin)+'%)'"></div></div>
                     </div>
                     <!-- Add entry -->
-                    <div class="rounded-xl p-3 space-y-2" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08)">
+                    <div class="rounded-xl p-3 space-y-2" style="background:#1E293B;border:1px solid #334155">
                         <div class="text-[10px] font-black uppercase tracking-widest text-amber-400" x-text="lang==='FR'?'Ajouter une ligne':'Add entry'"></div>
                         <div class="grid grid-cols-2 gap-2">
                             <select x-model="entryForm.direction" class="input-field text-xs">
@@ -4241,7 +4241,7 @@
                         <div class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2" x-text="lang==='FR'?'Transactions':'Transactions'"></div>
                         <div class="space-y-1 max-h-52 overflow-y-auto">
                             <template x-for="e in (detail?.entries||[])" :key="e.id">
-                                <div class="flex items-center justify-between text-xs py-1.5 px-2 rounded-lg" style="background:rgba(255,255,255,0.03)">
+                                <div class="flex items-center justify-between text-xs py-1.5 px-2 rounded-lg" style="background:#1E293B">
                                     <span class="text-slate-300 truncate flex-1" x-text="e.description"></span>
                                     <span class="text-[9px] uppercase tracking-wider text-slate-500 mx-2" x-text="e.entry_type"></span>
                                     <span class="font-black shrink-0" :class="e.amount>=0?'text-emerald-400':'text-red-400'" x-text="fmtXaf(e.amount)"></span>
@@ -4280,7 +4280,7 @@
                     <template x-for="(m,i) in messages" :key="i">
                         <div :class="m.role==='user' ? 'flex justify-end' : 'flex justify-start'">
                             <div class="max-w-[80%] px-4 py-2.5 rounded-2xl text-sm"
-                                 :style="m.role==='user' ? 'background:rgba(245,158,11,0.18);border:1px solid rgba(245,158,11,0.3);color:#fff' : 'background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:rgb(226,232,240)'">
+                                 :style="m.role==='user' ? 'background:rgba(245,158,11,0.18);border:1px solid rgba(245,158,11,0.3);color:#fff' : 'background:#293548;border:1px solid #334155;color:rgb(226,232,240)'">
                                 <div x-text="m.text" style="white-space:pre-wrap"></div>
                                 <template x-if="m.figures && m.figures.length">
                                     <div class="mt-2 space-y-1">
@@ -4292,15 +4292,15 @@
                             </div>
                         </div>
                     </template>
-                    <div x-show="thinking" class="flex justify-start"><div class="px-4 py-2.5 rounded-2xl text-sm" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1)"><span class="text-slate-400">…</span></div></div>
+                    <div x-show="thinking" class="flex justify-start"><div class="px-4 py-2.5 rounded-2xl text-sm" style="background:#293548;border:1px solid #334155"><span class="text-slate-400">…</span></div></div>
                     <!-- Suggested chips (empty state) -->
                     <div x-show="messages.length===0 && aiStatus.mode!=='unavailable'" class="flex flex-wrap gap-2 pt-2">
                         <template x-for="q in chips" :key="q">
-                            <button @click="send(q)" class="px-3 py-2 rounded-xl text-xs text-left" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1)" x-text="q"></button>
+                            <button @click="send(q)" class="px-3 py-2 rounded-xl text-xs text-left" style="background:#1E293B;border:1px solid #334155" x-text="q"></button>
                         </template>
                     </div>
                 </div>
-                <div class="p-3 border-t flex gap-2" style="border-color:rgba(255,255,255,0.08)">
+                <div class="p-3 border-t flex gap-2" style="border-color:#334155">
                     <input x-model="input" @keydown.enter="send()" :disabled="aiStatus.mode==='unavailable'||thinking" class="input-field flex-1" :placeholder="lang==='FR'?'Posez une question sur vos finances…':'Ask about your finances…'">
                     <button @click="send()" :disabled="aiStatus.mode==='unavailable'||thinking" class="glass-btn-amber px-5 rounded-xl text-xs uppercase tracking-widest disabled:opacity-40" x-text="lang==='FR'?'Envoyer':'Send'"></button>
                 </div>
@@ -4382,7 +4382,7 @@
             <div x-show="keys.length>0" class="glass-card rounded-2xl overflow-hidden">
                 <table class="w-full text-sm">
                     <thead>
-                        <tr class="border-b border-white/10 text-xs opacity-50">
+                        <tr class="border-b border-slate-700 text-xs opacity-50">
                             <th class="px-4 py-3 text-left" x-text="lang==='FR' ? 'Nom' : 'Name'"></th>
                             <th class="px-4 py-3 text-left">Clé</th>
                             <th class="px-4 py-3 text-left">Env.</th>
@@ -4395,7 +4395,7 @@
                     </thead>
                     <tbody>
                         <template x-for="k in keys" :key="k.id">
-                            <tr class="border-b border-white/5 hover:bg-white/5">
+                            <tr class="border-b border-slate-800 hover:bg-slate-800">
                                 <td class="px-4 py-3 font-semibold" x-text="k.name"></td>
                                 <td class="px-4 py-3"><code class="font-mono text-xs text-amber-300" x-text="k.key_preview"></code></td>
                                 <td class="px-4 py-3">
@@ -4429,7 +4429,7 @@
                 <div x-show="logs.length===0" class="text-xs text-slate-500" x-text="lang==='FR' ? 'Aucun appel enregistré.' : 'No calls logged.'"></div>
                 <div x-show="logs.length>0" class="overflow-x-auto">
                     <table class="w-full text-xs">
-                        <thead><tr class="border-b border-white/10 text-slate-400">
+                        <thead><tr class="border-b border-slate-700 text-slate-400">
                             <th class="px-3 py-2 text-left">Date</th>
                             <th class="px-3 py-2 text-left">Method</th>
                             <th class="px-3 py-2 text-left">Path</th>
@@ -4438,7 +4438,7 @@
                         </tr></thead>
                         <tbody>
                             <template x-for="(log,i) in logs" :key="i">
-                                <tr class="border-b border-white/5">
+                                <tr class="border-b border-slate-800">
                                     <td class="px-3 py-1.5 text-slate-400" x-text="new Date(log.created_at).toLocaleString('fr-CM')"></td>
                                     <td class="px-3 py-1.5 font-mono font-bold text-amber-400" x-text="log.method"></td>
                                     <td class="px-3 py-1.5 font-mono text-slate-300" x-text="log.path"></td>

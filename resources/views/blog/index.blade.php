@@ -6,7 +6,7 @@
 <section class="max-w-5xl mx-auto px-5 py-16">
     <div class="text-center mb-12">
         <h1 class="text-3xl md:text-5xl font-black">Le Blog OPESBooks</h1>
-        <p class="text-white/60 mt-4">Guides comptables et fiscaux pour les PME camerounaises.</p>
+        <p class="text-slate-400 mt-4">Guides comptables et fiscaux pour les PME camerounaises.</p>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
         @forelse($posts as $post)
@@ -19,12 +19,12 @@
             <div class="p-5 flex-1 flex flex-col">
                 <div class="text-[10px] uppercase tracking-widest text-gold mb-2">{{ optional($post->published_at)->translatedFormat('d M Y') }} · {{ $post->reading_time_minutes }} min</div>
                 <div class="font-black text-white leading-snug">{{ $post->title }}</div>
-                <p class="text-white/50 text-xs mt-2 leading-relaxed flex-1">{{ \Illuminate\Support\Str::limit($post->excerpt, 110) }}</p>
+                <p class="text-slate-400 text-xs mt-2 leading-relaxed flex-1">{{ \Illuminate\Support\Str::limit($post->excerpt, 110) }}</p>
                 <span class="text-gold text-xs font-bold mt-3">Lire l'article →</span>
             </div>
         </a>
         @empty
-        <div class="col-span-3 text-center py-16 text-white/40">Aucun article pour le moment.</div>
+        <div class="col-span-3 text-center py-16 text-slate-500">Aucun article pour le moment.</div>
         @endforelse
     </div>
     <div class="mt-10">{{ $posts->links() }}</div>

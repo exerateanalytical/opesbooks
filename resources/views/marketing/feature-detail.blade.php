@@ -26,10 +26,10 @@ $c = $colors[$module['color']];
     <div class="absolute inset-0 pointer-events-none" style="background:radial-gradient(ellipse 700px 350px at 50% -60px,{{ $c['glow'] }},transparent)"></div>
     <div class="max-w-5xl mx-auto">
         <!-- Breadcrumb -->
-        <nav class="flex items-center gap-2 text-xs text-white/40 mb-8">
+        <nav class="flex items-center gap-2 text-xs text-slate-500 mb-8">
             <a href="{{ route('m.features') }}" class="hover:text-white transition">Fonctionnalités</a>
             <span>/</span>
-            <span class="text-white/70">{{ $module['title'] }}</span>
+            <span class="text-slate-300">{{ $module['title'] }}</span>
         </nav>
         <div class="flex items-start gap-5">
             <div class="w-16 h-16 rounded-2xl flex items-center justify-center shrink-0" style="background:{{ $c['bg'] }};border:1px solid {{ $c['border'] }}">
@@ -38,12 +38,12 @@ $c = $colors[$module['color']];
             <div>
                 <span class="inline-block text-[11px] font-black uppercase tracking-widest px-3 py-1 rounded-full mb-3" style="background:{{ $c['bg'] }};color:{{ $c['text'] }};border:1px solid {{ $c['border'] }}">{{ $module['tag'] }}</span>
                 <h1 class="text-3xl md:text-5xl font-black leading-tight">{{ $module['title'] }}</h1>
-                <p class="text-white/60 mt-4 text-lg leading-relaxed max-w-3xl">{{ $module['headline'] }}</p>
+                <p class="text-slate-400 mt-4 text-lg leading-relaxed max-w-3xl">{{ $module['headline'] }}</p>
             </div>
         </div>
         <div class="flex flex-wrap gap-3 mt-8">
             <a href="/login" class="px-6 py-3 rounded-xl text-sm font-black text-navy bg-gold hover:bg-gold-light transition">Essayer gratuitement →</a>
-            <a href="{{ route('m.features') }}" class="px-6 py-3 rounded-xl text-sm font-bold text-white glass hover:bg-white/10 transition">← Toutes les fonctionnalités</a>
+            <a href="{{ route('m.features') }}" class="px-6 py-3 rounded-xl text-sm font-bold text-white glass hover:bg-slate-700 transition">← Toutes les fonctionnalités</a>
         </div>
     </div>
 </section>
@@ -58,7 +58,7 @@ $c = $colors[$module['color']];
             </div>
             <div>
                 <div class="font-bold text-white text-sm mb-1">{{ $feat['title'] }}</div>
-                <p class="text-white/50 text-xs leading-relaxed">{{ $feat['desc'] }}</p>
+                <p class="text-slate-400 text-xs leading-relaxed">{{ $feat['desc'] }}</p>
             </div>
         </div>
         @endforeach
@@ -79,7 +79,7 @@ $c = $colors[$module['color']];
             @foreach($module['context'] as $ctx)
             <div class="flex gap-3 items-start">
                 <span class="text-sm mt-0.5" style="color:{{ $c['text'] }}">●</span>
-                <p class="text-white/70 text-sm leading-relaxed">{{ $ctx }}</p>
+                <p class="text-slate-300 text-sm leading-relaxed">{{ $ctx }}</p>
             </div>
             @endforeach
         </div>
@@ -92,11 +92,11 @@ $c = $colors[$module['color']];
     <h2 class="text-xl font-black mb-5">Modules complémentaires</h2>
     <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
         @foreach($related as $r)
-        <a href="{{ route('m.feature', $r['slug']) }}" class="glass rounded-xl p-4 hover:bg-white/10 transition text-center group">
+        <a href="{{ route('m.feature', $r['slug']) }}" class="glass rounded-xl p-4 hover:bg-slate-700 transition text-center group">
             <div class="w-8 h-8 rounded-lg flex items-center justify-center mx-auto mb-2" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1)">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><path d="{{ $r['icon'] }}"/></svg>
             </div>
-            <div class="text-xs font-bold text-white/70 group-hover:text-white transition">{{ $r['title'] }}</div>
+            <div class="text-xs font-bold text-slate-300 group-hover:text-white transition">{{ $r['title'] }}</div>
         </a>
         @endforeach
     </div>
@@ -106,10 +106,10 @@ $c = $colors[$module['color']];
 <section class="max-w-4xl mx-auto px-5 pb-20 text-center">
     <div class="glass rounded-3xl p-10" style="background:linear-gradient(145deg,rgba(245,158,11,0.08),rgba(255,255,255,0.03))">
         <h2 class="text-2xl md:text-3xl font-black">Commencez avec {{ $module['title'] }}</h2>
-        <p class="text-white/60 mt-3 text-sm">Essai gratuit 30 jours · Sans carte bancaire · Support en français</p>
+        <p class="text-slate-400 mt-3 text-sm">Essai gratuit 30 jours · Sans carte bancaire · Support en français</p>
         <div class="flex flex-wrap justify-center gap-3 mt-6">
             <a href="/login" class="px-7 py-3.5 rounded-xl text-sm font-black text-navy bg-gold hover:bg-gold-light transition">Démarrer l'essai gratuit →</a>
-            <a href="{{ route('m.contact') }}" class="px-7 py-3.5 rounded-xl text-sm font-bold text-white glass hover:bg-white/10 transition">Demander une démo</a>
+            <a href="{{ route('m.contact') }}" class="px-7 py-3.5 rounded-xl text-sm font-bold text-white glass hover:bg-slate-700 transition">Demander une démo</a>
         </div>
     </div>
 </section>
