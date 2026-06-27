@@ -201,40 +201,40 @@
                 </p>
                 <div class="grid grid-cols-2 gap-2">
                     <button type="button"
-                            @click="loginForm.email='owner@testco.cm'; loginForm.password='password123'"
+                            @click="loginForm.email='owner@demo.cm'; loginForm.password='demo1234'"
                             class="demo-btn">
                         <div class="flex items-center gap-1.5 mb-0.5" style="color:#F59E0B">
                             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7z"/><path d="M5 20h14"/></svg>
                             <span class="text-[10px] font-black uppercase tracking-wider">Owner</span>
                         </div>
-                        <div class="text-[10px]" style="color:#475569">owner@testco.cm</div>
+                        <div class="text-[10px]" style="color:#475569">owner@demo.cm</div>
                     </button>
                     <button type="button"
-                            @click="loginForm.email='accountant@testco.cm'; loginForm.password='password123'"
+                            @click="loginForm.email='accountant@demo.cm'; loginForm.password='demo1234'"
                             class="demo-btn">
                         <div class="flex items-center gap-1.5 mb-0.5" style="color:#818cf8">
                             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
                             <span class="text-[10px] font-black uppercase tracking-wider">Accountant</span>
                         </div>
-                        <div class="text-[10px]" style="color:#475569">accountant@testco.cm</div>
+                        <div class="text-[10px]" style="color:#475569">accountant@demo.cm</div>
                     </button>
                     <button type="button"
-                            @click="loginForm.email='clerk@testco.cm'; loginForm.password='password123'"
+                            @click="loginForm.email='junior@demo.cm'; loginForm.password='demo1234'"
                             class="demo-btn">
                         <div class="flex items-center gap-1.5 mb-0.5" style="color:#94a3b8">
                             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
-                            <span class="text-[10px] font-black uppercase tracking-wider">Clerk</span>
+                            <span class="text-[10px] font-black uppercase tracking-wider">Junior Accountant</span>
                         </div>
-                        <div class="text-[10px]" style="color:#475569">clerk@testco.cm</div>
+                        <div class="text-[10px]" style="color:#475569">junior@demo.cm</div>
                     </button>
                     <button type="button"
-                            @click="loginForm.email='admin@opesbooks.cm'; loginForm.password='yourpassword'"
+                            @click="loginForm.email='cabinet@demo.cm'; loginForm.password='demo1234'"
                             class="demo-btn">
                         <div class="flex items-center gap-1.5 mb-0.5" style="color:#f87171">
                             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                            <span class="text-[10px] font-black uppercase tracking-wider">Super Admin</span>
+                            <span class="text-[10px] font-black uppercase tracking-wider">Cabinet Partner</span>
                         </div>
-                        <div class="text-[10px]" style="color:#475569">admin@opesbooks.cm</div>
+                        <div class="text-[10px]" style="color:#475569">cabinet@demo.cm</div>
                     </button>
                 </div>
 
