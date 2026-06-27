@@ -31,6 +31,7 @@
         .badge-overdue { background: rgba(239,68,68,0.12); color: #f87171; border-color: rgba(239,68,68,0.25); }
         .badge-unknown { background: rgba(100,116,139,0.12); color: #94a3b8; border-color: rgba(100,116,139,0.25); }
         .badge-pending { background: rgba(59,130,246,0.12); color: #60a5fa; border-color: rgba(59,130,246,0.25); }
+        .badge-na      { background: rgba(100,116,139,0.08); color: #64748b; border-color: rgba(100,116,139,0.2); }
         input, select, textarea { background: var(--c-raised); border: 1px solid var(--c-border); color: var(--c-text); border-radius: 0.5rem; padding: 0.5rem 0.75rem; font-size: 0.875rem; width: 100%; outline: none; transition: border-color 0.15s; }
         input:focus, select:focus, textarea:focus { border-color: var(--c-accent); }
         label { font-size: 0.8rem; color: var(--c-muted); display: block; margin-bottom: 0.35rem; }
@@ -44,6 +45,11 @@
         .urgency-high   { color: #f87171; }
         .urgency-medium { color: #fbbf24; }
         .urgency-low    { color: var(--c-muted); }
+        .search-results { position: absolute; top: 100%; left: 0; right: 0; background: var(--c-raised); border: 1px solid var(--c-border-strong); border-radius: 0.5rem; margin-top: 0.25rem; z-index: 60; max-height: 220px; overflow-y: auto; box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+        .search-result-item { padding: 0.6rem 0.875rem; cursor: pointer; font-size: 0.85rem; border-bottom: 1px solid var(--c-border); }
+        .search-result-item:last-child { border-bottom: none; }
+        .search-result-item:hover { background: var(--c-border); }
+        .capacity-bar-fill { height: 100%; border-radius: 9999px; transition: width 0.3s; }
     </style>
 </head>
 <body x-data="firmApp()" x-init="init()">
@@ -115,6 +121,12 @@
                 <span x-text="firm?.city"></span>
             </p>
         </div>
+        {{-- Fix #12: capacity warning at 80% --}}
+        <template x-if="capacityPct >= 80">
+            <div style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:0.5rem;padding:0.5rem 1rem;font-size:0.8rem;color:#f87171;display:flex;align-items:center;gap:0.5rem">
+                ⚠ Portefeuille à <span x-text="capacityPct + '%'"></span> — limite approchée
+            </div>
+        </template>
         <button class="btn-primary" @click="showAddClient = true">+ Ajouter un client</button>
     </div>
 
@@ -144,6 +156,7 @@
         <button class="tab-btn" :class="tab==='portfolio' && 'active'" @click="tab='portfolio'">Portefeuille</button>
         <button class="tab-btn" :class="tab==='tasks' && 'active'" @click="tab='tasks';loadTasks()">Tâches & Délais</button>
         <button class="tab-btn" :class="tab==='reports' && 'active'" @click="tab='reports';loadReport()">Rapports</button>
+        <button class="tab-btn" :class="tab==='activity' && 'active'" @click="tab='activity';loadActivity()">Activité</button>
         <button class="tab-btn" :class="tab==='team' && 'active'" @click="tab='team';loadStaff()">Équipe</button>
         <button class="tab-btn" :class="tab==='settings' && 'active'" @click="tab='settings'">Paramètres</button>
     </div>
@@ -159,6 +172,7 @@
                 <option value="WARNING">Avertissement</option>
                 <option value="OK">À jour</option>
             </select>
+            <span style="margin-left:auto;font-size:0.8rem;color:var(--c-muted);align-self:center" x-text="filteredClients.length + ' client(s) affiché(s)'"></span>
         </div>
 
         {{-- Loading skeletons --}}
@@ -193,11 +207,14 @@
                         <span class="badge" :class="statusBadgeClass(client.compliance?.tva)" x-text="'TVA: ' + (client.compliance?.tva || '—')"></span>
                         <span class="badge" :class="statusBadgeClass(client.compliance?.dgi)" x-text="'DGI: ' + (client.compliance?.dgi || '—')"></span>
                         <span class="badge" :class="statusBadgeClass(client.compliance?.dsf)" x-text="'DSF: ' + (client.compliance?.dsf || '—')"></span>
+                        <template x-if="client.locked_until">
+                            <span class="badge badge-warning" x-text="'🔒 ' + client.locked_until"></span>
+                        </template>
                     </div>
 
                     {{-- Meta --}}
                     <div style="font-size:0.75rem;color:var(--c-faint)">
-                        <span x-text="client.engagement_type"></span>
+                        <span x-text="engagementLabel(client.engagement_type)"></span>
                         <span x-show="client.assigned_accountant"> · <span x-text="client.assigned_accountant"></span></span>
                         <span x-show="client.last_activity_human"> · Dernière activité <span x-text="client.last_activity_human"></span></span>
                     </div>
@@ -255,7 +272,7 @@
 
     {{-- ── Tab: Rapports consolidés ────────────────────────────────── --}}
     <div x-show="tab === 'reports'">
-        {{-- Period picker --}}
+        {{-- Period picker + export --}}
         <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;margin-bottom:1.25rem">
             <div style="display:flex;gap:0.5rem;align-items:center">
                 <label style="margin:0;white-space:nowrap">Du</label>
@@ -266,6 +283,8 @@
                 <input x-model="reportTo" type="date" style="max-width:160px" />
             </div>
             <button class="btn-primary" @click="loadReport(true)">Actualiser</button>
+            {{-- Fix #11: CSV export button --}}
+            <button class="btn-ghost" style="margin-left:auto" @click="exportReportCsv()" x-show="report">⬇ Exporter CSV</button>
         </div>
 
         <div x-show="loadingReport" style="text-align:center;padding:3rem;color:var(--c-muted)">Chargement…</div>
@@ -332,6 +351,47 @@
         </div>
     </div>
 
+    {{-- ── Tab: Activité récente ───────────────────────────────────── --}}
+    <div x-show="tab === 'activity'">
+        <div x-show="loadingActivity" style="text-align:center;padding:3rem;color:var(--c-muted)">Chargement…</div>
+        <div x-show="!loadingActivity" class="card" style="overflow:hidden">
+            <div style="padding:0.875rem 1.25rem;border-bottom:1px solid var(--c-border)">
+                <h3 style="font-size:0.875rem;font-weight:600">50 dernières écritures — tous clients</h3>
+            </div>
+            <div style="overflow-x:auto">
+                <table style="width:100%;border-collapse:collapse;font-size:0.825rem">
+                    <thead>
+                        <tr style="background:var(--c-bg)">
+                            <th style="text-align:left;padding:0.6rem 1.25rem;color:var(--c-muted);font-weight:600;font-size:0.72rem;text-transform:uppercase;border-bottom:1px solid var(--c-border)">Date</th>
+                            <th style="text-align:left;padding:0.6rem 1rem;color:var(--c-muted);font-weight:600;font-size:0.72rem;text-transform:uppercase;border-bottom:1px solid var(--c-border)">Client</th>
+                            <th style="text-align:left;padding:0.6rem 1rem;color:var(--c-muted);font-weight:600;font-size:0.72rem;text-transform:uppercase;border-bottom:1px solid var(--c-border)">Référence</th>
+                            <th style="text-align:left;padding:0.6rem 1rem;color:var(--c-muted);font-weight:600;font-size:0.72rem;text-transform:uppercase;border-bottom:1px solid var(--c-border)">Libellé</th>
+                            <th style="text-align:left;padding:0.6rem 1rem;color:var(--c-muted);font-weight:600;font-size:0.72rem;text-transform:uppercase;border-bottom:1px solid var(--c-border)">DGI</th>
+                            <th style="text-align:right;padding:0.6rem 1.25rem;color:var(--c-muted);font-weight:600;font-size:0.72rem;text-transform:uppercase;border-bottom:1px solid var(--c-border)">Enregistré</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template x-for="(entry, idx) in activityLog" :key="entry.id">
+                            <tr style="border-bottom:1px solid var(--c-border)" onmouseover="this.style.background='#1C2A3A'" onmouseout="this.style.background=''">
+                                <td style="padding:0.6rem 1.25rem;color:var(--c-muted);white-space:nowrap" x-text="entry.date"></td>
+                                <td style="padding:0.6rem 1rem;font-weight:500" x-text="entry.company"></td>
+                                <td style="padding:0.6rem 1rem;color:var(--c-faint);font-family:monospace;font-size:0.75rem" x-text="entry.reference"></td>
+                                <td style="padding:0.6rem 1rem;max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" x-text="entry.memo"></td>
+                                <td style="padding:0.6rem 1rem">
+                                    <span class="badge" :class="entry.dgi_status === 'APPROVED' ? 'badge-ok' : entry.dgi_status === 'REJECTED' ? 'badge-overdue' : 'badge-pending'" x-text="entry.dgi_status"></span>
+                                </td>
+                                <td style="padding:0.6rem 1.25rem;text-align:right;color:var(--c-faint);font-size:0.75rem" x-text="entry.recorded_at"></td>
+                            </tr>
+                        </template>
+                        <tr x-show="activityLog.length === 0">
+                            <td colspan="6" style="padding:2rem;text-align:center;color:var(--c-muted)">Aucune activité récente.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
     {{-- ── Tab: Équipe ─────────────────────────────────────────────── --}}
     <div x-show="tab === 'team'">
         <div style="display:flex;justify-content:flex-end;margin-bottom:1rem">
@@ -357,13 +417,24 @@
                             <td style="padding:0.75rem 1.25rem;font-weight:500" x-text="member.name"></td>
                             <td style="padding:0.75rem 1rem;color:var(--c-muted)" x-text="member.email"></td>
                             <td style="padding:0.75rem 1rem">
-                                <span class="badge badge-unknown" x-text="member.firm_role"></span>
+                                {{-- Fix #9: PARTNER can change roles inline --}}
+                                <template x-if="firmRole === 'PARTNER' && member.id !== currentUserId">
+                                    <select style="width:auto;padding:0.2rem 0.5rem;font-size:0.75rem" x-model="member.firm_role" @change="updateStaffRole(member)">
+                                        <option value="PARTNER">PARTNER</option>
+                                        <option value="SENIOR">SENIOR</option>
+                                        <option value="JUNIOR">JUNIOR</option>
+                                        <option value="ASSISTANT">ASSISTANT</option>
+                                    </select>
+                                </template>
+                                <template x-if="firmRole !== 'PARTNER' || member.id === currentUserId">
+                                    <span class="badge badge-unknown" x-text="member.firm_role"></span>
+                                </template>
                             </td>
                             <td style="padding:0.75rem 1rem">
                                 <span class="badge" :class="member.is_active ? 'badge-ok' : 'badge-unknown'" x-text="member.is_active ? 'Actif' : 'Inactif'"></span>
                             </td>
                             <td style="padding:0.75rem 1rem;text-align:right">
-                                <button @click="confirmRemoveStaff(member)" style="background:transparent;border:none;color:var(--c-faint);cursor:pointer;font-size:0.75rem" onmouseover="this.style.color='#f87171'" onmouseout="this.style.color='var(--c-faint)'">Retirer</button>
+                                <button x-show="member.id !== currentUserId" @click="confirmRemoveStaff(member)" style="background:transparent;border:none;color:var(--c-faint);cursor:pointer;font-size:0.75rem" onmouseover="this.style.color='#f87171'" onmouseout="this.style.color='var(--c-faint)'">Retirer</button>
                             </td>
                         </tr>
                     </template>
@@ -432,31 +503,54 @@
                 <p style="font-size:0.72rem;color:var(--c-faint);margin-top:0.5rem">JPG, PNG ou WebP · max 2 Mo</p>
             </div>
 
-            {{-- Capacity card --}}
+            {{-- Capacity card (fix #12) --}}
             <div class="card" style="padding:1.5rem">
                 <h3 style="font-size:0.95rem;font-weight:600;margin-bottom:1rem">Capacité du Portefeuille</h3>
                 <div style="display:flex;align-items:baseline;gap:0.5rem;margin-bottom:0.75rem">
                     <span style="font-size:2rem;font-weight:700" x-text="firm?.client_count ?? 0"></span>
                     <span style="color:var(--c-muted);font-size:0.875rem" x-text="'/ ' + (firm?.max_clients ?? 50) + ' clients'"></span>
                 </div>
-                <div style="background:var(--c-bg);border-radius:9999px;height:6px;overflow:hidden">
-                    <div style="background:var(--c-accent);height:100%;border-radius:9999px;transition:width 0.3s"
-                         :style="'width:' + Math.min(100, ((firm?.client_count||0) / (firm?.max_clients||50)) * 100) + '%'"></div>
+                <div style="background:var(--c-bg);border-radius:9999px;height:8px;overflow:hidden;margin-bottom:0.5rem">
+                    <div class="capacity-bar-fill"
+                         :style="'width:' + capacityPct + '%;background:' + (capacityPct >= 90 ? '#ef4444' : capacityPct >= 80 ? '#f59e0b' : '#22c55e')"
+                         :title="capacityPct + '% utilisé'"></div>
                 </div>
-                <p style="font-size:0.75rem;color:var(--c-faint);margin-top:0.5rem">Contactez le support pour augmenter la limite.</p>
+                <p x-show="capacityPct >= 80" style="font-size:0.75rem;color:#fbbf24">⚠ Limite bientôt atteinte — contactez le support.</p>
+                <p x-show="capacityPct < 80" style="font-size:0.75rem;color:var(--c-faint)">Contactez le support pour augmenter la limite.</p>
             </div>
         </div>
     </div>
 </div>
 
-{{-- ── Add Client Modal ─────────────────────────────────────────────── --}}
+{{-- ── Add Client Modal (fix #9: company search typeahead) ────────── --}}
 <div x-show="showAddClient" class="modal-backdrop" @click.self="showAddClient = false">
-    <div class="card" style="width:100%;max-width:480px;padding:1.5rem" @click.stop>
+    <div class="card" style="width:100%;max-width:520px;padding:1.5rem" @click.stop>
         <h2 style="font-size:1.05rem;font-weight:700;margin-bottom:1.25rem">Ajouter un client au portefeuille</h2>
-        <div class="form-group">
-            <label>ID de la société *</label>
-            <input x-model="newClient.company_id" type="number" placeholder="ID numérique de la société Opes Books" />
+
+        {{-- Company search --}}
+        <div class="form-group" style="position:relative">
+            <label>Rechercher la société *</label>
+            <input x-model="companySearch" @input.debounce.300="searchCompanies()" placeholder="Nom ou NIU de la société…" autocomplete="off" />
+            <div x-show="companyResults.length > 0" class="search-results">
+                <template x-for="co in companyResults" :key="co.id">
+                    <div class="search-result-item" @click="selectCompany(co)">
+                        <span style="font-weight:500" x-text="co.name"></span>
+                        <span style="color:var(--c-faint);font-size:0.75rem;margin-left:0.5rem" x-text="co.niu ? 'NIU: '+co.niu : ''"></span>
+                        <span style="float:right;font-size:0.7rem" x-text="co.tax_regime"></span>
+                    </div>
+                </template>
+            </div>
         </div>
+
+        {{-- Selected company --}}
+        <div x-show="newClient.company_id" style="background:var(--c-bg);border:1px solid var(--c-border);border-radius:0.5rem;padding:0.6rem 0.875rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between">
+            <div>
+                <span style="font-size:0.85rem;font-weight:500" x-text="newClient.company_name"></span>
+                <span style="font-size:0.75rem;color:var(--c-muted);margin-left:0.5rem" x-text="'ID: ' + newClient.company_id"></span>
+            </div>
+            <button @click="newClient.company_id = ''; newClient.company_name = ''; companySearch = ''" style="background:transparent;border:none;color:var(--c-faint);cursor:pointer;font-size:1rem">×</button>
+        </div>
+
         <div class="form-group">
             <label>Type d'engagement</label>
             <select x-model="newClient.engagement_type">
@@ -480,8 +574,8 @@
         </div>
         <p x-show="addClientError" x-text="addClientError" style="color:#f87171;font-size:0.8rem;margin-bottom:0.75rem"></p>
         <div style="display:flex;gap:0.75rem;justify-content:flex-end">
-            <button class="btn-ghost" @click="showAddClient = false">Annuler</button>
-            <button class="btn-primary" @click="submitAddClient()" :disabled="addingClient">
+            <button class="btn-ghost" @click="showAddClient = false; companyResults = []">Annuler</button>
+            <button class="btn-primary" @click="submitAddClient()" :disabled="addingClient || !newClient.company_id">
                 <span x-show="!addingClient">Ajouter</span>
                 <span x-show="addingClient">Ajout…</span>
             </button>
@@ -491,7 +585,7 @@
 
 {{-- ── Edit Client Modal ────────────────────────────────────────────── --}}
 <div x-show="showEditClient" class="modal-backdrop" @click.self="showEditClient = false">
-    <div class="card" style="width:100%;max-width:480px;padding:1.5rem" @click.stop>
+    <div class="card" style="width:100%;max-width:520px;padding:1.5rem" @click.stop>
         <h2 style="font-size:1.05rem;font-weight:700;margin-bottom:0.25rem" x-text="editingClient?.name"></h2>
         <p style="font-size:0.8rem;color:var(--c-muted);margin-bottom:1.25rem" x-text="'NIU: ' + (editingClient?.niu || '—')"></p>
         <div class="form-group">
@@ -515,6 +609,21 @@
             <label>Notes</label>
             <textarea x-model="editForm.notes" rows="2"></textarea>
         </div>
+
+        {{-- Fix #16: Period lock (PARTNER/SENIOR only) --}}
+        <template x-if="firmRole === 'PARTNER' || firmRole === 'SENIOR'">
+            <div class="form-group" style="border-top:1px solid var(--c-border);padding-top:1rem;margin-top:0.5rem">
+                <label>Clôture de période (date de verrouillage)</label>
+                <div style="display:flex;gap:0.5rem;align-items:center">
+                    <input type="date" x-model="editForm.lock_date" style="flex:1" />
+                    <button class="btn-ghost" style="white-space:nowrap;font-size:0.8rem" @click="lockPeriod(editingClient)" :disabled="!editForm.lock_date">
+                        Verrouiller
+                    </button>
+                </div>
+                <p style="font-size:0.72rem;color:var(--c-faint);margin-top:0.3rem">Les écritures antérieures à cette date ne pourront plus être modifiées.</p>
+            </div>
+        </template>
+
         <p x-show="editClientError" x-text="editClientError" style="color:#f87171;font-size:0.8rem;margin-bottom:0.75rem"></p>
         <div style="display:flex;gap:0.75rem;justify-content:space-between">
             <button class="btn-ghost" style="color:#f87171;border-color:rgba(239,68,68,0.3)" @click="removeClient(editingClient)">Retirer du portefeuille</button>
@@ -565,6 +674,7 @@ function firmApp() {
         loaded: false,
         firm: null,
         firmRole: null,
+        currentUserId: null,
         stats: {},
         clients: [],
         taskGroups: [],
@@ -580,17 +690,22 @@ function firmApp() {
         creating: false,
         setupError: '',
 
+        // Company search (fix #12)
+        companySearch: '',
+        companyResults: [],
+
         // Add client modal
         showAddClient: false,
-        newClient: { company_id: '', engagement_type: 'FULL_OUTSOURCE', billing_mode: 'FIRM_PAYS', notes: '' },
+        newClient: { company_id: '', company_name: '', engagement_type: 'FULL_OUTSOURCE', billing_mode: 'FIRM_PAYS', notes: '' },
         addingClient: false,
         addClientError: '',
 
         // Edit client modal
         showEditClient: false,
         editingClient: null,
-        editForm: { engagement_type: '', billing_mode: '', notes: '' },
+        editForm: { engagement_type: '', billing_mode: '', notes: '', lock_date: '' },
         savingClient: false,
+        editClientError: '',
 
         // Reports
         report: null,
@@ -598,6 +713,11 @@ function firmApp() {
         reportLoaded: false,
         reportFrom: new Date(new Date().getFullYear(), 0, 1).toISOString().slice(0,10),
         reportTo: new Date().toISOString().slice(0,10),
+
+        // Activity
+        activityLog: [],
+        loadingActivity: false,
+        activityLoaded: false,
 
         // Staff
         staffList: [],
@@ -614,7 +734,6 @@ function firmApp() {
         settingsError: '',
         settingsSuccess: '',
         uploadingLogo: false,
-        editClientError: '',
 
         get filteredClients() {
             return this.clients.filter(c => {
@@ -624,6 +743,12 @@ function firmApp() {
                 const matchFilter = !this.clientFilter || c.compliance?.overall === this.clientFilter;
                 return matchSearch && matchFilter;
             });
+        },
+
+        // Fix #12: capacity percentage
+        get capacityPct() {
+            if (!this.firm) return 0;
+            return Math.min(100, Math.round(((this.firm.client_count || 0) / (this.firm.max_clients || 50)) * 100));
         },
 
         token() { return localStorage.getItem('opes_token'); },
@@ -642,9 +767,13 @@ function firmApp() {
         async init() {
             if (!this.token()) { window.location = '/login'; return; }
             try {
-                const me = await this.api('GET', '/firm/me');
-                this.firm = me.firm;
-                this.firmRole = me.firm_role;
+                // Load current user id
+                const me = await this.api('GET', '/auth/me');
+                this.currentUserId = me.id;
+
+                const firmMe = await this.api('GET', '/firm/me');
+                this.firm = firmMe.firm;
+                this.firmRole = firmMe.firm_role;
                 if (this.firm) {
                     this.syncSettingsForm();
                     await this.loadPortfolio();
@@ -690,6 +819,17 @@ function firmApp() {
             this.loadingTasks = false;
         },
 
+        async loadActivity() {
+            if (this.activityLoaded) return;
+            this.loadingActivity = true;
+            try {
+                const data = await this.api('GET', '/firm/activity');
+                this.activityLog = data.activity ?? [];
+                this.activityLoaded = true;
+            } catch (e) { console.error(e); }
+            this.loadingActivity = false;
+        },
+
         async createFirm() {
             this.setupError = '';
             if (!this.setup.name.trim()) { this.setupError = 'Le nom est obligatoire.'; return; }
@@ -712,7 +852,12 @@ function firmApp() {
 
         editClient(client) {
             this.editingClient = client;
-            this.editForm = { engagement_type: client.engagement_type, billing_mode: client.billing_mode, notes: client.notes || '' };
+            this.editForm = {
+                engagement_type: client.engagement_type,
+                billing_mode: client.billing_mode,
+                notes: client.notes || '',
+                lock_date: client.locked_until || '',
+            };
             this.editClientError = '';
             this.showEditClient = true;
         },
@@ -721,7 +866,11 @@ function firmApp() {
             this.editClientError = '';
             this.savingClient = true;
             try {
-                const data = await this.api('PUT', '/firm/clients/' + this.editingClient.id, this.editForm);
+                const data = await this.api('PUT', '/firm/clients/' + this.editingClient.id, {
+                    engagement_type: this.editForm.engagement_type,
+                    billing_mode: this.editForm.billing_mode,
+                    notes: this.editForm.notes,
+                });
                 const idx = this.clients.findIndex(c => c.id === this.editingClient.id);
                 if (idx !== -1) this.clients[idx] = data.client;
                 this.showEditClient = false;
@@ -730,25 +879,63 @@ function firmApp() {
         },
 
         async removeClient(client) {
-            if (!confirm('Retirer ' + client.name + ' du portefeuille ?')) return;
+            if (!confirm('Retirer ' + client.name + ' du portefeuille ? Cela révoquera l\'accès du personnel à ce dossier.')) return;
             try {
                 await this.api('DELETE', '/firm/clients/' + client.id);
                 this.clients = this.clients.filter(c => c.id !== client.id);
                 this.stats.total_clients = Math.max(0, (this.stats.total_clients || 1) - 1);
+                if (this.firm) this.firm.client_count = Math.max(0, (this.firm.client_count || 1) - 1);
                 this.showEditClient = false;
             } catch (e) { alert(e.message); }
         },
 
+        // Fix #16: Period lock
+        async lockPeriod(client) {
+            if (!this.editForm.lock_date) return;
+            if (!confirm('Verrouiller les écritures de ' + client.name + ' jusqu\'au ' + this.editForm.lock_date + ' ?')) return;
+            try {
+                await this.api('POST', '/firm/clients/' + client.id + '/lock', { locked_until: this.editForm.lock_date });
+                const idx = this.clients.findIndex(c => c.id === client.id);
+                if (idx !== -1) this.clients[idx].locked_until = this.editForm.lock_date;
+                this.editingClient = { ...this.editingClient, locked_until: this.editForm.lock_date };
+                alert('Période verrouillée jusqu\'au ' + this.editForm.lock_date);
+            } catch (e) { alert(e.message); }
+        },
+
+        // Fix #12: company search typeahead
+        async searchCompanies() {
+            if (this.companySearch.length < 2) { this.companyResults = []; return; }
+            try {
+                const data = await this.api('GET', '/firm/companies/search?q=' + encodeURIComponent(this.companySearch));
+                this.companyResults = data.companies ?? [];
+            } catch (e) { this.companyResults = []; }
+        },
+
+        selectCompany(co) {
+            this.newClient.company_id = co.id;
+            this.newClient.company_name = co.name;
+            this.companySearch = co.name;
+            this.companyResults = [];
+        },
+
         async submitAddClient() {
             this.addClientError = '';
-            if (!this.newClient.company_id) { this.addClientError = 'Renseignez l\'ID de la société.'; return; }
+            if (!this.newClient.company_id) { this.addClientError = 'Sélectionnez une société dans la liste.'; return; }
             this.addingClient = true;
             try {
-                const data = await this.api('POST', '/firm/clients', this.newClient);
+                const data = await this.api('POST', '/firm/clients', {
+                    company_id: this.newClient.company_id,
+                    engagement_type: this.newClient.engagement_type,
+                    billing_mode: this.newClient.billing_mode,
+                    notes: this.newClient.notes,
+                });
                 this.clients.unshift(data.client);
                 this.stats.total_clients = (this.stats.total_clients || 0) + 1;
+                if (this.firm) this.firm.client_count = (this.firm.client_count || 0) + 1;
                 this.showAddClient = false;
-                this.newClient = { company_id: '', engagement_type: 'FULL_OUTSOURCE', billing_mode: 'FIRM_PAYS', notes: '' };
+                this.newClient = { company_id: '', company_name: '', engagement_type: 'FULL_OUTSOURCE', billing_mode: 'FIRM_PAYS', notes: '' };
+                this.companySearch = '';
+                this.companyResults = [];
             } catch (e) { this.addClientError = e.message; }
             this.addingClient = false;
         },
@@ -762,6 +949,24 @@ function firmApp() {
                 this.reportLoaded = true;
             } catch (e) { console.error(e); }
             this.loadingReport = false;
+        },
+
+        // Fix #11: export report as CSV
+        exportReportCsv() {
+            if (!this.report) return;
+            const rows = [['Client', 'NIU', 'CA (XAF)', 'TVA (XAF)', 'Charges (XAF)', 'Résultat (XAF)']];
+            for (const row of (this.report.clients || [])) {
+                rows.push([row.name, row.niu || '', row.revenue, row.tva, row.charges, row.result]);
+            }
+            rows.push(['TOTAL', '', this.report.totals.revenue, this.report.totals.tva, this.report.totals.charges, this.report.totals.result]);
+            const csv = rows.map(r => r.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',')).join('\n');
+            const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'rapport-cabinet-' + this.reportFrom + '-' + this.reportTo + '.csv';
+            a.click();
+            URL.revokeObjectURL(url);
         },
 
         async loadStaff() {
@@ -788,8 +993,18 @@ function firmApp() {
             this.addingStaff = false;
         },
 
+        // Fix #9: update staff role inline
+        async updateStaffRole(member) {
+            try {
+                await this.api('PUT', '/firm/staff/' + member.id, { firm_role: member.firm_role });
+            } catch (e) {
+                alert(e.message);
+                await this.loadStaff(); // reload to restore
+            }
+        },
+
         async confirmRemoveStaff(member) {
-            if (!confirm(`Retirer ${member.name} de l'équipe ?`)) return;
+            if (!confirm(`Retirer ${member.name} de l'équipe ? Leur accès aux dossiers clients sera également révoqué.`)) return;
             try {
                 await this.api('DELETE', '/firm/staff/' + member.id);
                 this.staffList = this.staffList.filter(m => m.id !== member.id);
@@ -850,6 +1065,7 @@ function firmApp() {
             if (status === 'DUE') return 'badge-warning';
             if (status === 'OVERDUE') return 'badge-overdue';
             if (status === 'PENDING') return 'badge-pending';
+            if (status === 'N/A') return 'badge-na';
             return 'badge-unknown';
         },
 
@@ -863,6 +1079,16 @@ function firmApp() {
             const colors = { TVA: '#60a5fa', CNPS: '#a78bfa', DSF: '#34d399', IS: '#f97316' };
             const c = colors[type] || '#8B9EC0';
             return `color:${c};border-color:${c}33;background:${c}11`;
+        },
+
+        engagementLabel(type) {
+            const labels = {
+                FULL_OUTSOURCE: 'Externalisation totale',
+                REVIEW_ONLY: 'Révision uniquement',
+                TAX_ONLY: 'Fiscal uniquement',
+                PAYROLL_ONLY: 'Paie uniquement',
+            };
+            return labels[type] || type;
         },
     };
 }

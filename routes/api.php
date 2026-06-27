@@ -139,13 +139,18 @@ Route::prefix('v1')->name('v1.')->group(function () {
         Route::post('logo',                         [FirmController::class, 'uploadLogo'])->name('logo');
         Route::get('portfolio',                     [FirmController::class, 'portfolio'])->name('portfolio');
         Route::get('tasks',                         [FirmController::class, 'tasks'])->name('tasks');
+        Route::get('activity',                      [FirmController::class, 'activity'])->name('activity');
+        Route::get('companies/search',              [FirmController::class, 'searchCompanies'])->name('companies.search');
         Route::post('clients',                      [FirmController::class, 'addClient'])->name('clients.add');
         Route::put('clients/{company}',             [FirmController::class, 'updateClient'])->name('clients.update');
         Route::delete('clients/{company}',          [FirmController::class, 'removeClient'])->name('clients.remove');
         Route::post('clients/{company}/open',       [FirmController::class, 'openClient'])->name('clients.open');
+        Route::post('clients/close',                [FirmController::class, 'closeClient'])->name('clients.close');
+        Route::post('clients/{company}/lock',       [FirmController::class, 'lockPeriod'])->name('clients.lock');
         Route::get('report',                        [FirmController::class, 'report'])->name('report');
         Route::get('staff',                         [FirmController::class, 'staff'])->name('staff.index');
         Route::post('staff',                        [FirmController::class, 'addStaff'])->name('staff.add');
+        Route::put('staff/{user}',                  [FirmController::class, 'updateStaff'])->name('staff.update');
         Route::delete('staff/{user}',               [FirmController::class, 'removeStaff'])->name('staff.remove');
     });
 

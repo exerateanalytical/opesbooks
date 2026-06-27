@@ -254,7 +254,17 @@
     <span style="color:#8B9EC0;white-space:nowrap" x-text="firm?.name"></span>
     <span style="color:#4E647E">·</span>
     <span style="color:#F0F4FA;font-weight:600;white-space:nowrap" x-text="company?.name"></span>
+    {{-- Fix #13: show engagement type scope --}}
+    <template x-if="firmEngagementType">
+        <span style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.25);color:#F59E0B;font-size:0.65rem;padding:0.1rem 0.4rem;border-radius:0.25rem;white-space:nowrap;font-weight:600" x-text="firmEngagementType"></span>
+    </template>
     <span style="flex:1"></span>
+    {{-- Fix #5: close client context button --}}
+    <template x-if="firmInClientContext">
+        <button @click="closeClientContext()" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#f87171;padding:0.2rem 0.6rem;border-radius:0.375rem;cursor:pointer;font-size:0.75rem;white-space:nowrap">
+            ✕ Fermer le dossier
+        </button>
+    </template>
     {{-- Quick client switcher --}}
     <div style="position:relative" x-data>
         <button @click="firmSwitcherOpen = !firmSwitcherOpen" style="background:var(--c-raised,#1C2A3A);border:1px solid #334155;color:#8B9EC0;padding:0.2rem 0.6rem;border-radius:0.375rem;cursor:pointer;font-size:0.75rem;display:flex;align-items:center;gap:0.35rem">
@@ -4788,6 +4798,8 @@ function opesApp() {
         firm: null,
         firmPortfolio: [],
         firmSwitcherOpen: false,
+        firmInClientContext: false,
+        firmEngagementType: null,
         async loadMe() {
             const data = await this.api('auth/me');
             this.user    = data.user;
@@ -4795,10 +4807,8 @@ function opesApp() {
             this.mustEnable2fa = !!data.must_enable_2fa;
             if (this.company) {
                 this.buildKpis();
-                // Refresh KPI totals from trial balance
                 this.loadDashboardKpis();
             }
-            // Load firm context for FIRM_ACCOUNTANT users
             if (this.user?.role === 'FIRM_ACCOUNTANT') {
                 this.loadFirmContext();
             }
@@ -4811,12 +4821,29 @@ function opesApp() {
                 ]);
                 this.firm = meData.firm;
                 this.firmPortfolio = portData.clients ?? [];
+                // Fix #5: detect if we're currently inside a client dossier
+                this.firmInClientContext = !!meData.in_client_context;
+                // Fix #13: detect engagement type for current client
+                if (this.firmInClientContext && this.company) {
+                    const currentClient = this.firmPortfolio.find(c => c.id === this.company?.id);
+                    this.firmEngagementType = currentClient?.engagement_type ?? null;
+                }
             } catch(e) {}
         },
         async switchFirmClient(clientId) {
             this.firmSwitcherOpen = false;
             try {
-                await this.api(`firm/clients/${clientId}/open`, { method:'POST', body:'{}' });
+                const res = await this.api(`firm/clients/${clientId}/open`, { method:'POST', body:'{}' });
+                this.firmEngagementType = res.engagement_type ?? null;
+                window.location.reload();
+            } catch(e) { window.opesToast && window.opesToast('error', 'Erreur', e.message); }
+        },
+        // Fix #5: close client session and return to firm context
+        async closeClientContext() {
+            try {
+                await this.api('firm/clients/close', { method:'POST', body:'{}' });
+                this.firmInClientContext = false;
+                this.firmEngagementType = null;
                 window.location.reload();
             } catch(e) { window.opesToast && window.opesToast('error', 'Erreur', e.message); }
         },

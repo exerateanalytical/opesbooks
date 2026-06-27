@@ -25,7 +25,7 @@ class Firm extends Model
     public function clients(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(Company::class, 'firm_clients')
-                    ->withPivot(['assigned_accountant_id', 'engagement_type', 'billing_mode', 'notes', 'is_active', 'onboarded_at'])
+                    ->withPivot(['assigned_accountant_id', 'engagement_type', 'billing_mode', 'notes', 'is_active', 'onboarded_at', 'locked_until'])
                     ->withTimestamps();
     }
 
