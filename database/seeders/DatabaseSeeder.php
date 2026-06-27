@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             SyscohadaAccountSeeder::class,
             DemoSeeder::class,
             FirmDemoSeeder::class,
+            FirmClientDataSeeder::class,
         ]);
     }
 }

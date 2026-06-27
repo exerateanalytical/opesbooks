@@ -366,7 +366,7 @@ class FirmController extends Controller
 
         // Per-client revenue + TVA summary
         $clients = $firm->activeClients()->get()->map(function (Company $c) use ($from, $to, $revenueIds, $tvaIds, $chargeIds) {
-            $lines = JournalLine::whereHas('entry', fn($q) =>
+            $lines = JournalLine::whereHas('journalEntry', fn($q) =>
                     $q->where('company_id', $c->id)
                       ->whereBetween('posting_date', [$from, $to])
                 )->with('account')->get();
@@ -564,7 +564,7 @@ class FirmController extends Controller
         // TVA — check for journal lines on accounts 443xxx (TVA Facturée) in last 45 days
         $tvaAccountIds = SyscohadaAccount::where('code', 'like', '443%')->pluck('id');
 
-        $lastTvaLine = JournalLine::whereHas('entry', fn($q) => $q->where('company_id', $company->id))
+        $lastTvaLine = JournalLine::whereHas('journalEntry', fn($q) => $q->where('company_id', $company->id))
             ->whereIn('syscohada_account_id', $tvaAccountIds)
             ->orderByDesc('created_at')
             ->first();
