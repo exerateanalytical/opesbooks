@@ -43,7 +43,7 @@
 <body class="bg-[#0B1120] text-slate-200 min-h-screen" x-data="{ mobileNav: false }">
 
 <!-- Topbar -->
-<header class="fixed top-0 inset-x-0 h-14 z-40 bg-[#0B1120] border-b border-slate-700/50 border-t-2 border-t-amber-400 flex items-center justify-between px-4">
+<header class="fixed top-0 inset-x-0 h-14 z-40 bg-[#0B1120] border-b border-[#334155]/50 border-t-2 border-t-amber-400 flex items-center justify-between px-4">
     <div class="flex items-center gap-3">
         <button @click="mobileNav = !mobileNav" class="lg:hidden w-9 h-9 flex items-center justify-center rounded-lg text-slate-300 hover:bg-white/10">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
@@ -61,7 +61,7 @@
 
 <!-- Sidebar -->
 <aside :class="mobileNav ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
-       class="fixed top-14 bottom-0 left-0 w-60 bg-[#151F2E] border-r border-slate-700/50 overflow-y-auto z-30 transition-transform duration-300 py-5 px-3">
+       class="fixed top-14 bottom-0 left-0 w-60 bg-[#151F2E] border-r border-[#334155]/50 overflow-y-auto z-30 transition-transform duration-300 py-5 px-3">
     <nav class="space-y-5">
         @foreach($nav as $group => $items)
         <div>

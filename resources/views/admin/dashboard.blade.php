@@ -39,7 +39,7 @@
     <div class="overflow-x-auto">
         <table class="w-full text-left">
             <thead>
-                <tr class="text-[9px] font-black uppercase tracking-widest text-slate-500 border-b border-[#253347] bg-slate-950/50">
+                <tr class="text-[9px] font-black uppercase tracking-widest text-slate-500 border-b border-[#253347] bg-[#0B1120]/50">
                     <th class="py-3 px-6">Name</th>
                     <th class="py-3 px-4">NIU</th>
                     <th class="py-3 px-4">Plan</th>
@@ -52,7 +52,7 @@
             <tbody class="text-xs font-medium divide-y divide-slate-800/60">
                 @forelse($companies as $company)
                     @php $sub = $company->subscriptions->first(); @endphp
-                    <tr class="hover:bg-slate-800/40 transition-colors">
+                    <tr class="hover:bg-[#1C2A3A]/40 transition-colors">
                         <td class="py-3.5 px-6 font-bold text-white">{{ $company->name }}</td>
                         <td class="py-3.5 px-4 font-mono text-slate-400">{{ $company->niu ?? '—' }}</td>
                         <td class="py-3.5 px-4">

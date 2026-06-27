@@ -29,7 +29,7 @@
     <div class="overflow-x-auto">
         <table class="w-full text-left">
             <thead>
-                <tr class="text-[9px] font-black uppercase tracking-widest text-slate-500 border-b border-[#253347] bg-slate-950/50">
+                <tr class="text-[9px] font-black uppercase tracking-widest text-slate-500 border-b border-[#253347] bg-[#0B1120]/50">
                     <th class="py-3 px-6">Time</th>
                     <th class="py-3 px-4">User</th>
                     <th class="py-3 px-4">Company</th>
@@ -51,7 +51,7 @@
                             default => 'text-slate-300',
                         };
                     @endphp
-                    <tr class="hover:bg-slate-800/40 transition-colors">
+                    <tr class="hover:bg-[#1C2A3A]/40 transition-colors">
                         <td class="py-3.5 px-6 font-mono text-[10px] text-slate-500">{{ $log->created_at?->format('Y-m-d H:i') }}</td>
                         <td class="py-3.5 px-4 text-slate-300">{{ $log->user->name ?? 'system' }}</td>
                         <td class="py-3.5 px-4 text-slate-400">{{ $log->company->name ?? '—' }}</td>

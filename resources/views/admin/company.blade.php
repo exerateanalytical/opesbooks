@@ -71,7 +71,7 @@
         </h2>
         <div class="space-y-2">
             @forelse($company->users as $user)
-                <div class="flex items-center justify-between px-4 py-3 rounded-xl bg-slate-800/60 border border-slate-700/60">
+                <div class="flex items-center justify-between px-4 py-3 rounded-xl bg-[#1C2A3A]/60 border border-[#334155]/60">
                     <div>
                         <div class="text-sm font-bold text-white">{{ $user->name }}</div>
                         <div class="text-[10px] text-slate-500 mt-0.5">{{ $user->email }}</div>
@@ -100,7 +100,7 @@
     <div class="overflow-x-auto">
         <table class="w-full text-left text-xs divide-y divide-slate-800/60">
             <thead>
-                <tr class="text-[9px] font-black uppercase tracking-widest text-slate-500 bg-slate-950/50">
+                <tr class="text-[9px] font-black uppercase tracking-widest text-slate-500 bg-[#0B1120]/50">
                     <th class="py-3 px-6">Plan</th>
                     <th class="py-3 px-4">Status</th>
                     <th class="py-3 px-4">Amount (XAF)</th>
@@ -110,7 +110,7 @@
             </thead>
             <tbody class="divide-y divide-slate-800/40">
                 @foreach($company->subscriptions as $s)
-                    <tr class="hover:bg-slate-800/30 transition-colors">
+                    <tr class="hover:bg-[#1C2A3A]/30 transition-colors">
                         <td class="py-3 px-6 font-bold text-white">{{ $s->plan }}</td>
                         <td class="py-3 px-4 text-slate-400">{{ $s->status }}</td>
                         <td class="py-3 px-4 font-mono text-slate-400">{{ number_format($s->amount_xaf) }}</td>

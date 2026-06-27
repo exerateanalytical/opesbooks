@@ -68,19 +68,19 @@
 <div class="bg-[#151F2E] border border-[#253347] rounded-2xl p-6">
     <span class="text-[9px] font-black uppercase tracking-widest text-slate-500">Platform Counts</span>
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-5">
-        <div class="bg-slate-950/40 border border-[#253347] rounded-xl p-4">
+        <div class="bg-[#0B1120]/40 border border-[#253347] rounded-xl p-4">
             <div class="text-[9px] font-black uppercase tracking-widest text-slate-500">Companies</div>
             <div class="text-white text-2xl font-black mt-2">{{ number_format($counts['companies']) }}</div>
         </div>
-        <div class="bg-slate-950/40 border border-[#253347] rounded-xl p-4">
+        <div class="bg-[#0B1120]/40 border border-[#253347] rounded-xl p-4">
             <div class="text-[9px] font-black uppercase tracking-widest text-slate-500">Users</div>
             <div class="text-white text-2xl font-black mt-2">{{ number_format($counts['users']) }}</div>
         </div>
-        <div class="bg-slate-950/40 border border-[#253347] rounded-xl p-4">
+        <div class="bg-[#0B1120]/40 border border-[#253347] rounded-xl p-4">
             <div class="text-[9px] font-black uppercase tracking-widest text-slate-500">Active API Keys</div>
             <div class="text-white text-2xl font-black mt-2">{{ number_format($counts['api_keys']) }}</div>
         </div>
-        <div class="bg-slate-950/40 border border-[#253347] rounded-xl p-4">
+        <div class="bg-[#0B1120]/40 border border-[#253347] rounded-xl p-4">
             <div class="text-[9px] font-black uppercase tracking-widest text-slate-500">API Calls 24h</div>
             <div class="text-white text-2xl font-black mt-2">{{ number_format($counts['api_calls_24h']) }}</div>
         </div>

@@ -12,7 +12,7 @@
     <div class="overflow-x-auto">
         <table class="w-full text-left">
             <thead>
-                <tr class="text-[9px] font-black uppercase tracking-widest text-slate-500 border-b border-[#253347] bg-slate-950/50">
+                <tr class="text-[9px] font-black uppercase tracking-widest text-slate-500 border-b border-[#253347] bg-[#0B1120]/50">
                     <th class="py-3 px-6">Fonctionnalité</th>
                     <th class="py-3 px-4">Clé</th>
                     <th class="py-3 px-4">Activée pour</th>
@@ -21,7 +21,7 @@
             </thead>
             <tbody class="text-xs font-medium divide-y divide-slate-800/60">
                 @forelse($flags as $flag)
-                    <tr class="hover:bg-slate-800/40 transition-colors">
+                    <tr class="hover:bg-[#1C2A3A]/40 transition-colors">
                         <td class="py-3.5 px-6">
                             <div class="font-bold text-white">{{ $flag->name }}</div>
                             @if($flag->description)<div class="text-slate-500 text-[10px] mt-0.5">{{ $flag->description }}</div>@endif

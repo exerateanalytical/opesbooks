@@ -13,7 +13,7 @@
     <div class="bg-[#151F2E] border border-[#253347] rounded-2xl divide-y divide-slate-800/60"
          x-data>
         @foreach($flags as $key => $flag)
-        <label class="flex items-center justify-between gap-6 px-6 py-5 cursor-pointer hover:bg-slate-800/30 transition-colors">
+        <label class="flex items-center justify-between gap-6 px-6 py-5 cursor-pointer hover:bg-[#1C2A3A]/30 transition-colors">
             <div>
                 <div class="text-sm font-black text-white">{{ $flag['label'] }}</div>
                 <div class="text-xs text-slate-500 mt-0.5">{{ $flag['description'] }}</div>

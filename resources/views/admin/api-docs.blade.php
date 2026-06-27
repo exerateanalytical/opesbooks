@@ -37,7 +37,7 @@
     <div class="overflow-x-auto">
         <table class="w-full text-left">
             <thead>
-                <tr class="text-[9px] font-black uppercase tracking-widest text-slate-500 border-b border-[#253347] bg-slate-950/50">
+                <tr class="text-[9px] font-black uppercase tracking-widest text-slate-500 border-b border-[#253347] bg-[#0B1120]/50">
                     <th class="py-3 px-6">Method</th>
                     <th class="py-3 px-4">Path</th>
                     <th class="py-3 px-4">Description</th>
@@ -60,7 +60,7 @@
                     ];
                 @endphp
                 @foreach($endpoints as [$method, $path, $desc])
-                    <tr class="hover:bg-slate-800/40 transition-colors">
+                    <tr class="hover:bg-[#1C2A3A]/40 transition-colors">
                         <td class="py-3.5 px-6">
                             <span class="px-2 py-0.5 rounded-full font-mono text-[9px] font-black uppercase {{ $methodColors[$method] ?? 'bg-slate-500/20 text-slate-300 border border-slate-500/30' }}">
                                 {{ $method }}

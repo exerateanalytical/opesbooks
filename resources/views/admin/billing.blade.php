@@ -37,7 +37,7 @@
                 @php $pct = $maxRevenue > 0 ? ($amount / $maxRevenue) * 100 : 0; @endphp
                 <div class="flex items-center gap-3">
                     <div class="w-16 shrink-0 text-[10px] font-mono font-bold text-slate-400">{{ $month }}</div>
-                    <div class="flex-1 h-5 bg-slate-800/60 rounded-lg overflow-hidden">
+                    <div class="flex-1 h-5 bg-[#1C2A3A]/60 rounded-lg overflow-hidden">
                         <div class="h-full bg-amber-500/70 rounded-lg" style="width: {{ $pct }}%"></div>
                     </div>
                     <div class="w-32 shrink-0 text-right text-[10px] font-mono font-bold text-slate-300">{{ number_format($amount) }} XAF</div>
@@ -53,7 +53,7 @@
         <div class="px-6 pt-6 pb-4 text-[9px] font-black uppercase tracking-widest text-slate-500">By plan</div>
         <table class="w-full text-left">
             <thead>
-                <tr class="text-[9px] font-black uppercase tracking-widest text-slate-500 border-b border-[#253347] bg-slate-950/50">
+                <tr class="text-[9px] font-black uppercase tracking-widest text-slate-500 border-b border-[#253347] bg-[#0B1120]/50">
                     <th class="py-3 px-6">Plan</th>
                     <th class="py-3 px-4 text-center">Count</th>
                     <th class="py-3 px-4 text-right">Total</th>
@@ -61,7 +61,7 @@
             </thead>
             <tbody class="text-xs font-medium divide-y divide-slate-800/60">
                 @forelse($byPlan as $row)
-                    <tr class="hover:bg-slate-800/40 transition-colors">
+                    <tr class="hover:bg-[#1C2A3A]/40 transition-colors">
                         <td class="py-3.5 px-6">
                             <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase
                                 {{ $row->plan === 'ENTERPRISE' ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30' :
@@ -89,7 +89,7 @@
     <div class="overflow-x-auto">
         <table class="w-full text-left">
             <thead>
-                <tr class="text-[9px] font-black uppercase tracking-widest text-slate-500 border-b border-[#253347] bg-slate-950/50">
+                <tr class="text-[9px] font-black uppercase tracking-widest text-slate-500 border-b border-[#253347] bg-[#0B1120]/50">
                     <th class="py-3 px-6">Company</th>
                     <th class="py-3 px-4">Plan</th>
                     <th class="py-3 px-4">Amount</th>
@@ -99,7 +99,7 @@
             </thead>
             <tbody class="text-xs font-medium divide-y divide-slate-800/60">
                 @forelse($recent as $tx)
-                    <tr class="hover:bg-slate-800/40 transition-colors">
+                    <tr class="hover:bg-[#1C2A3A]/40 transition-colors">
                         <td class="py-3.5 px-6 font-bold text-white">{{ $tx->company?->name ?? '—' }}</td>
                         <td class="py-3.5 px-4">
                             <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase
@@ -139,7 +139,7 @@
     <div class="overflow-x-auto">
         <table class="w-full text-left">
             <thead>
-                <tr class="text-[9px] font-black uppercase tracking-widest text-slate-500 border-b border-[#253347] bg-slate-950/50">
+                <tr class="text-[9px] font-black uppercase tracking-widest text-slate-500 border-b border-[#253347] bg-[#0B1120]/50">
                     <th class="py-3 px-6">Date</th><th class="py-3 px-4">Entreprise</th>
                     <th class="py-3 px-4">Montant</th><th class="py-3 px-4">Méthode</th>
                     <th class="py-3 px-4">Référence</th><th class="py-3 px-4">Reçu</th>
@@ -147,7 +147,7 @@
             </thead>
             <tbody class="text-xs font-medium divide-y divide-slate-800/60">
                 @forelse($payments as $p)
-                    <tr class="hover:bg-slate-800/40 transition-colors">
+                    <tr class="hover:bg-[#1C2A3A]/40 transition-colors">
                         <td class="py-3.5 px-6 font-mono text-[10px] text-slate-400">{{ $p->created_at?->format('Y-m-d') }}</td>
                         <td class="py-3.5 px-4 font-bold text-white">{{ $p->company?->name ?? '—' }}</td>
                         <td class="py-3.5 px-4 font-black text-amber-400">{{ number_format($p->amount_xaf) }} XAF</td>

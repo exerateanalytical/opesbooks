@@ -30,7 +30,7 @@
                         ? 'hover:border-emerald-400/40'
                         : 'hover:border-white/20'"
                     style="background:var(--c-raised);border:1px solid var(--c-border);transition:all 0.2s ease"
-                    @mouseenter="$el.style.background='rgba(255,255,255,0.10)';$el.style.borderColor='rgba(255,255,255,0.18)'"
+                    @mouseenter="$el.style.background='#253347';$el.style.borderColor='#334155'"
                     @mouseleave="$el.style.background='#1C2A3A';$el.style.borderColor='#253347'"
                 >
                     <span class="text-2xl mb-2 leading-none" x-text="intent.icon"></span>
