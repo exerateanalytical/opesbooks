@@ -2695,7 +2695,7 @@
                         </template>
                         <template x-for="c in customers" :key="c.id">
                             <tr style="border-bottom:1px solid #2A2A72" class="hover:bg-slate-800 transition-colors">
-                                <td class="px-4 py-3 font-medium" x-text="c.name"></td>
+                                <td class="px-4 py-3 font-medium text-amber-400 cursor-pointer hover:underline" @click="openCustomer(c)" x-text="c.name"></td>
                                 <td class="px-4 py-3 opacity-70" x-text="c.niu||'—'"></td>
                                 <td class="px-4 py-3 opacity-70" x-text="c.email||'—'"></td>
                                 <td class="px-4 py-3 text-right opacity-70" x-text="c.payment_terms_days||'30'"></td>
@@ -2704,6 +2704,55 @@
                         </template>
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Customer detail / statement drawer -->
+            <div x-show="showDetail" x-cloak class="fixed inset-0 z-50" @keydown.escape.window="showDetail=false">
+                <div class="absolute inset-0 bg-black/60" @click="showDetail=false"></div>
+                <div class="absolute right-0 top-0 bottom-0 w-full max-w-lg overflow-y-auto p-6 space-y-4" style="background:#010048;border-left:1px solid #2A2A72"
+                     x-transition:enter="transition ease-out duration-200" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-lg font-black text-white" x-text="detail?.name||'…'"></p>
+                            <p class="text-[11px] text-slate-400 mt-0.5" x-text="(detail?.niu? 'NIU '+detail.niu+' · ':'')+(detail?.email||'')"></p>
+                        </div>
+                        <button @click="showDetail=false" class="text-slate-400 hover:text-white text-xl leading-none">✕</button>
+                    </div>
+                    <template x-if="detail">
+                    <div class="space-y-4">
+                        <!-- totals -->
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="glass-card rounded-xl p-3"><p class="text-[9px] font-black text-slate-400 uppercase tracking-widest" x-text="lang==='FR'?'Facturé':'Invoiced'"></p><p class="font-mono font-black text-white mt-1" x-text="fmtXaf(detail.totals?.invoiced||0)"></p></div>
+                            <div class="glass-card rounded-xl p-3"><p class="text-[9px] font-black text-slate-400 uppercase tracking-widest" x-text="lang==='FR'?'Encaissé':'Paid'"></p><p class="font-mono font-black text-emerald-400 mt-1" x-text="fmtXaf(detail.totals?.paid||0)"></p></div>
+                            <div class="glass-card rounded-xl p-3"><p class="text-[9px] font-black text-slate-400 uppercase tracking-widest" x-text="lang==='FR'?'En cours':'Outstanding'"></p><p class="font-mono font-black text-amber-400 mt-1" x-text="fmtXaf(detail.totals?.outstanding||0)"></p></div>
+                            <div class="glass-card rounded-xl p-3"><p class="text-[9px] font-black text-slate-400 uppercase tracking-widest" x-text="lang==='FR'?'En retard':'Overdue'"></p><p class="font-mono font-black mt-1" :class="(detail.totals?.overdue||0)>0?'text-red-400':'text-white'" x-text="fmtXaf(detail.totals?.overdue||0)"></p></div>
+                        </div>
+                        <!-- contact -->
+                        <div class="glass-card rounded-2xl p-4 text-xs space-y-1.5">
+                            <div class="flex justify-between" x-show="detail.phone"><span class="text-slate-400" x-text="lang==='FR'?'Téléphone':'Phone'"></span><span x-text="detail.phone"></span></div>
+                            <div class="flex justify-between" x-show="detail.address"><span class="text-slate-400" x-text="lang==='FR'?'Adresse':'Address'"></span><span class="text-right" x-text="detail.address"></span></div>
+                            <div class="flex justify-between"><span class="text-slate-400" x-text="lang==='FR'?'Délai paiement':'Payment terms'"></span><span x-text="(detail.payment_terms_days||30)+' j'"></span></div>
+                            <div class="flex justify-between" x-show="detail.credit_limit_xaf"><span class="text-slate-400" x-text="lang==='FR'?'Plafond crédit':'Credit limit'"></span><span class="font-mono" x-text="fmtXaf(detail.credit_limit_xaf)"></span></div>
+                        </div>
+                        <!-- invoices -->
+                        <div class="glass-card rounded-2xl p-4">
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2" x-text="lang==='FR'?'Factures ('+(detail.invoices?.length||0)+')':'Invoices ('+(detail.invoices?.length||0)+')'"></p>
+                            <div x-show="detail.invoices?.length" class="divide-y" style="border-color:rgba(255,255,255,0.06)">
+                                <template x-for="iv in (detail.invoices||[])" :key="iv.id">
+                                    <div class="flex items-center justify-between py-2 gap-2 text-xs">
+                                        <div class="min-w-0"><span class="font-mono text-amber-400" x-text="iv.invoice_number"></span><span class="text-slate-500 block text-[10px]" x-text="iv.invoice_date"></span></div>
+                                        <div class="text-right shrink-0"><span class="font-mono text-slate-300" x-text="fmtXaf(iv.amount_ttc)"></span><span class="block text-[10px]" :class="iv.status==='PAID'?'text-emerald-400':iv.status==='OVERDUE'?'text-red-400':'text-slate-400'" x-text="iv.status"></span></div>
+                                    </div>
+                                </template>
+                            </div>
+                            <p x-show="!detail.invoices?.length" class="text-xs text-slate-500 py-4 text-center" x-text="lang==='FR'?'Aucune facture':'No invoices'"></p>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <button @click="downloadStatement(detail)" class="glass-btn-dark px-4 py-2 rounded-xl text-xs" x-text="lang==='FR'?'Relevé PDF':'Statement PDF'"></button>
+                        </div>
+                    </div>
+                    </template>
+                </div>
             </div>
         </div>
 
@@ -3418,7 +3467,7 @@
                         <template x-for="inv in invoices" :key="inv.id">
                             <tr style="border-bottom:1px solid #2A2A72" class="hover:bg-slate-800">
                                 <td class="px-4 py-2.5 font-medium" x-text="inv.supplier?.name ?? '—'"></td>
-                                <td class="px-4 py-2.5 opacity-70" x-text="inv.invoice_number"></td>
+                                <td class="px-4 py-2.5 text-amber-400 cursor-pointer hover:underline" @click="openInvoice(inv)" x-text="inv.invoice_number"></td>
                                 <td class="px-4 py-2.5 text-right opacity-70" x-text="fmtXaf(inv.amount_ht)"></td>
                                 <td class="px-4 py-2.5 text-right font-bold" x-text="fmtXaf(inv.amount_ttc)"></td>
                                 <td class="px-4 py-2.5 text-center">
@@ -3434,6 +3483,62 @@
                 <div x-show="invoices.length===0" class="py-12 flex flex-col items-center gap-3">
                     <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-amber-400/70" style="background:rgba(201,155,14,0.08);border:1px solid rgba(201,155,14,0.18)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h14a2 2 0 0 0 2-2V7.5L14.5 2H6a2 2 0 0 0-2 2v4"/><polyline points="14 2 14 8 20 8"/><path d="M2 15h10"/><path d="m9 18 3-3-3-3"/></svg></div>
                     <span class="text-[11px] font-black uppercase tracking-widest text-slate-500" x-text="lang==='FR' ? 'Aucune facture fournisseur.' : 'No supplier invoices.'"></span>
+                </div>
+            </div>
+
+            <!-- Supplier invoice detail drawer -->
+            <div x-show="showDetail" x-cloak class="fixed inset-0 z-50" @keydown.escape.window="showDetail=false">
+                <div class="absolute inset-0 bg-black/60" @click="showDetail=false"></div>
+                <div class="absolute right-0 top-0 bottom-0 w-full max-w-lg overflow-y-auto p-6 space-y-4" style="background:#010048;border-left:1px solid #2A2A72"
+                     x-transition:enter="transition ease-out duration-200" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="font-mono text-amber-400 text-sm" x-text="detail?.invoice_number||'…'"></p>
+                            <p class="text-lg font-black text-white" x-text="detail?.supplier?.name||'—'"></p>
+                            <p class="text-[11px] text-slate-400 mt-0.5" x-show="detail?.supplier_ref" x-text="(lang==='FR'?'Réf. fournisseur : ':'Supplier ref: ')+(detail?.supplier_ref||'')"></p>
+                        </div>
+                        <button @click="showDetail=false" class="text-slate-400 hover:text-white text-xl leading-none">✕</button>
+                    </div>
+                    <template x-if="detail">
+                    <div class="space-y-4">
+                        <span class="px-2 py-0.5 rounded-full text-xs font-bold inline-block" :class="{'bg-emerald-900/50 text-emerald-300':detail.status==='PAID','bg-amber-900/50 text-amber-300':detail.status==='PENDING'||detail.status==='SENT','bg-red-900/50 text-red-300':detail.status==='OVERDUE'}" x-text="detail.status"></span>
+                        <div class="glass-card rounded-2xl p-4 space-y-2 text-sm">
+                            <div class="flex justify-between"><span class="text-slate-400">HT</span><span class="font-mono" x-text="fmtXaf(detail.amount_ht)"></span></div>
+                            <div class="flex justify-between"><span class="text-slate-400">TVA</span><span class="font-mono" x-text="fmtXaf(detail.tva_amount)"></span></div>
+                            <div class="flex justify-between"><span class="text-slate-400">CAC</span><span class="font-mono" x-text="fmtXaf(detail.cac_amount)"></span></div>
+                            <div class="flex justify-between border-t pt-2" style="border-color:#2A2A72"><span class="font-bold">TTC</span><span class="font-mono font-black text-amber-400" x-text="fmtXaf(detail.amount_ttc)"></span></div>
+                            <div class="flex justify-between" x-show="detail.withholding_amount"><span class="text-slate-400" x-text="lang==='FR'?'Retenue à la source':'Withholding'"></span><span class="font-mono" x-text="fmtXaf(detail.withholding_amount)"></span></div>
+                            <div class="flex justify-between" x-show="detail.net_payable"><span class="text-slate-400" x-text="lang==='FR'?'Net à payer':'Net payable'"></span><span class="font-mono" x-text="fmtXaf(detail.net_payable)"></span></div>
+                        </div>
+                        <div class="glass-card rounded-2xl p-4">
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3" x-text="lang==='FR'?'Chronologie':'Timeline'"></p>
+                            <div class="space-y-2 text-xs">
+                                <div class="flex justify-between"><span class="text-slate-400" x-text="lang==='FR'?'Date facture':'Invoice date'"></span><span x-text="detail.invoice_date"></span></div>
+                                <div class="flex justify-between"><span class="text-slate-400" x-text="lang==='FR'?'Échéance':'Due date'"></span><span x-text="detail.due_date"></span></div>
+                                <div class="flex justify-between" x-show="detail.paid_at"><span class="text-slate-400" x-text="lang==='FR'?'Payée le':'Paid at'"></span><span x-text="(detail.paid_at||'').slice(0,10)"></span></div>
+                                <div class="flex justify-between" x-show="detail.payment_ref"><span class="text-slate-400" x-text="lang==='FR'?'Réf. paiement':'Payment ref'"></span><span class="font-mono" x-text="detail.payment_ref"></span></div>
+                            </div>
+                        </div>
+                        <div class="glass-card rounded-2xl p-4" x-show="detail.journal_lines?.length">
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2" x-text="lang==='FR'?'Écriture comptable':'Journal entry'"></p>
+                            <table class="w-full text-xs">
+                                <template x-for="(l,i) in detail.journal_lines" :key="i">
+                                    <tr class="border-t" style="border-color:rgba(255,255,255,0.06)">
+                                        <td class="py-1.5 font-mono text-slate-300" x-text="l.account"></td>
+                                        <td class="py-1.5 text-slate-500 truncate max-w-[120px]" x-text="l.label"></td>
+                                        <td class="py-1.5 text-right font-mono text-slate-300" x-text="l.debit?fmtXaf(l.debit):''"></td>
+                                        <td class="py-1.5 text-right font-mono text-slate-300" x-text="l.credit?fmtXaf(l.credit):''"></td>
+                                    </tr>
+                                </template>
+                            </table>
+                        </div>
+                        <div x-show="detail.notes" class="glass-card rounded-2xl p-4 text-xs text-slate-300"><p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Notes</p><span x-text="detail.notes"></span></div>
+                        <div class="flex flex-wrap gap-2">
+                            <button @click="downloadPdf(detail)" class="glass-btn-dark px-4 py-2 rounded-xl text-xs" x-text="lang==='FR'?'Télécharger PDF':'Download PDF'"></button>
+                            <button x-show="detail.status!=='PAID'" @click="payInvoice(detail); showDetail=false" class="px-4 py-2 rounded-xl text-xs" style="background:rgba(16,185,129,0.12);color:rgb(110,231,183)" x-text="lang==='FR'?'Marquer payée':'Mark paid'"></button>
+                        </div>
+                    </div>
+                    </template>
                 </div>
             </div>
         </div>
@@ -3491,7 +3596,7 @@
                     <tbody>
                         <template x-for="a in assets" :key="a.id">
                             <tr style="border-bottom:1px solid #2A2A72" class="hover:bg-slate-800">
-                                <td class="px-4 py-2.5 font-medium" x-text="a.name"></td>
+                                <td class="px-4 py-2.5 font-medium text-amber-400 cursor-pointer hover:underline" @click="openAsset(a)" x-text="a.name"></td>
                                 <td class="px-4 py-2.5 opacity-70" x-text="a.category"></td>
                                 <td class="px-4 py-2.5 text-right opacity-70" x-text="fmtXaf(a.acquisition_cost)"></td>
                                 <td class="px-4 py-2.5 text-right text-red-400" x-text="fmtXaf(a.accumulated_depreciation)"></td>
@@ -3507,6 +3612,58 @@
                 <div x-show="assets.length===0" class="py-12 flex flex-col items-center gap-3">
                     <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-amber-400/70" style="background:rgba(201,155,14,0.08);border:1px solid rgba(201,155,14,0.18)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg></div>
                     <span class="text-[11px] font-black uppercase tracking-widest text-slate-500" x-text="lang==='FR' ? 'Aucune immobilisation enregistrée.' : 'No assets registered.'"></span>
+                </div>
+            </div>
+
+            <!-- Fixed asset detail drawer -->
+            <div x-show="showDetail" x-cloak class="fixed inset-0 z-50" @keydown.escape.window="showDetail=false">
+                <div class="absolute inset-0 bg-black/60" @click="showDetail=false"></div>
+                <div class="absolute right-0 top-0 bottom-0 w-full max-w-lg overflow-y-auto p-6 space-y-4" style="background:#010048;border-left:1px solid #2A2A72"
+                     x-transition:enter="transition ease-out duration-200" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-lg font-black text-white" x-text="detail?.name||'…'"></p>
+                            <p class="text-[11px] text-slate-400 mt-0.5" x-text="(detail?.asset_code? detail.asset_code+' · ':'')+(detail?.category||'')"></p>
+                        </div>
+                        <button @click="showDetail=false" class="text-slate-400 hover:text-white text-xl leading-none">✕</button>
+                    </div>
+                    <template x-if="detail">
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="glass-card rounded-xl p-3"><p class="text-[9px] font-black text-slate-400 uppercase tracking-widest" x-text="lang==='FR'?'Coût':'Cost'"></p><p class="font-mono font-black text-white mt-1" x-text="fmtXaf(detail.acquisition_cost)"></p></div>
+                            <div class="glass-card rounded-xl p-3"><p class="text-[9px] font-black text-slate-400 uppercase tracking-widest" x-text="lang==='FR'?'Val. nette':'Book value'"></p><p class="font-mono font-black text-emerald-400 mt-1" x-text="fmtXaf(detail.book_value)"></p></div>
+                            <div class="glass-card rounded-xl p-3"><p class="text-[9px] font-black text-slate-400 uppercase tracking-widest" x-text="lang==='FR'?'Amort. cumulés':'Acc. depreciation'"></p><p class="font-mono font-black text-red-400 mt-1" x-text="fmtXaf(detail.accumulated_depreciation)"></p></div>
+                            <div class="glass-card rounded-xl p-3"><p class="text-[9px] font-black text-slate-400 uppercase tracking-widest" x-text="lang==='FR'?'Dotation/mois':'Monthly'"></p><p class="font-mono font-black text-white mt-1" x-text="fmtXaf(detail.monthly_depreciation)"></p></div>
+                        </div>
+                        <div class="glass-card rounded-2xl p-4 text-xs space-y-1.5">
+                            <div class="flex justify-between"><span class="text-slate-400" x-text="lang==='FR'?'Compte SYSCOHADA':'SYSCOHADA account'"></span><span class="font-mono" x-text="detail.syscohada_account_code||'—'"></span></div>
+                            <div class="flex justify-between"><span class="text-slate-400" x-text="lang==='FR'?'Acquisition':'Acquired'"></span><span x-text="detail.acquisition_date"></span></div>
+                            <div class="flex justify-between"><span class="text-slate-400" x-text="lang==='FR'?'Durée (mois)':'Useful life (mo)'"></span><span x-text="detail.useful_life_months"></span></div>
+                            <div class="flex justify-between"><span class="text-slate-400" x-text="lang==='FR'?'Méthode':'Method'"></span><span x-text="detail.depreciation_method||'LINEAR'"></span></div>
+                            <div class="flex justify-between" x-show="detail.residual_value"><span class="text-slate-400" x-text="lang==='FR'?'Valeur résiduelle':'Residual value'"></span><span class="font-mono" x-text="fmtXaf(detail.residual_value)"></span></div>
+                            <div class="flex justify-between" x-show="detail.is_fully_depreciated"><span class="text-slate-400" x-text="lang==='FR'?'Statut':'Status'"></span><span class="text-amber-400" x-text="lang==='FR'?'Totalement amorti':'Fully depreciated'"></span></div>
+                            <div class="flex justify-between" x-show="!detail.is_active"><span class="text-slate-400" x-text="lang==='FR'?'Cession':'Disposed'"></span><span class="text-red-400" x-text="detail.disposal_date||'—'"></span></div>
+                        </div>
+                        <!-- depreciation schedule -->
+                        <div class="glass-card rounded-2xl p-4">
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2" x-text="lang==='FR'?'Plan d\'amortissement':'Depreciation schedule'"></p>
+                            <div x-show="detail.depreciation_entries?.length" class="max-h-60 overflow-y-auto">
+                                <table class="w-full text-xs">
+                                    <thead><tr class="text-slate-500 text-[10px]"><th class="text-left py-1" x-text="lang==='FR'?'Période':'Period'"></th><th class="text-right py-1" x-text="lang==='FR'?'Dotation':'Charge'"></th></tr></thead>
+                                    <tbody>
+                                        <template x-for="(d,i) in (detail.depreciation_entries||[])" :key="i">
+                                            <tr class="border-t" style="border-color:rgba(255,255,255,0.06)">
+                                                <td class="py-1.5 font-mono text-slate-300" x-text="(d.period_month? String(d.period_month).padStart(2,'0')+'/' :'')+(d.period_year||'')"></td>
+                                                <td class="py-1.5 text-right font-mono text-slate-300" x-text="fmtXaf(d.amount)"></td>
+                                            </tr>
+                                        </template>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <p x-show="!detail.depreciation_entries?.length" class="text-xs text-slate-500 py-3 text-center" x-text="lang==='FR'?'Aucune dotation enregistrée':'No depreciation recorded yet'"></p>
+                        </div>
+                    </div>
+                    </template>
                 </div>
             </div>
         </div>
@@ -5938,7 +6095,27 @@ function customersPanel() {
         showForm: false,
         saving: false,
         formError: '',
+        showDetail: false, detail: null,
         form: { name:'', niu:'', email:'', phone:'', address:'', payment_terms_days:30, credit_limit_xaf:'' },
+
+        async openCustomer(c) {
+            this.showDetail = true; this.detail = null;
+            const cid = c.company_id || this._cid;
+            try {
+                const token = localStorage.getItem('opes_token');
+                this.detail = await (await fetch(`/api/v1/companies/${cid}/customers/${c.id}`,{headers:{'Authorization':'Bearer '+token,'Accept':'application/json'}})).json();
+            } catch(e){ this.detail = c; }
+        },
+        async downloadStatement(c) {
+            const cid = c.company_id || this._cid;
+            try {
+                const token = localStorage.getItem('opes_token');
+                const res = await fetch(`/api/v1/companies/${cid}/customers/${c.id}/statement`,{headers:{'Authorization':'Bearer '+token}});
+                if(!res.ok){ window.opesToast && window.opesToast('error','Relevé','Indisponible'); return; }
+                const blob = await res.blob(); const url = URL.createObjectURL(blob);
+                const a=document.createElement('a'); a.href=url; a.download=`releve_${(c.name||'client').replace(/\s+/g,'_')}.pdf`; a.click(); URL.revokeObjectURL(url);
+            } catch(e){ window.opesToast && window.opesToast('error','Relevé',e.message); }
+        },
 
         async init() {
             const token = localStorage.getItem('opes_token');
@@ -6398,8 +6575,27 @@ function supplierInvoicesPanel() {
     return {
         invoices: [], suppliers: [], loading: true, _cid: null,
         showForm: false, submitting: false, formError: '',
+        showDetail: false, detail: null,
         form: { supplier_id:'', invoice_number:'', supplier_ref:'', invoice_date:'', due_date:'', amount_ht:0, tva_amount:0, expense_account:'601100', notes:'' },
         fmtXaf(v) { if(v===null||v===undefined)return'—'; return Number(v).toLocaleString('fr-CM',{minimumFractionDigits:2})+' XAF'; },
+        async openInvoice(inv) {
+            this.showDetail = true; this.detail = null;
+            const cid = inv.company_id || this._cid;
+            try {
+                const token = localStorage.getItem('opes_token');
+                this.detail = await fetch(`/api/v1/companies/${cid}/supplier-invoices/${inv.id}`,{headers:{Authorization:'Bearer '+token,Accept:'application/json'}}).then(r=>r.json());
+            } catch(e){ this.detail = inv; }
+        },
+        async downloadPdf(inv) {
+            const cid = inv.company_id || this._cid;
+            try {
+                const token = localStorage.getItem('opes_token');
+                const res = await fetch(`/api/v1/companies/${cid}/supplier-invoices/${inv.id}/pdf`,{headers:{Authorization:'Bearer '+token}});
+                if(!res.ok){ window.opesToast && window.opesToast('error','PDF','Indisponible'); return; }
+                const blob = await res.blob(); const url = URL.createObjectURL(blob);
+                const a=document.createElement('a'); a.href=url; a.download=`${inv.invoice_number||'facture'}.pdf`; a.click(); URL.revokeObjectURL(url);
+            } catch(e){ window.opesToast && window.opesToast('error','PDF',e.message); }
+        },
         async init() {
             const token = localStorage.getItem('opes_token');
             const me = await fetch('/api/v1/auth/me',{headers:{Authorization:'Bearer '+token,Accept:'application/json'}}).then(r=>r.json());
@@ -6442,8 +6638,17 @@ function fixedAssetsPanel() {
     return {
         assets: [], loading: true, _cid: null,
         showForm: false, submitting: false, formError: '', depMsg: '',
+        showDetail: false, detail: null,
         form: { name:'', category:'', syscohada_account_code:'', acquisition_date:'', acquisition_cost:0, useful_life_months:60, residual_value:0, credit_account:'401100' },
         fmtXaf(v) { if(v===null||v===undefined)return'—'; return Number(v).toLocaleString('fr-CM',{minimumFractionDigits:2})+' XAF'; },
+        async openAsset(a) {
+            this.showDetail = true; this.detail = null;
+            const cid = a.company_id || this._cid;
+            try {
+                const token = localStorage.getItem('opes_token');
+                this.detail = await fetch(`/api/v1/companies/${cid}/fixed-assets/${a.id}`,{headers:{Authorization:'Bearer '+token,Accept:'application/json'}}).then(r=>r.json());
+            } catch(e){ this.detail = a; }
+        },
         async init() {
             const token = localStorage.getItem('opes_token');
             const me = await fetch('/api/v1/auth/me',{headers:{Authorization:'Bearer '+token,Accept:'application/json'}}).then(r=>r.json());

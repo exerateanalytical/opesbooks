@@ -37,7 +37,18 @@ class CustomerController extends Controller
     public function show(Company $company, Customer $customer): JsonResponse
     {
         abort_if($customer->company_id !== $company->id, 404);
-        return response()->json($customer->load('invoices'));
+        $customer->load('invoices');
+
+        $invoices = $customer->invoices;
+        $data = $customer->toArray();
+        $data['totals'] = [
+            'invoiced'    => round((float) $invoices->whereNotIn('status', ['DRAFT', 'CANCELLED'])->sum('amount_ttc'), 0),
+            'paid'        => round((float) $invoices->where('status', 'PAID')->sum('amount_ttc'), 0),
+            'outstanding' => round((float) $invoices->whereIn('status', ['SENT', 'OVERDUE'])->sum('amount_ttc'), 0),
+            'overdue'     => round((float) $invoices->where('status', 'OVERDUE')->sum('amount_ttc'), 0),
+            'count'       => $invoices->count(),
+        ];
+        return response()->json($data);
     }
 
     public function update(Request $request, Company $company, Customer $customer): JsonResponse

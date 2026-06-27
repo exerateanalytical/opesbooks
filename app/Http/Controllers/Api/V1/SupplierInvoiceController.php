@@ -66,7 +66,19 @@ class SupplierInvoiceController extends Controller
     public function show(Company $company, SupplierInvoice $invoice)
     {
         abort_if($invoice->company_id !== $company->id, 404);
-        return response()->json($invoice->load('supplier'));
+
+        $invoice->load(['supplier', 'journalEntry.lines.account']);
+        $data = $invoice->toArray();
+        $data['journal_lines'] = $invoice->journalEntry
+            ? $invoice->journalEntry->lines->map(fn ($l) => [
+                'account' => $l->account?->code,
+                'label'   => $l->account?->label,
+                'debit'   => (float) $l->debit,
+                'credit'  => (float) $l->credit,
+            ])
+            : [];
+
+        return response()->json($data);
     }
 
     public function update(Request $request, Company $company, SupplierInvoice $invoice)
