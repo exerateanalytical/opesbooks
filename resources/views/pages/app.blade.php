@@ -951,7 +951,7 @@
                             </template>
                             <template x-for="txn in journalEntries" :key="txn.id">
                                 <tr class="glass-row">
-                                    <td class="py-3 px-5 font-mono font-black text-amber-400 text-xs whitespace-nowrap" x-text="txn.reference_id"></td>
+                                    <td class="py-3 px-5 font-mono font-black text-amber-400 text-xs whitespace-nowrap cursor-pointer hover:underline" @click="openJournal(txn)" x-text="txn.reference_id"></td>
                                     <td class="py-3 px-5 text-[11px] text-slate-400 font-mono whitespace-nowrap" x-text="txn.posting_date"></td>
                                     <td class="py-3 px-5 text-[11px] text-slate-300 max-w-xs truncate" x-text="txn.memo"></td>
                                     <td class="py-3 px-5">
@@ -1008,6 +1008,57 @@
                                 x-text="lang==='FR'?'Suiv. →':'Next →'"></button>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Journal entry detail drawer -->
+        <div x-show="showJournalDetail" x-cloak class="fixed inset-0 z-50" @keydown.escape.window="showJournalDetail=false">
+            <div class="absolute inset-0 bg-black/60" @click="showJournalDetail=false"></div>
+            <div class="absolute right-0 top-0 bottom-0 w-full max-w-lg overflow-y-auto p-6 space-y-4" style="background:#010048;border-left:1px solid #2A2A72"
+                 x-transition:enter="transition ease-out duration-200" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0">
+                <template x-if="journalDetail">
+                <div class="space-y-4">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="font-mono text-amber-400 text-sm" x-text="journalDetail.reference_id"></p>
+                            <p class="text-base font-black text-white" x-text="journalDetail.memo"></p>
+                            <p class="text-[11px] text-slate-400 mt-1" x-text="journalDetail.posting_date"></p>
+                        </div>
+                        <button @click="showJournalDetail=false" class="text-slate-400 hover:text-white text-xl leading-none">✕</button>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider" style="background:#030363;border:1px solid #2A2A72;color:rgb(148,163,184)" x-text="(journalDetail.source_pipeline||'').replace('_',' ')"></span>
+                        <span class="text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider" :style="journalDetail.transaction_status==='SUCCESSFUL'?'background:rgba(16,185,129,0.15);color:rgb(110,231,183)':'background:rgba(244,63,94,0.15);color:rgb(252,165,165)'" x-text="journalDetail.transaction_status"></span>
+                        <span class="text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider" style="background:rgba(99,102,241,0.12);color:rgb(165,180,252)" x-text="'DGI: '+(journalDetail.dgi_sync_status||'NOT_SYNCED')"></span>
+                    </div>
+                    <!-- lines -->
+                    <div class="glass-card rounded-2xl p-4">
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2" x-text="lang==='FR'?'Lignes d\'écriture':'Entry lines'"></p>
+                        <table class="w-full text-xs">
+                            <thead><tr class="text-slate-500 text-[10px]"><th class="text-left py-1">Compte</th><th class="text-right py-1">Débit</th><th class="text-right py-1">Crédit</th></tr></thead>
+                            <tbody>
+                                <template x-for="(l,i) in (journalDetail.lines||[])" :key="i">
+                                    <tr class="border-t" style="border-color:rgba(255,255,255,0.06)">
+                                        <td class="py-1.5"><span class="font-mono text-slate-300" x-text="l.account?.code||l.syscohada_account_id"></span><span class="text-slate-500 block text-[10px] truncate max-w-[160px]" x-text="l.account?.label||l.description"></span></td>
+                                        <td class="py-1.5 text-right font-mono text-slate-300" x-text="(+l.debit)?fmtXaf(l.debit):''"></td>
+                                        <td class="py-1.5 text-right font-mono text-slate-300" x-text="(+l.credit)?fmtXaf(l.credit):''"></td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                            <tfoot><tr class="border-t font-black" style="border-color:#2A2A72">
+                                <td class="py-2 text-[10px] text-slate-400 uppercase">Total</td>
+                                <td class="py-2 text-right font-mono text-amber-400" x-text="fmtXaf((journalDetail.lines||[]).reduce((s,l)=>s+(+l.debit||0),0))"></td>
+                                <td class="py-2 text-right font-mono text-amber-400" x-text="fmtXaf((journalDetail.lines||[]).reduce((s,l)=>s+(+l.credit||0),0))"></td>
+                            </tr></tfoot>
+                        </table>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button @click="downloadInvoice(journalDetail)" class="glass-btn-dark px-4 py-2 rounded-xl text-xs" x-text="lang==='FR'?'Télécharger PDF':'Download PDF'"></button>
+                        <button @click="openAttachments(journalDetail)" class="px-4 py-2 rounded-xl text-xs" style="background:rgba(16,185,129,0.1);color:rgb(110,231,183)" x-text="lang==='FR'?'Pièces jointes':'Attachments'"></button>
+                        <button @click="forceDgiSync(journalDetail)" class="px-4 py-2 rounded-xl text-xs" style="background:rgba(99,102,241,0.1);color:rgb(165,180,252)" x-text="lang==='FR'?'Synchroniser DGI':'Sync DGI'"></button>
+                    </div>
+                </div>
+                </template>
             </div>
         </div>
 
@@ -5059,6 +5110,9 @@ function opesApp() {
             if (p==='sync')                                       this.loadSyncStatus();
         },
 
+        showJournalDetail: false,
+        journalDetail: null,
+        openJournal(txn) { this.journalDetail = txn; this.showJournalDetail = true; },
         async loadJournal() {
             if (!this.company) return;
             this.loading = true;
