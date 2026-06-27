@@ -92,7 +92,26 @@ class CustomerInvoiceController extends Controller
     public function show(Company $company, CustomerInvoice $invoice): JsonResponse
     {
         abort_if($invoice->company_id !== $company->id, 404);
-        return response()->json($invoice->load('customer'));
+
+        $invoice->load(['customer', 'journalEntry.lines.account']);
+
+        // Credit notes issued against this invoice.
+        $creditNotes = CustomerInvoice::where('credit_note_for_id', $invoice->id)
+            ->get(['id', 'invoice_number', 'invoice_date', 'amount_ttc', 'status']);
+
+        $data = $invoice->toArray();
+        $data['is_overdue']   = $invoice->isOverdue();
+        $data['credit_notes'] = $creditNotes;
+        $data['journal_lines'] = $invoice->journalEntry
+            ? $invoice->journalEntry->lines->map(fn ($l) => [
+                'account' => $l->account?->code,
+                'label'   => $l->account?->label,
+                'debit'   => (float) $l->debit,
+                'credit'  => (float) $l->credit,
+            ])
+            : [];
+
+        return response()->json($data);
     }
 
     public function update(Request $request, Company $company, CustomerInvoice $invoice): JsonResponse

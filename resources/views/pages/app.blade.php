@@ -2451,7 +2451,7 @@
                         </template>
                         <template x-for="inv in invoices" :key="inv.id">
                             <tr style="border-bottom:1px solid #2A2A72" class="hover:bg-slate-800 transition-colors">
-                                <td class="px-4 py-3 font-mono text-amber-400 text-xs" x-text="inv.invoice_number"></td>
+                                <td class="px-4 py-3 font-mono text-amber-400 text-xs cursor-pointer hover:underline" @click="openInvoice(inv)" x-text="inv.invoice_number"></td>
                                 <td class="px-4 py-3 font-medium" x-text="inv.customer?.name??'—'"></td>
                                 <td class="px-4 py-3 text-right font-bold" x-text="fmtXaf(inv.amount_ttc)"></td>
                                 <td class="px-4 py-3 opacity-70 text-xs" x-text="inv.due_date"></td>
@@ -2490,6 +2490,88 @@
                         </template>
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Invoice detail drawer -->
+            <div x-show="showDetail" x-cloak class="fixed inset-0 z-50" @keydown.escape.window="showDetail=false">
+                <div class="absolute inset-0 bg-black/60" @click="showDetail=false"></div>
+                <div class="absolute right-0 top-0 bottom-0 w-full max-w-lg overflow-y-auto p-6 space-y-4" style="background:#010048;border-left:1px solid #2A2A72"
+                     x-transition:enter="transition ease-out duration-200" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="font-mono text-amber-400 text-sm" x-text="detail?.invoice_number||'…'"></p>
+                            <p class="text-lg font-black text-white" x-text="detail?.customer?.name||'—'"></p>
+                        </div>
+                        <button @click="showDetail=false" class="text-slate-400 hover:text-white text-xl leading-none">✕</button>
+                    </div>
+                    <template x-if="detail">
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 rounded-full text-xs font-bold"
+                                :class="{'bg-emerald-900/50 text-emerald-300':detail.status==='PAID','bg-amber-900/50 text-amber-300':detail.status==='SENT','bg-slate-800 text-slate-400':detail.status==='DRAFT','bg-red-900/50 text-red-300':detail.status==='OVERDUE'||detail.status==='CANCELLED','bg-indigo-900/50 text-indigo-300':detail.status==='CREDIT_NOTE'}" x-text="detail.status"></span>
+                            <span x-show="detail.is_overdue" class="px-2 py-0.5 rounded-full text-xs font-bold bg-red-900/50 text-red-300" x-text="lang==='FR'?'En retard':'Overdue'"></span>
+                        </div>
+
+                        <div class="glass-card rounded-2xl p-4 space-y-2 text-sm">
+                            <div class="flex justify-between"><span class="text-slate-400">HT</span><span class="font-mono" x-text="fmtXaf(detail.amount_ht)"></span></div>
+                            <div class="flex justify-between"><span class="text-slate-400">TVA 17,5%</span><span class="font-mono" x-text="fmtXaf(detail.tva_amount)"></span></div>
+                            <div class="flex justify-between"><span class="text-slate-400">CAC</span><span class="font-mono" x-text="fmtXaf(detail.cac_amount)"></span></div>
+                            <div class="flex justify-between border-t pt-2" style="border-color:#2A2A72"><span class="font-bold">TTC</span><span class="font-mono font-black text-amber-400" x-text="fmtXaf(detail.amount_ttc)"></span></div>
+                            <div class="flex justify-between" x-show="detail.withholding_received"><span class="text-slate-400" x-text="lang==='FR'?'Retenue à la source':'Withholding'"></span><span class="font-mono" x-text="fmtXaf(detail.withholding_received)"></span></div>
+                            <div class="flex justify-between" x-show="detail.net_receivable"><span class="text-slate-400" x-text="lang==='FR'?'Net à recevoir':'Net receivable'"></span><span class="font-mono" x-text="fmtXaf(detail.net_receivable)"></span></div>
+                        </div>
+
+                        <div class="glass-card rounded-2xl p-4">
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3" x-text="lang==='FR'?'Chronologie':'Timeline'"></p>
+                            <div class="space-y-2 text-xs">
+                                <div class="flex justify-between"><span class="text-slate-400" x-text="lang==='FR'?'Date facture':'Invoice date'"></span><span x-text="detail.invoice_date"></span></div>
+                                <div class="flex justify-between"><span class="text-slate-400" x-text="lang==='FR'?'Échéance':'Due date'"></span><span x-text="detail.due_date"></span></div>
+                                <div class="flex justify-between" x-show="detail.paid_at"><span class="text-slate-400" x-text="lang==='FR'?'Payée le':'Paid at'"></span><span x-text="(detail.paid_at||'').slice(0,10)"></span></div>
+                            </div>
+                        </div>
+
+                        <div class="glass-card rounded-2xl p-4">
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">MECeF · DGI</p>
+                            <div class="space-y-2 text-xs">
+                                <div class="flex justify-between"><span class="text-slate-400">Statut</span><span :class="detail.mecef_status==='certified'?'text-emerald-400':'text-slate-400'" x-text="detail.mecef_status||(lang==='FR'?'Non certifiée':'Not certified')"></span></div>
+                                <div class="flex justify-between" x-show="detail.mecef_nim"><span class="text-slate-400">NIM</span><span class="font-mono" x-text="detail.mecef_nim"></span></div>
+                                <div class="flex justify-between" x-show="detail.mecef_counter"><span class="text-slate-400" x-text="lang==='FR'?'Compteur':'Counter'"></span><span class="font-mono" x-text="detail.mecef_counter"></span></div>
+                                <div class="flex justify-between" x-show="detail.mecef_certified_at"><span class="text-slate-400" x-text="lang==='FR'?'Certifiée le':'Certified at'"></span><span x-text="(detail.mecef_certified_at||'').slice(0,10)"></span></div>
+                            </div>
+                        </div>
+
+                        <div class="glass-card rounded-2xl p-4" x-show="detail.journal_lines?.length">
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2" x-text="lang==='FR'?'Écriture comptable':'Journal entry'"></p>
+                            <table class="w-full text-xs">
+                                <template x-for="(l,i) in detail.journal_lines" :key="i">
+                                    <tr class="border-t" style="border-color:rgba(255,255,255,0.06)">
+                                        <td class="py-1.5 font-mono text-slate-300" x-text="l.account"></td>
+                                        <td class="py-1.5 text-slate-500 truncate max-w-[120px]" x-text="l.label"></td>
+                                        <td class="py-1.5 text-right font-mono text-slate-300" x-text="l.debit?fmtXaf(l.debit):''"></td>
+                                        <td class="py-1.5 text-right font-mono text-slate-300" x-text="l.credit?fmtXaf(l.credit):''"></td>
+                                    </tr>
+                                </template>
+                            </table>
+                        </div>
+
+                        <div class="glass-card rounded-2xl p-4" x-show="detail.credit_notes?.length">
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2" x-text="lang==='FR'?'Avoirs liés':'Credit notes'"></p>
+                            <template x-for="cn in detail.credit_notes" :key="cn.id">
+                                <div class="flex justify-between text-xs py-1"><span class="font-mono text-indigo-300" x-text="cn.invoice_number"></span><span class="font-mono text-slate-300" x-text="fmtXaf(cn.amount_ttc)"></span></div>
+                            </template>
+                        </div>
+
+                        <div x-show="detail.notes" class="glass-card rounded-2xl p-4 text-xs text-slate-300"><p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Notes</p><span x-text="detail.notes"></span></div>
+
+                        <div class="flex flex-wrap gap-2 pt-1">
+                            <button @click="downloadInvoicePdf(detail)" class="glass-btn-dark px-4 py-2 rounded-xl text-xs" x-text="lang==='FR'?'Télécharger PDF':'Download PDF'"></button>
+                            <button x-show="detail.status==='DRAFT'" @click="markSent(detail); showDetail=false" class="px-4 py-2 rounded-xl text-xs" style="background:rgba(201,155,14,0.12);color:#E3B420" x-text="lang==='FR'?'Envoyer':'Send'"></button>
+                            <button x-show="detail.status==='SENT'||detail.status==='OVERDUE'" @click="markPaid(detail); showDetail=false" class="px-4 py-2 rounded-xl text-xs" style="background:rgba(16,185,129,0.12);color:rgb(110,231,183)" x-text="lang==='FR'?'Marquer payée':'Mark paid'"></button>
+                        </div>
+                    </div>
+                    </template>
+                    <div x-show="!detail" class="text-slate-400 text-sm py-10 text-center" x-text="lang==='FR'?'Chargement…':'Loading…'"></div>
+                </div>
             </div>
         </div>
 
@@ -5642,6 +5724,27 @@ function customerInvoicesPanel() {
         ttcPreview: { tva:0, cac:0, ttc:0 },
         form: { customer_id:'', invoice_date:'', due_date:'', amount_ht:'', notes:'' },
         _cid: null,
+        showDetail: false,
+        detail: null,
+        async openInvoice(inv) {
+            this.showDetail = true; this.detail = null;
+            try {
+                const res = await fetch(`/api/v1/companies/${this._cid}/customer-invoices/${inv.id}`, {
+                    headers: { 'Authorization':'Bearer '+localStorage.getItem('opes_token'), 'Accept':'application/json' }
+                });
+                this.detail = await res.json();
+            } catch(e) { this.detail = inv; }
+        },
+        async downloadInvoicePdf(inv) {
+            try {
+                const res = await fetch(`/api/v1/companies/${this._cid}/customer-invoices/${inv.id}/pdf`, {
+                    headers: { 'Authorization':'Bearer '+localStorage.getItem('opes_token') }
+                });
+                if (!res.ok) { window.opesToast && window.opesToast('error','PDF','Échec du téléchargement.'); return; }
+                const blob = await res.blob(); const url = URL.createObjectURL(blob);
+                const a = document.createElement('a'); a.href = url; a.download = `${inv.invoice_number||'facture'}.pdf`; a.click(); URL.revokeObjectURL(url);
+            } catch(e) { window.opesToast && window.opesToast('error','PDF',e.message); }
+        },
         async exportDownload(type, fmt) {
             try {
                 const res = await fetch(`/api/v1/companies/${this._cid}/export/${type}?format=${fmt}`, {
