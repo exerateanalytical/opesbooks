@@ -6,7 +6,7 @@
     <title>Opes Books — App</title>
     <!-- PWA -->
     <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#0B1120">
+    <meta name="theme-color" content="#01003A">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -18,22 +18,22 @@
         /* ── Design tokens ────────────────────────────────────────────────
            Aligned with marketing site. Edit here to retheme the whole app. */
         :root {
-            --c-bg:           #0B1120;
-            --c-surface:      #151F2E;
-            --c-raised:       #1C2A3A;
-            --c-border:       #253347;
+            --c-bg:           #01003A;
+            --c-surface:      #02014D;
+            --c-raised:       #030363;
+            --c-border:       #2A2A72;
             --c-border-strong:#334155;
-            --c-accent:       245,158,11;          /* rgb triplet — amber-500 */
+            --c-accent:       201,155,14;          /* rgb triplet — amber-500 */
             --c-accent-dim:   217,119,6;           /* amber-600 */
-            --gold:           245,158,11;
+            --gold:           201,155,14;
             --gold-strong:    217,119,6;
             --danger:         244, 63, 94;
             --success:        16, 185, 129;
             --info:           99, 102, 241;
             --text-primary:   #F0F4FA;
             --text-secondary: #8B9EC0;
-            --border-subtle:  #151F2E;
-            --border-normal:  #253347;
+            --border-subtle:  #02014D;
+            --border-normal:  #2A2A72;
             --radius-card:    1rem;
             --radius-input:   0.75rem;
         }
@@ -52,7 +52,7 @@
             content: '';
             position: fixed; inset: 0; pointer-events: none; z-index: 0;
             background:
-                radial-gradient(ellipse 55% 45% at 5% 10%,  rgba(245,158,11,0.05) 0%, transparent 60%),
+                radial-gradient(ellipse 55% 45% at 5% 10%,  rgba(201,155,14,0.05) 0%, transparent 60%),
                 radial-gradient(ellipse 45% 35% at 92% 85%, rgba(16,185,129,0.04) 0%, transparent 55%);
         }
 
@@ -138,7 +138,7 @@
             background: rgb(var(--gold));
             border: 1px solid rgba(var(--gold),0.6);
             box-shadow: 0 2px 12px rgba(var(--gold),0.25);
-            color: #0F172A; font-weight: 900;
+            color: #01003A; font-weight: 900;
             transition: all 0.2s;
         }
         .glass-btn-amber:hover { background: rgb(var(--gold-strong)); box-shadow: 0 4px 18px rgba(var(--gold),0.35); }
@@ -150,7 +150,7 @@
             color: white; font-weight: 700;
             transition: all 0.2s;
         }
-        .glass-btn-dark:hover { border-color: #475569; background: #253347; }
+        .glass-btn-dark:hover { border-color: #475569; background: #2A2A72; }
         .glass-btn-dark:active { transform: scale(0.98); }
 
         /* Sidebar nav item */
@@ -238,7 +238,7 @@
 
 <!-- Admin impersonation banner -->
 <div x-show="impersonation" x-cloak class="relative z-[100] flex items-center justify-between gap-3 px-4 py-2 text-black"
-     style="background:#F59E0B">
+     style="background:#C99B0E">
     <span class="text-xs font-black uppercase tracking-wider flex items-center gap-2">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
         <span x-text="(lang==='FR'?'Mode Admin — Vous consultez : ':'Admin Mode — Viewing: ') + (impersonation?.name || '')"></span>
@@ -249,14 +249,14 @@
 </div>
 
 <!-- Firm accountant context bar -->
-<div x-show="firm && user?.role === 'FIRM_ACCOUNTANT'" x-cloak style="background:linear-gradient(90deg,#1C2A3A 0%,#162133 100%);border-bottom:1px solid #334155;padding:0.45rem 1.5rem;display:flex;align-items:center;gap:0.75rem;font-size:0.8rem;position:relative;z-index:39">
-    <span style="color:#F59E0B;font-weight:700;white-space:nowrap">🏢</span>
+<div x-show="firm && user?.role === 'FIRM_ACCOUNTANT'" x-cloak style="background:linear-gradient(90deg,#030363 0%,#162133 100%);border-bottom:1px solid #334155;padding:0.45rem 1.5rem;display:flex;align-items:center;gap:0.75rem;font-size:0.8rem;position:relative;z-index:39">
+    <span style="color:#C99B0E;font-weight:700;white-space:nowrap">🏢</span>
     <span style="color:#8B9EC0;white-space:nowrap" x-text="firm?.name"></span>
     <span style="color:#4E647E">·</span>
     <span style="color:#F0F4FA;font-weight:600;white-space:nowrap" x-text="company?.name"></span>
     {{-- Fix #13: show engagement type scope --}}
     <template x-if="firmEngagementType">
-        <span style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.25);color:#F59E0B;font-size:0.65rem;padding:0.1rem 0.4rem;border-radius:0.25rem;white-space:nowrap;font-weight:600" x-text="firmEngagementType"></span>
+        <span style="background:rgba(201,155,14,0.1);border:1px solid rgba(201,155,14,0.25);color:#C99B0E;font-size:0.65rem;padding:0.1rem 0.4rem;border-radius:0.25rem;white-space:nowrap;font-weight:600" x-text="firmEngagementType"></span>
     </template>
     <span style="flex:1"></span>
     {{-- Fix #5: close client context button --}}
@@ -267,24 +267,24 @@
     </template>
     {{-- Quick client switcher --}}
     <div style="position:relative" x-data>
-        <button @click="firmSwitcherOpen = !firmSwitcherOpen" style="background:var(--c-raised,#1C2A3A);border:1px solid #334155;color:#8B9EC0;padding:0.2rem 0.6rem;border-radius:0.375rem;cursor:pointer;font-size:0.75rem;display:flex;align-items:center;gap:0.35rem">
+        <button @click="firmSwitcherOpen = !firmSwitcherOpen" style="background:var(--c-raised,#030363);border:1px solid #334155;color:#8B9EC0;padding:0.2rem 0.6rem;border-radius:0.375rem;cursor:pointer;font-size:0.75rem;display:flex;align-items:center;gap:0.35rem">
             Changer de client
             <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
         </button>
-        <div x-show="firmSwitcherOpen" @click.outside="firmSwitcherOpen = false" style="position:absolute;right:0;top:calc(100% + 4px);background:#151F2E;border:1px solid #253347;border-radius:0.5rem;min-width:220px;max-height:280px;overflow-y:auto;z-index:100;box-shadow:0 8px 24px rgba(0,0,0,0.5)">
+        <div x-show="firmSwitcherOpen" @click.outside="firmSwitcherOpen = false" style="position:absolute;right:0;top:calc(100% + 4px);background:#02014D;border:1px solid #2A2A72;border-radius:0.5rem;min-width:220px;max-height:280px;overflow-y:auto;z-index:100;box-shadow:0 8px 24px rgba(0,0,0,0.5)">
             <template x-for="client in firmPortfolio" :key="client.id">
                 <button @click="switchFirmClient(client.id)"
-                    :style="client.id === company?.id ? 'background:#1C2A3A' : ''"
+                    :style="client.id === company?.id ? 'background:#030363' : ''"
                     style="display:block;width:100%;text-align:left;padding:0.5rem 0.875rem;font-size:0.8rem;border:none;cursor:pointer;color:#F0F4FA;transition:background 0.1s"
-                    onmouseover="this.style.background='#1C2A3A'" onmouseout="this.style.background=''">
+                    onmouseover="this.style.background='#030363'" onmouseout="this.style.background=''">
                     <span x-text="client.name"></span>
-                    <span x-show="client.id === company?.id" style="color:#F59E0B;font-size:0.65rem;margin-left:0.35rem">✓</span>
+                    <span x-show="client.id === company?.id" style="color:#C99B0E;font-size:0.65rem;margin-left:0.35rem">✓</span>
                 </button>
             </template>
             <div x-show="firmPortfolio.length === 0" style="padding:0.75rem;color:#4E647E;font-size:0.8rem">Aucun client</div>
         </div>
     </div>
-    <a href="/firm" style="color:#F59E0B;text-decoration:none;border:1px solid rgba(245,158,11,0.3);padding:0.2rem 0.75rem;border-radius:0.375rem;white-space:nowrap;font-size:0.75rem" onmouseover="this.style.background='rgba(245,158,11,0.1)'" onmouseout="this.style.background='transparent'">Portefeuille →</a>
+    <a href="/firm" style="color:#C99B0E;text-decoration:none;border:1px solid rgba(201,155,14,0.3);padding:0.2rem 0.75rem;border-radius:0.375rem;white-space:nowrap;font-size:0.75rem" onmouseover="this.style.background='rgba(201,155,14,0.1)'" onmouseout="this.style.background='transparent'">Portefeuille →</a>
 </div>
 
 <!-- Global toast notifications -->
@@ -298,9 +298,9 @@
              :style="({
                 success:'background:rgba(16,185,129,0.18);border:1px solid rgba(16,185,129,0.35);color:rgb(110,231,183)',
                 error:'background:rgba(244,63,94,0.18);border:1px solid rgba(244,63,94,0.35);color:rgb(252,165,165)',
-                warning:'background:rgba(245,158,11,0.18);border:1px solid rgba(245,158,11,0.35);color:#E3B420',
+                warning:'background:rgba(201,155,14,0.18);border:1px solid rgba(201,155,14,0.35);color:#E3B420',
                 info:'background:rgba(99,102,241,0.18);border:1px solid rgba(99,102,241,0.35);color:rgb(165,180,252)'
-             })[t.type] || 'background:#1C2A3A;border:1px solid #253347;color:#fff'">
+             })[t.type] || 'background:#030363;border:1px solid #2A2A72;color:#fff'">
             <div class="flex-1 min-w-0">
                 <p class="font-black text-sm" x-text="t.title"></p>
                 <p x-show="t.message" class="text-xs opacity-80 mt-0.5" x-text="t.message"></p>
@@ -315,7 +315,7 @@
 <!-- PWA install banner -->
 <div x-data="pwaInstall()" x-init="init()" x-show="showBanner" x-cloak
      class="fixed bottom-6 left-4 right-4 lg:left-auto lg:right-6 lg:w-80 z-[110] rounded-xl p-4 shadow-2xl"
-     style="background:#151F2E;border:1px solid rgba(245,158,11,0.3)">
+     style="background:#02014D;border:1px solid rgba(201,155,14,0.3)">
     <div class="flex items-start gap-3">
         <img src="/icon.svg" class="w-11 h-11 rounded-xl" alt="OPESBooks">
         <div class="flex-1 min-w-0">
@@ -343,7 +343,7 @@
         <div class="px-2 mb-6">
             <div class="flex items-center gap-2.5 mb-3">
                 <div class="w-8 h-8 rounded-xl flex items-center justify-center text-[10px] font-black text-amber-400 flex-shrink-0"
-                     style="background:rgba(245,158,11,0.14);border:1px solid rgba(245,158,11,0.3)">OB</div>
+                     style="background:rgba(201,155,14,0.14);border:1px solid rgba(201,155,14,0.3)">OB</div>
                 <span class="text-white font-black text-sm tracking-widest uppercase flex-1">OPES<span class="text-amber-400">BOOKS</span></span>
                 <!-- Notification bell -->
                 <div class="relative" @click.outside="notifOpen=false">
@@ -351,15 +351,15 @@
                         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
                         <span x-show="notifUnread>0" x-cloak class="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[8px] font-black rounded-full min-w-[14px] h-[14px] px-0.5 flex items-center justify-center" x-text="notifUnread>9?'9+':notifUnread"></span>
                     </button>
-                    <div x-show="notifOpen" x-cloak class="absolute left-0 mt-2 w-72 rounded-xl overflow-hidden z-[90]" style="background:#151F2E;border:1px solid #253347;box-shadow:0 12px 40px rgba(0,0,0,0.6)">
-                        <div class="flex items-center justify-between px-3 py-2.5 border-b" style="border-color:#253347">
+                    <div x-show="notifOpen" x-cloak class="absolute left-0 mt-2 w-72 rounded-xl overflow-hidden z-[90]" style="background:#02014D;border:1px solid #2A2A72;box-shadow:0 12px 40px rgba(0,0,0,0.6)">
+                        <div class="flex items-center justify-between px-3 py-2.5 border-b" style="border-color:#2A2A72">
                             <span class="text-xs font-black text-white uppercase tracking-wider">Notifications</span>
                             <button @click="markAllNotifsRead()" x-show="notifUnread>0" class="text-[10px] text-amber-400 font-bold uppercase">Tout lire</button>
                         </div>
                         <div class="max-h-72 overflow-y-auto">
                             <template x-for="n in notifications" :key="n.id">
-                                <a :href="n.action_url || '#'" class="flex items-start gap-2.5 px-3 py-2.5 hover:bg-slate-800 transition-colors border-b" style="border-color:#253347" :style="!n.read_at ? 'background:rgba(245,158,11,0.05)' : ''">
-                                    <span class="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" :style="!n.read_at ? 'background:#F59E0B' : 'background:transparent'"></span>
+                                <a :href="n.action_url || '#'" class="flex items-start gap-2.5 px-3 py-2.5 hover:bg-slate-800 transition-colors border-b" style="border-color:#2A2A72" :style="!n.read_at ? 'background:rgba(201,155,14,0.05)' : ''">
+                                    <span class="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" :style="!n.read_at ? 'background:#C99B0E' : 'background:transparent'"></span>
                                     <div class="min-w-0 flex-1">
                                         <div class="text-xs font-bold text-slate-200 truncate" x-text="n.title"></div>
                                         <div class="text-[10px] text-slate-500 truncate" x-text="n.body"></div>
@@ -373,13 +373,13 @@
             </div>
             <!-- User chip -->
             <div class="px-2.5 py-1.5 rounded-xl text-[10px] font-bold"
-                 style="background:#151F2E;border:1px solid #253347">
+                 style="background:#02014D;border:1px solid #2A2A72">
                 <div class="text-slate-300 font-black truncate" x-text="user?.name ?? '—'"></div>
                 <!-- Role badge -->
                 <div class="mt-1 mb-0.5">
                     <span x-show="user?.role === 'OWNER'"
                           class="inline-block px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest"
-                          style="background:rgba(245,158,11,0.18);color:rgb(252,211,77);border:1px solid rgba(245,158,11,0.35)">OWNER</span>
+                          style="background:rgba(201,155,14,0.18);color:rgb(252,211,77);border:1px solid rgba(201,155,14,0.35)">OWNER</span>
                     <span x-show="user?.role === 'ACCOUNTANT'"
                           class="inline-block px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest"
                           style="background:rgba(99,102,241,0.18);color:rgb(165,180,252);border:1px solid rgba(99,102,241,0.35)">ACCOUNTANT</span>
@@ -399,12 +399,12 @@
                     <!-- Switcher dropdown -->
                     <div x-show="companySwitcherOpen" x-cloak x-transition.opacity
                          class="absolute left-0 right-0 mt-2 z-50 rounded-xl overflow-hidden"
-                         style="background:#151F2E;border:1px solid #253347;box-shadow:0 12px 40px rgba(0,0,0,0.6)">
+                         style="background:#02014D;border:1px solid #2A2A72;box-shadow:0 12px 40px rgba(0,0,0,0.6)">
                         <template x-for="c in companies" :key="c.id">
                             <button type="button" @click="switchCompany(c.id)"
                                     class="w-full flex items-center gap-2 px-3 py-2.5 text-left hover:bg-slate-800 transition-colors"
                                     :class="c.is_active ? 'bg-white/5' : ''">
-                                <svg x-show="c.is_active" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgb(245,158,11)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><polyline points="20 6 9 17 4 12"/></svg>
+                                <svg x-show="c.is_active" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgb(201,155,14)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><polyline points="20 6 9 17 4 12"/></svg>
                                 <span x-show="!c.is_active" class="w-[13px] shrink-0"></span>
                                 <span class="flex-1 min-w-0">
                                     <span class="block truncate text-slate-200 font-black normal-case tracking-normal" x-text="c.name"></span>
@@ -414,7 +414,7 @@
                         </template>
                         <button type="button" @click="companySwitcherOpen=false; showAddCompany=true"
                                 class="w-full flex items-center gap-2 px-3 py-2.5 text-left border-t hover:bg-slate-800 transition-colors text-amber-400"
-                                style="border-color:#253347">
+                                style="border-color:#2A2A72">
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                             <span class="text-[10px] font-black uppercase tracking-wider normal-case" x-text="lang==='FR' ? 'Ajouter une entreprise' : 'Add company'"></span>
                         </button>
@@ -454,13 +454,13 @@
                 ? 'background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);color:rgb(110,231,183)'
                 : connStatus==='SYNCING'
                 ? 'background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.25);color:rgb(165,180,252)'
-                : 'background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.25);color:rgb(252,211,77)'">
+                : 'background:rgba(201,155,14,0.1);border:1px solid rgba(201,155,14,0.25);color:rgb(252,211,77)'">
             <span class="w-1.5 h-1.5 rounded-full pulse-dot flex-shrink-0"
                   :class="connStatus==='ONLINE' ? 'bg-emerald-400' : connStatus==='SYNCING' ? 'bg-indigo-400' : 'bg-amber-400'"></span>
             <span x-text="connStatus==='ONLINE' ? (lang==='FR'?'Connecté':'Online') : connStatus==='SYNCING' ? 'Sync…' : (lang==='FR'?'Hors ligne':'Offline')"></span>
             <span x-show="pendingSync>0" x-cloak @click="flushOutbox()" title="Changements en attente"
                   class="ml-auto cursor-pointer px-1.5 py-0.5 rounded-full text-[9px]"
-                  style="background:rgba(245,158,11,0.25);color:rgb(252,211,77)"
+                  style="background:rgba(201,155,14,0.25);color:rgb(252,211,77)"
                   x-text="pendingSync + (lang==='FR'?' en attente':' pending')"></span>
         </div>
 
@@ -524,7 +524,7 @@
                 <span x-text="lang==='FR' ? 'Mon Profil' : 'My Profile'"></span>
             </button>
 
-            <div class="my-1" style="height:1px;background:#253347"></div>
+            <div class="my-1" style="height:1px;background:#2A2A72"></div>
 
             <button @click="setPage('customer-invoices')" :class="page==='customer-invoices' ? 'nav-item active' : 'nav-item'">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
@@ -620,7 +620,7 @@
                 <span x-text="lang==='FR' ? 'Trésorerie Prev.' : 'Cashflow Forecast'"></span>
             </button>
 
-            <div class="my-2" style="height:1px;background:#253347"></div>
+            <div class="my-2" style="height:1px;background:#2A2A72"></div>
 
             <a href="/tax-dashboard" class="nav-item" x-show="user?.role === 'OWNER' || user?.role === 'ACCOUNTANT'">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
@@ -646,7 +646,7 @@
         </nav>
 
         <!-- Footer -->
-        <div class="space-y-0.5 mt-4 pt-4" style="border-top:1px solid #253347">
+        <div class="space-y-0.5 mt-4 pt-4" style="border-top:1px solid #2A2A72">
             <button @click="toggleLang()" class="nav-item">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/></svg>
                 <span x-text="lang==='FR' ? 'English' : 'Français'"></span>
@@ -665,7 +665,7 @@
         <div class="mobile-topbar">
             <button @click="sidebarOpen = !sidebarOpen" aria-label="Menu"
                     class="w-9 h-9 flex items-center justify-center rounded-lg text-slate-300 hover:text-white"
-                    style="background:#1C2A3A;border:1px solid #253347">
+                    style="background:#030363;border:1px solid #2A2A72">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
             </button>
             <span class="text-white font-black text-sm tracking-widest uppercase">OPES<span class="text-amber-400">BOOKS</span></span>
@@ -687,10 +687,10 @@
                 <div class="flex items-start gap-3 px-4 py-3 rounded-xl text-xs"
                      :style="({
                         INFO:        'background:rgba(99,102,241,0.10);border:1px solid rgba(99,102,241,0.30)',
-                        WARNING:     'background:rgba(245,158,11,0.10);border:1px solid rgba(245,158,11,0.30)',
+                        WARNING:     'background:rgba(201,155,14,0.10);border:1px solid rgba(201,155,14,0.30)',
                         MAINTENANCE: 'background:rgba(244,63,94,0.10);border:1px solid rgba(244,63,94,0.30)',
                         FEATURE:     'background:rgba(16,185,129,0.10);border:1px solid rgba(16,185,129,0.30)'
-                     })[a.type] || 'background:#151F2E;border:1px solid #253347'">
+                     })[a.type] || 'background:#02014D;border:1px solid #2A2A72'">
                     <div class="flex-1">
                         <div class="font-black uppercase tracking-wider text-white" x-text="a.title"></div>
                         <div class="text-slate-300 mt-0.5 leading-relaxed" x-text="a.body"></div>
@@ -727,7 +727,7 @@
                     <p class="text-xs text-slate-400 mt-1" x-text="today"></p>
                 </div>
                 <div class="text-[10px] font-black text-slate-400 px-3 py-1.5 rounded-xl uppercase tracking-widest"
-                     style="background:#1C2A3A;border:1px solid #253347"
+                     style="background:#030363;border:1px solid #2A2A72"
                      x-text="(company?.tax_regime ?? '—') + ' · NIU: ' + (company?.niu ?? '—')"></div>
             </div>
 
@@ -740,8 +740,8 @@
                     </div>
                     <button @click="dismissChecklist()" class="text-[10px] text-slate-500 hover:text-slate-300 uppercase tracking-wider" x-text="lang==='FR'?'Fermer':'Dismiss'"></button>
                 </div>
-                <div class="h-2 rounded-full overflow-hidden mb-4" style="background:#1C2A3A">
-                    <div class="h-full rounded-full transition-all" :style="'width:'+(((onboarding?.checklist_done||0)/(onboarding?.checklist_total||5))*100)+'%;background:#F59E0B'"></div>
+                <div class="h-2 rounded-full overflow-hidden mb-4" style="background:#030363">
+                    <div class="h-full rounded-full transition-all" :style="'width:'+(((onboarding?.checklist_done||0)/(onboarding?.checklist_total||5))*100)+'%;background:#C99B0E'"></div>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     <template x-for="item in [
@@ -752,9 +752,9 @@
                         {k:'report',  fr:'Rapport consulté',   en:'Report viewed',    page:'reports'}
                     ]" :key="item.k">
                         <button @click="setPage(item.page)" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-left transition-all"
-                                :style="onboarding?.checklist?.[item.k] ? 'background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2)' : 'background:#151F2E;border:1px solid #253347'">
+                                :style="onboarding?.checklist?.[item.k] ? 'background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2)' : 'background:#02014D;border:1px solid #2A2A72'">
                             <span class="w-5 h-5 rounded-full flex items-center justify-center shrink-0"
-                                  :style="onboarding?.checklist?.[item.k] ? 'background:rgb(16,185,129);color:#0F172A' : 'background:#253347;color:#94a3b8'">
+                                  :style="onboarding?.checklist?.[item.k] ? 'background:rgb(16,185,129);color:#01003A' : 'background:#2A2A72;color:#94a3b8'">
                                 <svg x-show="onboarding?.checklist?.[item.k]" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>
                             </span>
                             <span class="text-xs font-bold" :class="onboarding?.checklist?.[item.k] ? 'text-slate-300 line-through opacity-60' : 'text-white'" x-text="lang==='FR'?item.fr:item.en"></span>
@@ -784,9 +784,9 @@
 
             <!-- DGI Provision banner -->
             <div class="glass-card rounded-2xl p-5 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between shimmer-top relative overflow-hidden"
-                 style="background:linear-gradient(135deg,rgba(245,158,11,0.12),rgba(11,17,32,0.9));border-color:rgba(245,158,11,0.28);box-shadow:0 8px 32px rgba(245,158,11,0.14),0 4px 24px rgba(0,0,0,0.5)">
+                 style="background:linear-gradient(135deg,rgba(201,155,14,0.12),rgba(11,17,32,0.9));border-color:rgba(201,155,14,0.28);box-shadow:0 8px 32px rgba(201,155,14,0.14),0 4px 24px rgba(0,0,0,0.5)">
                 <div class="absolute -right-8 -top-8 w-32 h-32 rounded-full blur-3xl pointer-events-none opacity-20"
-                     style="background:radial-gradient(circle,rgba(245,158,11,1),transparent)"></div>
+                     style="background:radial-gradient(circle,rgba(201,155,14,1),transparent)"></div>
                 <div class="relative z-10">
                     <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1"
                        x-text="lang==='FR' ? 'Mois en cours · Provision DGI Cameroun' : 'Current Month · DGI Provision'"></p>
@@ -807,9 +807,9 @@
                     <template x-for="action in quickActions" :key="action.labelEn">
                         <button @click="action.href ? (window.location.href = action.href) : setPage(action.page)"
                                 class="flex flex-col items-center gap-2 p-4 rounded-xl transition-all text-center group active:scale-95"
-                                style="background:#151F2E;border:1px solid #253347"
-                                @mouseenter="$el.style.background='#253347';$el.style.borderColor='rgba(245,158,11,0.3)'"
-                                @mouseleave="$el.style.background='#151F2E';$el.style.borderColor='#253347'">
+                                style="background:#02014D;border:1px solid #2A2A72"
+                                @mouseenter="$el.style.background='#2A2A72';$el.style.borderColor='rgba(201,155,14,0.3)'"
+                                @mouseleave="$el.style.background='#02014D';$el.style.borderColor='#2A2A72'">
                             <span class="text-amber-400 group-hover:scale-110 transition-transform"
                                   x-html="`<svg width='26' height='26' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'>${action.icon}</svg>`"></span>
                             <span class="text-[10px] font-black text-slate-300 uppercase tracking-wide leading-tight"
@@ -843,18 +843,18 @@
             </div>
 
             <div class="glass rounded-2xl overflow-hidden">
-                <div class="px-5 py-3 flex items-center justify-between border-b" style="border-color:#253347;background:#0B1120">
+                <div class="px-5 py-3 flex items-center justify-between border-b" style="border-color:#2A2A72;background:#01003A">
                     <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest"
                           x-text="lang==='FR' ? 'Écritures Comptables' : 'Journal Entries'"></span>
                     <span class="text-[10px] font-mono font-black px-2.5 py-0.5 rounded-full"
-                          style="background:rgba(245,158,11,0.15);color:rgb(252,211,77);border:1px solid rgba(245,158,11,0.3)"
+                          style="background:rgba(201,155,14,0.15);color:rgb(252,211,77);border:1px solid rgba(201,155,14,0.3)"
                           x-text="journalEntries.length + (lang==='FR' ? ' entrées' : ' entries')"></span>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="text-[10px] font-black uppercase text-slate-500 tracking-widest border-b"
-                                style="border-color:#253347;background:#0B1120">
+                                style="border-color:#2A2A72;background:#01003A">
                                 <th class="py-3 px-5 whitespace-nowrap" x-text="lang==='FR' ? 'Référence' : 'Reference'"></th>
                                 <th class="py-3 px-5 whitespace-nowrap" x-text="lang==='FR' ? 'Date' : 'Date'"></th>
                                 <th class="py-3 px-5 whitespace-nowrap" x-text="lang==='FR' ? 'Mémo' : 'Memo'"></th>
@@ -871,7 +871,7 @@
                                     <td colspan="8" class="py-14 text-center">
                                         <div class="flex flex-col items-center gap-3">
                                             <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-amber-400/70"
-                                                 style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.18)">
+                                                 style="background:rgba(201,155,14,0.08);border:1px solid rgba(201,155,14,0.18)">
                                                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/></svg>
                                             </div>
                                             <div class="text-slate-500 text-[11px] font-black uppercase tracking-widest"
@@ -887,7 +887,7 @@
                                     <td class="py-3 px-5 text-[11px] text-slate-300 max-w-xs truncate" x-text="txn.memo"></td>
                                     <td class="py-3 px-5">
                                         <span class="text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider"
-                                              style="background:#1C2A3A;border:1px solid #253347;color:rgb(148,163,184)"
+                                              style="background:#030363;border:1px solid #2A2A72;color:rgb(148,163,184)"
                                               x-text="txn.source_pipeline?.replace('_', ' ')"></span>
                                     </td>
                                     <td class="py-3 px-5 text-center">
@@ -896,13 +896,13 @@
                                                 ? 'background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.3);color:rgb(110,231,183)'
                                                 : txn.transaction_status==='REVERSED'
                                                 ? 'background:rgba(244,63,94,0.15);border:1px solid rgba(244,63,94,0.3);color:rgb(252,165,165)'
-                                                : 'background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);color:rgb(252,211,77)'"
+                                                : 'background:rgba(201,155,14,0.15);border:1px solid rgba(201,155,14,0.3);color:rgb(252,211,77)'"
                                               x-text="txn.transaction_status"></span>
                                     </td>
                                     <td class="py-3 px-5 text-center whitespace-nowrap">
                                         <button @click="downloadInvoice(txn)"
                                                 class="text-[9px] font-black px-2.5 py-1 rounded-lg uppercase tracking-wider transition-all active:scale-95"
-                                                style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.25);color:rgb(252,211,77)"
+                                                style="background:rgba(201,155,14,0.1);border:1px solid rgba(201,155,14,0.25);color:rgb(252,211,77)"
                                                 x-text="lang==='FR' ? '↓ PDF' : '↓ PDF'"></button>
                                     </td>
                                     <td class="py-3 px-5 text-center whitespace-nowrap">
@@ -927,7 +927,7 @@
                 <!-- Pagination -->
                 <div x-show="journalMeta.last_page > 1"
                      class="px-5 py-3 flex items-center justify-between border-t text-[11px]"
-                     style="border-color:#253347;background:#0B1120">
+                     style="border-color:#2A2A72;background:#01003A">
                     <span class="text-slate-500"
                           x-text="(lang==='FR'?'Page ':'Page ') + journalMeta.current_page + ' / ' + journalMeta.last_page"></span>
                     <div class="flex gap-1.5">
@@ -962,7 +962,7 @@
                         </div>
                     </template>
                 </div>
-                <div class="border-t pt-4" style="border-color:#253347">
+                <div class="border-t pt-4" style="border-color:#2A2A72">
                     <label class="block text-xs opacity-60 mb-2" x-text="lang==='FR'?'Ajouter une pièce jointe':'Add attachment'"></label>
                     <input type="file" @change="attachFile=$event.target.files[0]"
                            accept=".pdf,.jpg,.jpeg,.png,.webp,.xlsx,.csv,.doc,.docx"
@@ -1015,7 +1015,7 @@
             </div>
 
             <div class="glass rounded-2xl overflow-hidden">
-                <div class="px-5 py-3 border-b" style="border-color:#253347;background:#0B1120">
+                <div class="px-5 py-3 border-b" style="border-color:#2A2A72;background:#01003A">
                     <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest"
                           x-text="lang==='FR' ? 'Comptes SYSCOHADA Révisé' : 'SYSCOHADA Revised Accounts'"></span>
                 </div>
@@ -1023,7 +1023,7 @@
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="text-[10px] font-black uppercase text-slate-500 tracking-widest border-b"
-                                style="border-color:#253347;background:#0B1120">
+                                style="border-color:#2A2A72;background:#01003A">
                                 <th class="py-3 px-5 whitespace-nowrap">Code</th>
                                 <th class="py-3 px-5 whitespace-nowrap">Libellé / Label</th>
                                 <th class="py-3 px-5 text-right whitespace-nowrap">Débit / Debit</th>
@@ -1037,7 +1037,7 @@
                                     <td colspan="5" class="py-14 text-center">
                                         <div class="flex flex-col items-center gap-3">
                                             <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-amber-400/70"
-                                                 style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.18)">
+                                                 style="background:rgba(201,155,14,0.08);border:1px solid rgba(201,155,14,0.18)">
                                                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
                                             </div>
                                             <div class="text-slate-500 text-[11px] font-black uppercase tracking-widest"
@@ -1128,7 +1128,7 @@
                 </div>
 
                 <!-- Totals -->
-                <div class="rounded-xl p-4" style="background:#0B1120;border:1px solid #253347">
+                <div class="rounded-xl p-4" style="background:#01003A;border:1px solid #2A2A72">
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center text-[11px]">
                         <div>
                             <div class="text-slate-500 font-black uppercase tracking-widest text-[9px] mb-1">Base HT</div>
@@ -1178,12 +1178,12 @@
 
                 <div class="glass rounded-2xl p-6 space-y-5">
                     <!-- Mode toggle -->
-                    <div class="flex gap-2 p-1 rounded-xl" style="background:#0B1120;border:1px solid #253347">
+                    <div class="flex gap-2 p-1 rounded-xl" style="background:#01003A;border:1px solid #2A2A72">
                         <button @click="mode='ht'" class="flex-1 py-2 rounded-lg text-[11px] font-black uppercase tracking-wider transition-all"
-                                :style="mode==='ht' ? 'background:rgba(245,158,11,0.2);border:1px solid rgba(245,158,11,0.35);color:rgb(252,211,77)' : 'color:rgba(148,163,184,0.7);border:1px solid transparent'"
+                                :style="mode==='ht' ? 'background:rgba(201,155,14,0.2);border:1px solid rgba(201,155,14,0.35);color:rgb(252,211,77)' : 'color:rgba(148,163,184,0.7);border:1px solid transparent'"
                                 x-text="lang==='FR' ? 'À partir du HT' : 'From HT'"></button>
                         <button @click="mode='ttc'" class="flex-1 py-2 rounded-lg text-[11px] font-black uppercase tracking-wider transition-all"
-                                :style="mode==='ttc' ? 'background:rgba(245,158,11,0.2);border:1px solid rgba(245,158,11,0.35);color:rgb(252,211,77)' : 'color:rgba(148,163,184,0.7);border:1px solid transparent'"
+                                :style="mode==='ttc' ? 'background:rgba(201,155,14,0.2);border:1px solid rgba(201,155,14,0.35);color:rgb(252,211,77)' : 'color:rgba(148,163,184,0.7);border:1px solid transparent'"
                                 x-text="lang==='FR' ? 'À partir du TTC' : 'From TTC'"></button>
                     </div>
 
@@ -1200,17 +1200,17 @@
 
                     <!-- Result -->
                     <div x-show="result" x-cloak class="rounded-xl p-4 space-y-3 float-in"
-                         style="background:#0B1120;border:1px solid #253347">
-                        <div class="flex justify-between items-center py-1.5 border-b" style="border-color:#253347">
+                         style="background:#01003A;border:1px solid #2A2A72">
+                        <div class="flex justify-between items-center py-1.5 border-b" style="border-color:#2A2A72">
                             <span class="text-[11px] font-black text-slate-400 uppercase tracking-wider"
                                   x-text="lang==='FR' ? 'Base HT' : 'Amount HT'"></span>
                             <span class="font-mono font-black text-white" x-text="fmtXaf(result?.amount_ht)"></span>
                         </div>
-                        <div class="flex justify-between items-center py-1.5 border-b" style="border-color:#253347">
+                        <div class="flex justify-between items-center py-1.5 border-b" style="border-color:#2A2A72">
                             <span class="text-[11px] font-black text-slate-400 uppercase tracking-wider">TVA (17.5%)</span>
                             <span class="font-mono font-black text-indigo-400" x-text="fmtXaf(result?.base_vat)"></span>
                         </div>
-                        <div class="flex justify-between items-center py-1.5 border-b" style="border-color:#253347">
+                        <div class="flex justify-between items-center py-1.5 border-b" style="border-color:#2A2A72">
                             <span class="text-[11px] font-black text-slate-400 uppercase tracking-wider">CAC (10% TVA)</span>
                             <span class="font-mono font-black text-purple-400" x-text="fmtXaf(result?.cac)"></span>
                         </div>
@@ -1248,7 +1248,7 @@
                            x-text="lang==='FR' ? 'Fichier CSV (.csv ou .txt)' : 'CSV File (.csv or .txt)'"></label>
                     <input type="file" accept=".csv,.txt" @change="onFileChange($event)"
                            class="block text-xs text-slate-400 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-[10px] file:font-black file:uppercase file:tracking-wider file:cursor-pointer"
-                           style="file:background:#1C2A3A;file:color:rgb(226,232,240);file:border:1px solid #253347">
+                           style="file:background:#030363;file:color:rgb(226,232,240);file:border:1px solid #2A2A72">
                     <p x-show="importFile" class="text-[10px] text-slate-400 mt-1.5" x-text="importFile?.name + ' — ' + Math.round((importFile?.size||0)/1024) + ' KB'"></p>
                 </div>
 
@@ -1351,7 +1351,7 @@
                 <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3"
                    x-text="lang==='FR' ? 'Exemple de Format CSV Attendu' : 'Expected CSV Format Example'"></p>
                 <pre class="text-[10px] text-slate-400 font-mono leading-relaxed overflow-x-auto"
-                     style="background:#0B1120;border:1px solid #253347;padding:0.75rem;border-radius:0.5rem">Date,Reference,Memo,Debit,Credit
+                     style="background:#01003A;border:1px solid #2A2A72;padding:0.75rem;border-radius:0.5rem">Date,Reference,Memo,Debit,Credit
 2026-01-15,VIR-001234,Paiement fournisseur SARL ABC,150000,
 2026-01-16,REC-005678,Encaissement client XYZ,,320000
 2026-01-17,VIR-001299,Salaires janvier 2026,850000,</pre>
@@ -1391,7 +1391,7 @@
 
             <div class="glass rounded-2xl overflow-hidden">
                 <div class="px-5 py-3 border-b flex items-center justify-between"
-                     style="border-color:#253347;background:#0B1120">
+                     style="border-color:#2A2A72;background:#01003A">
                     <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest"
                           x-text="lang==='FR' ? 'Comptes Auxiliaires Actifs' : 'Active Auxiliary Accounts'"></span>
                     <span class="text-[10px] font-mono font-black px-2.5 py-0.5 rounded-full"
@@ -1402,7 +1402,7 @@
                     <div class="py-14 text-center">
                         <div class="flex flex-col items-center gap-3">
                             <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl"
-                                 style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.18)">
+                                 style="background:rgba(201,155,14,0.08);border:1px solid rgba(201,155,14,0.18)">
                                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="text-amber-400/70"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
                             </div>
                             <div class="text-slate-500 text-[11px] font-black uppercase tracking-widest"
@@ -1410,7 +1410,7 @@
                         </div>
                     </div>
                 </template>
-                <div class="divide-y" style="border-color:#253347">
+                <div class="divide-y" style="border-color:#2A2A72">
                     <template x-for="acc in subAccounts" :key="acc.id">
                         <div class="px-5 py-3.5 flex items-center justify-between glass-row">
                             <div class="flex items-center gap-3">
@@ -1456,7 +1456,7 @@
                 <template x-for="(s,i) in steps" :key="i">
                     <div class="flex items-center gap-2">
                         <span class="w-6 h-6 rounded-full flex items-center justify-center"
-                              :style="step>=i+1 ? 'background:#F59E0B;color:#0F172A' : 'background:#1C2A3A;color:#94a3b8'" x-text="i+1"></span>
+                              :style="step>=i+1 ? 'background:#C99B0E;color:#01003A' : 'background:#030363;color:#94a3b8'" x-text="i+1"></span>
                         <span :class="step>=i+1?'text-amber-300':'text-slate-500'" x-text="lang==='FR'?s.fr:s.en"></span>
                         <span x-show="i<3" class="w-6 h-px bg-white/15"></span>
                     </div>
@@ -1470,7 +1470,7 @@
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         <template x-for="t in types" :key="t.key">
                             <button @click="type=t.key" class="text-left p-4 rounded-xl border transition"
-                                    :style="type===t.key ? 'border-color:#F59E0B;background:rgba(245,158,11,0.08)' : 'border-color:#253347'">
+                                    :style="type===t.key ? 'border-color:#C99B0E;background:rgba(201,155,14,0.08)' : 'border-color:#2A2A72'">
                                 <div class="font-black text-white text-sm" x-text="lang==='FR'?t.fr:t.en"></div>
                                 <div class="text-[11px] text-slate-400 mt-1" x-text="lang==='FR'?t.descFr:t.descEn"></div>
                             </button>
@@ -1502,7 +1502,7 @@
                     </div>
                     <div class="overflow-auto rounded-xl border border-slate-700 max-h-80">
                         <table class="w-full text-[11px]">
-                            <thead class="sticky top-0" style="background:#151F2E">
+                            <thead class="sticky top-0" style="background:#02014D">
                                 <tr><th class="px-2 py-2 text-left text-slate-400">#</th>
                                     <template x-for="h in report.headers" :key="h"><th class="px-2 py-2 text-left text-slate-400" x-text="h"></th></template>
                                     <th class="px-2 py-2 text-left text-slate-400" x-text="lang==='FR'?'Erreurs':'Errors'"></th></tr>
@@ -1558,9 +1558,9 @@
             <!-- Status cards -->
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 <div class="glass-card rounded-2xl p-4 text-center relative overflow-hidden"
-                     style="box-shadow:0 4px 24px rgba(0,0,0,0.45),0 0 24px rgba(245,158,11,0.12)">
+                     style="box-shadow:0 4px 24px rgba(0,0,0,0.45),0 0 24px rgba(201,155,14,0.12)">
                     <div class="absolute -top-2 -right-2 w-12 h-12 rounded-full blur-2xl opacity-20"
-                         style="background:rgb(245,158,11)"></div>
+                         style="background:rgb(201,155,14)"></div>
                     <div class="text-[9px] text-slate-500 font-black uppercase tracking-widest mb-2"
                          x-text="lang==='FR' ? 'En Attente' : 'Pending'"></div>
                     <div class="font-mono font-black text-amber-400 text-2xl" x-text="syncStatus?.pending_count ?? '—'"></div>
@@ -1593,11 +1593,11 @@
             <div class="glass-card rounded-2xl p-4 flex items-center gap-4"
                  :style="connStatus==='ONLINE'
                     ? 'border-color:rgba(16,185,129,0.3);box-shadow:0 4px 20px rgba(16,185,129,0.1)'
-                    : 'border-color:rgba(245,158,11,0.3);box-shadow:0 4px 20px rgba(245,158,11,0.1)'">
+                    : 'border-color:rgba(201,155,14,0.3);box-shadow:0 4px 20px rgba(201,155,14,0.1)'">
                 <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 text-lg"
                      :style="connStatus==='ONLINE'
                         ? 'background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.3)'
-                        : 'background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3)'"
+                        : 'background:rgba(201,155,14,0.15);border:1px solid rgba(201,155,14,0.3)'"
                      x-text="connStatus==='ONLINE' ? '🌐' : '📴'"></div>
                 <div>
                     <div class="text-sm font-black text-white"
@@ -1611,11 +1611,11 @@
 
             <!-- Pending items list -->
             <div x-show="syncQueue.length > 0" class="glass rounded-2xl overflow-hidden">
-                <div class="px-5 py-3 border-b" style="border-color:#253347;background:#0B1120">
+                <div class="px-5 py-3 border-b" style="border-color:#2A2A72;background:#01003A">
                     <span class="text-[10px] font-black text-amber-400 uppercase tracking-widest"
                           x-text="lang==='FR' ? 'File d\'Attente de Synchronisation' : 'Sync Queue'"></span>
                 </div>
-                <div class="divide-y" style="border-color:#253347">
+                <div class="divide-y" style="border-color:#2A2A72">
                     <template x-for="item in syncQueue" :key="item.id">
                         <div class="px-5 py-3 flex items-center justify-between glass-row">
                             <div>
@@ -1623,7 +1623,7 @@
                                 <div class="text-[10px] text-slate-500 mt-0.5" x-text="item.memo ?? item.payload_type"></div>
                             </div>
                             <span class="text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider"
-                                  style="background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);color:rgb(252,211,77)"
+                                  style="background:rgba(201,155,14,0.15);border:1px solid rgba(201,155,14,0.3);color:rgb(252,211,77)"
                                   x-text="lang==='FR' ? 'En attente' : 'Pending'"></span>
                         </div>
                     </template>
@@ -1695,18 +1695,18 @@
             <!-- Members list -->
             <div class="glass rounded-2xl overflow-hidden">
                 <div class="px-5 py-3 border-b flex items-center justify-between"
-                     style="border-color:#253347;background:#0B1120">
+                     style="border-color:#2A2A72;background:#01003A">
                     <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest"
                           x-text="lang==='FR' ? 'Membres de l\'Entreprise' : 'Company Members'"></span>
                     <span class="text-[10px] font-mono font-black px-2.5 py-0.5 rounded-full"
-                          style="background:rgba(245,158,11,0.15);color:rgb(252,211,77);border:1px solid rgba(245,158,11,0.3)"
+                          style="background:rgba(201,155,14,0.15);color:rgb(252,211,77);border:1px solid rgba(201,155,14,0.3)"
                           x-text="teamMembers.length + (lang==='FR' ? ' membres' : ' members')"></span>
                 </div>
                 <template x-if="teamMembers.length === 0">
                     <div class="py-14 text-center">
                         <div class="flex flex-col items-center gap-3">
                             <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl"
-                                 style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.18)">
+                                 style="background:rgba(201,155,14,0.08);border:1px solid rgba(201,155,14,0.18)">
                                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="text-amber-400/70"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                             </div>
                             <div class="text-slate-500 text-[11px] font-black uppercase tracking-widest"
@@ -1719,7 +1719,7 @@
                         <div class="px-5 py-3.5 flex items-center justify-between glass-row">
                             <div class="flex items-center gap-3">
                                 <div class="w-8 h-8 rounded-xl flex items-center justify-center text-xs font-black"
-                                     style="background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.2);color:rgb(252,211,77)"
+                                     style="background:rgba(201,155,14,0.12);border:1px solid rgba(201,155,14,0.2);color:rgb(252,211,77)"
                                      x-text="(member.name ?? '?')[0].toUpperCase()"></div>
                                 <div>
                                     <div class="text-sm font-black text-white" x-text="member.name"></div>
@@ -1729,10 +1729,10 @@
                             <div class="flex items-center gap-3">
                                 <span class="text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-widest"
                                       :style="member.role==='OWNER'
-                                        ? 'background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);color:rgb(252,211,77)'
+                                        ? 'background:rgba(201,155,14,0.15);border:1px solid rgba(201,155,14,0.3);color:rgb(252,211,77)'
                                         : member.role==='ACCOUNTANT'
                                         ? 'background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3);color:rgb(165,180,252)'
-                                        : 'background:#1C2A3A;border:1px solid #253347;color:#94a3b8'"
+                                        : 'background:#030363;border:1px solid #2A2A72;color:#94a3b8'"
                                       x-text="member.role"></span>
                                 <span class="text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider"
                                       :style="member.id===user?.id
@@ -1837,7 +1837,7 @@
                 <div class="flex items-center justify-between">
                     <p class="text-[10px] font-black text-amber-400 uppercase tracking-widest">MECeF · DGI Cameroun</p>
                     <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest"
-                          :style="cfg.is_active ? (cfg.sandbox_mode ? 'background:rgba(245,158,11,0.18);color:#E3B420;border:1px solid rgba(245,158,11,0.35)' : 'background:rgba(16,185,129,0.18);color:rgb(110,231,183);border:1px solid rgba(16,185,129,0.35)') : 'background:rgba(100,116,139,0.18);color:rgb(148,163,184);border:1px solid rgba(100,116,139,0.35)'"
+                          :style="cfg.is_active ? (cfg.sandbox_mode ? 'background:rgba(201,155,14,0.18);color:#E3B420;border:1px solid rgba(201,155,14,0.35)' : 'background:rgba(16,185,129,0.18);color:rgb(110,231,183);border:1px solid rgba(16,185,129,0.35)') : 'background:rgba(100,116,139,0.18);color:rgb(148,163,184);border:1px solid rgba(100,116,139,0.35)'"
                           x-text="cfg.is_active ? (cfg.sandbox_mode ? 'SANDBOX' : 'LIVE') : (lang==='FR'?'INACTIF':'INACTIVE')"></span>
                 </div>
                 <p class="text-[10px] text-slate-500" x-text="lang==='FR' ? 'Certifiez vos factures auprès de la DGI. Contactez la DGI pour obtenir votre NIM et vos identifiants API.' : 'Certify invoices with the DGI. Contact the DGI to obtain your NIM and API credentials.'"></p>
@@ -1872,7 +1872,7 @@
                         <span class="block text-[10px] font-black text-amber-400 uppercase tracking-widest" x-text="lang==='FR'?'Sécurité de l\'équipe':'Team security'"></span>
                         <span class="block text-xs text-slate-400 mt-1" x-text="lang==='FR'?'Exiger la 2FA pour tous les membres':'Require 2FA for all members'"></span>
                     </span>
-                    <button type="button" @click="toggle()" :disabled="busy" class="relative w-12 h-6 rounded-full transition-colors shrink-0" :style="on ? 'background:#F59E0B' : 'background:#253347'">
+                    <button type="button" @click="toggle()" :disabled="busy" class="relative w-12 h-6 rounded-full transition-colors shrink-0" :style="on ? 'background:#C99B0E' : 'background:#2A2A72'">
                         <span class="absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform" :class="on ? 'translate-x-6' : ''"></span>
                     </button>
                 </label>
@@ -1885,7 +1885,7 @@
                 <div class="flex items-center gap-5">
                     <!-- Logo preview -->
                     <div class="w-20 h-20 rounded-2xl flex items-center justify-center overflow-hidden flex-shrink-0"
-                         style="background:#1C2A3A;border:1px solid #253347">
+                         style="background:#030363;border:1px solid #2A2A72">
                         <template x-if="logoPreview || settingsData.logo_url">
                             <img :src="logoPreview || settingsData.logo_url" class="w-full h-full object-contain p-1">
                         </template>
@@ -1899,7 +1899,7 @@
                                x-text="lang==='FR' ? 'Logo Entreprise (PNG/JPG/SVG, max 2 Mo)' : 'Company Logo (PNG/JPG/SVG, max 2MB)'"></label>
                         <input type="file" accept="image/*" @change="onLogoChange($event)"
                                class="block text-xs text-slate-400 file:mr-3 file:py-1.5 file:px-4 file:rounded-xl file:border-0 file:text-[10px] file:font-black file:uppercase file:tracking-wider file:cursor-pointer"
-                               style="file:background:rgba(245,158,11,0.15);file:color:rgb(252,211,77);file:border:1px solid rgba(245,158,11,0.3)">
+                               style="file:background:rgba(201,155,14,0.15);file:color:rgb(252,211,77);file:border:1px solid rgba(201,155,14,0.3)">
                         <button x-show="logoFile" @click="uploadLogo()"
                                 :disabled="logoUploading"
                                 class="glass-btn-amber px-4 py-1.5 rounded-xl text-[10px] uppercase tracking-widest disabled:opacity-40"
@@ -2071,12 +2071,12 @@
                         <div @click="selectedPlan = plan.id"
                              class="glass-card rounded-2xl p-5 cursor-pointer transition-all"
                              :style="selectedPlan===plan.id
-                                ? 'border-color:rgba(245,158,11,0.5);box-shadow:0 0 24px rgba(245,158,11,0.18)'
+                                ? 'border-color:rgba(201,155,14,0.5);box-shadow:0 0 24px rgba(201,155,14,0.18)'
                                 : ''">
                             <div class="flex items-center justify-between mb-3">
                                 <span class="text-[10px] font-black text-amber-400 uppercase tracking-widest" x-text="plan.name"></span>
                                 <div x-show="selectedPlan===plan.id" class="w-4 h-4 rounded-full flex items-center justify-center"
-                                     style="background:rgb(245,158,11)">
+                                     style="background:rgb(201,155,14)">
                                     <svg class="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
                                 </div>
                             </div>
@@ -2176,7 +2176,7 @@
                     <div class="space-y-2">
                         <p class="text-xs text-amber-300 font-bold" x-text="lang==='FR'?'Sauvegardez ces codes de récupération — ils ne seront plus affichés.':'Save these recovery codes — they won\'t be shown again.'"></p>
                         <div class="grid grid-cols-2 gap-2 font-mono text-sm">
-                            <template x-for="c in recovery" :key="c"><div class="px-3 py-1.5 rounded-lg text-amber-400" style="background:#151F2E" x-text="c"></div></template>
+                            <template x-for="c in recovery" :key="c"><div class="px-3 py-1.5 rounded-lg text-amber-400" style="background:#02014D" x-text="c"></div></template>
                         </div>
                         <button @click="step='idle'" class="glass-btn-dark px-4 py-2 rounded-xl text-xs uppercase tracking-widest mt-1" x-text="lang==='FR'?'J\'ai sauvegardé':'Done'"></button>
                     </div>
@@ -2231,7 +2231,7 @@
                     <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest"
                           x-text="lang==='FR' ? 'Rôle :' : 'Role:'"></span>
                     <span class="text-[10px] font-black px-2.5 py-1 rounded-lg"
-                          style="background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);color:rgb(252,211,77)"
+                          style="background:rgba(201,155,14,0.15);border:1px solid rgba(201,155,14,0.3);color:rgb(252,211,77)"
                           x-text="profileForm.role ?? '—'"></span>
                 </div>
 
@@ -2321,7 +2321,7 @@
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                             <span x-text="lang==='FR'?'Exporter':'Export'"></span>
                         </button>
-                        <div x-show="open" x-cloak class="absolute right-0 mt-1 z-20 rounded-xl overflow-hidden min-w-36" style="background:#151F2E;border:1px solid #253347">
+                        <div x-show="open" x-cloak class="absolute right-0 mt-1 z-20 rounded-xl overflow-hidden min-w-36" style="background:#02014D;border:1px solid #2A2A72">
                             <template x-for="f in [['xlsx','Excel'],['csv','CSV'],['pdf','PDF']]" :key="f[0]">
                                 <button type="button" @click="open=false; exportDownload('invoices', f[0])"
                                    class="block w-full text-left px-4 py-2.5 text-xs text-slate-300 hover:bg-slate-800 hover:text-white" x-text="f[1]"></button>
@@ -2363,7 +2363,7 @@
 
             <div class="glass-card rounded-2xl overflow-hidden">
                 <table class="w-full text-sm">
-                    <thead><tr style="background:#151F2E;border-bottom:1px solid #253347">
+                    <thead><tr style="background:#02014D;border-bottom:1px solid #2A2A72">
                         <th class="text-left px-4 py-3 text-xs uppercase tracking-widest opacity-50" x-text="lang==='FR'?'N° Facture':'Invoice #'"></th>
                         <th class="text-left px-4 py-3 text-xs uppercase tracking-widest opacity-50" x-text="lang==='FR'?'Client':'Customer'"></th>
                         <th class="text-right px-4 py-3 text-xs uppercase tracking-widest opacity-50">TTC</th>
@@ -2375,13 +2375,13 @@
                         <template x-if="invoices.length===0">
                             <tr><td colspan="6" class="text-center py-12">
                                 <div class="flex flex-col items-center gap-3">
-                                    <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-amber-400/70" style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.18)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+                                    <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-amber-400/70" style="background:rgba(201,155,14,0.08);border:1px solid rgba(201,155,14,0.18)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
                                     <span class="text-[11px] font-black uppercase tracking-widest text-slate-500" x-text="lang==='FR'?'Aucune facture.':'No invoices yet.'"></span>
                                 </div>
                             </td></tr>
                         </template>
                         <template x-for="inv in invoices" :key="inv.id">
-                            <tr style="border-bottom:1px solid #253347" class="hover:bg-slate-800 transition-colors">
+                            <tr style="border-bottom:1px solid #2A2A72" class="hover:bg-slate-800 transition-colors">
                                 <td class="px-4 py-3 font-mono text-amber-400 text-xs" x-text="inv.invoice_number"></td>
                                 <td class="px-4 py-3 font-medium" x-text="inv.customer?.name??'—'"></td>
                                 <td class="px-4 py-3 text-right font-bold" x-text="fmtXaf(inv.amount_ttc)"></td>
@@ -2399,7 +2399,7 @@
                                 <td class="px-4 py-3 text-center">
                                     <div class="flex gap-1 justify-center flex-wrap">
                                         <button x-show="inv.status==='DRAFT'" @click="markSent(inv)"
-                                            class="px-2 py-1 rounded-lg text-xs" style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);color:rgb(252,211,77)"
+                                            class="px-2 py-1 rounded-lg text-xs" style="background:rgba(201,155,14,0.1);border:1px solid rgba(201,155,14,0.2);color:rgb(252,211,77)"
                                             x-text="lang==='FR'?'Envoyer':'Send'"></button>
                                         <button x-show="inv.status==='SENT'||inv.status==='OVERDUE'" @click="markPaid(inv)"
                                             class="px-2 py-1 rounded-lg text-xs" style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);color:rgb(110,231,183)"
@@ -2413,7 +2413,7 @@
                                             <span x-text="(lang==='FR'?'Certifiée ':'Certified ')+(inv.mecef_counter||'')"></span>
                                         </span>
                                         <button x-show="inv.mecef_status!=='certified' && (inv.status==='SENT'||inv.status==='PAID')" @click="certifyMecef(inv)" :disabled="mecefLoading===inv.id"
-                                            class="px-2 py-1 rounded-lg text-xs disabled:opacity-50" style="background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.25);color:#E3B420"
+                                            class="px-2 py-1 rounded-lg text-xs disabled:opacity-50" style="background:rgba(201,155,14,0.12);border:1px solid rgba(201,155,14,0.25);color:#E3B420"
                                             x-text="mecefLoading===inv.id ? '…' : (lang==='FR'?'Certifier DGI':'Certify DGI')"></button>
                                     </div>
                                 </td>
@@ -2456,7 +2456,7 @@
 
             <div class="glass-card rounded-2xl overflow-hidden">
                 <table class="w-full text-sm">
-                    <thead><tr style="background:#151F2E;border-bottom:1px solid #253347">
+                    <thead><tr style="background:#02014D;border-bottom:1px solid #2A2A72">
                         <th class="text-left px-4 py-3 text-xs uppercase tracking-widest opacity-50" x-text="lang==='FR' ? 'Nom' : 'Name'"></th>
                         <th class="text-left px-4 py-3 text-xs uppercase tracking-widest opacity-50">NIU</th>
                         <th class="text-left px-4 py-3 text-xs uppercase tracking-widest opacity-50">Email</th>
@@ -2467,13 +2467,13 @@
                         <template x-if="customers.length===0">
                             <tr><td colspan="5" class="text-center py-12">
                                 <div class="flex flex-col items-center gap-3">
-                                    <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-amber-400/70" style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.18)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg></div>
+                                    <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-amber-400/70" style="background:rgba(201,155,14,0.08);border:1px solid rgba(201,155,14,0.18)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg></div>
                                     <span class="text-[11px] font-black uppercase tracking-widest text-slate-500" x-text="lang==='FR' ? 'Aucun client enregistré.' : 'No customers yet.'"></span>
                                 </div>
                             </td></tr>
                         </template>
                         <template x-for="c in customers" :key="c.id">
-                            <tr style="border-bottom:1px solid #253347" class="hover:bg-slate-800 transition-colors">
+                            <tr style="border-bottom:1px solid #2A2A72" class="hover:bg-slate-800 transition-colors">
                                 <td class="px-4 py-3 font-medium" x-text="c.name"></td>
                                 <td class="px-4 py-3 opacity-70" x-text="c.niu||'—'"></td>
                                 <td class="px-4 py-3 opacity-70" x-text="c.email||'—'"></td>
@@ -2516,7 +2516,7 @@
 
             <div class="glass-card rounded-2xl overflow-hidden">
                 <table class="w-full text-sm">
-                    <thead><tr style="background:#151F2E;border-bottom:1px solid #253347">
+                    <thead><tr style="background:#02014D;border-bottom:1px solid #2A2A72">
                         <th class="text-left px-4 py-3 text-xs uppercase tracking-widest opacity-50" x-text="lang==='FR' ? 'Nom' : 'Name'"></th>
                         <th class="text-left px-4 py-3 text-xs uppercase tracking-widest opacity-50">NIU</th>
                         <th class="text-left px-4 py-3 text-xs uppercase tracking-widest opacity-50">Email</th>
@@ -2526,13 +2526,13 @@
                         <template x-if="suppliers.length===0">
                             <tr><td colspan="4" class="text-center py-12">
                                 <div class="flex flex-col items-center gap-3">
-                                    <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-amber-400/70" style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.18)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>
+                                    <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-amber-400/70" style="background:rgba(201,155,14,0.08);border:1px solid rgba(201,155,14,0.18)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>
                                     <span class="text-[11px] font-black uppercase tracking-widest text-slate-500" x-text="lang==='FR' ? 'Aucun fournisseur enregistré.' : 'No suppliers yet.'"></span>
                                 </div>
                             </td></tr>
                         </template>
                         <template x-for="s in suppliers" :key="s.id">
-                            <tr style="border-bottom:1px solid #253347" class="hover:bg-slate-800 transition-colors">
+                            <tr style="border-bottom:1px solid #2A2A72" class="hover:bg-slate-800 transition-colors">
                                 <td class="px-4 py-3 font-medium" x-text="s.name"></td>
                                 <td class="px-4 py-3 opacity-70" x-text="s.niu||'—'"></td>
                                 <td class="px-4 py-3 opacity-70" x-text="s.email||'—'"></td>
@@ -2682,7 +2682,7 @@
                             <template x-if="!loading && items.length===0">
                                 <tr><td colspan="6" class="px-4 py-12 text-center">
                                     <div class="flex flex-col items-center gap-3">
-                                        <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-amber-400/70" style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.18)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m16 16 2 2 4-4"/><path d="M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l2-1.14"/><path d="M3.29 7 12 12l8.71-5"/><path d="M12 22V12"/></svg></div>
+                                        <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-amber-400/70" style="background:rgba(201,155,14,0.08);border:1px solid rgba(201,155,14,0.18)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m16 16 2 2 4-4"/><path d="M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l2-1.14"/><path d="M3.29 7 12 12l8.71-5"/><path d="M12 22V12"/></svg></div>
                                         <span class="text-[11px] font-black uppercase tracking-widest text-slate-500" x-text="lang==='FR' ? 'Aucun bon de livraison.' : 'No delivery notes.'"></span>
                                     </div>
                                 </td></tr>
@@ -2910,7 +2910,7 @@
                     </div>
                 </div>
                 <table class="w-full text-sm mt-2">
-                    <thead><tr style="border-bottom:1px solid #253347">
+                    <thead><tr style="border-bottom:1px solid #2A2A72">
                         <th class="text-left px-3 py-2 text-xs opacity-50" x-text="lang==='FR' ? 'Client' : 'Customer'"></th>
                         <th class="text-left px-3 py-2 text-xs opacity-50" x-text="lang==='FR' ? 'Facture' : 'Invoice'"></th>
                         <th class="text-right px-3 py-2 text-xs opacity-50" x-text="lang==='FR' ? 'Montant TTC' : 'Amount TTC'"></th>
@@ -2919,7 +2919,7 @@
                     </tr></thead>
                     <tbody>
                         <template x-for="inv in (result?.invoices??[])" :key="inv.id">
-                            <tr style="border-bottom:1px solid #253347" class="hover:bg-slate-800">
+                            <tr style="border-bottom:1px solid #2A2A72" class="hover:bg-slate-800">
                                 <td class="px-3 py-2 font-medium" x-text="inv.customer?.name??'—'"></td>
                                 <td class="px-3 py-2 opacity-70" x-text="inv.invoice_number"></td>
                                 <td class="px-3 py-2 text-right" x-text="fmtXaf(inv.amount_ttc)"></td>
@@ -2978,7 +2978,7 @@
 
             <div class="glass-card rounded-2xl overflow-hidden">
                 <table class="w-full text-sm">
-                    <thead><tr style="background:#151F2E;border-bottom:1px solid #253347">
+                    <thead><tr style="background:#02014D;border-bottom:1px solid #2A2A72">
                         <th class="text-left px-4 py-3 text-xs uppercase tracking-widest opacity-50" x-text="lang==='FR' ? 'Nom' : 'Name'"></th>
                         <th class="text-left px-4 py-3 text-xs uppercase tracking-widest opacity-50" x-text="lang==='FR' ? 'Fréquence' : 'Frequency'"></th>
                         <th class="text-right px-4 py-3 text-xs uppercase tracking-widest opacity-50" x-text="lang==='FR' ? 'Montant' : 'Amount'"></th>
@@ -2989,13 +2989,13 @@
                         <template x-if="items.length===0">
                             <tr><td colspan="5" class="text-center py-12">
                                 <div class="flex flex-col items-center gap-3">
-                                    <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-amber-400/70" style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.18)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></div>
+                                    <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-amber-400/70" style="background:rgba(201,155,14,0.08);border:1px solid rgba(201,155,14,0.18)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></div>
                                     <span class="text-[11px] font-black uppercase tracking-widest text-slate-500" x-text="lang==='FR' ? 'Aucune transaction récurrente.' : 'No recurring transactions.'"></span>
                                 </div>
                             </td></tr>
                         </template>
                         <template x-for="rt in items" :key="rt.id">
-                            <tr style="border-bottom:1px solid #253347" class="hover:bg-slate-800 transition-colors">
+                            <tr style="border-bottom:1px solid #2A2A72" class="hover:bg-slate-800 transition-colors">
                                 <td class="px-4 py-3 font-medium" x-text="rt.name"></td>
                                 <td class="px-4 py-3 opacity-70 text-xs" x-text="rt.frequency"></td>
                                 <td class="px-4 py-3 text-right" x-text="fmtXaf(rt.amount_xaf)"></td>
@@ -3045,7 +3045,7 @@
                 </div>
                 <div class="glass-card rounded-2xl overflow-hidden">
                     <table class="w-full text-sm">
-                        <thead><tr style="background:#151F2E;border-bottom:1px solid #253347">
+                        <thead><tr style="background:#02014D;border-bottom:1px solid #2A2A72">
                             <th class="text-left px-4 py-3 text-xs uppercase tracking-widest opacity-50" x-text="lang==='FR' ? 'Nom' : 'Name'"></th>
                             <th class="text-left px-4 py-3 text-xs uppercase tracking-widest opacity-50" x-text="lang==='FR' ? 'Poste' : 'Position'"></th>
                             <th class="text-right px-4 py-3 text-xs uppercase tracking-widest opacity-50" x-text="lang==='FR' ? 'Salaire Brut' : 'Gross Salary'"></th>
@@ -3056,13 +3056,13 @@
                             <template x-if="employees.length===0">
                                 <tr><td colspan="5" class="text-center py-12">
                                     <div class="flex flex-col items-center gap-3">
-                                        <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-amber-400/70" style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.18)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+                                        <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-amber-400/70" style="background:rgba(201,155,14,0.08);border:1px solid rgba(201,155,14,0.18)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
                                         <span class="text-[11px] font-black uppercase tracking-widest text-slate-500" x-text="lang==='FR' ? 'Aucun employé enregistré.' : 'No employees yet.'"></span>
                                     </div>
                                 </td></tr>
                             </template>
                             <template x-for="e in employees" :key="e.id">
-                                <tr style="border-bottom:1px solid #253347" class="hover:bg-slate-800 transition-colors">
+                                <tr style="border-bottom:1px solid #2A2A72" class="hover:bg-slate-800 transition-colors">
                                     <td class="px-4 py-3 font-medium" x-text="e.name"></td>
                                     <td class="px-4 py-3 opacity-70" x-text="e.position||'—'"></td>
                                     <td class="px-4 py-3 text-right" x-text="fmtXaf(e.gross_salary_xaf)"></td>
@@ -3091,7 +3091,7 @@
                 </div>
                 <div x-show="periodError" class="px-4 py-2 rounded-xl text-sm" style="background:rgba(244,63,94,0.1);color:rgb(252,165,165)" x-text="periodError"></div>
                 <div x-show="periods.length===0" class="glass-card p-10 rounded-2xl flex flex-col items-center gap-3">
-                    <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-amber-400/70" style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.18)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+                    <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-amber-400/70" style="background:rgba(201,155,14,0.08);border:1px solid rgba(201,155,14,0.18)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
                     <span class="text-[11px] font-black uppercase tracking-widest text-slate-500" x-text="lang==='FR' ? 'Aucune période de paie.' : 'No pay periods yet.'"></span>
                 </div>
                 <template x-for="p in periods" :key="p.id">
@@ -3121,7 +3121,7 @@
                         </div>
                         <div x-show="p.lines && p.lines.length">
                             <table class="w-full text-xs mt-2">
-                                <thead><tr style="border-bottom:1px solid #253347">
+                                <thead><tr style="border-bottom:1px solid #2A2A72">
                                     <th class="text-left px-3 py-1.5 opacity-50" x-text="lang==='FR' ? 'Employé' : 'Employee'"></th>
                                     <th class="text-right px-3 py-1.5 opacity-50" x-text="lang==='FR' ? 'Brut' : 'Gross'"></th>
                                     <th class="text-right px-3 py-1.5 opacity-50">CNPS Sal.</th>
@@ -3130,7 +3130,7 @@
                                 </tr></thead>
                                 <tbody>
                                     <template x-for="l in p.lines" :key="l.id">
-                                        <tr style="border-bottom:1px solid #253347">
+                                        <tr style="border-bottom:1px solid #2A2A72">
                                             <td class="px-3 py-1.5 font-medium" x-text="l.employee?.name??'—'"></td>
                                             <td class="px-3 py-1.5 text-right opacity-70" x-text="fmtXaf(l.gross_salary)"></td>
                                             <td class="px-3 py-1.5 text-right text-red-400" x-text="fmtXaf(l.cnps_employee)"></td>
@@ -3185,7 +3185,7 @@
             <div x-show="loading" class="text-center opacity-50 py-6">...</div>
             <div x-show="!loading" class="glass rounded-2xl overflow-hidden">
                 <table class="w-full text-xs">
-                    <thead><tr style="border-bottom:1px solid #253347">
+                    <thead><tr style="border-bottom:1px solid #2A2A72">
                         <th class="text-left px-4 py-2.5 opacity-50" x-text="lang==='FR' ? 'Fournisseur' : 'Supplier'"></th>
                         <th class="text-left px-4 py-2.5 opacity-50">Nº</th>
                         <th class="text-right px-4 py-2.5 opacity-50">HT</th>
@@ -3195,7 +3195,7 @@
                     </tr></thead>
                     <tbody>
                         <template x-for="inv in invoices" :key="inv.id">
-                            <tr style="border-bottom:1px solid #253347" class="hover:bg-slate-800">
+                            <tr style="border-bottom:1px solid #2A2A72" class="hover:bg-slate-800">
                                 <td class="px-4 py-2.5 font-medium" x-text="inv.supplier?.name ?? '—'"></td>
                                 <td class="px-4 py-2.5 opacity-70" x-text="inv.invoice_number"></td>
                                 <td class="px-4 py-2.5 text-right opacity-70" x-text="fmtXaf(inv.amount_ht)"></td>
@@ -3211,7 +3211,7 @@
                     </tbody>
                 </table>
                 <div x-show="invoices.length===0" class="py-12 flex flex-col items-center gap-3">
-                    <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-amber-400/70" style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.18)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h14a2 2 0 0 0 2-2V7.5L14.5 2H6a2 2 0 0 0-2 2v4"/><polyline points="14 2 14 8 20 8"/><path d="M2 15h10"/><path d="m9 18 3-3-3-3"/></svg></div>
+                    <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-amber-400/70" style="background:rgba(201,155,14,0.08);border:1px solid rgba(201,155,14,0.18)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h14a2 2 0 0 0 2-2V7.5L14.5 2H6a2 2 0 0 0-2 2v4"/><polyline points="14 2 14 8 20 8"/><path d="M2 15h10"/><path d="m9 18 3-3-3-3"/></svg></div>
                     <span class="text-[11px] font-black uppercase tracking-widest text-slate-500" x-text="lang==='FR' ? 'Aucune facture fournisseur.' : 'No supplier invoices.'"></span>
                 </div>
             </div>
@@ -3259,7 +3259,7 @@
 
             <div x-show="!loading" class="glass rounded-2xl overflow-hidden">
                 <table class="w-full text-xs">
-                    <thead><tr style="border-bottom:1px solid #253347">
+                    <thead><tr style="border-bottom:1px solid #2A2A72">
                         <th class="text-left px-4 py-2.5 opacity-50" x-text="lang==='FR' ? 'Immobilisation' : 'Asset'"></th>
                         <th class="text-left px-4 py-2.5 opacity-50" x-text="lang==='FR' ? 'Catégorie' : 'Category'"></th>
                         <th class="text-right px-4 py-2.5 opacity-50" x-text="lang==='FR' ? 'Coût' : 'Cost'"></th>
@@ -3269,7 +3269,7 @@
                     </tr></thead>
                     <tbody>
                         <template x-for="a in assets" :key="a.id">
-                            <tr style="border-bottom:1px solid #253347" class="hover:bg-slate-800">
+                            <tr style="border-bottom:1px solid #2A2A72" class="hover:bg-slate-800">
                                 <td class="px-4 py-2.5 font-medium" x-text="a.name"></td>
                                 <td class="px-4 py-2.5 opacity-70" x-text="a.category"></td>
                                 <td class="px-4 py-2.5 text-right opacity-70" x-text="fmtXaf(a.acquisition_cost)"></td>
@@ -3284,7 +3284,7 @@
                     </tbody>
                 </table>
                 <div x-show="assets.length===0" class="py-12 flex flex-col items-center gap-3">
-                    <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-amber-400/70" style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.18)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg></div>
+                    <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-amber-400/70" style="background:rgba(201,155,14,0.08);border:1px solid rgba(201,155,14,0.18)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg></div>
                     <span class="text-[11px] font-black uppercase tracking-widest text-slate-500" x-text="lang==='FR' ? 'Aucune immobilisation enregistrée.' : 'No assets registered.'"></span>
                 </div>
             </div>
@@ -3314,7 +3314,7 @@
 
             <div class="glass rounded-2xl overflow-hidden">
                 <template x-for="s in sessions" :key="s.id">
-                    <div class="px-4 py-3 flex items-center justify-between" style="border-bottom:1px solid #253347">
+                    <div class="px-4 py-3 flex items-center justify-between" style="border-bottom:1px solid #2A2A72">
                         <div>
                             <div class="text-sm font-medium" x-text="s.bank_account_code + ' — ' + s.statement_date"></div>
                             <div class="text-xs opacity-50 mt-0.5" x-text="fmtXaf(s.statement_balance) + ' | Diff: ' + fmtXaf(s.difference)"></div>
@@ -3323,7 +3323,7 @@
                     </div>
                 </template>
                 <div x-show="sessions.length===0" class="py-12 flex flex-col items-center gap-3">
-                    <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-amber-400/70" style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.18)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M6 21V9a9 9 0 0 0 9 9"/></svg></div>
+                    <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-amber-400/70" style="background:rgba(201,155,14,0.08);border:1px solid rgba(201,155,14,0.18)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M6 21V9a9 9 0 0 0 9 9"/></svg></div>
                     <span class="text-[11px] font-black uppercase tracking-widest text-slate-500" x-text="lang==='FR' ? 'Aucune session de rapprochement.' : 'No reconciliation sessions.'"></span>
                 </div>
             </div>
@@ -3357,7 +3357,7 @@
                 </div>
                 <div x-show="variance" class="overflow-x-auto">
                     <table class="w-full text-xs">
-                        <thead><tr style="border-bottom:1px solid #253347">
+                        <thead><tr style="border-bottom:1px solid #2A2A72">
                             <th class="text-left px-3 py-1.5 opacity-50" x-text="lang==='FR' ? 'Compte' : 'Account'"></th>
                             <th class="text-right px-3 py-1.5 opacity-50" x-text="lang==='FR' ? 'Budgété' : 'Budgeted'"></th>
                             <th class="text-right px-3 py-1.5 opacity-50" x-text="lang==='FR' ? 'Réel' : 'Actual'"></th>
@@ -3366,7 +3366,7 @@
                         </tr></thead>
                         <tbody>
                             <template x-for="l in variance?.lines ?? []" :key="l.account_code">
-                                <tr style="border-bottom:1px solid #253347">
+                                <tr style="border-bottom:1px solid #2A2A72">
                                     <td class="px-3 py-1.5 font-mono" x-text="l.account_code"></td>
                                     <td class="px-3 py-1.5 text-right opacity-70" x-text="fmtXaf(l.total_budgeted)"></td>
                                     <td class="px-3 py-1.5 text-right opacity-70" x-text="fmtXaf(l.total_actual)"></td>
@@ -3381,7 +3381,7 @@
 
             <div class="glass rounded-2xl overflow-hidden">
                 <template x-for="b in budgets" :key="b.id">
-                    <div class="px-4 py-3 flex items-center justify-between cursor-pointer hover:bg-slate-800" @click="loadVariance(b)" style="border-bottom:1px solid #253347">
+                    <div class="px-4 py-3 flex items-center justify-between cursor-pointer hover:bg-slate-800" @click="loadVariance(b)" style="border-bottom:1px solid #2A2A72">
                         <div>
                             <div class="text-sm font-medium" x-text="b.name"></div>
                             <div class="text-xs opacity-50 mt-0.5" x-text="b.fiscal_year + ' — ' + b.status"></div>
@@ -3390,7 +3390,7 @@
                     </div>
                 </template>
                 <div x-show="budgets.length===0" class="py-12 flex flex-col items-center gap-3">
-                    <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-amber-400/70" style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.18)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg></div>
+                    <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-amber-400/70" style="background:rgba(201,155,14,0.08);border:1px solid rgba(201,155,14,0.18)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg></div>
                     <span class="text-[11px] font-black uppercase tracking-widest text-slate-500" x-text="lang==='FR' ? 'Aucun budget créé.' : 'No budgets yet.'"></span>
                 </div>
             </div>
@@ -3436,7 +3436,7 @@
                     <div x-show="tvaData" class="text-xs space-y-1">
                         <div class="flex justify-between"><span class="opacity-50">TVA Collectée</span><span class="text-yellow-400 font-bold" x-text="fmtXaf(tvaData?.tva_collectee)"></span></div>
                         <div class="flex justify-between"><span class="opacity-50">TVA Déductible</span><span class="text-emerald-400 font-bold" x-text="fmtXaf(tvaData?.tva_deductible)"></span></div>
-                        <div class="flex justify-between border-t pt-1" style="border-color:#253347"><span class="font-bold" x-text="lang==='FR' ? 'TVA Nette Due' : 'Net TVA Due'"></span><span class="text-red-400 font-bold" x-text="fmtXaf(tvaData?.tva_nette_due)"></span></div>
+                        <div class="flex justify-between border-t pt-1" style="border-color:#2A2A72"><span class="font-bold" x-text="lang==='FR' ? 'TVA Nette Due' : 'Net TVA Due'"></span><span class="text-red-400 font-bold" x-text="fmtXaf(tvaData?.tva_nette_due)"></span></div>
                         <div class="flex justify-between"><span class="opacity-50">CAC (10% TVA)</span><span class="text-red-400" x-text="fmtXaf(tvaData?.cac_net_du)"></span></div>
                         <div class="flex justify-between bg-white/5 rounded-lg px-2 py-1 mt-1"><span class="font-bold">Total à Payer</span><span class="text-red-400 font-bold text-sm" x-text="fmtXaf(tvaData?.total_a_payer)"></span></div>
                     </div>
@@ -3454,7 +3454,7 @@
             </div>
             <div class="glass rounded-2xl overflow-hidden">
                 <table class="w-full text-xs">
-                    <thead><tr style="border-bottom:1px solid #253347">
+                    <thead><tr style="border-bottom:1px solid #2A2A72">
                         <th class="text-left px-4 py-2.5 opacity-50" x-text="lang==='FR' ? 'Date' : 'Date'"></th>
                         <th class="text-left px-4 py-2.5 opacity-50" x-text="lang==='FR' ? 'Utilisateur' : 'User'"></th>
                         <th class="text-left px-4 py-2.5 opacity-50" x-text="lang==='FR' ? 'Action' : 'Action'"></th>
@@ -3462,7 +3462,7 @@
                     </tr></thead>
                     <tbody>
                         <template x-for="log in logs" :key="log.id">
-                            <tr style="border-bottom:1px solid #253347" class="hover:bg-slate-800">
+                            <tr style="border-bottom:1px solid #2A2A72" class="hover:bg-slate-800">
                                 <td class="px-4 py-2 opacity-60 whitespace-nowrap" x-text="log.created_at?.substring(0,19).replace('T',' ')"></td>
                                 <td class="px-4 py-2 font-medium" x-text="log.user?.name ?? '—'"></td>
                                 <td class="px-4 py-2 font-mono text-sky-300" x-text="log.action"></td>
@@ -3472,7 +3472,7 @@
                     </tbody>
                 </table>
                 <div x-show="logs.length===0 && !loading" class="py-12 flex flex-col items-center gap-3">
-                    <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-amber-400/70" style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.18)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+                    <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-amber-400/70" style="background:rgba(201,155,14,0.08);border:1px solid rgba(201,155,14,0.18)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
                     <span class="text-[11px] font-black uppercase tracking-widest text-slate-500" x-text="lang==='FR' ? 'Aucune activité enregistrée.' : 'No audit activity recorded.'"></span>
                 </div>
                 <div x-show="loading" class="text-center py-8 opacity-40 text-sm">...</div>
@@ -3557,14 +3557,14 @@
 
             <div class="glass rounded-2xl overflow-hidden" style="max-height:60vh;overflow-y:auto">
                 <table class="w-full text-xs">
-                    <thead class="sticky top-0" style="background:rgba(15,23,42,0.95)"><tr style="border-bottom:1px solid #253347">
+                    <thead class="sticky top-0" style="background:rgba(15,23,42,0.95)"><tr style="border-bottom:1px solid #2A2A72">
                         <th class="text-left px-4 py-2.5 opacity-50" x-text="lang==='FR' ? 'Code' : 'Code'"></th>
                         <th class="text-left px-4 py-2.5 opacity-50" x-text="lang==='FR' ? 'Intitulé' : 'Label'"></th>
                         <th class="text-center px-4 py-2.5 opacity-50" x-text="lang==='FR' ? 'Cl.' : 'Cl.'"></th>
                     </tr></thead>
                     <tbody>
                         <template x-for="a in filtered" :key="a.id">
-                            <tr style="border-bottom:1px solid #253347" class="hover:bg-slate-800">
+                            <tr style="border-bottom:1px solid #2A2A72" class="hover:bg-slate-800">
                                 <td class="px-4 py-1.5 font-mono text-sky-300" x-text="a.code"></td>
                                 <td class="px-4 py-1.5 opacity-80" x-text="a.label"></td>
                                 <td class="px-4 py-1.5 text-center opacity-50" x-text="a.class_digit"></td>
@@ -3573,7 +3573,7 @@
                     </tbody>
                 </table>
                 <div x-show="filtered.length===0" class="py-12 flex flex-col items-center gap-3">
-                    <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-amber-400/70" style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.18)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div>
+                    <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-amber-400/70" style="background:rgba(201,155,14,0.08);border:1px solid rgba(201,155,14,0.18)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div>
                     <span class="text-[11px] font-black uppercase tracking-widest text-slate-500" x-text="lang==='FR' ? 'Aucun compte trouvé.' : 'No accounts found.'"></span>
                 </div>
             </div>
@@ -3629,7 +3629,7 @@
                     </tr></thead>
                     <tbody>
                         <template x-for="q in quotations" :key="q.id">
-                            <tr style="border-bottom:1px solid #253347" class="hover:bg-slate-800">
+                            <tr style="border-bottom:1px solid #2A2A72" class="hover:bg-slate-800">
                                 <td class="px-4 py-2 font-mono text-sky-300 text-xs" x-text="q.quotation_number"></td>
                                 <td class="px-4 py-2 text-xs" x-text="q.customer?.name ?? '—'"></td>
                                 <td class="px-4 py-2 text-xs opacity-70" x-text="q.quotation_date"></td>
@@ -3645,7 +3645,7 @@
                         </template>
                         <tr x-show="quotations.length===0"><td colspan="6" class="text-center py-12">
                             <div class="flex flex-col items-center gap-3">
-                                <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-amber-400/70" style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.18)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+                                <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-amber-400/70" style="background:rgba(201,155,14,0.08);border:1px solid rgba(201,155,14,0.18)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
                                 <span class="text-[11px] font-black uppercase tracking-widest text-slate-500" x-text="lang==='FR' ? 'Aucun devis.' : 'No quotations.'"></span>
                             </div>
                         </td></tr>
@@ -3702,7 +3702,7 @@
                     </tr></thead>
                     <tbody>
                         <template x-for="po in orders" :key="po.id">
-                            <tr style="border-bottom:1px solid #253347" class="hover:bg-slate-800">
+                            <tr style="border-bottom:1px solid #2A2A72" class="hover:bg-slate-800">
                                 <td class="px-4 py-2 font-mono text-sky-300 text-xs" x-text="po.po_number"></td>
                                 <td class="px-4 py-2 text-xs" x-text="po.supplier?.name ?? '—'"></td>
                                 <td class="px-4 py-2 text-xs opacity-70" x-text="po.order_date"></td>
@@ -3714,7 +3714,7 @@
                         </template>
                         <tr x-show="orders.length===0"><td colspan="5" class="text-center py-12">
                             <div class="flex flex-col items-center gap-3">
-                                <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-amber-400/70" style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.18)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></div>
+                                <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-amber-400/70" style="background:rgba(201,155,14,0.08);border:1px solid rgba(201,155,14,0.18)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></div>
                                 <span class="text-[11px] font-black uppercase tracking-widest text-slate-500" x-text="lang==='FR' ? 'Aucun bon de commande.' : 'No purchase orders.'"></span>
                             </div>
                         </td></tr>
@@ -3798,7 +3798,7 @@
                     </tr></thead>
                     <tbody>
                         <template x-for="p in records" :key="p.id">
-                            <tr style="border-bottom:1px solid #253347" class="hover:bg-slate-800">
+                            <tr style="border-bottom:1px solid #2A2A72" class="hover:bg-slate-800">
                                 <td class="px-4 py-2 font-semibold" x-text="p.tax_year"></td>
                                 <td class="px-4 py-2 text-xs font-mono opacity-70" x-text="p.patente_number ?? '—'"></td>
                                 <td class="px-4 py-2 text-right text-xs" x-text="Number(p.amount_due_xaf).toLocaleString('fr-CM') + ' XAF'"></td>
@@ -3813,7 +3813,7 @@
                         </template>
                         <tr x-show="records.length===0"><td colspan="6" class="text-center py-12">
                             <div class="flex flex-col items-center gap-3">
-                                <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-amber-400/70" style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.18)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg></div>
+                                <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-amber-400/70" style="background:rgba(201,155,14,0.08);border:1px solid rgba(201,155,14,0.18)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg></div>
                                 <span class="text-[11px] font-black uppercase tracking-widest text-slate-500" x-text="lang==='FR' ? 'Aucun enregistrement.' : 'No records.'"></span>
                             </div>
                         </td></tr>
@@ -3893,7 +3893,7 @@
                 </div>
                 <div style="overflow-x:auto">
                     <table class="w-full text-sm">
-                        <thead><tr style="border-bottom:1px solid #253347">
+                        <thead><tr style="border-bottom:1px solid #2A2A72">
                             <th class="text-left px-3 py-2 opacity-50" x-text="lang==='FR' ? 'Code' : 'Code'"></th>
                             <th class="text-left px-3 py-2 opacity-50" x-text="lang==='FR' ? 'Désignation' : 'Product'"></th>
                             <th class="text-left px-3 py-2 opacity-50" x-text="lang==='FR' ? 'Compte' : 'Account'"></th>
@@ -3902,7 +3902,7 @@
                         </tr></thead>
                         <tbody>
                             <template x-for="item in valuation" :key="item.product_code">
-                                <tr style="border-bottom:1px solid #253347" class="hover:bg-slate-800 cursor-pointer" @click="loadLedger(item.product_code)">
+                                <tr style="border-bottom:1px solid #2A2A72" class="hover:bg-slate-800 cursor-pointer" @click="loadLedger(item.product_code)">
                                     <td class="px-3 py-1.5 font-mono text-sky-300" x-text="item.product_code"></td>
                                     <td class="px-3 py-1.5" x-text="item.product_name"></td>
                                     <td class="px-3 py-1.5 font-mono opacity-60" x-text="item.account_code"></td>
@@ -3912,7 +3912,7 @@
                             </template>
                             <tr x-show="valuation.length===0"><td colspan="5" class="text-center py-12">
                                 <div class="flex flex-col items-center gap-3">
-                                    <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-amber-400/70" style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.18)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></div>
+                                    <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-amber-400/70" style="background:rgba(201,155,14,0.08);border:1px solid rgba(201,155,14,0.18)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></div>
                                     <span class="text-[11px] font-black uppercase tracking-widest text-slate-500" x-text="lang==='FR' ? 'Aucun stock enregistré.' : 'No stock recorded.'"></span>
                                 </div>
                             </td></tr>
@@ -3931,7 +3931,7 @@
                 </div>
                 <div style="overflow-x:auto">
                     <table class="w-full text-xs">
-                        <thead><tr style="border-bottom:1px solid #253347">
+                        <thead><tr style="border-bottom:1px solid #2A2A72">
                             <th class="text-left px-3 py-2 opacity-50">Date</th>
                             <th class="text-left px-3 py-2 opacity-50">Type</th>
                             <th class="text-left px-3 py-2 opacity-50">Réf.</th>
@@ -3942,7 +3942,7 @@
                         </tr></thead>
                         <tbody>
                             <template x-for="m in ledger.movements" :key="m.id">
-                                <tr style="border-bottom:1px solid #253347">
+                                <tr style="border-bottom:1px solid #2A2A72">
                                     <td class="px-3 py-1" x-text="m.movement_date"></td>
                                     <td class="px-3 py-1" :class="m.movement_type==='IN' ? 'text-emerald-400' : m.movement_type==='OUT' ? 'text-rose-400' : 'text-amber-400'" x-text="m.movement_type"></td>
                                     <td class="px-3 py-1 opacity-60" x-text="m.reference ?? '—'"></td>
@@ -4001,7 +4001,7 @@
                 <template x-for="v in [['pipeline','Pipeline'],['list', lang==='FR'?'Liste':'List'],['activities', lang==='FR'?'Activités':'Activities']]" :key="v[0]">
                     <button @click="view=v[0]"
                             class="px-4 py-2 rounded-xl text-[11px] font-black uppercase tracking-wider transition-all"
-                            :style="view===v[0] ? 'background:rgba(245,158,11,0.15);color:#F59E0B;border:1px solid rgba(245,158,11,0.4)' : 'background:#1C2A3A;color:#94a3b8;border:1px solid #253347'"
+                            :style="view===v[0] ? 'background:rgba(201,155,14,0.15);color:#C99B0E;border:1px solid rgba(201,155,14,0.4)' : 'background:#030363;color:#94a3b8;border:1px solid #2A2A72'"
                             x-text="v[1]"></button>
                 </template>
             </div>
@@ -4030,7 +4030,7 @@
                                                     <option :value="c.key" x-show="c.key!==lead.status" x-text="c.label"></option>
                                                 </template>
                                             </select>
-                                            <button @click="openActivity(lead)" :title="lang==='FR'?'Activité':'Activity'" class="p-1.5 rounded-lg text-slate-400 hover:text-white" style="background:#151F2E">
+                                            <button @click="openActivity(lead)" :title="lang==='FR'?'Activité':'Activity'" class="p-1.5 rounded-lg text-slate-400 hover:text-white" style="background:#02014D">
                                                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                                             </button>
                                             <a :href="waLink(lead)" target="_blank" x-show="lead.contact_phone" title="WhatsApp" class="p-1.5 rounded-lg text-emerald-400 hover:text-emerald-300" style="background:rgba(16,185,129,0.1)">
@@ -4051,7 +4051,7 @@
 
             <!-- LIST -->
             <div x-show="view==='list'" class="glass-card rounded-2xl overflow-hidden">
-                <div class="flex flex-wrap gap-2 p-3 border-b" style="border-color:#253347">
+                <div class="flex flex-wrap gap-2 p-3 border-b" style="border-color:#2A2A72">
                     <input x-model="search" @input.debounce.400ms="load()" class="input-field text-xs flex-1 min-w-[160px]" :placeholder="lang==='FR'?'Rechercher…':'Search…'">
                     <select x-model="filterStatus" @change="load()" class="input-field text-xs">
                         <option value="" x-text="lang==='FR'?'Tous statuts':'All statuses'"></option>
@@ -4060,7 +4060,7 @@
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-xs">
-                        <thead><tr class="text-[9px] font-black uppercase tracking-widest text-slate-500" style="border-bottom:1px solid #253347">
+                        <thead><tr class="text-[9px] font-black uppercase tracking-widest text-slate-500" style="border-bottom:1px solid #2A2A72">
                             <th class="py-2.5 px-4">Contact</th><th class="py-2.5 px-3" x-text="lang==='FR'?'Entreprise':'Company'"></th>
                             <th class="py-2.5 px-3" x-text="lang==='FR'?'Valeur':'Value'"></th><th class="py-2.5 px-3">Source</th>
                             <th class="py-2.5 px-3" x-text="lang==='FR'?'Statut':'Status'"></th><th class="py-2.5 px-3"></th>
@@ -4088,8 +4088,8 @@
             <!-- ACTIVITIES -->
             <div x-show="view==='activities'" class="glass-card rounded-2xl p-5 space-y-3">
                 <template x-for="a in activities" :key="a.id">
-                    <div class="flex items-start gap-3 pb-3 border-b" style="border-color:#253347">
-                        <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 text-amber-400" style="background:rgba(245,158,11,0.1)">
+                    <div class="flex items-start gap-3 pb-3 border-b" style="border-color:#2A2A72">
+                        <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 text-amber-400" style="background:rgba(201,155,14,0.1)">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                         </div>
                         <div class="flex-1 min-w-0">
@@ -4180,7 +4180,7 @@
                                 <div class="text-[11px] text-slate-400 truncate"><span x-text="p.client?.name || (lang==='FR'?'Sans client':'No client')"></span></div>
                             </div>
                             <div class="flex flex-col items-end gap-1 shrink-0">
-                                <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest text-amber-400" style="background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.3)" x-text="p.code"></span>
+                                <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest text-amber-400" style="background:rgba(201,155,14,0.12);border:1px solid rgba(201,155,14,0.3)" x-text="p.code"></span>
                                 <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase" :style="statusBadge(p.status)" x-text="p.status"></span>
                             </div>
                         </div>
@@ -4190,8 +4190,8 @@
                                 <span x-text="lang==='FR'?'Coûts / Budget':'Costs / Budget'"></span>
                                 <span x-text="fmtXaf(p.costs)+' / '+fmtXaf(p.budget_amount)"></span>
                             </div>
-                            <div class="h-2 rounded-full overflow-hidden" style="background:#1C2A3A">
-                                <div class="h-full rounded-full" :style="'width:'+Math.min(100,(p.budget_amount? p.costs/p.budget_amount*100:0))+'%;background:'+(p.costs>p.budget_amount?'rgb(244,63,94)':'rgb(245,158,11)')"></div>
+                            <div class="h-2 rounded-full overflow-hidden" style="background:#030363">
+                                <div class="h-full rounded-full" :style="'width:'+Math.min(100,(p.budget_amount? p.costs/p.budget_amount*100:0))+'%;background:'+(p.costs>p.budget_amount?'rgb(244,63,94)':'rgb(201,155,14)')"></div>
                             </div>
                         </div>
                         <div class="grid grid-cols-3 gap-2 pt-1">
@@ -4203,7 +4203,7 @@
                 </template>
             </div>
             <div x-show="projects.length===0" class="glass-card rounded-2xl py-16 flex flex-col items-center gap-3">
-                <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-amber-400/70" style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.18)">
+                <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-amber-400/70" style="background:rgba(201,155,14,0.08);border:1px solid rgba(201,155,14,0.18)">
                     <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
                 </div>
                 <p class="text-[11px] font-black uppercase tracking-widest text-slate-500" x-text="lang==='FR'?'Aucun projet':'No projects'"></p>
@@ -4242,12 +4242,12 @@
                     </div>
                     <!-- KPIs -->
                     <div class="grid grid-cols-3 gap-3">
-                        <div class="rounded-xl p-3" style="background:#151F2E"><div class="text-[9px] uppercase tracking-widest text-slate-500" x-text="lang==='FR'?'Revenus':'Revenue'"></div><div class="text-sm font-black text-white" x-text="fmtXaf(detail?.project?.revenue)"></div></div>
-                        <div class="rounded-xl p-3" style="background:#151F2E"><div class="text-[9px] uppercase tracking-widest text-slate-500" x-text="lang==='FR'?'Coûts':'Costs'"></div><div class="text-sm font-black text-white" x-text="fmtXaf(detail?.project?.costs)"></div></div>
-                        <div class="rounded-xl p-3" style="background:#151F2E"><div class="text-[9px] uppercase tracking-widest text-slate-500" x-text="lang==='FR'?'Bénéfice':'Profit'"></div><div class="text-sm font-black" :class="(detail?.project?.profit>=0)?'text-emerald-400':'text-red-400'" x-text="fmtXaf(detail?.project?.profit)+' ('+(detail?.project?.margin)+'%)'"></div></div>
+                        <div class="rounded-xl p-3" style="background:#02014D"><div class="text-[9px] uppercase tracking-widest text-slate-500" x-text="lang==='FR'?'Revenus':'Revenue'"></div><div class="text-sm font-black text-white" x-text="fmtXaf(detail?.project?.revenue)"></div></div>
+                        <div class="rounded-xl p-3" style="background:#02014D"><div class="text-[9px] uppercase tracking-widest text-slate-500" x-text="lang==='FR'?'Coûts':'Costs'"></div><div class="text-sm font-black text-white" x-text="fmtXaf(detail?.project?.costs)"></div></div>
+                        <div class="rounded-xl p-3" style="background:#02014D"><div class="text-[9px] uppercase tracking-widest text-slate-500" x-text="lang==='FR'?'Bénéfice':'Profit'"></div><div class="text-sm font-black" :class="(detail?.project?.profit>=0)?'text-emerald-400':'text-red-400'" x-text="fmtXaf(detail?.project?.profit)+' ('+(detail?.project?.margin)+'%)'"></div></div>
                     </div>
                     <!-- Add entry -->
-                    <div class="rounded-xl p-3 space-y-2" style="background:#151F2E;border:1px solid #253347">
+                    <div class="rounded-xl p-3 space-y-2" style="background:#02014D;border:1px solid #2A2A72">
                         <div class="text-[10px] font-black uppercase tracking-widest text-amber-400" x-text="lang==='FR'?'Ajouter une ligne':'Add entry'"></div>
                         <div class="grid grid-cols-2 gap-2">
                             <select x-model="entryForm.direction" class="input-field text-xs">
@@ -4271,7 +4271,7 @@
                         <div class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2" x-text="lang==='FR'?'Transactions':'Transactions'"></div>
                         <div class="space-y-1 max-h-52 overflow-y-auto">
                             <template x-for="e in (detail?.entries||[])" :key="e.id">
-                                <div class="flex items-center justify-between text-xs py-1.5 px-2 rounded-lg" style="background:#151F2E">
+                                <div class="flex items-center justify-between text-xs py-1.5 px-2 rounded-lg" style="background:#02014D">
                                     <span class="text-slate-300 truncate flex-1" x-text="e.description"></span>
                                     <span class="text-[9px] uppercase tracking-wider text-slate-500 mx-2" x-text="e.entry_type"></span>
                                     <span class="font-black shrink-0" :class="e.amount>=0?'text-emerald-400':'text-red-400'" x-text="fmtXaf(e.amount)"></span>
@@ -4290,16 +4290,16 @@
         <div x-show="page==='ai-assistant'" x-cloak class="p-6 float-in flex flex-col" style="height:calc(100vh - 0px)" x-data="aiPanel()" x-init="init()">
             <div class="flex items-center justify-between gap-3 mb-4">
                 <div class="flex items-center gap-2">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgb(245,158,11)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 4.6L18.5 9.5l-4.6 1.9L12 16l-1.9-4.6L5.5 9.5l4.6-1.9L12 3z"/></svg>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgb(201,155,14)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 4.6L18.5 9.5l-4.6 1.9L12 16l-1.9-4.6L5.5 9.5l4.6-1.9L12 3z"/></svg>
                     <h2 class="text-2xl font-black text-white uppercase tracking-wide" x-text="lang==='FR'?'Assistant IA':'AI Assistant'"></h2>
                 </div>
                 <span class="px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-widest"
-                      :style="aiStatus.mode==='online' ? 'background:rgba(16,185,129,0.2);color:rgb(110,231,183);border:1px solid rgba(16,185,129,0.3)' : aiStatus.mode==='offline' ? 'background:rgba(245,158,11,0.2);color:#E3B420;border:1px solid rgba(245,158,11,0.3)' : 'background:rgba(100,116,139,0.2);color:rgb(148,163,184);border:1px solid rgba(100,116,139,0.3)'"
+                      :style="aiStatus.mode==='online' ? 'background:rgba(16,185,129,0.2);color:rgb(110,231,183);border:1px solid rgba(16,185,129,0.3)' : aiStatus.mode==='offline' ? 'background:rgba(201,155,14,0.2);color:#E3B420;border:1px solid rgba(201,155,14,0.3)' : 'background:rgba(100,116,139,0.2);color:rgb(148,163,184);border:1px solid rgba(100,116,139,0.3)'"
                       x-text="aiStatus.mode==='online'?'IA: En ligne':(aiStatus.mode==='offline'?'IA: Hors ligne':(lang==='FR'?'IA: Indisponible':'AI: Unavailable'))"></span>
             </div>
 
             <!-- Unavailable banner -->
-            <div x-show="aiStatus.mode==='unavailable'" x-cloak class="glass-card rounded-xl p-4 mb-4 text-xs text-slate-300" style="border-color:rgba(245,158,11,0.3)">
+            <div x-show="aiStatus.mode==='unavailable'" x-cloak class="glass-card rounded-xl p-4 mb-4 text-xs text-slate-300" style="border-color:rgba(201,155,14,0.3)">
                 <span x-text="lang==='FR' ? 'IA non configurée. Ajoutez une clé API Gemini dans Paramètres › IA pour activer l\'assistant.' : 'AI not configured. Add a Gemini API key in Settings › AI to enable the assistant.'"></span>
                 <button @click="setPage('settings')" class="text-amber-400 font-black uppercase tracking-wider ml-1" x-text="lang==='FR'?'Configurer →':'Configure →'"></button>
             </div>
@@ -4310,7 +4310,7 @@
                     <template x-for="(m,i) in messages" :key="i">
                         <div :class="m.role==='user' ? 'flex justify-end' : 'flex justify-start'">
                             <div class="max-w-[80%] px-4 py-2.5 rounded-2xl text-sm"
-                                 :style="m.role==='user' ? 'background:rgba(245,158,11,0.18);border:1px solid rgba(245,158,11,0.3);color:#fff' : 'background:#1C2A3A;border:1px solid #253347;color:rgb(226,232,240)'">
+                                 :style="m.role==='user' ? 'background:rgba(201,155,14,0.18);border:1px solid rgba(201,155,14,0.3);color:#fff' : 'background:#030363;border:1px solid #2A2A72;color:rgb(226,232,240)'">
                                 <div x-text="m.text" style="white-space:pre-wrap"></div>
                                 <template x-if="m.figures && m.figures.length">
                                     <div class="mt-2 space-y-1">
@@ -4322,15 +4322,15 @@
                             </div>
                         </div>
                     </template>
-                    <div x-show="thinking" class="flex justify-start"><div class="px-4 py-2.5 rounded-2xl text-sm" style="background:#1C2A3A;border:1px solid #253347"><span class="text-slate-400">…</span></div></div>
+                    <div x-show="thinking" class="flex justify-start"><div class="px-4 py-2.5 rounded-2xl text-sm" style="background:#030363;border:1px solid #2A2A72"><span class="text-slate-400">…</span></div></div>
                     <!-- Suggested chips (empty state) -->
                     <div x-show="messages.length===0 && aiStatus.mode!=='unavailable'" class="flex flex-wrap gap-2 pt-2">
                         <template x-for="q in chips" :key="q">
-                            <button @click="send(q)" class="px-3 py-2 rounded-xl text-xs text-left" style="background:#151F2E;border:1px solid #253347" x-text="q"></button>
+                            <button @click="send(q)" class="px-3 py-2 rounded-xl text-xs text-left" style="background:#02014D;border:1px solid #2A2A72" x-text="q"></button>
                         </template>
                     </div>
                 </div>
-                <div class="p-3 border-t flex gap-2" style="border-color:#253347">
+                <div class="p-3 border-t flex gap-2" style="border-color:#2A2A72">
                     <input x-model="input" @keydown.enter="send()" :disabled="aiStatus.mode==='unavailable'||thinking" class="input-field flex-1" :placeholder="lang==='FR'?'Posez une question sur vos finances…':'Ask about your finances…'">
                     <button @click="send()" :disabled="aiStatus.mode==='unavailable'||thinking" class="glass-btn-amber px-5 rounded-xl text-xs uppercase tracking-widest disabled:opacity-40" x-text="lang==='FR'?'Envoyer':'Send'"></button>
                 </div>
@@ -4343,7 +4343,7 @@
         <div x-show="page==='api-keys'" x-cloak class="p-6 space-y-5 float-in" x-data="apiKeysPanel()" x-init="init()">
             <div class="flex items-center justify-between gap-3 flex-wrap">
                 <div class="flex items-center gap-2">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C99B0E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
                     <h2 class="text-2xl font-black text-white uppercase tracking-wide" x-text="lang==='FR' ? 'Clés API' : 'API Keys'"></h2>
                 </div>
                 <div class="flex gap-2">
@@ -4358,7 +4358,7 @@
             <!-- New key created — show once -->
             <div x-show="newKey" class="glass-card rounded-2xl p-5 border border-amber-500/40 bg-amber-900/10 space-y-3">
                 <div class="flex items-center gap-2">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C99B0E" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                     <span class="text-amber-400 text-xs font-bold uppercase tracking-widest" x-text="lang==='FR' ? 'Copiez cette clé maintenant — elle ne sera plus visible' : 'Copy this key now — it will not be shown again'"></span>
                 </div>
                 <div class="flex gap-2 items-center">
