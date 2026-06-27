@@ -248,7 +248,34 @@
     </button>
 </div>
 
-<x-firm-bar />
+<!-- Firm accountant context bar -->
+<div x-show="firm && user?.role === 'FIRM_ACCOUNTANT'" x-cloak style="background:linear-gradient(90deg,#1C2A3A 0%,#162133 100%);border-bottom:1px solid #334155;padding:0.45rem 1.5rem;display:flex;align-items:center;gap:0.75rem;font-size:0.8rem;position:relative;z-index:39">
+    <span style="color:#F59E0B;font-weight:700;white-space:nowrap">🏢</span>
+    <span style="color:#8B9EC0;white-space:nowrap" x-text="firm?.name"></span>
+    <span style="color:#4E647E">·</span>
+    <span style="color:#F0F4FA;font-weight:600;white-space:nowrap" x-text="company?.name"></span>
+    <span style="flex:1"></span>
+    {{-- Quick client switcher --}}
+    <div style="position:relative" x-data>
+        <button @click="firmSwitcherOpen = !firmSwitcherOpen" style="background:var(--c-raised,#1C2A3A);border:1px solid #334155;color:#8B9EC0;padding:0.2rem 0.6rem;border-radius:0.375rem;cursor:pointer;font-size:0.75rem;display:flex;align-items:center;gap:0.35rem">
+            Changer de client
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+        <div x-show="firmSwitcherOpen" @click.outside="firmSwitcherOpen = false" style="position:absolute;right:0;top:calc(100% + 4px);background:#151F2E;border:1px solid #253347;border-radius:0.5rem;min-width:220px;max-height:280px;overflow-y:auto;z-index:100;box-shadow:0 8px 24px rgba(0,0,0,0.5)">
+            <template x-for="client in firmPortfolio" :key="client.id">
+                <button @click="switchFirmClient(client.id)"
+                    :style="client.id === company?.id ? 'background:#1C2A3A' : ''"
+                    style="display:block;width:100%;text-align:left;padding:0.5rem 0.875rem;font-size:0.8rem;border:none;cursor:pointer;color:#F0F4FA;transition:background 0.1s"
+                    onmouseover="this.style.background='#1C2A3A'" onmouseout="this.style.background=''">
+                    <span x-text="client.name"></span>
+                    <span x-show="client.id === company?.id" style="color:#F59E0B;font-size:0.65rem;margin-left:0.35rem">✓</span>
+                </button>
+            </template>
+            <div x-show="firmPortfolio.length === 0" style="padding:0.75rem;color:#4E647E;font-size:0.8rem">Aucun client</div>
+        </div>
+    </div>
+    <a href="/firm" style="color:#F59E0B;text-decoration:none;border:1px solid rgba(245,158,11,0.3);padding:0.2rem 0.75rem;border-radius:0.375rem;white-space:nowrap;font-size:0.75rem" onmouseover="this.style.background='rgba(245,158,11,0.1)'" onmouseout="this.style.background='transparent'">Portefeuille →</a>
+</div>
 
 <!-- Global toast notifications -->
 <div x-data="toastManager()" @toast.window="addToast($event.detail)"
@@ -294,7 +321,7 @@
 </div>
 
 <!-- ── Layout ──────────────────────────────────────────────────────── -->
-<div class="flex relative z-10" :class="impersonation ? 'h-[calc(100vh-2.5rem)]' : 'h-screen'">
+<div class="flex relative z-10" :class="impersonation && firm && user?.role==='FIRM_ACCOUNTANT' ? 'h-[calc(100vh-5rem)]' : impersonation ? 'h-[calc(100vh-2.5rem)]' : firm && user?.role==='FIRM_ACCOUNTANT' ? 'h-[calc(100vh-2.5rem)]' : 'h-screen'">
 
     <!-- Mobile drawer overlay -->
     <div class="sidebar-overlay" :class="{ 'is-open': sidebarOpen }" @click="sidebarOpen = false"></div>
@@ -4758,6 +4785,9 @@ function opesApp() {
         },
 
         mustEnable2fa: false,
+        firm: null,
+        firmPortfolio: [],
+        firmSwitcherOpen: false,
         async loadMe() {
             const data = await this.api('auth/me');
             this.user    = data.user;
@@ -4768,6 +4798,27 @@ function opesApp() {
                 // Refresh KPI totals from trial balance
                 this.loadDashboardKpis();
             }
+            // Load firm context for FIRM_ACCOUNTANT users
+            if (this.user?.role === 'FIRM_ACCOUNTANT') {
+                this.loadFirmContext();
+            }
+        },
+        async loadFirmContext() {
+            try {
+                const [meData, portData] = await Promise.all([
+                    this.api('firm/me'),
+                    this.api('firm/portfolio'),
+                ]);
+                this.firm = meData.firm;
+                this.firmPortfolio = portData.clients ?? [];
+            } catch(e) {}
+        },
+        async switchFirmClient(clientId) {
+            this.firmSwitcherOpen = false;
+            try {
+                await this.api(`firm/clients/${clientId}/open`, { method:'POST', body:'{}' });
+                window.location.reload();
+            } catch(e) { window.opesToast && window.opesToast('error', 'Erreur', e.message); }
         },
 
         async loadDashboardKpis() {
