@@ -166,6 +166,18 @@
                             </div>
                             <div class="text-slate-400 font-medium normal-case tracking-normal mt-0.5">admin@opesbooks.cm</div>
                         </button>
+                        <button type="button"
+                                @click="loginForm.email='cabinet@demo.cm'; loginForm.password='demo1234'"
+                                class="col-span-2 px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider text-left transition-all"
+                                style="background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.3);position:relative;overflow:hidden">
+                            <div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(245,158,11,0.04) 0%,transparent 100%)"></div>
+                            <div class="text-amber-400 flex items-center gap-1.5 relative">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                                Cabinet Comptable — Demo Enterprise
+                                <span style="background:rgba(245,158,11,0.2);color:#F59E0B;font-size:0.55rem;padding:0.1rem 0.35rem;border-radius:3px;margin-left:auto">NOUVEAU</span>
+                            </div>
+                            <div class="text-slate-400 font-medium normal-case tracking-normal mt-0.5 relative">cabinet@demo.cm · Gère 4 sociétés clientes</div>
+                        </button>
                     </div>
                     <p class="text-[10px] text-slate-600 text-center mt-1.5">
                         <span x-show="lang === 'FR'">Cliquez un rôle pour remplir automatiquement</span>

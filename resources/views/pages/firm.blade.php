@@ -145,6 +145,7 @@
         <button class="tab-btn" :class="tab==='tasks' && 'active'" @click="tab='tasks';loadTasks()">Tâches & Délais</button>
         <button class="tab-btn" :class="tab==='reports' && 'active'" @click="tab='reports';loadReport()">Rapports</button>
         <button class="tab-btn" :class="tab==='team' && 'active'" @click="tab='team';loadStaff()">Équipe</button>
+        <button class="tab-btn" :class="tab==='settings' && 'active'" @click="tab='settings'">Paramètres</button>
     </div>
 
     {{-- ── Tab: Portefeuille ──────────────────────────────────────────── --}}
@@ -373,6 +374,79 @@
             </table>
         </div>
     </div>
+
+    {{-- ── Tab: Paramètres du Cabinet ──────────────────────────────── --}}
+    <div x-show="tab === 'settings'">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;max-width:800px" class="settings-grid">
+            {{-- Firm info card --}}
+            <div class="card" style="padding:1.5rem;grid-column:1/-1">
+                <h3 style="font-size:0.95rem;font-weight:600;margin-bottom:1.25rem">Informations du Cabinet</h3>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+                    <div class="form-group" style="margin-bottom:0">
+                        <label>Raison sociale</label>
+                        <input x-model="settingsForm.name" />
+                    </div>
+                    <div class="form-group" style="margin-bottom:0">
+                        <label>N° OECAM</label>
+                        <input x-model="settingsForm.oecam_number" placeholder="OEC-XXXX-XXXX" />
+                    </div>
+                    <div class="form-group" style="margin-bottom:0">
+                        <label>Email</label>
+                        <input x-model="settingsForm.email" type="email" />
+                    </div>
+                    <div class="form-group" style="margin-bottom:0">
+                        <label>Téléphone</label>
+                        <input x-model="settingsForm.phone" placeholder="+237 6..." />
+                    </div>
+                    <div class="form-group" style="margin-bottom:0">
+                        <label>Adresse</label>
+                        <input x-model="settingsForm.address" />
+                    </div>
+                    <div class="form-group" style="margin-bottom:0">
+                        <label>Ville</label>
+                        <input x-model="settingsForm.city" placeholder="Douala" />
+                    </div>
+                </div>
+                <p x-show="settingsError" x-text="settingsError" style="color:#f87171;font-size:0.8rem;margin-top:0.75rem"></p>
+                <p x-show="settingsSuccess" x-text="settingsSuccess" style="color:#4ade80;font-size:0.8rem;margin-top:0.75rem"></p>
+                <div style="margin-top:1.25rem;display:flex;justify-content:flex-end">
+                    <button class="btn-primary" @click="saveSettings()" :disabled="savingSettings">
+                        <span x-show="!savingSettings">Enregistrer</span>
+                        <span x-show="savingSettings">Sauvegarde…</span>
+                    </button>
+                </div>
+            </div>
+
+            {{-- Logo upload card --}}
+            <div class="card" style="padding:1.5rem">
+                <h3 style="font-size:0.95rem;font-weight:600;margin-bottom:1rem">Logo du Cabinet</h3>
+                <div x-show="firm?.logo_url" style="margin-bottom:1rem">
+                    <img :src="firm?.logo_url" style="max-height:80px;border-radius:0.5rem;border:1px solid var(--c-border)" />
+                </div>
+                <div x-show="!firm?.logo_url" style="width:80px;height:80px;border:2px dashed var(--c-border);border-radius:0.5rem;display:flex;align-items:center;justify-content:center;color:var(--c-faint);font-size:1.5rem;margin-bottom:1rem">🏢</div>
+                <input type="file" accept="image/jpeg,image/png,image/webp" x-ref="logoInput" style="display:none" @change="uploadLogo($event)" />
+                <button class="btn-ghost" style="font-size:0.8rem" @click="$refs.logoInput.click()" :disabled="uploadingLogo">
+                    <span x-show="!uploadingLogo">Changer le logo</span>
+                    <span x-show="uploadingLogo">Envoi…</span>
+                </button>
+                <p style="font-size:0.72rem;color:var(--c-faint);margin-top:0.5rem">JPG, PNG ou WebP · max 2 Mo</p>
+            </div>
+
+            {{-- Capacity card --}}
+            <div class="card" style="padding:1.5rem">
+                <h3 style="font-size:0.95rem;font-weight:600;margin-bottom:1rem">Capacité du Portefeuille</h3>
+                <div style="display:flex;align-items:baseline;gap:0.5rem;margin-bottom:0.75rem">
+                    <span style="font-size:2rem;font-weight:700" x-text="firm?.client_count ?? 0"></span>
+                    <span style="color:var(--c-muted);font-size:0.875rem" x-text="'/ ' + (firm?.max_clients ?? 50) + ' clients'"></span>
+                </div>
+                <div style="background:var(--c-bg);border-radius:9999px;height:6px;overflow:hidden">
+                    <div style="background:var(--c-accent);height:100%;border-radius:9999px;transition:width 0.3s"
+                         :style="'width:' + Math.min(100, ((firm?.client_count||0) / (firm?.max_clients||50)) * 100) + '%'"></div>
+                </div>
+                <p style="font-size:0.75rem;color:var(--c-faint);margin-top:0.5rem">Contactez le support pour augmenter la limite.</p>
+            </div>
+        </div>
+    </div>
 </div>
 
 {{-- ── Add Client Modal ─────────────────────────────────────────────── --}}
@@ -533,6 +607,13 @@ function firmApp() {
         newStaff: { email: '', firm_role: 'JUNIOR' },
         addingStaff: false,
         addStaffError: '',
+
+        // Settings
+        settingsForm: { name: '', oecam_number: '', email: '', phone: '', address: '', city: '' },
+        savingSettings: false,
+        settingsError: '',
+        settingsSuccess: '',
+        uploadingLogo: false,
         editClientError: '',
 
         get filteredClients() {
@@ -564,11 +645,26 @@ function firmApp() {
                 const me = await this.api('GET', '/firm/me');
                 this.firm = me.firm;
                 this.firmRole = me.firm_role;
-                if (this.firm) await this.loadPortfolio();
+                if (this.firm) {
+                    this.syncSettingsForm();
+                    await this.loadPortfolio();
+                }
             } catch (e) {
                 console.error(e);
             }
             this.loaded = true;
+        },
+
+        syncSettingsForm() {
+            if (!this.firm) return;
+            this.settingsForm = {
+                name: this.firm.name || '',
+                oecam_number: this.firm.oecam_number || '',
+                email: this.firm.email || '',
+                phone: this.firm.phone || '',
+                address: this.firm.address || '',
+                city: this.firm.city || '',
+            };
         },
 
         async loadPortfolio() {
@@ -578,6 +674,7 @@ function firmApp() {
                 this.firm = data.firm;
                 this.stats = data.stats;
                 this.clients = data.clients;
+                this.syncSettingsForm();
             } catch (e) { console.error(e); }
             this.loadingPortfolio = false;
         },
@@ -697,6 +794,38 @@ function firmApp() {
                 await this.api('DELETE', '/firm/staff/' + member.id);
                 this.staffList = this.staffList.filter(m => m.id !== member.id);
             } catch (e) { alert(e.message); }
+        },
+
+        async saveSettings() {
+            this.settingsError = '';
+            this.settingsSuccess = '';
+            this.savingSettings = true;
+            try {
+                const data = await this.api('PUT', '/firm', this.settingsForm);
+                this.firm = data.firm;
+                this.settingsSuccess = 'Paramètres enregistrés avec succès.';
+                setTimeout(() => this.settingsSuccess = '', 3000);
+            } catch (e) { this.settingsError = e.message; }
+            this.savingSettings = false;
+        },
+
+        async uploadLogo(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            this.uploadingLogo = true;
+            const formData = new FormData();
+            formData.append('logo', file);
+            try {
+                const res = await fetch('/api/v1/firm/logo', {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + this.token(), 'Accept': 'application/json' },
+                    body: formData,
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || 'Erreur');
+                this.firm = { ...this.firm, logo_url: data.logo_url };
+            } catch (e) { alert(e.message); }
+            this.uploadingLogo = false;
         },
 
         fmtXaf(v) {

@@ -7,6 +7,7 @@ use App\Models\Company;
 use App\Models\Firm;
 use App\Models\JournalEntry;
 use App\Models\JournalLine;
+use App\Models\SyscohadaAccount;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -258,6 +259,10 @@ class FirmController extends Controller
     {
         $user = $request->user();
 
+        if ($user->primaryFirm()) {
+            return response()->json(['message' => 'You already belong to a firm.'], 409);
+        }
+
         $data = $request->validate([
             'name'         => 'required|string|max:255',
             'oecam_number' => 'nullable|string|max:50',
@@ -277,16 +282,66 @@ class FirmController extends Controller
             'city'         => $data['city'] ?? 'Douala',
         ]);
 
-        // Attach creator as PARTNER
         $firm->staff()->attach($user->id, ['firm_role' => 'PARTNER', 'is_active' => true]);
-
-        // Upgrade user role
         $user->forceFill(['role' => 'FIRM_ACCOUNTANT'])->save();
 
         return response()->json([
             'message' => 'Firm created.',
             'firm'    => $this->firmPayload($firm),
         ], 201);
+    }
+
+    /** PUT /api/v1/firm — update firm settings */
+    public function update(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        $firm = $user->primaryFirm();
+
+        if (! $firm) return response()->json(['message' => 'No firm associated.'], 404);
+
+        $pivot = $firm->pivot;
+        if (! in_array($pivot?->firm_role, ['PARTNER', 'SENIOR'])) {
+            return response()->json(['message' => 'Only PARTNER or SENIOR staff can update firm settings.'], 403);
+        }
+
+        $data = $request->validate([
+            'name'         => 'sometimes|string|max:255',
+            'oecam_number' => 'nullable|string|max:50',
+            'email'        => 'nullable|email|max:255',
+            'phone'        => 'nullable|string|max:20',
+            'address'      => 'nullable|string|max:500',
+            'city'         => 'nullable|string|max:100',
+        ]);
+
+        $firm->fill($data)->save();
+
+        return response()->json([
+            'message' => 'Firm updated.',
+            'firm'    => $this->firmPayload($firm->fresh()),
+        ]);
+    }
+
+    /** POST /api/v1/firm/logo — upload firm logo */
+    public function uploadLogo(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        $firm = $user->primaryFirm();
+
+        if (! $firm) return response()->json(['message' => 'No firm associated.'], 404);
+
+        $request->validate(['logo' => 'required|image|mimes:jpeg,png,webp|max:2048']);
+
+        if ($firm->logo_path) {
+            Storage::disk('public')->delete($firm->logo_path);
+        }
+
+        $path = $request->file('logo')->store('firm-logos', 'public');
+        $firm->update(['logo_path' => $path]);
+
+        return response()->json([
+            'message'  => 'Logo updated.',
+            'logo_url' => Storage::url($path),
+        ]);
     }
 
     // ── Consolidated report ──────────────────────────────────────────────────
@@ -304,20 +359,25 @@ class FirmController extends Controller
 
         $clientIds = $firm->activeClients()->pluck('companies.id');
 
+        // Pre-load account IDs by class for efficient filtering
+        $revenueIds = SyscohadaAccount::where('code', 'like', '7%')->pluck('id');
+        $tvaIds     = SyscohadaAccount::where('code', 'like', '443%')->pluck('id');
+        $chargeIds  = SyscohadaAccount::where('code', 'like', '6%')->pluck('id');
+
         // Per-client revenue + TVA summary
-        $clients = $firm->activeClients()->get()->map(function (Company $c) use ($from, $to) {
+        $clients = $firm->activeClients()->get()->map(function (Company $c) use ($from, $to, $revenueIds, $tvaIds, $chargeIds) {
             $lines = JournalLine::whereHas('entry', fn($q) =>
                     $q->where('company_id', $c->id)
                       ->whereBetween('posting_date', [$from, $to])
-                )->get();
+                )->with('account')->get();
 
-            $revenue = $lines->where('account_code', 'like', '7%')
+            $revenue = $lines->whereIn('syscohada_account_id', $revenueIds->all())
                              ->sum(fn($l) => $l->credit - $l->debit);
 
-            $tva = $lines->where('account_code', 'like', '443%')
+            $tva = $lines->whereIn('syscohada_account_id', $tvaIds->all())
                          ->sum(fn($l) => $l->credit - $l->debit);
 
-            $charges = $lines->where('account_code', 'like', '6%')
+            $charges = $lines->whereIn('syscohada_account_id', $chargeIds->all())
                               ->sum(fn($l) => $l->debit - $l->credit);
 
             return [
@@ -458,6 +518,7 @@ class FirmController extends Controller
             'oecam_number' => $firm->oecam_number,
             'email'        => $firm->email,
             'phone'        => $firm->phone,
+            'address'      => $firm->address,
             'city'         => $firm->city,
             'logo_url'     => $firm->logo_path ? Storage::url($firm->logo_path) : null,
             'max_clients'  => $firm->max_clients,
@@ -500,9 +561,11 @@ class FirmController extends Controller
 
     private function computeCompliance(Company $company): array
     {
-        // TVA — check for journal lines on account 443xxx (TVA Facturée) in last 45 days
+        // TVA — check for journal lines on accounts 443xxx (TVA Facturée) in last 45 days
+        $tvaAccountIds = SyscohadaAccount::where('code', 'like', '443%')->pluck('id');
+
         $lastTvaLine = JournalLine::whereHas('entry', fn($q) => $q->where('company_id', $company->id))
-            ->where('account_code', 'like', '443%')
+            ->whereIn('syscohada_account_id', $tvaAccountIds)
             ->orderByDesc('created_at')
             ->first();
 

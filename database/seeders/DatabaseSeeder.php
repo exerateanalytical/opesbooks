@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             BlogPostSeeder::class,
             SyscohadaAccountSeeder::class,
             DemoSeeder::class,
+            FirmDemoSeeder::class,
         ]);
     }
 }

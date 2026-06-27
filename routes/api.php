@@ -135,6 +135,8 @@ Route::prefix('v1')->name('v1.')->group(function () {
     Route::middleware('auth:sanctum')->prefix('firm')->name('firm.')->group(function () {
         Route::get('me',                            [FirmController::class, 'me'])->name('me');
         Route::post('',                             [FirmController::class, 'create'])->name('create');
+        Route::put('',                              [FirmController::class, 'update'])->name('update');
+        Route::post('logo',                         [FirmController::class, 'uploadLogo'])->name('logo');
         Route::get('portfolio',                     [FirmController::class, 'portfolio'])->name('portfolio');
         Route::get('tasks',                         [FirmController::class, 'tasks'])->name('tasks');
         Route::post('clients',                      [FirmController::class, 'addClient'])->name('clients.add');
