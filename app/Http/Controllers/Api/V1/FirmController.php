@@ -289,6 +289,147 @@ class FirmController extends Controller
         ], 201);
     }
 
+    // ── Consolidated report ──────────────────────────────────────────────────
+
+    /** GET /api/v1/firm/report?from=YYYY-MM-DD&to=YYYY-MM-DD */
+    public function report(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        $firm = $user->primaryFirm();
+
+        if (! $firm) return response()->json(['message' => 'No firm associated.'], 404);
+
+        $from = $request->query('from', now()->startOfYear()->toDateString());
+        $to   = $request->query('to',   now()->toDateString());
+
+        $clientIds = $firm->activeClients()->pluck('companies.id');
+
+        // Per-client revenue + TVA summary
+        $clients = $firm->activeClients()->get()->map(function (Company $c) use ($from, $to) {
+            $lines = JournalLine::whereHas('entry', fn($q) =>
+                    $q->where('company_id', $c->id)
+                      ->whereBetween('posting_date', [$from, $to])
+                )->get();
+
+            $revenue = $lines->where('account_code', 'like', '7%')
+                             ->sum(fn($l) => $l->credit - $l->debit);
+
+            $tva = $lines->where('account_code', 'like', '443%')
+                         ->sum(fn($l) => $l->credit - $l->debit);
+
+            $charges = $lines->where('account_code', 'like', '6%')
+                              ->sum(fn($l) => $l->debit - $l->credit);
+
+            return [
+                'id'       => $c->id,
+                'name'     => $c->name,
+                'niu'      => $c->niu,
+                'revenue'  => round($revenue, 0),
+                'tva'      => round($tva, 0),
+                'charges'  => round($charges, 0),
+                'result'   => round($revenue - $charges, 0),
+            ];
+        });
+
+        $totalRevenue  = $clients->sum('revenue');
+        $totalTva      = $clients->sum('tva');
+        $totalCharges  = $clients->sum('charges');
+        $totalResult   = $clients->sum('result');
+
+        // DGI backlog across all clients
+        $totalDgiPending = JournalEntry::whereIn('company_id', $clientIds)
+            ->where('dgi_sync_status', 'PENDING')
+            ->count();
+
+        return response()->json([
+            'period'           => ['from' => $from, 'to' => $to],
+            'totals'           => [
+                'revenue'      => $totalRevenue,
+                'tva'          => $totalTva,
+                'charges'      => $totalCharges,
+                'result'       => $totalResult,
+                'dgi_pending'  => $totalDgiPending,
+            ],
+            'clients'          => $clients->sortByDesc('revenue')->values(),
+        ]);
+    }
+
+    // ── Staff management ─────────────────────────────────────────────────────
+
+    /** GET /api/v1/firm/staff */
+    public function staff(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        $firm = $user->primaryFirm();
+
+        if (! $firm) return response()->json(['message' => 'No firm associated.'], 404);
+
+        $members = $firm->staff()->get()->map(fn(User $u) => [
+            'id'        => $u->id,
+            'name'      => $u->name,
+            'email'     => $u->email,
+            'firm_role' => $u->pivot->firm_role,
+            'is_active' => (bool) $u->pivot->is_active,
+        ]);
+
+        return response()->json(['staff' => $members]);
+    }
+
+    /** POST /api/v1/firm/staff — link an existing user to this firm */
+    public function addStaff(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        $firm = $user->primaryFirm();
+
+        if (! $firm) return response()->json(['message' => 'No firm associated.'], 404);
+
+        $data = $request->validate([
+            'email'     => 'required|email|exists:users,email',
+            'firm_role' => 'in:PARTNER,SENIOR,JUNIOR,ASSISTANT',
+        ]);
+
+        $target = User::where('email', $data['email'])->firstOrFail();
+
+        if ($firm->staff()->where('users.id', $target->id)->exists()) {
+            return response()->json(['message' => 'User is already a member of this firm.'], 409);
+        }
+
+        $firm->staff()->attach($target->id, [
+            'firm_role' => $data['firm_role'] ?? 'JUNIOR',
+            'is_active' => true,
+        ]);
+
+        // Upgrade role if not already a firm accountant
+        if (! in_array($target->role, ['FIRM_ACCOUNTANT', 'SUPER_ADMIN'])) {
+            $target->forceFill(['role' => 'FIRM_ACCOUNTANT'])->save();
+        }
+
+        return response()->json([
+            'message' => 'Staff member added.',
+            'member'  => [
+                'id'        => $target->id,
+                'name'      => $target->name,
+                'email'     => $target->email,
+                'firm_role' => $data['firm_role'] ?? 'JUNIOR',
+                'is_active' => true,
+            ],
+        ], 201);
+    }
+
+    /** DELETE /api/v1/firm/staff/{user} */
+    public function removeStaff(Request $request, User $staffUser): JsonResponse
+    {
+        $user = $request->user();
+        $firm = $user->primaryFirm();
+
+        if (! $firm) return response()->json(['message' => 'No firm associated.'], 404);
+        if ($staffUser->id === $user->id) return response()->json(['message' => 'Cannot remove yourself.'], 422);
+
+        $firm->staff()->detach($staffUser->id);
+
+        return response()->json(['message' => 'Staff member removed.']);
+    }
+
     /** GET /api/v1/firm/me — current firm info for the authenticated user */
     public function me(Request $request): JsonResponse
     {

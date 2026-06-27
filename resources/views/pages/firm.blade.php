@@ -143,7 +143,8 @@
     <div style="display:flex;gap:0.25rem;margin-bottom:1.5rem;background:var(--c-surface);border:1px solid var(--c-border);border-radius:0.625rem;padding:0.25rem;width:fit-content">
         <button class="tab-btn" :class="tab==='portfolio' && 'active'" @click="tab='portfolio'">Portefeuille</button>
         <button class="tab-btn" :class="tab==='tasks' && 'active'" @click="tab='tasks';loadTasks()">Tâches & Délais</button>
-        <button class="tab-btn" :class="tab==='team' && 'active'" @click="tab='team'">Équipe</button>
+        <button class="tab-btn" :class="tab==='reports' && 'active'" @click="tab='reports';loadReport()">Rapports</button>
+        <button class="tab-btn" :class="tab==='team' && 'active'" @click="tab='team';loadStaff()">Équipe</button>
     </div>
 
     {{-- ── Tab: Portefeuille ──────────────────────────────────────────── --}}
@@ -251,11 +252,125 @@
         </div>
     </div>
 
+    {{-- ── Tab: Rapports consolidés ────────────────────────────────── --}}
+    <div x-show="tab === 'reports'">
+        {{-- Period picker --}}
+        <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;margin-bottom:1.25rem">
+            <div style="display:flex;gap:0.5rem;align-items:center">
+                <label style="margin:0;white-space:nowrap">Du</label>
+                <input x-model="reportFrom" type="date" style="max-width:160px" />
+            </div>
+            <div style="display:flex;gap:0.5rem;align-items:center">
+                <label style="margin:0;white-space:nowrap">Au</label>
+                <input x-model="reportTo" type="date" style="max-width:160px" />
+            </div>
+            <button class="btn-primary" @click="loadReport(true)">Actualiser</button>
+        </div>
+
+        <div x-show="loadingReport" style="text-align:center;padding:3rem;color:var(--c-muted)">Chargement…</div>
+
+        <div x-show="!loadingReport && report">
+            {{-- Consolidated KPIs --}}
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem;margin-bottom:1.5rem">
+                <div class="card" style="padding:1rem">
+                    <p style="font-size:0.72rem;color:var(--c-muted);margin-bottom:0.25rem;text-transform:uppercase;letter-spacing:0.05em">Chiffre d'affaires</p>
+                    <p style="font-size:1.4rem;font-weight:700;color:#4ade80" x-text="fmtXaf(report?.totals?.revenue)"></p>
+                </div>
+                <div class="card" style="padding:1rem">
+                    <p style="font-size:0.72rem;color:var(--c-muted);margin-bottom:0.25rem;text-transform:uppercase;letter-spacing:0.05em">TVA collectée</p>
+                    <p style="font-size:1.4rem;font-weight:700;color:#60a5fa" x-text="fmtXaf(report?.totals?.tva)"></p>
+                </div>
+                <div class="card" style="padding:1rem">
+                    <p style="font-size:0.72rem;color:var(--c-muted);margin-bottom:0.25rem;text-transform:uppercase;letter-spacing:0.05em">Charges</p>
+                    <p style="font-size:1.4rem;font-weight:700;color:#f87171" x-text="fmtXaf(report?.totals?.charges)"></p>
+                </div>
+                <div class="card" style="padding:1rem">
+                    <p style="font-size:0.72rem;color:var(--c-muted);margin-bottom:0.25rem;text-transform:uppercase;letter-spacing:0.05em">Résultat net</p>
+                    <p style="font-size:1.4rem;font-weight:700" :style="(report?.totals?.result||0) >= 0 ? 'color:#4ade80' : 'color:#f87171'" x-text="fmtXaf(report?.totals?.result)"></p>
+                </div>
+                <div class="card" style="padding:1rem">
+                    <p style="font-size:0.72rem;color:var(--c-muted);margin-bottom:0.25rem;text-transform:uppercase;letter-spacing:0.05em">DGI non-sync</p>
+                    <p style="font-size:1.4rem;font-weight:700" :style="(report?.totals?.dgi_pending||0) > 0 ? 'color:#fbbf24' : ''" x-text="report?.totals?.dgi_pending ?? 0"></p>
+                </div>
+            </div>
+
+            {{-- Per-client breakdown table --}}
+            <div class="card" style="overflow:hidden">
+                <div style="padding:0.875rem 1.25rem;border-bottom:1px solid var(--c-border);display:flex;align-items:center;justify-content:space-between">
+                    <h3 style="font-size:0.875rem;font-weight:600">Répartition par client</h3>
+                    <span style="font-size:0.75rem;color:var(--c-muted)" x-text="'Période: ' + (report?.period?.from||'') + ' → ' + (report?.period?.to||'')"></span>
+                </div>
+                <div style="overflow-x:auto">
+                    <table style="width:100%;border-collapse:collapse;font-size:0.825rem">
+                        <thead>
+                            <tr style="background:var(--c-bg)">
+                                <th style="text-align:left;padding:0.6rem 1.25rem;color:var(--c-muted);font-weight:600;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.04em;border-bottom:1px solid var(--c-border)">Client</th>
+                                <th style="text-align:right;padding:0.6rem 1rem;color:var(--c-muted);font-weight:600;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.04em;border-bottom:1px solid var(--c-border)">CA</th>
+                                <th style="text-align:right;padding:0.6rem 1rem;color:var(--c-muted);font-weight:600;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.04em;border-bottom:1px solid var(--c-border)">TVA</th>
+                                <th style="text-align:right;padding:0.6rem 1rem;color:var(--c-muted);font-weight:600;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.04em;border-bottom:1px solid var(--c-border)">Charges</th>
+                                <th style="text-align:right;padding:0.6rem 1.25rem;color:var(--c-muted);font-weight:600;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.04em;border-bottom:1px solid var(--c-border)">Résultat</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template x-for="row in (report?.clients||[])" :key="row.id">
+                                <tr style="border-bottom:1px solid var(--c-border)" onmouseover="this.style.background='#1C2A3A'" onmouseout="this.style.background=''">
+                                    <td style="padding:0.7rem 1.25rem">
+                                        <span style="font-weight:500" x-text="row.name"></span>
+                                        <span style="color:var(--c-faint);font-size:0.72rem;display:block" x-text="row.niu ? 'NIU: '+row.niu : ''"></span>
+                                    </td>
+                                    <td style="padding:0.7rem 1rem;text-align:right;color:#4ade80;font-variant-numeric:tabular-nums" x-text="fmtXaf(row.revenue)"></td>
+                                    <td style="padding:0.7rem 1rem;text-align:right;color:#60a5fa;font-variant-numeric:tabular-nums" x-text="fmtXaf(row.tva)"></td>
+                                    <td style="padding:0.7rem 1rem;text-align:right;color:#f87171;font-variant-numeric:tabular-nums" x-text="fmtXaf(row.charges)"></td>
+                                    <td style="padding:0.7rem 1.25rem;text-align:right;font-weight:600;font-variant-numeric:tabular-nums" :style="row.result >= 0 ? 'color:#4ade80' : 'color:#f87171'" x-text="fmtXaf(row.result)"></td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
     {{-- ── Tab: Équipe ─────────────────────────────────────────────── --}}
     <div x-show="tab === 'team'">
-        <div class="card" style="padding:1.5rem">
-            <h3 style="font-size:0.95rem;font-weight:600;margin-bottom:1rem">Personnel du Cabinet</h3>
-            <p style="color:var(--c-muted);font-size:0.875rem">La gestion des membres d'équipe sera disponible dans la prochaine version.</p>
+        <div style="display:flex;justify-content:flex-end;margin-bottom:1rem">
+            <button class="btn-primary" @click="showAddStaff = true">+ Ajouter un membre</button>
+        </div>
+
+        <div x-show="loadingStaff" style="text-align:center;padding:3rem;color:var(--c-muted)">Chargement…</div>
+
+        <div x-show="!loadingStaff" class="card" style="overflow:hidden">
+            <table style="width:100%;border-collapse:collapse;font-size:0.85rem">
+                <thead>
+                    <tr style="background:var(--c-bg)">
+                        <th style="text-align:left;padding:0.75rem 1.25rem;color:var(--c-muted);font-weight:600;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.04em;border-bottom:1px solid var(--c-border)">Nom</th>
+                        <th style="text-align:left;padding:0.75rem 1rem;color:var(--c-muted);font-weight:600;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.04em;border-bottom:1px solid var(--c-border)">Email</th>
+                        <th style="text-align:left;padding:0.75rem 1rem;color:var(--c-muted);font-weight:600;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.04em;border-bottom:1px solid var(--c-border)">Rôle</th>
+                        <th style="text-align:left;padding:0.75rem 1rem;color:var(--c-muted);font-weight:600;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.04em;border-bottom:1px solid var(--c-border)">Statut</th>
+                        <th style="border-bottom:1px solid var(--c-border)"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template x-for="member in staffList" :key="member.id">
+                        <tr style="border-bottom:1px solid var(--c-border)" onmouseover="this.style.background='#1C2A3A'" onmouseout="this.style.background=''">
+                            <td style="padding:0.75rem 1.25rem;font-weight:500" x-text="member.name"></td>
+                            <td style="padding:0.75rem 1rem;color:var(--c-muted)" x-text="member.email"></td>
+                            <td style="padding:0.75rem 1rem">
+                                <span class="badge badge-unknown" x-text="member.firm_role"></span>
+                            </td>
+                            <td style="padding:0.75rem 1rem">
+                                <span class="badge" :class="member.is_active ? 'badge-ok' : 'badge-unknown'" x-text="member.is_active ? 'Actif' : 'Inactif'"></span>
+                            </td>
+                            <td style="padding:0.75rem 1rem;text-align:right">
+                                <button @click="confirmRemoveStaff(member)" style="background:transparent;border:none;color:var(--c-faint);cursor:pointer;font-size:0.75rem" onmouseover="this.style.color='#f87171'" onmouseout="this.style.color='var(--c-faint)'">Retirer</button>
+                            </td>
+                        </tr>
+                    </template>
+                    <tr x-show="staffList.length === 0">
+                        <td colspan="5" style="padding:2rem;text-align:center;color:var(--c-muted)">Aucun membre d'équipe.</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
@@ -340,6 +455,35 @@
     </div>
 </div>
 
+{{-- ── Add Staff Modal ──────────────────────────────────────────────── --}}
+<div x-show="showAddStaff" class="modal-backdrop" @click.self="showAddStaff = false">
+    <div class="card" style="width:100%;max-width:420px;padding:1.5rem" @click.stop>
+        <h2 style="font-size:1.05rem;font-weight:700;margin-bottom:1.25rem">Ajouter un membre d'équipe</h2>
+        <div class="form-group">
+            <label>Adresse email *</label>
+            <input x-model="newStaff.email" type="email" placeholder="collaborateur@cabinet.cm" />
+            <p style="font-size:0.72rem;color:var(--c-faint);margin-top:0.3rem">L'utilisateur doit déjà avoir un compte Opes Books.</p>
+        </div>
+        <div class="form-group">
+            <label>Rôle dans le cabinet</label>
+            <select x-model="newStaff.firm_role">
+                <option value="PARTNER">Associé (PARTNER)</option>
+                <option value="SENIOR">Senior</option>
+                <option value="JUNIOR" selected>Junior</option>
+                <option value="ASSISTANT">Assistant</option>
+            </select>
+        </div>
+        <p x-show="addStaffError" x-text="addStaffError" style="color:#f87171;font-size:0.8rem;margin-bottom:0.75rem"></p>
+        <div style="display:flex;gap:0.75rem;justify-content:flex-end">
+            <button class="btn-ghost" @click="showAddStaff = false">Annuler</button>
+            <button class="btn-primary" @click="submitAddStaff()" :disabled="addingStaff">
+                <span x-show="!addingStaff">Ajouter</span>
+                <span x-show="addingStaff">Ajout…</span>
+            </button>
+        </div>
+    </div>
+</div>
+
 <script>
 function firmApp() {
     return {
@@ -373,6 +517,22 @@ function firmApp() {
         editingClient: null,
         editForm: { engagement_type: '', billing_mode: '', notes: '' },
         savingClient: false,
+
+        // Reports
+        report: null,
+        loadingReport: false,
+        reportLoaded: false,
+        reportFrom: new Date(new Date().getFullYear(), 0, 1).toISOString().slice(0,10),
+        reportTo: new Date().toISOString().slice(0,10),
+
+        // Staff
+        staffList: [],
+        loadingStaff: false,
+        staffLoaded: false,
+        showAddStaff: false,
+        newStaff: { email: '', firm_role: 'JUNIOR' },
+        addingStaff: false,
+        addStaffError: '',
         editClientError: '',
 
         get filteredClients() {
@@ -494,6 +654,54 @@ function firmApp() {
                 this.newClient = { company_id: '', engagement_type: 'FULL_OUTSOURCE', billing_mode: 'FIRM_PAYS', notes: '' };
             } catch (e) { this.addClientError = e.message; }
             this.addingClient = false;
+        },
+
+        async loadReport(force = false) {
+            if (this.reportLoaded && !force) return;
+            this.loadingReport = true;
+            try {
+                const data = await this.api('GET', `/firm/report?from=${this.reportFrom}&to=${this.reportTo}`);
+                this.report = data;
+                this.reportLoaded = true;
+            } catch (e) { console.error(e); }
+            this.loadingReport = false;
+        },
+
+        async loadStaff() {
+            if (this.staffLoaded) return;
+            this.loadingStaff = true;
+            try {
+                const data = await this.api('GET', '/firm/staff');
+                this.staffList = data.staff ?? [];
+                this.staffLoaded = true;
+            } catch (e) { console.error(e); }
+            this.loadingStaff = false;
+        },
+
+        async submitAddStaff() {
+            this.addStaffError = '';
+            if (!this.newStaff.email) { this.addStaffError = 'Email obligatoire.'; return; }
+            this.addingStaff = true;
+            try {
+                const data = await this.api('POST', '/firm/staff', this.newStaff);
+                this.staffList.push(data.member);
+                this.showAddStaff = false;
+                this.newStaff = { email: '', firm_role: 'JUNIOR' };
+            } catch (e) { this.addStaffError = e.message; }
+            this.addingStaff = false;
+        },
+
+        async confirmRemoveStaff(member) {
+            if (!confirm(`Retirer ${member.name} de l'équipe ?`)) return;
+            try {
+                await this.api('DELETE', '/firm/staff/' + member.id);
+                this.staffList = this.staffList.filter(m => m.id !== member.id);
+            } catch (e) { alert(e.message); }
+        },
+
+        fmtXaf(v) {
+            if (v == null) return '—';
+            return new Intl.NumberFormat('fr-CM', { style:'currency', currency:'XAF', maximumFractionDigits:0 }).format(v);
         },
 
         logout() {
