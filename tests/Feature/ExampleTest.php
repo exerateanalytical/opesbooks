@@ -13,8 +13,9 @@ class ExampleTest extends TestCase
     {
         $this->seed(\Database\Seeders\SyscohadaAccountSeeder::class);
 
+        // '/' now serves the public marketing home page (200), not a redirect.
         $response = $this->get('/');
 
-        $response->assertRedirect('/app');
+        $response->assertOk();
     }
 }

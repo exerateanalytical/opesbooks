@@ -28,8 +28,8 @@ class AuthTest extends TestCase
             'company_tax_center' => 'CIME Douala I',
             'name'               => 'Jean Kamga',
             'email'              => 'jean@test.cm',
-            'password'           => 'password123',
-            'password_confirmation' => 'password123',
+            'password'           => 'Password123!',
+            'password_confirmation' => 'Password123!',
         ]);
 
         $res->assertStatus(201)
@@ -85,6 +85,13 @@ class AuthTest extends TestCase
 
     public function test_owner_can_invite_clerk(): void
     {
+        // Permissive plan so the user-seat limit doesn't block the invite.
+        \App\Models\PlanConfig::create([
+            'name' => 'Free', 'slug' => 'free', 'price_xaf_monthly' => 0, 'price_xaf_yearly' => 0,
+            'max_users' => -1, 'max_invoices_per_month' => -1, 'api_calls_per_hour' => -1,
+            'features' => [], 'is_active' => true, 'sort_order' => 0,
+        ]);
+
         $company = Company::factory()->create();
         $owner   = User::factory()->create(['company_id' => $company->id, 'role' => 'OWNER']);
         $token   = $owner->createToken('test')->plainTextToken;
@@ -92,7 +99,7 @@ class AuthTest extends TestCase
         $res = $this->withToken($token)->postJson('/api/v1/auth/users', [
             'name'     => 'Caissier Paul',
             'email'    => 'paul@test.cm',
-            'password' => 'password123',
+            'password' => 'Password123!',
             'role'     => 'CLERK',
         ]);
 
