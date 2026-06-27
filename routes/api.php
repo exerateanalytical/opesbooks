@@ -271,6 +271,9 @@ Route::prefix('v1')->name('v1.')->group(function () {
                 Route::post('bank-statement/import', [BankStatementController::class, 'import'])
                     ->name('bank-statement.import');
 
+                // Dashboard aggregates (trend, recent, aging, cash)
+                Route::get('dashboard/summary', [\App\Http\Controllers\Api\V1\DashboardController::class, 'summary'])->name('dashboard.summary');
+
                 // Self-service data import wizard (customers / suppliers / journal)
                 Route::get('import/template/{type}', [\App\Http\Controllers\Api\V1\DataImportController::class, 'template'])->name('import.template');
                 Route::post('import/preview',        [\App\Http\Controllers\Api\V1\DataImportController::class, 'preview'])->name('import.preview');

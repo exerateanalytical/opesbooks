@@ -799,6 +799,75 @@
                    x-text="lang==='FR' ? 'Voir le Bilan Fiscal →' : 'View Tax Monitor →'"></a>
             </div>
 
+            <!-- Insights: trend + treasury + overdue -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                <div class="glass-card rounded-2xl p-5 lg:col-span-2">
+                    <div class="flex items-center justify-between mb-4">
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest" x-text="lang==='FR'?'Produits vs Charges (6 mois)':'Revenue vs Expenses (6 mo)'"></p>
+                        <div class="flex items-center gap-3 text-[10px] font-bold">
+                            <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-sm" style="background:#C99B0E"></span><span class="text-slate-400" x-text="lang==='FR'?'Produits':'Revenue'"></span></span>
+                            <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-sm" style="background:#64748b"></span><span class="text-slate-400" x-text="lang==='FR'?'Charges':'Expenses'"></span></span>
+                        </div>
+                    </div>
+                    <div class="flex items-end justify-between gap-2 h-40" x-show="dash?.series?.length">
+                        <template x-for="m in (dash?.series||[])" :key="m.label">
+                            <div class="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
+                                <div class="w-full flex items-end justify-center gap-1 flex-1">
+                                    <div class="w-1/2 rounded-t transition-all" :style="'height:'+Math.max(2,(m.revenue/dashMax)*100)+'%;background:#C99B0E'" :title="fmtXaf(m.revenue)"></div>
+                                    <div class="w-1/2 rounded-t transition-all" :style="'height:'+Math.max(2,(m.expense/dashMax)*100)+'%;background:#64748b'" :title="fmtXaf(m.expense)"></div>
+                                </div>
+                                <span class="text-[9px] text-slate-500 font-bold" x-text="m.label"></span>
+                            </div>
+                        </template>
+                    </div>
+                    <p x-show="!dash" class="text-xs text-slate-500 py-12 text-center" x-text="lang==='FR'?'Chargement…':'Loading…'"></p>
+                </div>
+                <div class="space-y-4">
+                    <div class="glass-card rounded-2xl p-4">
+                        <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest" x-text="lang==='FR'?'Trésorerie (classe 5)':'Cash (class 5)'"></p>
+                        <p class="font-mono font-black text-xl mt-1" :class="(dash?.cash||0)>=0?'text-emerald-400':'text-red-400'" x-text="fmtXaf(dash?.cash||0)"></p>
+                    </div>
+                    <div class="glass-card rounded-2xl p-4">
+                        <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest" x-text="lang==='FR'?'Créances clients':'Receivables'"></p>
+                        <p class="font-mono font-black text-xl mt-1 text-white" x-text="fmtXaf(dash?.ar_total||0)"></p>
+                    </div>
+                    <button @click="setPage('customer-invoices')" class="glass-card rounded-2xl p-4 w-full text-left block" :style="(dash?.overdue?.count||0)>0?'border-color:rgba(244,63,94,0.4)':''">
+                        <p class="text-[9px] font-black uppercase tracking-widest" :class="(dash?.overdue?.count||0)>0?'text-red-400':'text-slate-400'" x-text="lang==='FR'?'Factures en retard':'Overdue invoices'"></p>
+                        <p class="font-mono font-black text-xl mt-1" :class="(dash?.overdue?.count||0)>0?'text-red-400':'text-white'"><span x-text="dash?.overdue?.count||0"></span> · <span x-text="fmtXaf(dash?.overdue?.amount||0)"></span></p>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Recent activity + A/R aging -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                <div class="glass-card rounded-2xl p-5 lg:col-span-2">
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3" x-text="lang==='FR'?'Activité récente':'Recent activity'"></p>
+                    <div x-show="dash?.recent?.length" class="divide-y" style="border-color:rgba(255,255,255,0.06)">
+                        <template x-for="r in (dash?.recent||[])" :key="r.ref">
+                            <div class="flex items-center justify-between py-2 gap-3">
+                                <div class="min-w-0">
+                                    <p class="text-xs font-bold text-white truncate" x-text="r.memo||r.ref"></p>
+                                    <p class="text-[10px] text-slate-500" x-text="(r.date||'')+' · '+r.ref"></p>
+                                </div>
+                                <span class="font-mono text-xs text-slate-300 shrink-0" x-text="fmtXaf(r.amount)"></span>
+                            </div>
+                        </template>
+                    </div>
+                    <p x-show="dash && !dash.recent?.length" x-cloak class="text-xs text-slate-500 py-6 text-center" x-text="lang==='FR'?'Aucune écriture récente':'No recent entries'"></p>
+                </div>
+                <div class="glass-card rounded-2xl p-5">
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3" x-text="lang==='FR'?'Balance âgée (créances)':'A/R aging'"></p>
+                    <div class="space-y-2">
+                        <template x-for="b in [{k:'current',fr:'Courant',en:'Current',c:'#10b981'},{k:'d30',fr:'1-30 j',en:'1-30 d',c:'#C99B0E'},{k:'d60',fr:'31-60 j',en:'31-60 d',c:'#f59e0b'},{k:'d90',fr:'+60 j',en:'+60 d',c:'#ef4444'}]" :key="b.k">
+                            <div>
+                                <div class="flex justify-between text-[10px] mb-0.5"><span class="text-slate-400" x-text="lang==='FR'?b.fr:b.en"></span><span class="font-mono text-slate-300" x-text="fmtXaf(dash?.aging?.[b.k]||0)"></span></div>
+                                <div class="h-1.5 rounded-full overflow-hidden" style="background:rgba(255,255,255,0.06)"><div class="h-full rounded-full transition-all" :style="'width:'+(dash?.ar_total? (dash.aging[b.k]/dash.ar_total*100):0)+'%;background:'+b.c"></div></div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+
             <!-- Quick actions -->
             <div class="glass rounded-2xl p-5">
                 <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4"
@@ -4865,6 +4934,19 @@ function opesApp() {
                 this.kpiStats[3].value = debit6;
                 this.fiscalProvision = credit('443100') + credit('448600');
             } catch(e) {}
+            this.loadDashboardSummary();
+        },
+
+        dash: null,
+        async loadDashboardSummary() {
+            if (!this.company) return;
+            try { this.dash = await this.api(`companies/${this.company.id}/dashboard/summary`); }
+            catch(e) { this.dash = null; }
+        },
+        // Max value across the revenue/expense series, for chart scaling.
+        get dashMax() {
+            if (!this.dash?.series?.length) return 1;
+            return Math.max(1, ...this.dash.series.flatMap(m => [m.revenue, m.expense]));
         },
 
         buildKpis() {
