@@ -248,6 +248,8 @@
     </button>
 </div>
 
+<x-firm-bar />
+
 <!-- Global toast notifications -->
 <div x-data="toastManager()" @toast.window="addToast($event.detail)"
      class="fixed bottom-6 right-6 z-[120] flex flex-col gap-3 pointer-events-none" style="max-width:380px">

@@ -61,6 +61,14 @@ class Company extends Model
             ->withTimestamps();
     }
 
+    /** Firms that manage this company. */
+    public function firms(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(Firm::class, 'firm_clients')
+                    ->withPivot(['assigned_accountant_id', 'engagement_type', 'billing_mode', 'notes', 'is_active'])
+                    ->withTimestamps();
+    }
+
     /** CEMAC country fiscal configuration. */
     public function countryConfig()
     {

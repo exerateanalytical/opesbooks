@@ -29,6 +29,7 @@ Route::get('/developer',         fn () => view('api-docs'))->name('developer');
 Route::get('/docs',              fn () => view('api-docs'))->name('docs');
 Route::get('/developer/postman', fn () => response()->download(public_path('postman/opesbooks.postman_collection.json')))->name('developer.postman');
 
+Route::get('/firm',          fn () => view('pages.firm'))->name('firm');
 Route::get('/tax-dashboard', TaxDashboard::class)->name('tax.dashboard');
 Route::get('/dgi-monitor',   DgiMonitor::class)->name('dgi.monitor');
 

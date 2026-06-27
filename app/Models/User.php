@@ -73,10 +73,25 @@ class User extends Authenticatable
         return $this->hasMany(JournalEntry::class);
     }
 
-    public function isClerk(): bool      { return $this->role === 'CLERK'; }
-    public function isAccountant(): bool { return $this->role === 'ACCOUNTANT'; }
-    public function isOwner(): bool      { return $this->role === 'OWNER'; }
-    public function isSuperAdmin(): bool { return $this->role === 'SUPER_ADMIN'; }
+    public function isClerk(): bool          { return $this->role === 'CLERK'; }
+    public function isAccountant(): bool     { return $this->role === 'ACCOUNTANT'; }
+    public function isOwner(): bool          { return $this->role === 'OWNER'; }
+    public function isSuperAdmin(): bool     { return $this->role === 'SUPER_ADMIN'; }
+    public function isFirmAccountant(): bool { return $this->role === 'FIRM_ACCOUNTANT'; }
+
+    /** Firms this user belongs to as staff. */
+    public function firms(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(Firm::class, 'firm_users')
+                    ->withPivot(['firm_role', 'is_active'])
+                    ->withTimestamps();
+    }
+
+    /** The primary (first active) firm this user works for. */
+    public function primaryFirm(): ?Firm
+    {
+        return $this->firms()->wherePivot('is_active', true)->first();
+    }
 
     public function activeCaisseCode(): string
     {

@@ -44,6 +44,7 @@ use App\Http\Controllers\Api\V1\OfflineSyncController;
 use App\Http\Controllers\Api\V1\SubledgerController;
 use App\Http\Controllers\Api\V1\SubscriptionController;
 use App\Http\Controllers\Api\V1\TaxCalculatorController;
+use App\Http\Controllers\Api\V1\FirmController;
 use App\Http\Controllers\Api\V1\TelecomCallbackController;
 use Illuminate\Support\Facades\Route;
 
@@ -128,6 +129,18 @@ Route::prefix('v1')->name('v1.')->group(function () {
         Route::get('companies/mine',        [\App\Http\Controllers\Api\V1\CompanySwitchController::class, 'mine'])->name('companies.mine');
         Route::post('companies/switch',     [\App\Http\Controllers\Api\V1\CompanySwitchController::class, 'switch'])->name('companies.switch');
         Route::post('companies/additional', [\App\Http\Controllers\Api\V1\CompanySwitchController::class, 'createAdditional'])->name('companies.additional');
+    });
+
+    // ── Firm / Cabinet Comptable (auth only; no sub required — firm has its own billing) ──
+    Route::middleware('auth:sanctum')->prefix('firm')->name('firm.')->group(function () {
+        Route::get('me',                            [FirmController::class, 'me'])->name('me');
+        Route::post('',                             [FirmController::class, 'create'])->name('create');
+        Route::get('portfolio',                     [FirmController::class, 'portfolio'])->name('portfolio');
+        Route::get('tasks',                         [FirmController::class, 'tasks'])->name('tasks');
+        Route::post('clients',                      [FirmController::class, 'addClient'])->name('clients.add');
+        Route::put('clients/{company}',             [FirmController::class, 'updateClient'])->name('clients.update');
+        Route::delete('clients/{company}',          [FirmController::class, 'removeClient'])->name('clients.remove');
+        Route::post('clients/{company}/open',       [FirmController::class, 'openClient'])->name('clients.open');
     });
 
     // ── Authenticated routes ─────────────────────────────────────────────────
