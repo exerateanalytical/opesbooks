@@ -4483,7 +4483,7 @@
                             <div class="space-y-2 min-h-[80px]">
                                 <template x-for="lead in leadsByStatus(col.key)" :key="lead.id">
                                     <div class="glass-card rounded-xl p-3 space-y-2">
-                                        <div class="font-black text-white text-sm truncate" x-text="lead.contact_name"></div>
+                                        <div class="font-black text-amber-400 text-sm truncate cursor-pointer hover:underline" @click="openLead(lead)" x-text="lead.contact_name"></div>
                                         <div class="text-[11px] text-slate-400 truncate" x-text="lead.company_name || '—'"></div>
                                         <div class="text-amber-400 font-black text-sm" x-text="fmtXaf(lead.estimated_value)"></div>
                                         <div class="text-[9px] text-slate-500" x-text="daysInStage(lead)"></div>
@@ -4533,7 +4533,7 @@
                         <tbody>
                             <template x-for="lead in leads" :key="lead.id">
                                 <tr class="glass-row">
-                                    <td class="py-2.5 px-4 font-bold text-white" x-text="lead.contact_name"></td>
+                                    <td class="py-2.5 px-4 font-bold text-amber-400 cursor-pointer hover:underline" @click="openLead(lead)" x-text="lead.contact_name"></td>
                                     <td class="py-2.5 px-3 text-slate-400" x-text="lead.company_name || '—'"></td>
                                     <td class="py-2.5 px-3 text-amber-400 font-black" x-text="fmtXaf(lead.estimated_value)"></td>
                                     <td class="py-2.5 px-3 text-slate-400" x-text="lead.source"></td>
@@ -4569,6 +4569,53 @@
                     </div>
                 </template>
                 <div x-show="activities.length===0" class="text-center py-10 opacity-40 text-xs" x-text="lang==='FR'?'Aucune activité.':'No activities.'"></div>
+            </div>
+
+            <!-- Lead detail drawer -->
+            <div x-show="showLead" x-cloak class="fixed inset-0 z-[80]" @keydown.escape.window="showLead=false">
+                <div class="absolute inset-0 bg-black/60" @click="showLead=false"></div>
+                <div class="absolute right-0 top-0 bottom-0 w-full max-w-lg overflow-y-auto p-6 space-y-4" style="background:#010048;border-left:1px solid #2A2A72"
+                     x-transition:enter="transition ease-out duration-200" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0">
+                    <template x-if="leadDetail">
+                    <div class="space-y-4">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <p class="text-lg font-black text-white" x-text="leadDetail.contact_name"></p>
+                                <p class="text-[11px] text-slate-400 mt-0.5" x-text="leadDetail.company_name||'—'"></p>
+                            </div>
+                            <button @click="showLead=false" class="text-slate-400 hover:text-white text-xl leading-none">✕</button>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase" :style="statusBadge(leadDetail.status)" x-text="statusLabel(leadDetail.status)"></span>
+                            <span class="text-amber-400 font-black text-sm" x-text="fmtXaf(leadDetail.estimated_value)"></span>
+                        </div>
+                        <div class="glass-card rounded-2xl p-4 text-xs space-y-1.5">
+                            <div class="flex justify-between" x-show="leadDetail.contact_phone"><span class="text-slate-400" x-text="lang==='FR'?'Téléphone':'Phone'"></span><span x-text="leadDetail.contact_phone"></span></div>
+                            <div class="flex justify-between" x-show="leadDetail.contact_email"><span class="text-slate-400">Email</span><span x-text="leadDetail.contact_email"></span></div>
+                            <div class="flex justify-between"><span class="text-slate-400">Source</span><span x-text="leadDetail.source"></span></div>
+                            <div class="flex justify-between" x-show="leadDetail.lost_reason"><span class="text-slate-400" x-text="lang==='FR'?'Raison perte':'Lost reason'"></span><span class="text-red-300" x-text="leadDetail.lost_reason"></span></div>
+                        </div>
+                        <div x-show="leadDetail.notes" class="glass-card rounded-2xl p-4 text-xs text-slate-300"><p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Notes</p><span x-text="leadDetail.notes"></span></div>
+                        <!-- activity history -->
+                        <div class="glass-card rounded-2xl p-4">
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2" x-text="lang==='FR'?'Historique d\'activité':'Activity history'"></p>
+                            <div x-show="leadActivities().length" class="space-y-2">
+                                <template x-for="a in leadActivities()" :key="a.id">
+                                    <div class="border-t pt-2 first:border-0 first:pt-0" style="border-color:rgba(255,255,255,0.06)">
+                                        <div class="text-xs text-slate-200" x-text="a.description"></div>
+                                        <div class="text-[10px] text-slate-500 mt-0.5"><span class="text-amber-400 font-black uppercase" x-text="a.type"></span> · <span x-text="fmtDate(a.created_at)"></span></div>
+                                    </div>
+                                </template>
+                            </div>
+                            <p x-show="!leadActivities().length" class="text-xs text-slate-500 py-2 text-center" x-text="lang==='FR'?'Aucune activité':'No activity'"></p>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <button @click="openActivity(leadDetail); showLead=false" class="glass-btn-dark px-4 py-2 rounded-xl text-xs" x-text="lang==='FR'?'+ Activité':'+ Activity'"></button>
+                            <a :href="waLink(leadDetail)" target="_blank" x-show="leadDetail.contact_phone" class="px-4 py-2 rounded-xl text-xs" style="background:rgba(16,185,129,0.12);color:rgb(110,231,183)">WhatsApp</a>
+                        </div>
+                    </div>
+                    </template>
+                </div>
             </div>
 
             <!-- Add Lead modal -->
@@ -6346,6 +6393,9 @@ function crmPanel() {
         addForm: { contact_name:'', contact_phone:'', contact_email:'', company_name:'', source:'other', estimated_value:'', notes:'' },
         showActivity: false, activitySaving: false, activityLead: null,
         activityForm: { type:'note', description:'' },
+        showLead: false, leadDetail: null,
+        openLead(lead) { this.leadDetail = lead; this.showLead = true; },
+        leadActivities() { const id = this.leadDetail?.id; return id ? this.activities.filter(a => (a.lead?.id ?? a.lead_id) === id) : []; },
         columns: [
             { key:'new',           label:'Nouveau',     badge:'background:rgba(59,130,246,0.18);color:rgb(147,197,253);border:1px solid rgba(59,130,246,0.35)' },
             { key:'contacted',     label:'Contacté',    badge:'background:rgba(234,179,8,0.18);color:rgb(253,224,71);border:1px solid rgba(234,179,8,0.35)' },
