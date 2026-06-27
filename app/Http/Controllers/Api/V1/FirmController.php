@@ -546,7 +546,7 @@ class FirmController extends Controller
         if (! $firm) return response()->json(['message' => 'No firm associated.'], 404);
 
         $clientIds    = $firm->activeClients()->pluck('companies.id');
-        $companyNames = $firm->activeClients()->pluck('name', 'id');
+        $companyNames = $firm->activeClients()->pluck('companies.name', 'companies.id');
 
         $entries = JournalEntry::whereIn('company_id', $clientIds)
             ->orderByDesc('created_at')
@@ -707,7 +707,10 @@ class FirmController extends Controller
             'firm'               => $this->firmPayload($firm),
             'is_firm_accountant' => true,
             'firm_role'          => $firm->pivot?->firm_role ?? 'JUNIOR',
-            'in_client_context'  => (bool) $user->home_company_id,
+            // in_client_context: true if user has switched into a client company.
+            // For pure firm accountants (home = null), any non-null company_id means we're inside a dossier.
+            // For hybrid users (OWNER who joined a firm), home_company_id being set signals the switch.
+            'in_client_context'  => $user->company_id !== null,
         ]);
     }
 

@@ -150,8 +150,8 @@ Route::prefix('v1')->name('v1.')->group(function () {
         Route::get('report',                        [FirmController::class, 'report'])->name('report');
         Route::get('staff',                         [FirmController::class, 'staff'])->name('staff.index');
         Route::post('staff',                        [FirmController::class, 'addStaff'])->name('staff.add');
-        Route::put('staff/{user}',                  [FirmController::class, 'updateStaff'])->name('staff.update');
-        Route::delete('staff/{user}',               [FirmController::class, 'removeStaff'])->name('staff.remove');
+        Route::put('staff/{staffUser}',             [FirmController::class, 'updateStaff'])->name('staff.update');
+        Route::delete('staff/{staffUser}',          [FirmController::class, 'removeStaff'])->name('staff.remove');
     });
 
     // ── Authenticated routes ─────────────────────────────────────────────────
