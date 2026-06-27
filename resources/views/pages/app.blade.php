@@ -2925,7 +2925,7 @@
                             <template x-if="loading"><tr><td colspan="6" class="px-4 py-8 text-center opacity-40" x-text="lang==='FR' ? 'Chargement…' : 'Loading…'"></td></tr></template>
                             <template x-for="dn in items" :key="dn.id">
                                 <tr class="border-b border-slate-800 hover:bg-slate-800 transition">
-                                    <td class="px-4 py-3 font-mono text-xs" x-text="dn.dn_number"></td>
+                                    <td class="px-4 py-3 font-mono text-xs text-amber-400 cursor-pointer hover:underline" @click="openDelivery(dn)" x-text="dn.dn_number"></td>
                                     <td class="px-4 py-3"><span :class="dn.dn_type==='OUT' ? 'badge-blue' : 'badge-amber'" x-text="dn.dn_type"></span></td>
                                     <td class="px-4 py-3 text-xs opacity-70" x-text="dn.delivery_date"></td>
                                     <td class="px-4 py-3 text-xs" x-text="dn.customer?.name || dn.supplier?.name || '—'"></td>
@@ -2959,6 +2959,48 @@
                             </template>
                         </tbody>
                     </table>
+                </div>
+            </div>
+
+            <!-- Delivery note detail drawer -->
+            <div x-show="showDetail" x-cloak class="fixed inset-0 z-50" @keydown.escape.window="showDetail=false">
+                <div class="absolute inset-0 bg-black/60" @click="showDetail=false"></div>
+                <div class="absolute right-0 top-0 bottom-0 w-full max-w-lg overflow-y-auto p-6 space-y-4" style="background:#010048;border-left:1px solid #2A2A72"
+                     x-transition:enter="transition ease-out duration-200" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="font-mono text-amber-400 text-sm" x-text="detail?.dn_number||'…'"></p>
+                            <p class="text-lg font-black text-white" x-text="detail?.customer?.name||detail?.supplier?.name||'—'"></p>
+                        </div>
+                        <button @click="showDetail=false" class="text-slate-400 hover:text-white text-xl leading-none">✕</button>
+                    </div>
+                    <template x-if="detail">
+                    <div class="space-y-4">
+                        <div class="flex gap-2">
+                            <span class="px-2 py-0.5 rounded-full text-xs font-bold" style="background:rgba(99,102,241,0.15);color:rgb(165,180,252)" x-text="detail.dn_type==='OUT'?(lang==='FR'?'Expédition':'Outbound'):(lang==='FR'?'Réception':'Inbound')"></span>
+                            <span class="px-2 py-0.5 rounded-full text-xs font-bold" :class="{'bg-amber-900/50 text-amber-300':detail.status==='DRAFT','bg-blue-900/50 text-blue-300':detail.status==='DELIVERED','bg-emerald-900/50 text-emerald-300':detail.status==='SIGNED'}" x-text="detail.status"></span>
+                        </div>
+                        <div class="glass-card rounded-2xl p-4 text-xs space-y-1.5">
+                            <div class="flex justify-between"><span class="text-slate-400" x-text="lang==='FR'?'Date livraison':'Delivery date'"></span><span x-text="detail.delivery_date"></span></div>
+                            <div class="flex justify-between" x-show="detail.delivery_address"><span class="text-slate-400" x-text="lang==='FR'?'Adresse':'Address'"></span><span class="text-right" x-text="detail.delivery_address"></span></div>
+                            <div class="flex justify-between" x-show="detail.invoice"><span class="text-slate-400" x-text="lang==='FR'?'Facture liée':'Linked invoice'"></span><span class="font-mono text-indigo-300" x-text="detail.invoice?.invoice_number"></span></div>
+                        </div>
+                        <div class="glass-card rounded-2xl p-4" x-show="detail.lines?.length">
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2" x-text="lang==='FR'?'Articles':'Items'"></p>
+                            <table class="w-full text-xs">
+                                <template x-for="(l,i) in detail.lines" :key="i">
+                                    <tr class="border-t" style="border-color:rgba(255,255,255,0.06)">
+                                        <td class="py-1.5 text-slate-300" x-text="l.description"></td>
+                                        <td class="py-1.5 text-slate-500 font-mono" x-text="l.product_code"></td>
+                                        <td class="py-1.5 text-right font-mono text-slate-300" x-text="(l.quantity||0)+' '+(l.unit||'')"></td>
+                                    </tr>
+                                </template>
+                            </table>
+                        </div>
+                        <div x-show="detail.notes" class="glass-card rounded-2xl p-4 text-xs text-slate-300"><p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Notes</p><span x-text="detail.notes"></span></div>
+                        <a :href="`/api/v1/companies/${_cid}/delivery-notes/${detail.id}/pdf`" target="_blank" class="glass-btn-dark px-4 py-2 rounded-xl text-xs inline-block" x-text="lang==='FR'?'Télécharger PDF':'Download PDF'"></a>
+                    </div>
+                    </template>
                 </div>
             </div>
         </div>
@@ -4008,7 +4050,7 @@
                     <tbody>
                         <template x-for="q in quotations" :key="q.id">
                             <tr style="border-bottom:1px solid #2A2A72" class="hover:bg-slate-800">
-                                <td class="px-4 py-2 font-mono text-sky-300 text-xs" x-text="q.quotation_number"></td>
+                                <td class="px-4 py-2 font-mono text-amber-400 text-xs cursor-pointer hover:underline" @click="openQuotation(q)" x-text="q.quotation_number"></td>
                                 <td class="px-4 py-2 text-xs" x-text="q.customer?.name ?? '—'"></td>
                                 <td class="px-4 py-2 text-xs opacity-70" x-text="q.quotation_date"></td>
                                 <td class="px-4 py-2 text-right text-xs" x-text="Number(q.amount_ttc).toLocaleString('fr-CM') + ' XAF'"></td>
@@ -4029,6 +4071,51 @@
                         </td></tr>
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Quotation detail drawer -->
+            <div x-show="showDetail" x-cloak class="fixed inset-0 z-50" @keydown.escape.window="showDetail=false">
+                <div class="absolute inset-0 bg-black/60" @click="showDetail=false"></div>
+                <div class="absolute right-0 top-0 bottom-0 w-full max-w-lg overflow-y-auto p-6 space-y-4" style="background:#010048;border-left:1px solid #2A2A72"
+                     x-transition:enter="transition ease-out duration-200" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="font-mono text-amber-400 text-sm" x-text="detail?.quotation_number||'…'"></p>
+                            <p class="text-lg font-black text-white" x-text="detail?.customer?.name||'—'"></p>
+                        </div>
+                        <button @click="showDetail=false" class="text-slate-400 hover:text-white text-xl leading-none">✕</button>
+                    </div>
+                    <template x-if="detail">
+                    <div class="space-y-4">
+                        <span class="px-2 py-0.5 rounded-full text-xs font-bold inline-block" :class="{'bg-emerald-900/50 text-emerald-300':detail.status==='ACCEPTED','bg-amber-900/50 text-amber-300':detail.status==='SENT','bg-red-900/50 text-red-300':detail.status==='REJECTED','bg-indigo-900/50 text-indigo-300':detail.status==='CONVERTED','bg-slate-800 text-slate-400':detail.status==='DRAFT'}" x-text="detail.status"></span>
+                        <div class="glass-card rounded-2xl p-4 space-y-2 text-sm">
+                            <div class="flex justify-between"><span class="text-slate-400">HT</span><span class="font-mono" x-text="fmtXaf(detail.amount_ht)"></span></div>
+                            <div class="flex justify-between"><span class="text-slate-400">TVA</span><span class="font-mono" x-text="fmtXaf(detail.tva_amount)"></span></div>
+                            <div class="flex justify-between"><span class="text-slate-400">CAC</span><span class="font-mono" x-text="fmtXaf(detail.cac_amount)"></span></div>
+                            <div class="flex justify-between border-t pt-2" style="border-color:#2A2A72"><span class="font-bold">TTC</span><span class="font-mono font-black text-amber-400" x-text="fmtXaf(detail.amount_ttc)"></span></div>
+                        </div>
+                        <div class="glass-card rounded-2xl p-4 text-xs space-y-1.5">
+                            <div class="flex justify-between"><span class="text-slate-400">Date</span><span x-text="detail.quotation_date"></span></div>
+                            <div class="flex justify-between" x-show="detail.valid_until"><span class="text-slate-400" x-text="lang==='FR'?'Valable jusqu\'au':'Valid until'"></span><span x-text="detail.valid_until"></span></div>
+                            <div class="flex justify-between" x-show="detail.converted_invoice"><span class="text-slate-400" x-text="lang==='FR'?'Facturé':'Invoiced as'"></span><span class="font-mono text-indigo-300" x-text="detail.converted_invoice?.invoice_number"></span></div>
+                        </div>
+                        <div class="glass-card rounded-2xl p-4" x-show="detail.lines?.length">
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2" x-text="lang==='FR'?'Lignes':'Lines'"></p>
+                            <table class="w-full text-xs">
+                                <template x-for="(l,i) in detail.lines" :key="i">
+                                    <tr class="border-t" style="border-color:rgba(255,255,255,0.06)">
+                                        <td class="py-1.5 text-slate-300" x-text="l.description"></td>
+                                        <td class="py-1.5 text-right text-slate-500 whitespace-nowrap" x-text="(l.quantity||0)+' × '+fmtXaf(l.unit_price_ht)"></td>
+                                        <td class="py-1.5 text-right font-mono text-slate-300" x-text="fmtXaf(l.line_total_ht)"></td>
+                                    </tr>
+                                </template>
+                            </table>
+                        </div>
+                        <div x-show="detail.notes" class="glass-card rounded-2xl p-4 text-xs text-slate-300"><p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Notes</p><span x-text="detail.notes"></span></div>
+                        <button @click="downloadPdf(detail)" class="glass-btn-dark px-4 py-2 rounded-xl text-xs" x-text="lang==='FR'?'Télécharger PDF':'Download PDF'"></button>
+                    </div>
+                    </template>
+                </div>
             </div>
         </div>
 
@@ -6908,7 +6995,23 @@ function chartOfAccountsPanel() {
 function quotationsPanel() {
     return {
         _cid: null, quotations: [], customers: [], showForm: false, saving: false, formError: '',
+        showDetail: false, detail: null,
         form: { customer_id:'', quotation_date: new Date().toISOString().slice(0,10), valid_until:'', notes:'', lines:[{description:'',quantity:1,unit_price_ht:0}] },
+        async openQuotation(q) {
+            this.showDetail = true; this.detail = null;
+            const cid = q.company_id || this._cid;
+            try { this.detail = await fetch(`/api/v1/companies/${cid}/quotations/${q.id}`,{headers:{Authorization:'Bearer '+localStorage.getItem('opes_token'),Accept:'application/json'}}).then(r=>r.json()); }
+            catch(e){ this.detail = q; }
+        },
+        async downloadPdf(q) {
+            const cid = q.company_id || this._cid;
+            try {
+                const res = await fetch(`/api/v1/companies/${cid}/quotations/${q.id}/pdf`,{headers:{Authorization:'Bearer '+localStorage.getItem('opes_token')}});
+                if(!res.ok){ window.opesToast && window.opesToast('error','PDF','Indisponible'); return; }
+                const blob=await res.blob(); const url=URL.createObjectURL(blob);
+                const a=document.createElement('a'); a.href=url; a.download=`${q.quotation_number||'devis'}.pdf`; a.click(); URL.revokeObjectURL(url);
+            } catch(e){ window.opesToast && window.opesToast('error','PDF',e.message); }
+        },
         async init() {
             const token = localStorage.getItem('opes_token');
             const me = await fetch('/api/v1/auth/me',{headers:{Authorization:'Bearer '+token}}).then(r=>r.json());
@@ -7097,6 +7200,13 @@ function deliveryNotesPanel() {
         _cid: null, items: [], loading: false, showForm: false, saving: false, err: '',
         customers: [], suppliers: [],
         filterType: '', filterStatus: '',
+        showDetail: false, detail: null,
+        async openDelivery(dn) {
+            this.showDetail = true; this.detail = null;
+            const cid = dn.company_id || this._cid;
+            try { this.detail = await fetch(`/api/v1/companies/${cid}/delivery-notes/${dn.id}`,{headers:{Authorization:'Bearer '+localStorage.getItem('opes_token'),Accept:'application/json'}}).then(r=>r.json()); }
+            catch(e){ this.detail = dn; }
+        },
         form: {
             dn_type:'OUT', delivery_date: new Date().toISOString().slice(0,10),
             customer_id:'', supplier_id:'', delivery_address:'', notes:'',
