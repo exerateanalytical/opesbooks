@@ -271,7 +271,24 @@ class AuthController extends Controller
             'two_factor_enabled'   => $user->hasTwoFactorEnabled(),
             'last_login_at'        => optional($user->last_login_at)->toIso8601String(),
             'last_login_ip'        => $user->last_login_ip,
+            'notification_prefs'   => $user->notification_prefs ?? [],
         ];
+    }
+
+    /** PUT /api/v1/auth/notifications — update the user's notification preferences. */
+    public function updateNotificationPrefs(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'prefs'                  => 'required|array',
+            'prefs.email_reminders'  => 'boolean',
+            'prefs.email_invoices'   => 'boolean',
+            'prefs.email_payments'   => 'boolean',
+        ]);
+        $user = $request->user();
+        $user->notification_prefs = array_merge($user->notification_prefs ?? [], $data['prefs']);
+        $user->save();
+
+        return response()->json(['ok' => true, 'notification_prefs' => $user->notification_prefs]);
     }
 
     /** Verify a TOTP code or consume a one-time recovery code. */

@@ -24,6 +24,7 @@ class User extends Authenticatable
         'two_factor_confirmed_at',
         'last_login_at',
         'last_login_ip',
+        'notification_prefs',
     ];
 
     protected $hidden = ['password', 'remember_token'];
@@ -37,7 +38,15 @@ class User extends Authenticatable
             'two_factor_recovery_codes' => 'encrypted:array',
             'two_factor_confirmed_at'   => 'datetime',
             'last_login_at'             => 'datetime',
+            'notification_prefs'        => 'array',
         ];
+    }
+
+    /** Whether the user wants a given email notification (default on). */
+    public function wantsEmail(string $key): bool
+    {
+        $prefs = $this->notification_prefs ?? [];
+        return ($prefs[$key] ?? true) !== false;
     }
 
     public function hasTwoFactorEnabled(): bool

@@ -2327,6 +2327,25 @@
                 <button @click="logoutAll()" :disabled="busy" class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest disabled:opacity-50" style="background:rgba(244,63,94,0.15);color:rgb(252,165,165);border:1px solid rgba(244,63,94,0.3)" x-text="busy?'…':(lang==='FR'?'Déconnecter tous les appareils':'Log out everywhere')"></button>
             </div>
 
+            <!-- Notification preferences -->
+            <div class="glass-card rounded-2xl p-6 space-y-3">
+                <p class="text-[10px] font-black text-amber-400 uppercase tracking-widest" x-text="lang==='FR'?'Préférences de notification':'Notification preferences'"></p>
+                <p class="text-xs text-slate-400" x-text="lang==='FR'?'Choisissez les emails que vous souhaitez recevoir.':'Choose which emails you want to receive.'"></p>
+                <template x-for="opt in [
+                    {k:'email_reminders', fr:'Rappels (échéances, DSF, retards)', en:'Reminders (deadlines, DSF, overdue)'},
+                    {k:'email_invoices',  fr:'Copies de factures envoyées',       en:'Sent invoice copies'},
+                    {k:'email_payments',  fr:'Avis de paiement reçu',             en:'Payment received notices'}
+                ]" :key="opt.k">
+                    <label class="flex items-center justify-between cursor-pointer py-1.5">
+                        <span class="text-sm text-slate-300" x-text="lang==='FR'?opt.fr:opt.en"></span>
+                        <button type="button" @click="notifPrefs[opt.k]=!notifPrefs[opt.k]; saveNotifPrefs()" class="relative w-11 h-6 rounded-full transition-colors shrink-0" :style="notifPrefs[opt.k] ? 'background:#C99B0E' : 'background:rgba(255,255,255,0.15)'">
+                            <span class="absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform" :class="notifPrefs[opt.k] ? 'translate-x-5' : ''"></span>
+                        </button>
+                    </label>
+                </template>
+                <span x-show="notifSaved" x-cloak class="text-emerald-400 text-xs font-bold" x-text="lang==='FR'?'Enregistré ✔':'Saved ✔'"></span>
+            </div>
+
             <!-- Profile info card -->
             <div class="glass-card rounded-2xl p-6 space-y-4">
                 <p class="text-[10px] font-black text-amber-400 uppercase tracking-widest"
@@ -5683,6 +5702,9 @@ function profilePanel() {
         otpLoading: false,
         otpError: '',
         otpSuccess: '',
+        notifPrefs: { email_reminders:true, email_invoices:true, email_payments:true },
+        notifSaving: false,
+        notifSaved: false,
 
         async init() {
             const token = localStorage.getItem('opes_token');
@@ -5691,6 +5713,23 @@ function profilePanel() {
             this.profileForm.name  = data.user?.name  ?? '';
             this.profileForm.email = data.user?.email ?? '';
             this.profileForm.role  = data.user?.role  ?? '';
+            const p = data.user?.notification_prefs ?? {};
+            this.notifPrefs = {
+                email_reminders: p.email_reminders !== false,
+                email_invoices:  p.email_invoices  !== false,
+                email_payments:  p.email_payments  !== false,
+            };
+        },
+
+        async saveNotifPrefs() {
+            this.notifSaving=true; this.notifSaved=false;
+            try {
+                const token = localStorage.getItem('opes_token');
+                await fetch('/api/v1/auth/notifications', { method:'PUT', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json','Accept':'application/json'}, body: JSON.stringify({ prefs: this.notifPrefs }) });
+                this.notifSaved=true; window.opesToast && window.opesToast('success', 'Préférences enregistrées');
+                setTimeout(()=>this.notifSaved=false, 2000);
+            } catch(e) { window.opesToast && window.opesToast('error','Erreur', e.message); }
+            finally { this.notifSaving=false; }
         },
 
         async saveProfile() {
