@@ -10,7 +10,7 @@
 
 <form method="POST" action="{{ route('admin.settings.update') }}" class="max-w-3xl">
     @csrf
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl divide-y divide-slate-800/60"
+    <div class="bg-[#151F2E] border border-[#253347] rounded-2xl divide-y divide-slate-800/60"
          x-data>
         @foreach($flags as $key => $flag)
         <label class="flex items-center justify-between gap-6 px-6 py-5 cursor-pointer hover:bg-slate-800/30 transition-colors">

@@ -10,27 +10,27 @@
 
 <!-- Stat cards -->
 <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-10">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+    <div class="bg-[#151F2E] border border-[#253347] rounded-2xl p-5">
         <div class="text-[9px] font-black uppercase tracking-widest text-slate-500 mb-2">Total Companies</div>
         <div class="text-3xl font-black text-white">{{ number_format($stats['total_companies']) }}</div>
     </div>
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+    <div class="bg-[#151F2E] border border-[#253347] rounded-2xl p-5">
         <div class="text-[9px] font-black uppercase tracking-widest text-slate-500 mb-2">Total Users</div>
         <div class="text-3xl font-black text-white">{{ number_format($stats['total_users']) }}</div>
     </div>
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+    <div class="bg-[#151F2E] border border-[#253347] rounded-2xl p-5">
         <div class="text-[9px] font-black uppercase tracking-widest text-slate-500 mb-2">Active Subscriptions</div>
         <div class="text-3xl font-black text-emerald-400">{{ number_format($stats['active_subs']) }}</div>
     </div>
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+    <div class="bg-[#151F2E] border border-[#253347] rounded-2xl p-5">
         <div class="text-[9px] font-black uppercase tracking-widest text-slate-500 mb-2">Revenue This Month</div>
         <div class="text-2xl font-black text-amber-400">{{ number_format($stats['revenue_this_month']) }} XAF</div>
     </div>
 </div>
 
 <!-- Companies table -->
-<div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
-    <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
+<div class="bg-[#151F2E] border border-[#253347] rounded-2xl overflow-hidden">
+    <div class="px-6 py-4 border-b border-[#253347] flex items-center justify-between">
         <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">All Companies</span>
         <span class="text-[10px] font-mono font-black px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30">
             {{ $companies->total() }} total
@@ -39,7 +39,7 @@
     <div class="overflow-x-auto">
         <table class="w-full text-left">
             <thead>
-                <tr class="text-[9px] font-black uppercase tracking-widest text-slate-500 border-b border-slate-800 bg-slate-950/50">
+                <tr class="text-[9px] font-black uppercase tracking-widest text-slate-500 border-b border-[#253347] bg-slate-950/50">
                     <th class="py-3 px-6">Name</th>
                     <th class="py-3 px-4">NIU</th>
                     <th class="py-3 px-4">Plan</th>
@@ -87,7 +87,7 @@
                         </td>
                         <td class="py-3.5 px-4">
                             <a href="{{ route('admin.company', $company) }}"
-                               class="px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wide bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 hover:border-slate-600 transition-all">
+                               class="px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wide bg-[#1C2A3A] hover:bg-slate-700 text-slate-300 hover:text-white border border-[#334155] hover:border-slate-600 transition-all">
                                 View
                             </a>
                         </td>
@@ -101,7 +101,7 @@
         </table>
     </div>
     @if($companies->hasPages())
-        <div class="px-6 py-4 border-t border-slate-800">
+        <div class="px-6 py-4 border-t border-[#253347]">
             {{ $companies->links() }}
         </div>
     @endif

@@ -40,7 +40,7 @@
         ],
     ];
 @endphp
-<body class="bg-slate-950 text-slate-200 min-h-screen" x-data="{ mobileNav: false }">
+<body class="bg-[#0B1120] text-slate-200 min-h-screen" x-data="{ mobileNav: false }">
 
 <!-- Topbar -->
 <header class="fixed top-0 inset-x-0 h-14 z-40 bg-[#0B1120] border-b border-slate-700/50 border-t-2 border-t-amber-400 flex items-center justify-between px-4">

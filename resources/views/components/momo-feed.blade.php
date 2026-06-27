@@ -4,11 +4,11 @@
 ])
 
 <div class="w-full rounded-2xl overflow-hidden relative"
-     style="background:rgba(255,255,255,0.055);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);border:1px solid rgba(255,255,255,0.13);box-shadow:0 8px 40px rgba(0,0,0,0.5),0 1px 0 rgba(255,255,255,0.12) inset;">
+     style="background:var(--c-surface);border:1px solid var(--c-border);box-shadow:0 8px 40px rgba(0,0,0,0.5);">
 
     {{-- Header --}}
     <div class="px-5 py-4 flex flex-wrap justify-between items-center gap-2 border-b"
-         style="border-color:rgba(255,255,255,0.08);background:rgba(255,255,255,0.04)">
+         style="border-color:var(--c-border);background:var(--c-bg)">
         <div class="flex items-center gap-3">
             <div class="w-9 h-9 rounded-xl flex items-center justify-center text-[9px] font-black text-slate-950"
                  style="background:linear-gradient(135deg,rgba(245,158,11,0.95),rgba(160,124,8,0.95));box-shadow:0 4px 14px rgba(245,158,11,0.35)">
@@ -32,7 +32,7 @@
         <table class="w-full text-left border-collapse">
             <thead>
                 <tr class="text-[10px] font-black uppercase text-slate-500 tracking-widest border-b"
-                    style="border-color:rgba(255,255,255,0.07);background:rgba(0,0,0,0.15)">
+                    style="border-color:var(--c-border);background:var(--c-bg)">
                     <th class="py-3 px-5 whitespace-nowrap">Référence / Opérateur</th>
                     <th class="py-3 px-5 whitespace-nowrap">Description Payload</th>
                     <th class="py-3 px-5 whitespace-nowrap text-right">Montant TTC</th>
@@ -50,7 +50,7 @@
                         <td colspan="6" class="py-14 text-center">
                             <div class="flex flex-col items-center gap-3">
                                 <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl"
-                                     style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08)">
+                                     style="background:var(--c-raised);border:1px solid var(--c-border)">
                                     📭
                                 </div>
                                 <div class="text-slate-500 text-[11px] font-bold uppercase tracking-widest">
@@ -71,7 +71,7 @@
     {{-- Pagination --}}
     @if(isset($pagination))
         <div class="px-5 py-3.5 flex flex-wrap justify-between items-center gap-2 border-t"
-             style="border-color:rgba(255,255,255,0.07);background:rgba(0,0,0,0.1)">
+             style="border-color:var(--c-border);background:transparent">
             <div class="text-[10px] text-slate-500 font-medium">
                 Affichage <span class="text-slate-300 font-bold">{{ $pagination['from'] }}–{{ $pagination['to'] }}</span>
                 sur <span class="text-slate-300 font-bold">{{ $pagination['total'] }}</span> transactions

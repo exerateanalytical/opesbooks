@@ -11,9 +11,9 @@
 <!-- Filter bar -->
 <form method="GET" class="mb-6 flex flex-wrap items-center gap-3">
     <input type="text" name="search" value="{{ request('search') }}" placeholder="Search user, company, IP…"
-           class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500/60 flex-1 min-w-[200px]">
+           class="bg-[#1C2A3A] border border-[#334155] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#F59E0B]/60 flex-1 min-w-[200px]">
     <select name="action"
-            class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500/60">
+            class="bg-[#1C2A3A] border border-[#334155] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#F59E0B]/60">
         <option value="" @selected(request('action') === '' || request('action') === null)>All Actions</option>
         @foreach(['CREATE','UPDATE','DELETE','IMPERSONATE','LOGIN'] as $act)
             <option value="{{ $act }}" @selected(request('action') === $act)>{{ $act }}</option>
@@ -25,11 +25,11 @@
     </button>
 </form>
 
-<div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+<div class="bg-[#151F2E] border border-[#253347] rounded-2xl overflow-hidden">
     <div class="overflow-x-auto">
         <table class="w-full text-left">
             <thead>
-                <tr class="text-[9px] font-black uppercase tracking-widest text-slate-500 border-b border-slate-800 bg-slate-950/50">
+                <tr class="text-[9px] font-black uppercase tracking-widest text-slate-500 border-b border-[#253347] bg-slate-950/50">
                     <th class="py-3 px-6">Time</th>
                     <th class="py-3 px-4">User</th>
                     <th class="py-3 px-4">Company</th>
@@ -70,7 +70,7 @@
         </table>
     </div>
     @if($logs->hasPages())
-        <div class="px-6 py-4 border-t border-slate-800">
+        <div class="px-6 py-4 border-t border-[#253347]">
             {{ $logs->links() }}
         </div>
     @endif

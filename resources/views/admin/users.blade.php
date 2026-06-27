@@ -15,23 +15,23 @@
 
 <!-- Impersonate result modal (shown via JS) -->
 <div id="impersonate-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm">
-    <div class="bg-slate-900 border border-slate-700 rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl">
+    <div class="bg-[#151F2E] border border-[#334155] rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl">
         <h3 class="text-sm font-black text-white uppercase tracking-wider mb-4">Impersonation Token</h3>
         <p class="text-slate-400 text-xs mb-3">Use this Bearer token in the Authorization header to act as the user for 1 hour:</p>
-        <code id="impersonate-token" class="block bg-slate-800 rounded-xl px-4 py-3 text-amber-300 text-[10px] font-mono break-all mb-5"></code>
+        <code id="impersonate-token" class="block bg-[#1C2A3A] rounded-xl px-4 py-3 text-amber-300 text-[10px] font-mono break-all mb-5"></code>
         <div id="impersonate-user" class="text-slate-500 text-[10px] mb-4"></div>
         <button onclick="document.getElementById('impersonate-modal').classList.add('hidden')"
-                class="w-full py-2 rounded-xl text-xs font-black uppercase tracking-widest bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-all">
+                class="w-full py-2 rounded-xl text-xs font-black uppercase tracking-widest bg-[#1C2A3A] hover:bg-slate-700 text-slate-300 border border-[#334155] transition-all">
             Close
         </button>
     </div>
 </div>
 
-<div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+<div class="bg-[#151F2E] border border-[#253347] rounded-2xl overflow-hidden">
     <div class="overflow-x-auto">
         <table class="w-full text-left">
             <thead>
-                <tr class="text-[9px] font-black uppercase tracking-widest text-slate-500 border-b border-slate-800 bg-slate-950/50">
+                <tr class="text-[9px] font-black uppercase tracking-widest text-slate-500 border-b border-[#253347] bg-slate-950/50">
                     <th class="py-3 px-6">Name</th>
                     <th class="py-3 px-4">Email</th>
                     <th class="py-3 px-4">Role</th>
@@ -77,7 +77,7 @@
         </table>
     </div>
     @if($users->hasPages())
-        <div class="px-6 py-4 border-t border-slate-800">
+        <div class="px-6 py-4 border-t border-[#253347]">
             {{ $users->links() }}
         </div>
     @endif

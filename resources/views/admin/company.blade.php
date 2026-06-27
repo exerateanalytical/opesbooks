@@ -23,7 +23,7 @@
 <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
 
     <!-- Subscription form -->
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+    <div class="bg-[#151F2E] border border-[#253347] rounded-2xl p-6">
         <h2 class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-5">Update Subscription</h2>
 
         @php $sub = $company->subscriptions->first(); @endphp
@@ -32,7 +32,7 @@
             @csrf
             <div>
                 <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Plan</label>
-                <select name="plan" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500/60 transition-all">
+                <select name="plan" class="w-full bg-[#1C2A3A] border border-[#334155] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#F59E0B]/60 transition-all">
                     @foreach(['STARTER','GROWTH','ENTERPRISE'] as $plan)
                         <option value="{{ $plan }}" {{ ($sub?->plan === $plan) ? 'selected' : '' }}>{{ $plan }}</option>
                     @endforeach
@@ -40,7 +40,7 @@
             </div>
             <div>
                 <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Status</label>
-                <select name="status" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500/60 transition-all">
+                <select name="status" class="w-full bg-[#1C2A3A] border border-[#334155] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#F59E0B]/60 transition-all">
                     @foreach(['ACTIVE','SUSPENDED','CANCELLED'] as $status)
                         <option value="{{ $status }}" {{ ($sub?->status === $status) ? 'selected' : '' }}>{{ $status }}</option>
                     @endforeach
@@ -50,7 +50,7 @@
                 <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Expires At</label>
                 <input type="date" name="expires_at"
                        value="{{ $sub?->period_end ? \Carbon\Carbon::parse($sub->period_end)->format('Y-m-d') : '' }}"
-                       class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500/60 transition-all">
+                       class="w-full bg-[#1C2A3A] border border-[#334155] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#F59E0B]/60 transition-all">
             </div>
             @if($errors->any())
                 <div class="px-4 py-3 rounded-xl bg-red-500/15 border border-red-500/30 text-red-300 text-xs font-semibold">
@@ -65,7 +65,7 @@
     </div>
 
     <!-- Users list -->
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+    <div class="bg-[#151F2E] border border-[#253347] rounded-2xl p-6">
         <h2 class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-5">
             Users ({{ $company->users->count() }})
         </h2>
@@ -93,8 +93,8 @@
 
 <!-- Subscription history -->
 @if($company->subscriptions->count() > 1)
-<div class="mt-6 bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
-    <div class="px-6 py-4 border-b border-slate-800">
+<div class="mt-6 bg-[#151F2E] border border-[#253347] rounded-2xl overflow-hidden">
+    <div class="px-6 py-4 border-b border-[#253347]">
         <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Subscription History</span>
     </div>
     <div class="overflow-x-auto">

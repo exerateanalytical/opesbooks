@@ -9,7 +9,7 @@
 </div>
 
 <!-- Compose card -->
-<div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 mb-6">
+<div class="bg-[#151F2E] border border-[#253347] rounded-2xl p-6 mb-6">
     <span class="text-[9px] font-black uppercase tracking-widest text-slate-500">Compose</span>
     <form method="POST" action="{{ route('admin.announcements.store') }}" class="mt-5">
         @csrf
@@ -17,17 +17,17 @@
             <div class="md:col-span-2">
                 <label class="text-[9px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Title</label>
                 <input type="text" name="title" value="{{ old('title') }}"
-                       class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500/60">
+                       class="w-full bg-[#1C2A3A] border border-[#334155] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#F59E0B]/60">
             </div>
             <div class="md:col-span-2">
                 <label class="text-[9px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Body</label>
                 <textarea name="body" rows="3"
-                          class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500/60">{{ old('body') }}</textarea>
+                          class="w-full bg-[#1C2A3A] border border-[#334155] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#F59E0B]/60">{{ old('body') }}</textarea>
             </div>
             <div>
                 <label class="text-[9px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Type</label>
                 <select name="type"
-                        class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500/60">
+                        class="w-full bg-[#1C2A3A] border border-[#334155] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#F59E0B]/60">
                     @foreach(['INFO','WARNING','MAINTENANCE','FEATURE'] as $t)
                         <option value="{{ $t }}" @selected(old('type') === $t)>{{ $t }}</option>
                     @endforeach
@@ -36,7 +36,7 @@
             <div>
                 <label class="text-[9px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Target Plan</label>
                 <select name="target_plan"
-                        class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500/60">
+                        class="w-full bg-[#1C2A3A] border border-[#334155] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#F59E0B]/60">
                     <option value="" @selected(old('target_plan') === '' || old('target_plan') === null)>All plans</option>
                     @foreach(['STARTER','GROWTH','ENTERPRISE'] as $p)
                         <option value="{{ $p }}" @selected(old('target_plan') === $p)>{{ $p }}</option>
@@ -46,7 +46,7 @@
             <div>
                 <label class="text-[9px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Target Company</label>
                 <select name="target_company_id"
-                        class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500/60">
+                        class="w-full bg-[#1C2A3A] border border-[#334155] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#F59E0B]/60">
                     <option value="" @selected(old('target_company_id') === '' || old('target_company_id') === null)>All companies</option>
                     @foreach($companies as $company)
                         <option value="{{ $company->id }}" @selected((string) old('target_company_id') === (string) $company->id)>{{ $company->name }}</option>
@@ -56,12 +56,12 @@
             <div>
                 <label class="text-[9px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Published At</label>
                 <input type="datetime-local" name="published_at" value="{{ old('published_at') }}"
-                       class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500/60">
+                       class="w-full bg-[#1C2A3A] border border-[#334155] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#F59E0B]/60">
             </div>
             <div>
                 <label class="text-[9px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Expires At</label>
                 <input type="datetime-local" name="expires_at" value="{{ old('expires_at') }}"
-                       class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500/60">
+                       class="w-full bg-[#1C2A3A] border border-[#334155] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#F59E0B]/60">
             </div>
         </div>
         <div class="mt-5">
@@ -85,7 +85,7 @@
                 default => 'bg-slate-500/20 text-slate-300 border border-slate-500/30',
             };
         @endphp
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+        <div class="bg-[#151F2E] border border-[#253347] rounded-2xl p-5">
             <div class="flex items-start justify-between gap-4">
                 <div class="flex-1 min-w-0">
                     <div class="flex items-center gap-2 mb-2">
@@ -108,7 +108,7 @@
                     <form method="POST" action="{{ route('admin.announcements.toggle', $a) }}">
                         @csrf
                         <button type="submit"
-                                class="px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wide bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-all">
+                                class="px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wide bg-[#1C2A3A] hover:bg-slate-700 text-slate-300 border border-[#334155] transition-all">
                             {{ $a->active ? 'Deactivate' : 'Activate' }}
                         </button>
                     </form>
@@ -125,14 +125,14 @@
             </div>
         </div>
     @empty
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-12 text-center text-slate-500 text-sm">
+        <div class="bg-[#151F2E] border border-[#253347] rounded-2xl p-12 text-center text-slate-500 text-sm">
             No announcements yet.
         </div>
     @endforelse
 </div>
 
 @if($announcements->hasPages())
-    <div class="px-6 py-4 border-t border-slate-800 mt-4">
+    <div class="px-6 py-4 border-t border-[#253347] mt-4">
         {{ $announcements->links() }}
     </div>
 @endif

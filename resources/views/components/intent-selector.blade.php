@@ -2,11 +2,11 @@
 
 <div x-data="intentSelector()"
      class="w-full rounded-2xl overflow-hidden relative glass-shimmer"
-     style="background:rgba(255,255,255,0.055);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);border:1px solid rgba(255,255,255,0.13);box-shadow:0 8px 40px rgba(0,0,0,0.5),0 1px 0 rgba(255,255,255,0.12) inset;">
+     style="background:var(--c-surface);border:1px solid var(--c-border);box-shadow:0 8px 40px rgba(0,0,0,0.5);">
 
     {{-- Header --}}
     <div class="px-5 py-4 border-b flex items-center gap-3"
-         style="border-color:rgba(255,255,255,0.08);background:rgba(255,255,255,0.04)">
+         style="border-color:var(--c-border);background:var(--c-bg)">
         <div class="w-9 h-9 rounded-xl flex items-center justify-center text-xs font-black text-white"
              style="background:linear-gradient(135deg,rgba(99,102,241,0.8),rgba(79,70,229,0.9));box-shadow:0 4px 14px rgba(99,102,241,0.35)">
             +
@@ -29,9 +29,9 @@
                     :class="intent.highlight
                         ? 'hover:border-emerald-400/40'
                         : 'hover:border-white/20'"
-                    style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);transition:all 0.2s ease"
+                    style="background:var(--c-raised);border:1px solid var(--c-border);transition:all 0.2s ease"
                     @mouseenter="$el.style.background='rgba(255,255,255,0.10)';$el.style.borderColor='rgba(255,255,255,0.18)'"
-                    @mouseleave="$el.style.background='rgba(255,255,255,0.05)';$el.style.borderColor='rgba(255,255,255,0.09)'"
+                    @mouseleave="$el.style.background='#1C2A3A';$el.style.borderColor='#253347'"
                 >
                     <span class="text-2xl mb-2 leading-none" x-text="intent.icon"></span>
                     <span class="text-[10px] font-black text-slate-200 uppercase tracking-wide leading-tight" x-text="intent.labelFr"></span>
@@ -52,7 +52,7 @@
                 ← Retour
             </button>
             <div class="flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider text-white"
-                 style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.16)">
+                 style="background:var(--c-raised);border:1px solid var(--c-border-strong)">
                 <span x-text="selectedIntent?.icon"></span>
                 <span x-text="selectedIntent?.labelFr"></span>
             </div>
@@ -78,7 +78,7 @@
             {{-- Tax breakdown --}}
             <div x-show="taxBreakdown" x-cloak
                  class="mt-2.5 rounded-xl p-3 float-in"
-                 style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08)">
+                 style="background:var(--c-raised);border:1px solid var(--c-border)">
                 <div class="grid grid-cols-4 gap-2 text-[10px] font-mono text-center">
                     <div>
                         <div class="text-slate-500 font-bold mb-0.5">Base HT</div>
@@ -115,7 +115,7 @@
 
         {{-- SYSCOHADA mapping preview --}}
         <div x-show="selectedIntent" class="mb-4 rounded-xl p-3"
-             style="background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.07)">
+             style="background:var(--c-bg);border:1px solid var(--c-border)">
             <div class="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-2">
                 Mappage SYSCOHADA Automatique
             </div>

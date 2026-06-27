@@ -9,19 +9,19 @@
 </div>
 
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+    <div class="bg-[#151F2E] border border-[#253347] rounded-2xl p-5">
         <div class="text-[9px] font-black uppercase tracking-widest text-slate-500">MRR</div>
         <div class="text-3xl font-black text-amber-400 mt-2">{{ number_format($metrics['mrr']) }} <span class="text-sm font-bold text-slate-500">XAF</span></div>
     </div>
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+    <div class="bg-[#151F2E] border border-[#253347] rounded-2xl p-5">
         <div class="text-[9px] font-black uppercase tracking-widest text-slate-500">ARR</div>
         <div class="text-3xl font-black text-white mt-2">{{ number_format($metrics['arr']) }} <span class="text-sm font-bold text-slate-500">XAF</span></div>
     </div>
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+    <div class="bg-[#151F2E] border border-[#253347] rounded-2xl p-5">
         <div class="text-[9px] font-black uppercase tracking-widest text-slate-500">Active Subs</div>
         <div class="text-3xl font-black text-emerald-400 mt-2">{{ number_format($metrics['active']) }}</div>
     </div>
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+    <div class="bg-[#151F2E] border border-[#253347] rounded-2xl p-5">
         <div class="text-[9px] font-black uppercase tracking-widest text-slate-500">Avg / Company</div>
         <div class="text-3xl font-black text-white mt-2">{{ number_format($metrics['avg_per_co']) }} <span class="text-sm font-bold text-slate-500">XAF</span></div>
     </div>
@@ -29,7 +29,7 @@
 
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
     <!-- Revenue last 6 months -->
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+    <div class="bg-[#151F2E] border border-[#253347] rounded-2xl p-6">
         <div class="text-[9px] font-black uppercase tracking-widest text-slate-500 mb-5">Revenue (last 6 months)</div>
         @php $maxRevenue = count($byMonth) ? max($byMonth) : 0; @endphp
         <div class="space-y-3">
@@ -49,11 +49,11 @@
     </div>
 
     <!-- By plan -->
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+    <div class="bg-[#151F2E] border border-[#253347] rounded-2xl overflow-hidden">
         <div class="px-6 pt-6 pb-4 text-[9px] font-black uppercase tracking-widest text-slate-500">By plan</div>
         <table class="w-full text-left">
             <thead>
-                <tr class="text-[9px] font-black uppercase tracking-widest text-slate-500 border-b border-slate-800 bg-slate-950/50">
+                <tr class="text-[9px] font-black uppercase tracking-widest text-slate-500 border-b border-[#253347] bg-slate-950/50">
                     <th class="py-3 px-6">Plan</th>
                     <th class="py-3 px-4 text-center">Count</th>
                     <th class="py-3 px-4 text-right">Total</th>
@@ -84,12 +84,12 @@
 </div>
 
 <!-- Recent transactions -->
-<div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+<div class="bg-[#151F2E] border border-[#253347] rounded-2xl overflow-hidden">
     <div class="px-6 pt-6 pb-4 text-[9px] font-black uppercase tracking-widest text-slate-500">Recent transactions</div>
     <div class="overflow-x-auto">
         <table class="w-full text-left">
             <thead>
-                <tr class="text-[9px] font-black uppercase tracking-widest text-slate-500 border-b border-slate-800 bg-slate-950/50">
+                <tr class="text-[9px] font-black uppercase tracking-widest text-slate-500 border-b border-[#253347] bg-slate-950/50">
                     <th class="py-3 px-6">Company</th>
                     <th class="py-3 px-4">Plan</th>
                     <th class="py-3 px-4">Amount</th>
@@ -131,7 +131,7 @@
 </div>
 
 <!-- Payments received (with receipts) -->
-<div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden mt-6">
+<div class="bg-[#151F2E] border border-[#253347] rounded-2xl overflow-hidden mt-6">
     <div class="px-6 pt-6 pb-4 flex items-center justify-between">
         <span class="text-[9px] font-black uppercase tracking-widest text-slate-500">Paiements reçus</span>
         <span class="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30">Reçus PDF</span>
@@ -139,7 +139,7 @@
     <div class="overflow-x-auto">
         <table class="w-full text-left">
             <thead>
-                <tr class="text-[9px] font-black uppercase tracking-widest text-slate-500 border-b border-slate-800 bg-slate-950/50">
+                <tr class="text-[9px] font-black uppercase tracking-widest text-slate-500 border-b border-[#253347] bg-slate-950/50">
                     <th class="py-3 px-6">Date</th><th class="py-3 px-4">Entreprise</th>
                     <th class="py-3 px-4">Montant</th><th class="py-3 px-4">Méthode</th>
                     <th class="py-3 px-4">Référence</th><th class="py-3 px-4">Reçu</th>
@@ -155,7 +155,7 @@
                         <td class="py-3.5 px-4 font-mono text-[10px] text-slate-500">{{ $p->reference ?? '—' }}</td>
                         <td class="py-3.5 px-4">
                             <a href="{{ route('admin.payments.receipt', $p) }}"
-                               class="px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wide bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700">
+                               class="px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wide bg-[#1C2A3A] hover:bg-slate-700 text-slate-300 hover:text-white border border-[#334155]">
                                 {{ $p->receipt_number }}
                             </a>
                         </td>

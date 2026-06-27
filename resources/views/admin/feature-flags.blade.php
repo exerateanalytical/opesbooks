@@ -8,11 +8,11 @@
     <p class="text-slate-500 text-xs mt-1">Activez les modules par plan ou par entreprise</p>
 </div>
 
-<div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+<div class="bg-[#151F2E] border border-[#253347] rounded-2xl overflow-hidden">
     <div class="overflow-x-auto">
         <table class="w-full text-left">
             <thead>
-                <tr class="text-[9px] font-black uppercase tracking-widest text-slate-500 border-b border-slate-800 bg-slate-950/50">
+                <tr class="text-[9px] font-black uppercase tracking-widest text-slate-500 border-b border-[#253347] bg-slate-950/50">
                     <th class="py-3 px-6">Fonctionnalité</th>
                     <th class="py-3 px-4">Clé</th>
                     <th class="py-3 px-4">Activée pour</th>
@@ -31,7 +31,7 @@
                             <form method="POST" action="{{ route('admin.feature-flags.update', $flag) }}" class="flex items-center gap-2">
                                 @csrf
                                 <select name="enabled_for" onchange="this.form.submit()"
-                                        class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500/60">
+                                        class="bg-[#1C2A3A] border border-[#334155] rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-[#F59E0B]/60">
                                     @foreach($targets as $val => $label)
                                         <option value="{{ $val }}" {{ $flag->enabled_for === $val ? 'selected' : '' }}>{{ $label }}</option>
                                     @endforeach

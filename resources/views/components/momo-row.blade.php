@@ -8,10 +8,10 @@
 @php
     $isResolved  = $transaction['status'] === 'RESOLVED';
     $isRevenue   = $transaction['type'] === 'REVENUE';
-    $rowBg       = $isResolved ? 'bg-white' : 'bg-amber-50/40';
+    $rowBg       = $isResolved ? '' : 'bg-amber-500/5';
     $statusColor = $isResolved
-        ? 'text-emerald-600 bg-emerald-50 border-emerald-200'
-        : 'text-amber-700 bg-amber-100 border-amber-300';
+        ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30'
+        : 'text-amber-400 bg-amber-500/10 border-amber-500/30';
     $statusLabel = $isResolved
         ? 'Validé Auto / Auto-Matched'
         : 'À Résoudre / Requires Review';
@@ -32,11 +32,11 @@
     $opText     = $operator === 'ORANGE' ? 'text-white'    : 'text-slate-950';
 @endphp
 
-<tr class="hover:bg-slate-50 transition-colors {{ $rowBg }}">
+<tr class="tbl-row transition-colors {{ $rowBg }}">
 
     {{-- ID Reference + Operator Badge --}}
-    <td class="py-3 px-4 font-mono font-black text-slate-900 whitespace-nowrap">
-        <span class="block text-slate-950 text-[11px]">{{ $transaction['transaction_id'] }}</span>
+    <td class="py-3 px-4 font-mono font-black text-slate-200 whitespace-nowrap">
+        <span class="block text-slate-100 text-[11px]">{{ $transaction['transaction_id'] }}</span>
         <div class="flex items-center gap-1 mt-0.5">
             <span class="text-[9px] font-black px-1.5 py-0.5 rounded {{ $opBg }} {{ $opText }} uppercase tracking-widest">
                 {{ $operator }}
@@ -48,24 +48,24 @@
     </td>
 
     {{-- Raw Payload Description --}}
-    <td class="py-3 px-4 max-w-xs md:max-w-sm truncate text-slate-800 font-mono text-[11px]"
+    <td class="py-3 px-4 max-w-xs md:max-w-sm truncate text-slate-300 font-mono text-[11px]"
         title="{{ $transaction['message'] ?? '' }}">
         {{ $transaction['message'] ?? '—' }}
     </td>
 
     {{-- Gross Amount TTC — XAF format --}}
-    <td class="py-3 px-4 text-right font-mono font-black text-slate-950 whitespace-nowrap text-sm">
+    <td class="py-3 px-4 text-right font-mono font-black text-slate-100 whitespace-nowrap text-sm">
         {{ $ttcFmt }} <span class="text-[10px] text-slate-500 font-bold">XAF</span>
     </td>
 
     {{-- Tax Math Matrix: HT | TVA | CAC isolated per spec --}}
     <td class="py-3 px-4 whitespace-nowrap">
         <div class="flex flex-col items-center justify-center text-[10px] font-mono leading-tight
-                    {{ $isResolved ? 'bg-slate-50 border-slate-200' : 'bg-amber-100/50 border-amber-200' }}
+                    {{ $isResolved ? 'border-slate-700 bg-transparent' : 'bg-amber-500/10 border-amber-500/30' }}
                     p-1.5 rounded border">
-            <div class="font-bold text-slate-900">HT: {{ $htFmt }} XAF</div>
-            <div class="text-slate-600">TVA (17.5%): {{ $vatFmt }} | CAC (10%): {{ $cacFmt }}</div>
-            <div class="{{ $isResolved ? 'text-slate-500' : 'text-amber-700' }} font-bold">TTC: {{ $ttcFmt }} XAF</div>
+            <div class="font-bold text-slate-200">HT: {{ $htFmt }} XAF</div>
+            <div class="text-slate-500">TVA (17.5%): {{ $vatFmt }} | CAC (10%): {{ $cacFmt }}</div>
+            <div class="{{ $isResolved ? 'text-slate-400' : 'text-amber-400' }} font-bold">TTC: {{ $ttcFmt }} XAF</div>
         </div>
     </td>
 
@@ -73,10 +73,10 @@
     <td class="py-3 px-4 text-center whitespace-nowrap">
         @if($debitCode && $creditCode)
             <div class="inline-flex flex-col space-y-0.5">
-                <span class="text-[10px] font-mono bg-slate-900 text-white font-bold px-2 py-0.5 rounded">
+                <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded" style="background:#1C2A3A;border:1px solid #253347;color:#93C5FD">
                     D: {{ $debitCode }}
                 </span>
-                <span class="text-[10px] font-mono bg-slate-200 text-slate-800 font-bold px-2 py-0.5 rounded">
+                <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded" style="background:#1C2A3A;border:1px solid #253347;color:#86EFAC">
                     C: {{ $creditCode }}
                 </span>
             </div>

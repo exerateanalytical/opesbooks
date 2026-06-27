@@ -9,7 +9,7 @@
 </div>
 
 @if($newKey)
-    <div x-data="{ copied: false }" class="mb-8 bg-slate-900 border border-emerald-500/40 rounded-2xl p-6">
+    <div x-data="{ copied: false }" class="mb-8 bg-[#151F2E] border border-emerald-500/40 rounded-2xl p-6">
         <div class="flex items-start justify-between gap-4">
             <div>
                 <div class="text-[9px] font-black uppercase tracking-widest text-emerald-400">✓ API Key Generated</div>
@@ -17,7 +17,7 @@
             </div>
         </div>
         <div class="mt-4 flex items-center gap-3">
-            <code class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 font-mono text-xs text-emerald-300 break-all">{{ $newKey }}</code>
+            <code class="flex-1 bg-[#0B1120] border border-[#253347] rounded-xl px-4 py-3 font-mono text-xs text-emerald-300 break-all">{{ $newKey }}</code>
             <button type="button"
                     @click="navigator.clipboard.writeText(@js($newKey)); copied = true; setTimeout(() => copied = false, 2000)"
                     class="shrink-0 px-4 py-2.5 rounded-xl text-sm font-black uppercase tracking-widest text-slate-900 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 transition-all">
@@ -29,8 +29,8 @@
 @endif
 
 <!-- Issue New Key -->
-<div x-data="{ open: false }" class="mb-8 bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
-    <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800">
+<div x-data="{ open: false }" class="mb-8 bg-[#151F2E] border border-[#253347] rounded-2xl overflow-hidden">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-[#253347]">
         <div class="text-[9px] font-black uppercase tracking-widest text-slate-500">Issue New Key</div>
         <button type="button" @click="open = !open"
                 class="px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest text-amber-400 bg-amber-500/15 border border-amber-500/30 hover:bg-amber-500/25 transition-all">
@@ -44,7 +44,7 @@
             <div>
                 <label class="block text-[9px] font-black uppercase tracking-widest text-slate-500 mb-1.5">Company</label>
                 <select name="company_id" required
-                        class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500/60">
+                        class="w-full bg-[#1C2A3A] border border-[#334155] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#F59E0B]/60">
                     @foreach($companies as $company)
                         <option value="{{ $company->id }}">{{ $company->name }}</option>
                     @endforeach
@@ -53,12 +53,12 @@
             <div>
                 <label class="block text-[9px] font-black uppercase tracking-widest text-slate-500 mb-1.5">Key Name</label>
                 <input type="text" name="name" required placeholder="e.g. Production integration"
-                       class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500/60">
+                       class="w-full bg-[#1C2A3A] border border-[#334155] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#F59E0B]/60">
             </div>
             <div>
                 <label class="block text-[9px] font-black uppercase tracking-widest text-slate-500 mb-1.5">Environment</label>
                 <select name="environment"
-                        class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500/60">
+                        class="w-full bg-[#1C2A3A] border border-[#334155] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#F59E0B]/60">
                     <option value="live">Live</option>
                     <option value="test">Test</option>
                 </select>
@@ -66,21 +66,21 @@
             <div>
                 <label class="block text-[9px] font-black uppercase tracking-widest text-slate-500 mb-1.5">Rate Limit (per hour)</label>
                 <input type="number" name="rate_limit" value="1000" min="1"
-                       class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500/60">
+                       class="w-full bg-[#1C2A3A] border border-[#334155] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#F59E0B]/60">
             </div>
             <div>
                 <label class="block text-[9px] font-black uppercase tracking-widest text-slate-500 mb-1.5">Expires At <span class="text-slate-600 normal-case font-medium">(optional)</span></label>
                 <input type="date" name="expires_at"
-                       class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500/60">
+                       class="w-full bg-[#1C2A3A] border border-[#334155] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#F59E0B]/60">
             </div>
         </div>
         <div>
             <label class="block text-[9px] font-black uppercase tracking-widest text-slate-500 mb-2">Scopes</label>
             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
                 @foreach($scopes as $scope)
-                    <label class="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 cursor-pointer hover:border-amber-500/40 transition-all">
+                    <label class="flex items-center gap-2 px-3 py-2 rounded-xl bg-[#1C2A3A] border border-[#334155] cursor-pointer hover:border-amber-500/40 transition-all">
                         <input type="checkbox" name="scopes[]" value="{{ $scope }}"
-                               class="w-3.5 h-3.5 rounded bg-slate-900 border-slate-600 text-amber-500 focus:ring-0 focus:ring-offset-0">
+                               class="w-3.5 h-3.5 rounded bg-[#151F2E] border-slate-600 text-amber-500 focus:ring-0 focus:ring-offset-0">
                         <span class="font-mono text-[11px] text-slate-300">{{ $scope }}</span>
                     </label>
                 @endforeach
@@ -96,11 +96,11 @@
 </div>
 
 <!-- Keys table -->
-<div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+<div class="bg-[#151F2E] border border-[#253347] rounded-2xl overflow-hidden">
     <div class="overflow-x-auto">
         <table class="w-full text-left">
             <thead>
-                <tr class="text-[9px] font-black uppercase tracking-widest text-slate-500 border-b border-slate-800 bg-slate-950/50">
+                <tr class="text-[9px] font-black uppercase tracking-widest text-slate-500 border-b border-[#253347] bg-slate-950/50">
                     <th class="py-3 px-6">Name</th>
                     <th class="py-3 px-4">Company</th>
                     <th class="py-3 px-4">Key</th>
@@ -165,7 +165,7 @@
         </table>
     </div>
     @if($keys->hasPages())
-        <div class="px-6 py-4 border-t border-slate-800">
+        <div class="px-6 py-4 border-t border-[#253347]">
             {{ $keys->links() }}
         </div>
     @endif

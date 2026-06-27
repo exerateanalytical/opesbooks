@@ -10,39 +10,39 @@
 
 <!-- Stat strip -->
 <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+    <div class="bg-[#151F2E] border border-[#253347] rounded-2xl p-5">
         <div class="text-[9px] font-black uppercase tracking-widest text-slate-500">Total Requests</div>
         <div class="text-2xl font-black text-white mt-2">{{ number_format($stats['total']) }}</div>
     </div>
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+    <div class="bg-[#151F2E] border border-[#253347] rounded-2xl p-5">
         <div class="text-[9px] font-black uppercase tracking-widest text-slate-500">Today</div>
         <div class="text-2xl font-black text-amber-400 mt-2">{{ number_format($stats['today']) }}</div>
     </div>
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+    <div class="bg-[#151F2E] border border-[#253347] rounded-2xl p-5">
         <div class="text-[9px] font-black uppercase tracking-widest text-slate-500">Errors (24h)</div>
         <div class="text-2xl font-black text-red-400 mt-2">{{ number_format($stats['errors_24h']) }}</div>
     </div>
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+    <div class="bg-[#151F2E] border border-[#253347] rounded-2xl p-5">
         <div class="text-[9px] font-black uppercase tracking-widest text-slate-500">Avg Latency</div>
         <div class="text-2xl font-black text-white mt-2">{{ $stats['avg_latency'] }} ms</div>
     </div>
 </div>
 
 <!-- Filter bar -->
-<form method="GET" class="mb-8 bg-slate-900 border border-slate-800 rounded-2xl p-5">
+<form method="GET" class="mb-8 bg-[#151F2E] border border-[#253347] rounded-2xl p-5">
     <div class="text-[9px] font-black uppercase tracking-widest text-slate-500 mb-3">Filters</div>
     <div class="flex flex-col md:flex-row gap-3">
         <input type="text" name="search" value="{{ request('search') }}" placeholder="Search endpoint…"
-               class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500/60">
+               class="flex-1 bg-[#1C2A3A] border border-[#334155] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#F59E0B]/60">
         <select name="status"
-                class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500/60">
+                class="bg-[#1C2A3A] border border-[#334155] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#F59E0B]/60">
             <option value="">All Status</option>
             <option value="2xx" @selected(request('status') === '2xx')>2xx</option>
             <option value="4xx" @selected(request('status') === '4xx')>4xx</option>
             <option value="5xx" @selected(request('status') === '5xx')>5xx</option>
         </select>
         <select name="method"
-                class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500/60">
+                class="bg-[#1C2A3A] border border-[#334155] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#F59E0B]/60">
             <option value="">All Methods</option>
             <option value="GET" @selected(request('method') === 'GET')>GET</option>
             <option value="POST" @selected(request('method') === 'POST')>POST</option>
@@ -57,11 +57,11 @@
 </form>
 
 <!-- Logs table -->
-<div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+<div class="bg-[#151F2E] border border-[#253347] rounded-2xl overflow-hidden">
     <div class="overflow-x-auto">
         <table class="w-full text-left">
             <thead>
-                <tr class="text-[9px] font-black uppercase tracking-widest text-slate-500 border-b border-slate-800 bg-slate-950/50">
+                <tr class="text-[9px] font-black uppercase tracking-widest text-slate-500 border-b border-[#253347] bg-slate-950/50">
                     <th class="py-3 px-6">Time</th>
                     <th class="py-3 px-4">Company</th>
                     <th class="py-3 px-4">Key</th>
@@ -107,7 +107,7 @@
         </table>
     </div>
     @if($logs->hasPages())
-        <div class="px-6 py-4 border-t border-slate-800">
+        <div class="px-6 py-4 border-t border-[#253347]">
             {{ $logs->links() }}
         </div>
     @endif
