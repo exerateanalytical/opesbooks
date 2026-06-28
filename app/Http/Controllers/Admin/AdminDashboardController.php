@@ -85,6 +85,31 @@ class AdminDashboardController extends Controller
         return redirect()->route('admin.companies')->with('success', "Entreprise supprimée : {$company->name}");
     }
 
+    /** GET /admin/companies/{company}/export — data-portability export (JSON download). */
+    public function exportCompany(Company $company)
+    {
+        $company->load(['users', 'subscriptions', 'payments']);
+
+        $users = $company->users
+            ->makeHidden(['password', 'remember_token', 'two_factor_secret', 'two_factor_recovery_codes'])
+            ->toArray();
+
+        $data = [
+            'exported_at'     => now()->toIso8601String(),
+            'company'         => $company->makeHidden(['logo_path'])->toArray(),
+            'users'           => $users,
+            'subscriptions'   => $company->subscriptions->toArray(),
+            'payments'        => $company->payments->toArray(),
+            'journal_entries' => $company->journalEntries()->with('lines')->get()->toArray(),
+        ];
+
+        $filename = 'tenant-' . $company->id . '-export-' . now()->format('Ymd-His') . '.json';
+
+        return response()->json($data, 200, [
+            'Content-Disposition' => "attachment; filename={$filename}",
+        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    }
+
     public function updateSubscription(Request $request, Company $company)
     {
         $slugs = PlanConfig::pluck('slug')->all();

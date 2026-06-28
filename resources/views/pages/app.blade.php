@@ -281,6 +281,14 @@
 </head>
 <body x-data="opesApp()" x-cloak class="relative">
 
+@if(\App\Models\PlatformSetting::flag('maintenance_mode'))
+<!-- Platform maintenance banner (driven by PlatformSetting::flag('maintenance_mode')) -->
+<div class="relative z-[100] flex items-center justify-center gap-2 px-4 py-2 text-center text-sm font-bold text-black" style="background:#F59E0B">
+    <span>🛠</span>
+    <span>Maintenance en cours — certaines fonctionnalités peuvent être temporairement indisponibles.</span>
+</div>
+@endif
+
 <!-- Admin impersonation banner -->
 <div x-show="impersonation" x-cloak class="relative z-[100] flex items-center justify-between gap-3 px-4 py-2 text-black"
      style="background:var(--c-accent-hex)">

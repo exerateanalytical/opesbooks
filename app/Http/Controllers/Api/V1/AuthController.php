@@ -167,12 +167,24 @@ class AuthController extends Controller
             $companyData['country_config'] = $company->countryConfig;
         }
 
+        // Resolve per-company feature flags so the SPA can gate features — this
+        // is the consumption point the FeatureFlag/targeting system was missing.
+        $features = [];
+        if ($company) {
+            $svc = app(\App\Services\FeatureFlagService::class);
+            foreach (\App\Models\FeatureFlag::pluck('key') as $key) {
+                $features[$key] = $svc->enabled($key, $company);
+            }
+        }
+
         return response()->json([
             'user'           => $this->userPayload($user),
             'company'        => $companyData,
             // Company enforces 2FA but this user hasn't enabled it yet.
             'must_enable_2fa'=> (bool) ($company?->require_2fa) && ! $user->hasTwoFactorEnabled(),
             'require_2fa'    => (bool) ($company?->require_2fa),
+            'features'       => $features,
+            'maintenance'    => \App\Models\PlatformSetting::flag('maintenance_mode', false),
             'fiscal_modules' => $company
                 ? app(\App\Services\FiscalGeographyRouter::class)->getActiveFiscalModules($company)
                 : null,

@@ -3,9 +3,13 @@
 @section('title', $company->name)
 
 @section('content')
-<div class="mb-6">
+<div class="mb-6 flex items-center justify-between">
     <a href="{{ route('admin.dashboard') }}" class="text-[10px] text-slate-500 hover:text-slate-300 uppercase tracking-widest font-bold transition-colors">
         ← Back to Dashboard
+    </a>
+    <a href="{{ route('admin.company.export', $company) }}"
+       class="text-[10px] font-black uppercase tracking-widest text-slate-300 hover:text-white border border-[#253347] rounded-lg px-3 py-1.5 transition-colors">
+        ⬇ Export data (JSON)
     </a>
 </div>
 

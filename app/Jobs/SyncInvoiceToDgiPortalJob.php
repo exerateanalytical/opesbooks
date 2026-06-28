@@ -9,6 +9,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
+use App\Models\PlatformSetting;
 
 class SyncInvoiceToDgiPortalJob implements ShouldQueue
 {
@@ -21,6 +22,13 @@ class SyncInvoiceToDgiPortalJob implements ShouldQueue
 
     public function handle(): void
     {
+        // Platform kill-switch: when DGI auto-sync is disabled, hold the entry
+        // and retry later rather than télétransmitting.
+        if (! PlatformSetting::flag('dgi_auto_sync', true)) {
+            $this->release(300);
+            return;
+        }
+
         $entry = DB::table('journal_entries')
             ->join('companies', 'journal_entries.company_id', '=', 'companies.id')
             ->where('journal_entries.id', $this->journalEntryId)
