@@ -56,6 +56,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/companies/{company}/reactivate',   [\App\Http\Controllers\Admin\AdminDashboardController::class, 'reactivateCompany'])->name('company.reactivate');
         Route::delete('/companies/{company}',            [\App\Http\Controllers\Admin\AdminDashboardController::class, 'destroyCompany'])->name('company.destroy');
         Route::get('/companies/{company}/export',        [\App\Http\Controllers\Admin\AdminDashboardController::class, 'exportCompany'])->name('company.export');
+        Route::get('/companies/{company}/data',          [\App\Http\Controllers\Admin\AdminDashboardController::class, 'companyData'])->name('company.data');
         Route::post('/impersonate/{user}',       [\App\Http\Controllers\Admin\AdminDashboardController::class, 'impersonate'])->name('impersonate');
         Route::get('/impersonate/leave',          [\App\Http\Controllers\Admin\AdminDashboardController::class, 'leaveImpersonation'])->name('impersonate.leave');
 

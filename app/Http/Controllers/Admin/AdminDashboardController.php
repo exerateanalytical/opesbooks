@@ -25,8 +25,19 @@ class AdminDashboardController extends Controller
                 ->whereYear('created_at', now()->year)
                 ->sum('amount_xaf'),
         ];
+
+        // Platform-wide business-data totals across all tenants.
+        $totals = [
+            'customers'    => \App\Models\Customer::count(),
+            'suppliers'    => \App\Models\Supplier::count(),
+            'projects'     => \App\Models\Project::count(),
+            'transactions' => \App\Models\JournalEntry::count(),
+            'invoices'     => \App\Models\CustomerInvoice::count() + \App\Models\SupplierInvoice::count(),
+            'employees'    => \App\Models\Employee::count(),
+        ];
+
         $companies = Company::with(['users', 'subscriptions' => fn($q) => $q->latest()])->latest()->paginate(20);
-        return view('admin.dashboard', compact('stats', 'companies'));
+        return view('admin.dashboard', compact('stats', 'totals', 'companies'));
     }
 
     public function users(Request $request)
@@ -83,6 +94,36 @@ class AdminDashboardController extends Controller
         }
         $company->delete();
         return redirect()->route('admin.companies')->with('success', "Entreprise supprimée : {$company->name}");
+    }
+
+    /** GET /admin/companies/{company}/data — read-only explorer of a tenant's business data. */
+    public function companyData(Request $request, Company $company)
+    {
+        $valid = ['customers', 'suppliers', 'projects', 'transactions', 'customer_invoices', 'supplier_invoices', 'employees'];
+        $tab = in_array($request->get('tab'), $valid, true) ? $request->get('tab') : 'customers';
+        $cid = $company->id;
+
+        $records = match ($tab) {
+            'customers'         => \App\Models\Customer::where('company_id', $cid)->latest()->paginate(25)->withQueryString(),
+            'suppliers'         => \App\Models\Supplier::where('company_id', $cid)->latest()->paginate(25)->withQueryString(),
+            'projects'          => \App\Models\Project::with('client')->where('company_id', $cid)->latest()->paginate(25)->withQueryString(),
+            'transactions'      => \App\Models\JournalEntry::where('company_id', $cid)->latest('posting_date')->paginate(25)->withQueryString(),
+            'customer_invoices' => \App\Models\CustomerInvoice::with('customer')->where('company_id', $cid)->latest('invoice_date')->paginate(25)->withQueryString(),
+            'supplier_invoices' => \App\Models\SupplierInvoice::with('supplier')->where('company_id', $cid)->latest('invoice_date')->paginate(25)->withQueryString(),
+            'employees'         => \App\Models\Employee::where('company_id', $cid)->latest()->paginate(25)->withQueryString(),
+        };
+
+        $counts = [
+            'customers'         => \App\Models\Customer::where('company_id', $cid)->count(),
+            'suppliers'         => \App\Models\Supplier::where('company_id', $cid)->count(),
+            'projects'          => \App\Models\Project::where('company_id', $cid)->count(),
+            'transactions'      => \App\Models\JournalEntry::where('company_id', $cid)->count(),
+            'customer_invoices' => \App\Models\CustomerInvoice::where('company_id', $cid)->count(),
+            'supplier_invoices' => \App\Models\SupplierInvoice::where('company_id', $cid)->count(),
+            'employees'         => \App\Models\Employee::where('company_id', $cid)->count(),
+        ];
+
+        return view('admin.company_data', compact('company', 'tab', 'records', 'counts'));
     }
 
     /** GET /admin/companies/{company}/export — data-portability export (JSON download). */

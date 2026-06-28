@@ -28,6 +28,29 @@
     </div>
 </div>
 
+<!-- Platform-wide tenant data totals -->
+<div class="mb-10">
+    <div class="text-[9px] font-black uppercase tracking-widest text-slate-500 mb-3">Across all tenants</div>
+    <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-4">
+        @php
+            $tcards = [
+                ['Clients', $totals['customers'], 'customers'],
+                ['Suppliers', $totals['suppliers'], 'suppliers'],
+                ['Projects', $totals['projects'], 'projects'],
+                ['Transactions', $totals['transactions'], 'transactions'],
+                ['Invoices', $totals['invoices'], null],
+                ['Employees', $totals['employees'], 'employees'],
+            ];
+        @endphp
+        @foreach($tcards as [$label, $value, $tab])
+        <div class="bg-[#151F2E] border border-[#253347] rounded-2xl p-4">
+            <div class="text-[9px] font-black uppercase tracking-widest text-slate-500">{{ $label }}</div>
+            <div class="text-2xl font-black text-white mt-1">{{ number_format($value) }}</div>
+        </div>
+        @endforeach
+    </div>
+</div>
+
 <!-- Companies table -->
 <div class="bg-[#151F2E] border border-[#253347] rounded-2xl overflow-hidden">
     <div class="px-6 py-4 border-b border-[#253347] flex items-center justify-between">

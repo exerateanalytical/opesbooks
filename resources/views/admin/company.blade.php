@@ -7,10 +7,16 @@
     <a href="{{ route('admin.dashboard') }}" class="text-[10px] text-slate-500 hover:text-slate-300 uppercase tracking-widest font-bold transition-colors">
         ← Back to Dashboard
     </a>
-    <a href="{{ route('admin.company.export', $company) }}"
-       class="text-[10px] font-black uppercase tracking-widest text-slate-300 hover:text-white border border-[#253347] rounded-lg px-3 py-1.5 transition-colors">
-        ⬇ Export data (JSON)
-    </a>
+    <div class="flex items-center gap-2">
+        <a href="{{ route('admin.company.data', $company) }}"
+           class="text-[10px] font-black uppercase tracking-widest text-amber-300 hover:text-amber-200 border border-amber-500/30 bg-amber-500/10 rounded-lg px-3 py-1.5 transition-colors">
+            🔎 View tenant data
+        </a>
+        <a href="{{ route('admin.company.export', $company) }}"
+           class="text-[10px] font-black uppercase tracking-widest text-slate-300 hover:text-white border border-[#253347] rounded-lg px-3 py-1.5 transition-colors">
+            ⬇ Export (JSON)
+        </a>
+    </div>
 </div>
 
 <div class="mb-6">
