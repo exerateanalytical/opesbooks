@@ -45,22 +45,7 @@
 </head>
 <body>
 <div class="page">
-    <div class="header">
-        <div>
-            <div class="brand-name">Opes<span>Books</span></div>
-            <div class="brand-meta">
-                {{ $company->name }}<br>
-                NIU: {{ $company->niu }} | RCCM: {{ $company->rccm }}<br>
-                {{ $company->address }}
-            </div>
-        </div>
-        <div class="doc-label">
-            <h1>Bordereau CNPS</h1>
-            <div class="sub">Déclaration mensuelle des cotisations sociales</div>
-            <div class="sub">Période : {{ $period_label }}</div>
-            <div class="sub">Généré le {{ $generated_at }}</div>
-        </div>
-    </div>
+    @include('documents.letterhead', ['title' => 'Bordereau CNPS', 'subtitle' => 'Cotisations sociales — Période ' . $period_label, 'docRef' => 'CNPS-' . str_replace(' ', '', $period_label)])
 
     <div class="cnps-info">
         📋 <strong>Caisse Nationale de Prévoyance Sociale (CNPS)</strong> — Cotisations patronales et salariales dues pour le mois de {{ $period_label }}. Taux salarial : <strong>2,8%</strong> (plafond 750 000 XAF). Taux patronal : <strong>11,2%</strong> (plafond 750 000 XAF).

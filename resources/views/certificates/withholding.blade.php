@@ -41,21 +41,7 @@
 </head>
 <body>
 <div class="page">
-    <div class="header">
-        <div>
-            <div class="brand-name">Opes<span>Books</span></div>
-            <div class="brand-meta">
-                {{ $company->name }}<br>
-                NIU: {{ $company->niu }} | RCCM: {{ $company->rccm }}<br>
-                {{ $company->address }}
-            </div>
-        </div>
-        <div class="doc-label">
-            <h1>Attestation de Précompte</h1>
-            <div class="sub">Période : {{ \Carbon\Carbon::parse($from)->format('d/m/Y') }} — {{ \Carbon\Carbon::parse($to)->format('d/m/Y') }}</div>
-            <div class="sub">Générée le {{ $generated_at }}</div>
-        </div>
-    </div>
+    @include('documents.letterhead', ['title' => 'Attestation de Précompte', 'subtitle' => \Carbon\Carbon::parse($from)->format('d/m/Y') . ' — ' . \Carbon\Carbon::parse($to)->format('d/m/Y'), 'docRef' => 'PREC-' . \Carbon\Carbon::parse($from)->format('Y')])
 
     <div class="legal-box">
         ⚖ Conformément à l'article 18 de la Loi de Finances 2026 et aux dispositions relatives au régime DGE/CIME, le précompte de <strong>5,5%</strong> a été appliqué sur les achats auprès du prestataire ci-dessous. Cette attestation constitue justificatif fiscal valable.
