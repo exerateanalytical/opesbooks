@@ -64,6 +64,47 @@
     </div>
 </div>
 
+<!-- Failed jobs detail -->
+@if($failedRows->isNotEmpty())
+<div class="bg-[#151F2E] border border-[#253347] rounded-2xl overflow-hidden mb-6">
+    <div class="px-6 pt-6 pb-4 text-[9px] font-black uppercase tracking-widest text-slate-500">Failed jobs (latest {{ $failedRows->count() }})</div>
+    <div class="overflow-x-auto">
+        <table class="w-full text-left">
+            <thead>
+                <tr class="text-[9px] font-black uppercase tracking-widest text-slate-500 border-b border-[#253347] bg-[#0B1120]/50">
+                    <th class="py-3 px-6">Job</th>
+                    <th class="py-3 px-4">Queue</th>
+                    <th class="py-3 px-4">Exception</th>
+                    <th class="py-3 px-4">Failed at</th>
+                    <th class="py-3 px-4"></th>
+                </tr>
+            </thead>
+            <tbody class="text-xs font-medium divide-y divide-slate-800/60">
+                @foreach($failedRows as $job)
+                <tr class="hover:bg-[#1C2A3A]/40 transition-colors">
+                    <td class="py-3 px-6 font-bold text-white">{{ $job->job }}</td>
+                    <td class="py-3 px-4 text-slate-400">{{ $job->queue }}</td>
+                    <td class="py-3 px-4 text-red-300/80 font-mono text-[10px]">{{ $job->exception }}</td>
+                    <td class="py-3 px-4 text-slate-500 font-mono text-[10px] whitespace-nowrap">{{ $job->failed_at }}</td>
+                    <td class="py-3 px-4">
+                        <div class="flex items-center gap-2">
+                            <form method="POST" action="{{ route('admin.system.job.retry', $job->uuid) }}">@csrf
+                                <button class="px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wide bg-amber-500/15 text-amber-300 border border-amber-500/30 hover:bg-amber-500/25">Retry</button>
+                            </form>
+                            <form method="POST" action="{{ route('admin.system.job.delete', $job->uuid) }}"
+                                  onsubmit="return confirm('Supprimer ce job échoué ?')">@csrf @method('DELETE')
+                                <button class="px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wide bg-red-500/15 text-red-300 border border-red-500/30 hover:bg-red-500/25">Delete</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+</div>
+@endif
+
 <!-- Platform counts -->
 <div class="bg-[#151F2E] border border-[#253347] rounded-2xl p-6">
     <span class="text-[9px] font-black uppercase tracking-widest text-slate-500">Platform Counts</span>

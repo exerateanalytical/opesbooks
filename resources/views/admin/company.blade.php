@@ -176,6 +176,22 @@
 
 </div>
 
+<!-- Notify owners -->
+<form method="POST" action="{{ route('admin.company.notify', $company) }}" class="mt-6 bg-[#151F2E] border border-[#253347] rounded-2xl p-6">
+    @csrf
+    <h2 class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Notify owners</h2>
+    <p class="text-xs text-slate-500 mb-4">Sends an email + in-app notification to this company's OWNER account(s).</p>
+    <div class="grid gap-3">
+        <input type="text" name="subject" placeholder="Subject" required
+               class="w-full bg-[#1C2A3A] border border-[#334155] rounded-xl px-4 py-2.5 text-sm text-white outline-none focus:border-amber-500">
+        <textarea name="message" rows="3" placeholder="Message…" required
+                  class="w-full bg-[#1C2A3A] border border-[#334155] rounded-xl px-4 py-2.5 text-sm text-white outline-none focus:border-amber-500"></textarea>
+        <div>
+            <button class="px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest text-slate-900 bg-amber-400 hover:bg-amber-300 transition-all">Send notice</button>
+        </div>
+    </div>
+</form>
+
 <!-- Danger zone -->
 <div class="mt-6 bg-[#151F2E] border border-red-500/25 rounded-2xl p-6">
     <h2 class="text-[10px] font-black uppercase tracking-widest text-red-400 mb-1">Danger Zone</h2>

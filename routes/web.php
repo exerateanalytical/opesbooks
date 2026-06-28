@@ -87,6 +87,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/system',                    [\App\Http\Controllers\Admin\AdminInsightsController::class, 'system'])->name('system');
         Route::post('/system/retry-jobs',        [\App\Http\Controllers\Admin\AdminInsightsController::class, 'retryFailedJobs'])->name('system.retry-jobs');
         Route::post('/system/flush-jobs',        [\App\Http\Controllers\Admin\AdminInsightsController::class, 'flushFailedJobs'])->name('system.flush-jobs');
+        Route::post('/system/jobs/{uuid}/retry', [\App\Http\Controllers\Admin\AdminInsightsController::class, 'retryJob'])->name('system.job.retry');
+        Route::delete('/system/jobs/{uuid}',     [\App\Http\Controllers\Admin\AdminInsightsController::class, 'deleteJob'])->name('system.job.delete');
+        Route::get('/logs',                      [\App\Http\Controllers\Admin\AdminLogController::class, 'index'])->name('logs');
+        Route::post('/companies/{company}/notify', [\App\Http\Controllers\Admin\AdminInsightsController::class, 'notifyCompany'])->name('company.notify');
         Route::get('/audit',                     [\App\Http\Controllers\Admin\AdminInsightsController::class, 'audit'])->name('audit');
         Route::get('/announcements',             [\App\Http\Controllers\Admin\AdminAnnouncementController::class, 'index'])->name('announcements');
         Route::post('/announcements',            [\App\Http\Controllers\Admin\AdminAnnouncementController::class, 'store'])->name('announcements.store');

@@ -136,6 +136,24 @@ class AdminInsightsController extends Controller
             'next_billing_at'         => $data['period_end'] ?? now()->addMonth(),
         ]);
 
+        // Emailed receipt to the company's owners (best-effort; never blocks the action).
+        $owners = $company->users()->where('role', 'OWNER')->pluck('email')->filter()->all();
+        if (! empty($owners)) {
+            try {
+                \Illuminate\Support\Facades\Mail::to($owners)->send(new \App\Mail\TransactionalMail(
+                    subjectLine: "Reçu de paiement {$payment->receipt_number}",
+                    heading: 'Paiement reçu',
+                    lines: [
+                        "Nous confirmons la réception de votre paiement de <strong>" . number_format($payment->amount_xaf, 0, ',', ' ') . " XAF</strong>.",
+                        "Reçu n° {$payment->receipt_number} · " . str_replace('_', ' ', $payment->payment_method) . '.',
+                    ],
+                    cta: ['url' => url('/app?page=subscription'), 'label' => 'Voir mon abonnement'],
+                ));
+            } catch (\Throwable $e) {
+                // Mail failure must not undo a recorded payment.
+            }
+        }
+
         return back()->with('success', "Paiement enregistré · Reçu {$payment->receipt_number}");
     }
 
@@ -204,6 +222,23 @@ class AdminInsightsController extends Controller
 
         $failedJobs = Schema::hasTable('failed_jobs') ? DB::table('failed_jobs')->count() : 0;
 
+        // Individual failed-job rows, with a readable job name + exception excerpt.
+        $failedRows = collect();
+        if (Schema::hasTable('failed_jobs')) {
+            $failedRows = DB::table('failed_jobs')->orderByDesc('id')->limit(50)->get()->map(function ($row) {
+                $payload = json_decode($row->payload ?? '{}', true);
+                $jobName = $payload['displayName'] ?? ($payload['job'] ?? 'Unknown job');
+                $excerpt = strtok((string) $row->exception, "\n");
+                return (object) [
+                    'uuid'       => $row->uuid,
+                    'queue'      => $row->queue,
+                    'job'        => class_basename($jobName),
+                    'exception'  => mb_strimwidth($excerpt, 0, 160, '…'),
+                    'failed_at'  => $row->failed_at,
+                ];
+            });
+        }
+
         $counts = [
             'companies'     => Company::count(),
             'users'         => User::count(),
@@ -211,7 +246,55 @@ class AdminInsightsController extends Controller
             'api_calls_24h' => ApiRequestLog::where('created_at', '>=', now()->subDay())->count(),
         ];
 
-        return view('admin.system', compact('services', 'failedJobs', 'counts'));
+        return view('admin.system', compact('services', 'failedJobs', 'failedRows', 'counts'));
+    }
+
+    /** POST /admin/system/jobs/{uuid}/retry — retry a single failed job. */
+    public function retryJob(string $uuid)
+    {
+        \Illuminate\Support\Facades\Artisan::call('queue:retry', ['id' => [$uuid]]);
+        return back()->with('success', 'Job relancé.');
+    }
+
+    /** DELETE /admin/system/jobs/{uuid} — forget a single failed job. */
+    public function deleteJob(string $uuid)
+    {
+        \Illuminate\Support\Facades\Artisan::call('queue:forget', ['id' => $uuid]);
+        return back()->with('success', 'Job supprimé.');
+    }
+
+    /** POST /admin/companies/{company}/notify — email the company's owners a message. */
+    public function notifyCompany(Request $request, Company $company)
+    {
+        $data = $request->validate([
+            'subject' => 'required|string|max:150',
+            'message' => 'required|string|max:2000',
+        ]);
+
+        $owners = $company->users()->where('role', 'OWNER')->pluck('email')->filter()->all();
+        if (empty($owners)) {
+            return back()->withErrors(['message' => "Cette entreprise n'a aucun propriétaire avec email."]);
+        }
+
+        // Also drop an in-app notification so it's visible even if mail is queued/disabled.
+        app(\App\Services\NotificationService::class)->pushOwners($company, [
+            'type'  => 'admin.notice',
+            'title' => $data['subject'],
+            'body'  => $data['message'],
+            'icon'  => 'bell',
+        ]);
+
+        try {
+            \Illuminate\Support\Facades\Mail::to($owners)->send(new \App\Mail\TransactionalMail(
+                subjectLine: $data['subject'],
+                heading: $data['subject'],
+                lines: [$data['message']],
+            ));
+        } catch (\Throwable $e) {
+            return back()->with('success', 'Notification in-app envoyée (email indisponible).');
+        }
+
+        return back()->with('success', 'Message envoyé aux propriétaires.');
     }
 
     /** POST /admin/system/retry-jobs */
