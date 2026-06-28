@@ -3308,7 +3308,7 @@
                         </template>
                         <template x-for="rt in items" :key="rt.id">
                             <tr style="border-bottom:1px solid #2A2A72" class="hover:bg-slate-800 transition-colors">
-                                <td class="px-4 py-3 font-medium" x-text="rt.name"></td>
+                                <td class="px-4 py-3 font-medium text-amber-400 cursor-pointer hover:underline" @click="openRecurring(rt)" x-text="rt.name"></td>
                                 <td class="px-4 py-3 opacity-70 text-xs" x-text="rt.frequency"></td>
                                 <td class="px-4 py-3 text-right" x-text="fmtXaf(rt.amount_xaf)"></td>
                                 <td class="px-4 py-3 opacity-70" x-text="rt.next_run_date"></td>
@@ -3319,6 +3319,35 @@
                         </template>
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Recurring template detail drawer -->
+            <div x-show="showDetail" x-cloak class="fixed inset-0 z-50" @keydown.escape.window="showDetail=false">
+                <div class="absolute inset-0 bg-black/60" @click="showDetail=false"></div>
+                <div class="absolute right-0 top-0 bottom-0 w-full max-w-md overflow-y-auto p-6 space-y-4" style="background:#010048;border-left:1px solid #2A2A72"
+                     x-transition:enter="transition ease-out duration-200" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0">
+                    <template x-if="detail">
+                    <div class="space-y-4">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <p class="text-lg font-black text-white" x-text="detail.name"></p>
+                                <p class="text-[11px] text-slate-400 mt-0.5" x-text="detail.frequency"></p>
+                            </div>
+                            <button @click="showDetail=false" class="text-slate-400 hover:text-white text-xl leading-none">✕</button>
+                        </div>
+                        <span class="px-2 py-0.5 rounded-full text-xs font-bold inline-block" :class="detail.is_active?'bg-emerald-900/50 text-emerald-300':'bg-red-900/50 text-red-300'" x-text="detail.is_active?(lang==='FR'?'Actif':'Active'):(lang==='FR'?'Inactif':'Inactive')"></span>
+                        <div class="glass-card rounded-2xl p-4 space-y-2 text-sm">
+                            <div class="flex justify-between"><span class="text-slate-400" x-text="lang==='FR'?'Montant':'Amount'"></span><span class="font-mono font-black text-amber-400" x-text="fmtXaf(detail.amount_xaf)"></span></div>
+                            <div class="flex justify-between"><span class="text-slate-400" x-text="lang==='FR'?'Prochaine exécution':'Next run'"></span><span x-text="detail.next_run_date"></span></div>
+                            <div class="flex justify-between" x-show="detail.end_date"><span class="text-slate-400" x-text="lang==='FR'?'Fin':'End date'"></span><span x-text="detail.end_date"></span></div>
+                        </div>
+                        <div class="glass-card rounded-2xl p-4 text-xs space-y-1.5">
+                            <div class="flex justify-between"><span class="text-slate-400" x-text="lang==='FR'?'Écriture':'Posting'"></span><span class="font-mono" x-text="(detail.debit_account||'?')+' / '+(detail.credit_account||'?')"></span></div>
+                            <div class="flex justify-between" x-show="detail.memo"><span class="text-slate-400">Mémo</span><span class="text-right" x-text="detail.memo"></span></div>
+                        </div>
+                    </div>
+                    </template>
+                </div>
             </div>
         </div>
 
@@ -3734,9 +3763,9 @@
 
             <div class="glass rounded-2xl overflow-hidden">
                 <template x-for="s in sessions" :key="s.id">
-                    <div class="px-4 py-3 flex items-center justify-between" style="border-bottom:1px solid #2A2A72">
+                    <div class="px-4 py-3 flex items-center justify-between cursor-pointer hover:bg-slate-800" @click="openSession(s)" style="border-bottom:1px solid #2A2A72">
                         <div>
-                            <div class="text-sm font-medium" x-text="s.bank_account_code + ' — ' + s.statement_date"></div>
+                            <div class="text-sm font-medium text-amber-400" x-text="s.bank_account_code + ' — ' + s.statement_date"></div>
                             <div class="text-xs opacity-50 mt-0.5" x-text="fmtXaf(s.statement_balance) + ' | Diff: ' + fmtXaf(s.difference)"></div>
                         </div>
                         <span :class="s.is_reconciled ? 'text-emerald-400' : 'text-yellow-400'" x-text="s.is_reconciled ? '✔ Réconcilié' : 'En cours'"></span>
@@ -3745,6 +3774,44 @@
                 <div x-show="sessions.length===0" class="py-12 flex flex-col items-center gap-3">
                     <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-amber-400/70" style="background:rgba(201,155,14,0.08);border:1px solid rgba(201,155,14,0.18)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M6 21V9a9 9 0 0 0 9 9"/></svg></div>
                     <span class="text-[11px] font-black uppercase tracking-widest text-slate-500" x-text="lang==='FR' ? 'Aucune session de rapprochement.' : 'No reconciliation sessions.'"></span>
+                </div>
+            </div>
+
+            <!-- Reconciliation session detail drawer -->
+            <div x-show="showDetail" x-cloak class="fixed inset-0 z-50" @keydown.escape.window="showDetail=false">
+                <div class="absolute inset-0 bg-black/60" @click="showDetail=false"></div>
+                <div class="absolute right-0 top-0 bottom-0 w-full max-w-lg overflow-y-auto p-6 space-y-4" style="background:#010048;border-left:1px solid #2A2A72"
+                     x-transition:enter="transition ease-out duration-200" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0">
+                    <template x-if="detail">
+                    <div class="space-y-4">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <p class="text-lg font-black text-white" x-text="detail.session?.bank_account_code"></p>
+                                <p class="text-[11px] text-slate-400 mt-0.5" x-text="detail.session?.statement_date"></p>
+                            </div>
+                            <button @click="showDetail=false" class="text-slate-400 hover:text-white text-xl leading-none">✕</button>
+                        </div>
+                        <span class="px-2 py-0.5 rounded-full text-xs font-bold inline-block" :class="detail.session?.is_reconciled?'bg-emerald-900/50 text-emerald-300':'bg-amber-900/50 text-amber-300'" x-text="detail.session?.is_reconciled?(lang==='FR'?'Réconcilié':'Reconciled'):(lang==='FR'?'En cours':'In progress')"></span>
+                        <div class="glass-card rounded-2xl p-4 space-y-2 text-sm">
+                            <div class="flex justify-between"><span class="text-slate-400" x-text="lang==='FR'?'Solde relevé':'Statement balance'"></span><span class="font-mono" x-text="fmtXaf(detail.session?.statement_balance)"></span></div>
+                            <div class="flex justify-between"><span class="text-slate-400" x-text="lang==='FR'?'Écart':'Difference'"></span><span class="font-mono" :class="(detail.session?.difference||0)==0?'text-emerald-400':'text-red-400'" x-text="fmtXaf(detail.session?.difference)"></span></div>
+                            <div class="flex justify-between"><span class="text-slate-400" x-text="lang==='FR'?'Lignes relevé':'Statement lines'"></span><span x-text="(detail.lines||[]).length"></span></div>
+                        </div>
+                        <div class="glass-card rounded-2xl p-4" x-show="detail.gl_movements?.length">
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2" x-text="lang==='FR'?'Mouvements comptables':'GL movements'"></p>
+                            <table class="w-full text-xs">
+                                <template x-for="(g,i) in (detail.gl_movements||[]).slice(0,50)" :key="i">
+                                    <tr class="border-t" style="border-color:rgba(255,255,255,0.06)">
+                                        <td class="py-1.5 text-slate-500 whitespace-nowrap" x-text="g.posting_date"></td>
+                                        <td class="py-1.5 text-slate-300 truncate max-w-[140px]" x-text="g.memo"></td>
+                                        <td class="py-1.5 text-right font-mono text-slate-300" x-text="(+g.debit)?fmtXaf(g.debit):('('+fmtXaf(g.credit)+')')"></td>
+                                    </tr>
+                                </template>
+                            </table>
+                        </div>
+                    </div>
+                    </template>
+                    <div x-show="!detail" class="text-slate-400 text-sm py-10 text-center" x-text="lang==='FR'?'Chargement…':'Loading…'"></div>
                 </div>
             </div>
         </div>
@@ -4168,7 +4235,7 @@
                     <tbody>
                         <template x-for="po in orders" :key="po.id">
                             <tr style="border-bottom:1px solid #2A2A72" class="hover:bg-slate-800">
-                                <td class="px-4 py-2 font-mono text-sky-300 text-xs" x-text="po.po_number"></td>
+                                <td class="px-4 py-2 font-mono text-amber-400 text-xs cursor-pointer hover:underline" @click="openPO(po)" x-text="po.po_number"></td>
                                 <td class="px-4 py-2 text-xs" x-text="po.supplier?.name ?? '—'"></td>
                                 <td class="px-4 py-2 text-xs opacity-70" x-text="po.order_date"></td>
                                 <td class="px-4 py-2 text-right text-xs" x-text="Number(po.amount_ttc).toLocaleString('fr-CM') + ' XAF'"></td>
@@ -4185,6 +4252,49 @@
                         </td></tr>
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Purchase order detail drawer -->
+            <div x-show="showDetail" x-cloak class="fixed inset-0 z-50" @keydown.escape.window="showDetail=false">
+                <div class="absolute inset-0 bg-black/60" @click="showDetail=false"></div>
+                <div class="absolute right-0 top-0 bottom-0 w-full max-w-lg overflow-y-auto p-6 space-y-4" style="background:#010048;border-left:1px solid #2A2A72"
+                     x-transition:enter="transition ease-out duration-200" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="font-mono text-amber-400 text-sm" x-text="detail?.po_number||'…'"></p>
+                            <p class="text-lg font-black text-white" x-text="detail?.supplier?.name||'—'"></p>
+                        </div>
+                        <button @click="showDetail=false" class="text-slate-400 hover:text-white text-xl leading-none">✕</button>
+                    </div>
+                    <template x-if="detail">
+                    <div class="space-y-4">
+                        <span class="px-2 py-0.5 rounded-full text-xs font-bold inline-block" :class="{'bg-emerald-900/50 text-emerald-300':detail.status==='RECEIVED','bg-amber-900/50 text-amber-300':detail.status==='SENT'||detail.status==='PARTIAL','bg-red-900/50 text-red-300':detail.status==='CANCELLED','bg-slate-800 text-slate-400':detail.status==='DRAFT'}" x-text="detail.status"></span>
+                        <div class="glass-card rounded-2xl p-4 space-y-2 text-sm">
+                            <div class="flex justify-between"><span class="text-slate-400">HT</span><span class="font-mono" x-text="fmtXaf(detail.amount_ht)"></span></div>
+                            <div class="flex justify-between"><span class="text-slate-400">TVA</span><span class="font-mono" x-text="fmtXaf(detail.tva_amount)"></span></div>
+                            <div class="flex justify-between border-t pt-2" style="border-color:#2A2A72"><span class="font-bold">TTC</span><span class="font-mono font-black text-amber-400" x-text="fmtXaf(detail.amount_ttc)"></span></div>
+                        </div>
+                        <div class="glass-card rounded-2xl p-4 text-xs space-y-1.5">
+                            <div class="flex justify-between"><span class="text-slate-400" x-text="lang==='FR'?'Date commande':'Order date'"></span><span x-text="detail.order_date"></span></div>
+                            <div class="flex justify-between" x-show="detail.expected_delivery_date"><span class="text-slate-400" x-text="lang==='FR'?'Livraison prévue':'Expected delivery'"></span><span x-text="detail.expected_delivery_date"></span></div>
+                        </div>
+                        <div class="glass-card rounded-2xl p-4" x-show="detail.lines?.length">
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2" x-text="lang==='FR'?'Lignes':'Lines'"></p>
+                            <table class="w-full text-xs">
+                                <template x-for="(l,i) in detail.lines" :key="i">
+                                    <tr class="border-t" style="border-color:rgba(255,255,255,0.06)">
+                                        <td class="py-1.5 text-slate-300" x-text="l.description"></td>
+                                        <td class="py-1.5 text-right text-slate-500 whitespace-nowrap" x-text="(l.quantity||0)+' × '+fmtXaf(l.unit_price_ht)"></td>
+                                        <td class="py-1.5 text-right font-mono text-slate-300" x-text="fmtXaf(l.line_total_ht)"></td>
+                                    </tr>
+                                </template>
+                            </table>
+                        </div>
+                        <div x-show="detail.notes" class="glass-card rounded-2xl p-4 text-xs text-slate-300"><p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Notes</p><span x-text="detail.notes"></span></div>
+                        <a :href="`/api/v1/companies/${_cid}/purchase-orders/${detail.id}/pdf`" target="_blank" class="glass-btn-dark px-4 py-2 rounded-xl text-xs inline-block" x-text="lang==='FR'?'Télécharger PDF':'Download PDF'"></a>
+                    </div>
+                    </template>
+                </div>
             </div>
         </div>
 
@@ -4264,7 +4374,7 @@
                     <tbody>
                         <template x-for="p in records" :key="p.id">
                             <tr style="border-bottom:1px solid #2A2A72" class="hover:bg-slate-800">
-                                <td class="px-4 py-2 font-semibold" x-text="p.tax_year"></td>
+                                <td class="px-4 py-2 font-semibold text-amber-400 cursor-pointer hover:underline" @click="openPatente(p)" x-text="p.tax_year"></td>
                                 <td class="px-4 py-2 text-xs font-mono opacity-70" x-text="p.patente_number ?? '—'"></td>
                                 <td class="px-4 py-2 text-right text-xs" x-text="Number(p.amount_due_xaf).toLocaleString('fr-CM') + ' XAF'"></td>
                                 <td class="px-4 py-2 text-right text-xs text-emerald-400" x-text="Number(p.amount_paid_xaf).toLocaleString('fr-CM') + ' XAF'"></td>
@@ -4284,6 +4394,34 @@
                         </td></tr>
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Patente detail drawer -->
+            <div x-show="showDetail" x-cloak class="fixed inset-0 z-50" @keydown.escape.window="showDetail=false">
+                <div class="absolute inset-0 bg-black/60" @click="showDetail=false"></div>
+                <div class="absolute right-0 top-0 bottom-0 w-full max-w-md overflow-y-auto p-6 space-y-4" style="background:#010048;border-left:1px solid #2A2A72"
+                     x-transition:enter="transition ease-out duration-200" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0">
+                    <template x-if="detail">
+                    <div class="space-y-4">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <p class="text-lg font-black text-white" x-text="(lang==='FR'?'Patente ':'Patente ')+detail.tax_year"></p>
+                                <p class="text-[11px] font-mono text-slate-400" x-text="detail.patente_number||'—'"></p>
+                            </div>
+                            <button @click="showDetail=false" class="text-slate-400 hover:text-white text-xl leading-none">✕</button>
+                        </div>
+                        <span class="px-2 py-0.5 rounded-full text-xs font-bold inline-block" :class="{'bg-emerald-900/50 text-emerald-300':detail.status==='PAID','bg-red-900/50 text-red-300':detail.status==='OVERDUE','bg-amber-900/50 text-amber-300':detail.status==='PENDING'}" x-text="detail.status"></span>
+                        <div class="glass-card rounded-2xl p-4 space-y-2 text-sm">
+                            <div class="flex justify-between"><span class="text-slate-400" x-text="lang==='FR'?'Montant dû':'Amount due'"></span><span class="font-mono" x-text="fmtXaf(detail.amount_due_xaf)"></span></div>
+                            <div class="flex justify-between"><span class="text-slate-400" x-text="lang==='FR'?'Payé':'Paid'"></span><span class="font-mono text-emerald-400" x-text="fmtXaf(detail.amount_paid_xaf)"></span></div>
+                            <div class="flex justify-between border-t pt-2" style="border-color:#2A2A72"><span class="font-bold" x-text="lang==='FR'?'Reste à payer':'Balance'"></span><span class="font-mono font-black text-amber-400" x-text="fmtXaf((detail.amount_due_xaf||0)-(detail.amount_paid_xaf||0))"></span></div>
+                            <div class="flex justify-between" x-show="detail.due_date"><span class="text-slate-400" x-text="lang==='FR'?'Échéance':'Due date'"></span><span x-text="detail.due_date"></span></div>
+                        </div>
+                        <div x-show="detail.notes" class="glass-card rounded-2xl p-4 text-xs text-slate-300"><p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Notes</p><span x-text="detail.notes"></span></div>
+                        <button x-show="detail.status!=='PAID'" @click="payPatente(detail); showDetail=false" class="px-4 py-2 rounded-xl text-xs" style="background:rgba(201,155,14,0.12);color:#E3B420" x-text="lang==='FR'?'Marquer payée':'Mark paid'"></button>
+                    </div>
+                    </template>
+                </div>
             </div>
         </div>
 
@@ -6546,6 +6684,8 @@ function reportsPanel() {
 function recurringPanel() {
     return {
         items: [],
+        showDetail: false, detail: null,
+        openRecurring(rt) { this.detail = rt; this.showDetail = true; },
         showForm: false,
         saving: false,
         running: false,
@@ -6833,6 +6973,13 @@ function fixedAssetsPanel() {
 function reconciliationPanel() {
     return {
         sessions: [], loading: true, _cid: null, showForm: false, submitting: false,
+        showDetail: false, detail: null,
+        async openSession(s) {
+            this.showDetail = true; this.detail = null;
+            const cid = s.company_id || this._cid;
+            try { this.detail = await fetch(`/api/v1/companies/${cid}/reconciliation/${s.id}`,{headers:{Authorization:'Bearer '+localStorage.getItem('opes_token'),Accept:'application/json'}}).then(r=>r.json()); }
+            catch(e){ this.detail = { session: s, lines: [], gl_movements: [] }; }
+        },
         form: { bank_account_code:'521100', statement_date:'', statement_balance:0 },
         fmtXaf(v) { if(v===null||v===undefined)return'—'; return Number(v).toLocaleString('fr-CM',{minimumFractionDigits:2})+' XAF'; },
         async init() {
@@ -7102,6 +7249,13 @@ function quotationsPanel() {
 function purchaseOrdersPanel() {
     return {
         _cid: null, orders: [], suppliers: [], showForm: false, saving: false, poError: '',
+        showDetail: false, detail: null,
+        async openPO(po) {
+            this.showDetail = true; this.detail = null;
+            const cid = po.company_id || this._cid;
+            try { this.detail = await fetch(`/api/v1/companies/${cid}/purchase-orders/${po.id}`,{headers:{Authorization:'Bearer '+localStorage.getItem('opes_token'),Accept:'application/json'}}).then(r=>r.json()); }
+            catch(e){ this.detail = po; }
+        },
         form: { supplier_id:'', order_date: new Date().toISOString().slice(0,10), expected_delivery_date:'', notes:'', lines:[{description:'',quantity:1,unit_price_ht:0}] },
         async init() {
             const token = localStorage.getItem('opes_token');
@@ -7167,6 +7321,8 @@ function creditNotesPanel() {
 function patentePanel() {
     return {
         _cid: null, records: [], showForm: false, saving: false, formError: '',
+        showDetail: false, detail: null,
+        openPatente(p) { this.detail = p; this.showDetail = true; },
         form: { tax_year: new Date().getFullYear(), patente_number:'', amount_due_xaf:0, due_date:'', notes:'' },
         async init() {
             const token = localStorage.getItem('opes_token');
