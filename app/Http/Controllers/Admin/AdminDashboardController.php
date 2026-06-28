@@ -23,16 +23,58 @@ class AdminDashboardController extends Controller
         return view('admin.dashboard', compact('stats', 'companies'));
     }
 
-    public function users()
+    public function users(Request $request)
     {
-        $users = User::with('company')->whereNotIn('role', ['SUPER_ADMIN'])->latest()->paginate(30);
+        $users = User::with('company')
+            ->whereNotIn('role', ['SUPER_ADMIN'])
+            ->when($request->search, fn ($q, $s) => $q->where(fn ($w) =>
+                $w->where('name', 'like', "%{$s}%")->orWhere('email', 'like', "%{$s}%")))
+            ->when($request->role, fn ($q, $r) => $q->where('role', $r))
+            ->latest()
+            ->paginate(30)
+            ->withQueryString();
+
         return view('admin.users', compact('users'));
     }
 
     public function company(Company $company)
     {
         $company->load(['users', 'subscriptions']);
-        return view('admin.company', compact('company'));
+
+        // Operational health snapshot for dunning / engagement assessment.
+        $health = [
+            'journal_entries' => $company->journalEntries()->count(),
+            'last_entry'      => $company->journalEntries()->max('created_at'),
+            'users'           => $company->users()->count(),
+            'last_login'      => $company->users()->max('last_login_at'),
+            'payments_total'  => (float) $company->payments()->where('status', 'completed')->sum('amount_xaf'),
+        ];
+
+        return view('admin.company', compact('company', 'health'));
+    }
+
+    /** POST /admin/companies/{company}/suspend — hard suspend (blocks tenant API access). */
+    public function suspendCompany(Request $request, Company $company)
+    {
+        $company->update(['subscription_status' => 'SUSPENDED']);
+        return back()->with('success', "Entreprise suspendue : {$company->name}");
+    }
+
+    /** POST /admin/companies/{company}/reactivate */
+    public function reactivateCompany(Request $request, Company $company)
+    {
+        $company->update(['subscription_status' => 'ACTIVE']);
+        return back()->with('success', "Entreprise réactivée : {$company->name}");
+    }
+
+    /** DELETE /admin/companies/{company} — soft delete + revoke member tokens. */
+    public function destroyCompany(Request $request, Company $company)
+    {
+        foreach ($company->users as $u) {
+            $u->tokens()->delete();
+        }
+        $company->delete();
+        return redirect()->route('admin.companies')->with('success', "Entreprise supprimée : {$company->name}");
     }
 
     public function updateSubscription(Request $request, Company $company)

@@ -13,6 +13,22 @@
     </span>
 </div>
 
+<!-- Search / filter -->
+<form method="GET" class="mb-5 flex flex-wrap gap-3">
+    <input type="text" name="search" value="{{ request('search') }}" placeholder="Search name or email…"
+           class="flex-1 min-w-[200px] bg-[#151F2E] border border-[#253347] rounded-xl px-4 py-2.5 text-sm text-white outline-none focus:border-amber-500">
+    <select name="role" class="bg-[#151F2E] border border-[#253347] rounded-xl px-4 py-2.5 text-sm text-white outline-none focus:border-amber-500">
+        <option value="">All roles</option>
+        @foreach(['OWNER','ACCOUNTANT','CLERK','AUDITOR'] as $r)
+            <option value="{{ $r }}" {{ request('role') === $r ? 'selected' : '' }}>{{ $r }}</option>
+        @endforeach
+    </select>
+    <button class="px-5 py-2.5 rounded-xl text-sm font-black uppercase tracking-widest text-slate-900 bg-amber-400 hover:bg-amber-300 transition-all">Search</button>
+    @if(request('search') || request('role'))
+        <a href="{{ route('admin.users') }}" class="px-4 py-2.5 rounded-xl text-sm font-bold text-slate-400 hover:text-white border border-[#253347]">Clear</a>
+    @endif
+</form>
+
 <!-- Impersonate result modal (shown via JS) -->
 <div id="impersonate-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm">
     <div class="bg-[#151F2E] border border-[#334155] rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl">
@@ -43,7 +59,10 @@
             <tbody class="text-xs font-medium divide-y divide-slate-800/60">
                 @forelse($users as $user)
                     <tr class="hover:bg-[#1C2A3A]/40 transition-colors">
-                        <td class="py-3.5 px-6 font-bold text-white">{{ $user->name }}</td>
+                        <td class="py-3.5 px-6 font-bold text-white">
+                            {{ $user->name }}
+                            @if($user->disabled_at)<span class="ml-1.5 text-[9px] font-black uppercase text-red-400">Disabled</span>@endif
+                        </td>
                         <td class="py-3.5 px-4 text-slate-400">{{ $user->email }}</td>
                         <td class="py-3.5 px-4">
                             <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase
@@ -58,14 +77,28 @@
                             {{ $user->created_at->format('Y-m-d') }}
                         </td>
                         <td class="py-3.5 px-4">
-                            <form method="POST" action="{{ route('admin.impersonate', $user) }}"
-                                  onsubmit="handleImpersonate(event, this)">
-                                @csrf
-                                <button type="submit"
-                                        class="px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wide bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 border border-indigo-500/30 transition-all">
-                                    Impersonate
-                                </button>
-                            </form>
+                            <div class="flex items-center gap-2">
+                                <form method="POST" action="{{ route('admin.impersonate', $user) }}"
+                                      onsubmit="handleImpersonate(event, this)">
+                                    @csrf
+                                    <button type="submit"
+                                            class="px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wide bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 border border-indigo-500/30 transition-all">
+                                        Impersonate
+                                    </button>
+                                </form>
+                                <form method="POST" action="{{ route('admin.users.toggle', $user) }}">@csrf
+                                    <button class="px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wide border transition-all
+                                        {{ $user->disabled_at ? 'bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border-emerald-500/30' : 'bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border-amber-500/30' }}">
+                                        {{ $user->disabled_at ? 'Enable' : 'Disable' }}
+                                    </button>
+                                </form>
+                                <form method="POST" action="{{ route('admin.users.destroy', $user) }}"
+                                      onsubmit="return confirm('Supprimer {{ $user->email }} ?')">@csrf @method('DELETE')
+                                    <button class="px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wide bg-red-500/15 hover:bg-red-500/25 text-red-300 border border-red-500/30 transition-all">
+                                        Delete
+                                    </button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                 @empty

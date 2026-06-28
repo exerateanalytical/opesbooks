@@ -100,6 +100,12 @@ class AuthController extends Controller
             ]);
         }
 
+        if ($user->disabled_at) {
+            throw ValidationException::withMessages([
+                'email' => ['Ce compte a été désactivé. Contactez votre administrateur.'],
+            ]);
+        }
+
         // Two-factor challenge: password is correct, but a valid TOTP or
         // recovery code is required before a token is issued.
         if ($user->hasTwoFactorEnabled()) {

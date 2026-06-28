@@ -52,8 +52,17 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/companies',                 [\App\Http\Controllers\Admin\AdminInsightsController::class, 'companies'])->name('companies');
         Route::get('/companies/{company}',       [\App\Http\Controllers\Admin\AdminDashboardController::class, 'company'])->name('company');
         Route::post('/companies/{company}/subscription', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'updateSubscription'])->name('company.subscription');
+        Route::post('/companies/{company}/suspend',      [\App\Http\Controllers\Admin\AdminDashboardController::class, 'suspendCompany'])->name('company.suspend');
+        Route::post('/companies/{company}/reactivate',   [\App\Http\Controllers\Admin\AdminDashboardController::class, 'reactivateCompany'])->name('company.reactivate');
+        Route::delete('/companies/{company}',            [\App\Http\Controllers\Admin\AdminDashboardController::class, 'destroyCompany'])->name('company.destroy');
         Route::post('/impersonate/{user}',       [\App\Http\Controllers\Admin\AdminDashboardController::class, 'impersonate'])->name('impersonate');
         Route::get('/impersonate/leave',          [\App\Http\Controllers\Admin\AdminDashboardController::class, 'leaveImpersonation'])->name('impersonate.leave');
+
+        // Tenant user management
+        Route::post('/companies/{company}/users', [\App\Http\Controllers\Admin\AdminUserController::class, 'store'])->name('company.users.store');
+        Route::post('/users/{user}',              [\App\Http\Controllers\Admin\AdminUserController::class, 'update'])->name('users.update');
+        Route::post('/users/{user}/toggle',       [\App\Http\Controllers\Admin\AdminUserController::class, 'toggleDisabled'])->name('users.toggle');
+        Route::delete('/users/{user}',            [\App\Http\Controllers\Admin\AdminUserController::class, 'destroy'])->name('users.destroy');
 
         // Subscriptions & billing
         Route::get('/subscriptions',             [\App\Http\Controllers\Admin\AdminInsightsController::class, 'subscriptions'])->name('subscriptions');

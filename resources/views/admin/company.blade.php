@@ -9,8 +9,17 @@
     </a>
 </div>
 
-<div class="mb-8">
-    <h1 class="text-2xl font-black text-white uppercase tracking-wide">{{ $company->name }}</h1>
+<div class="mb-6">
+    <div class="flex items-center gap-3">
+        <h1 class="text-2xl font-black text-white uppercase tracking-wide">{{ $company->name }}</h1>
+        @php $st = $company->subscription_status; @endphp
+        <span class="px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wide
+            {{ $st === 'ACTIVE' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' :
+               ($st === 'SUSPENDED' ? 'bg-red-500/20 text-red-300 border border-red-500/30' :
+               'bg-amber-500/20 text-amber-300 border border-amber-500/30') }}">
+            {{ $st ?? 'ACTIVE' }}
+        </span>
+    </div>
     <div class="flex flex-wrap gap-3 mt-2">
         <span class="text-[10px] text-slate-400 font-mono">NIU: {{ $company->niu ?? '—' }}</span>
         <span class="text-[10px] text-slate-600">·</span>
@@ -18,6 +27,25 @@
         <span class="text-[10px] text-slate-600">·</span>
         <span class="text-[10px] text-slate-400">Régime: {{ $company->tax_regime ?? '—' }}</span>
     </div>
+</div>
+
+<!-- Health snapshot -->
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+    @php
+        $cards = [
+            ['Journal entries', number_format($health['journal_entries']), $health['last_entry'] ? 'last '.\Carbon\Carbon::parse($health['last_entry'])->diffForHumans() : 'no activity'],
+            ['Users', number_format($health['users']), $health['last_login'] ? 'login '.\Carbon\Carbon::parse($health['last_login'])->diffForHumans() : 'never logged in'],
+            ['Payments collected', number_format($health['payments_total']).' XAF', 'all-time'],
+            ['Next billing', $company->next_billing_at ? \Carbon\Carbon::parse($company->next_billing_at)->format('Y-m-d') : '—', $company->plan_slug ?? '—'],
+        ];
+    @endphp
+    @foreach($cards as [$label, $value, $sub])
+    <div class="bg-[#151F2E] border border-[#253347] rounded-2xl p-4">
+        <div class="text-[9px] font-black uppercase tracking-widest text-slate-500">{{ $label }}</div>
+        <div class="text-lg font-black text-white mt-1 truncate">{{ $value }}</div>
+        <div class="text-[10px] text-slate-500 mt-0.5">{{ $sub }}</div>
+    </div>
+    @endforeach
 </div>
 
 <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
@@ -64,24 +92,67 @@
         </form>
     </div>
 
-    <!-- Users list -->
-    <div class="bg-[#151F2E] border border-[#253347] rounded-2xl p-6">
-        <h2 class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-5">
-            Users ({{ $company->users->count() }})
-        </h2>
+    <!-- Users list + management -->
+    <div class="bg-[#151F2E] border border-[#253347] rounded-2xl p-6" x-data="{ adding: false, editing: null }">
+        <div class="flex items-center justify-between mb-5">
+            <h2 class="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                Users ({{ $company->users->count() }})
+            </h2>
+            <button @click="adding = !adding" class="text-[10px] font-black uppercase tracking-widest text-amber-300 hover:text-amber-200">+ Add user</button>
+        </div>
+
+        <!-- Add user -->
+        <form x-show="adding" x-cloak method="POST" action="{{ route('admin.company.users.store', $company) }}"
+              class="mb-4 p-4 rounded-xl bg-[#1C2A3A]/60 border border-[#334155]/60 grid grid-cols-2 gap-3">
+            @csrf
+            <input type="text" name="name" placeholder="Name" required class="col-span-2 bg-[#0B1120] border border-[#334155] rounded-lg px-3 py-2 text-xs text-white outline-none focus:border-amber-500">
+            <input type="email" name="email" placeholder="Email" required class="bg-[#0B1120] border border-[#334155] rounded-lg px-3 py-2 text-xs text-white outline-none focus:border-amber-500">
+            <input type="password" name="password" placeholder="Password (min 8)" required class="bg-[#0B1120] border border-[#334155] rounded-lg px-3 py-2 text-xs text-white outline-none focus:border-amber-500">
+            <select name="role" class="bg-[#0B1120] border border-[#334155] rounded-lg px-3 py-2 text-xs text-white outline-none focus:border-amber-500">
+                @foreach(['OWNER','ACCOUNTANT','CLERK','AUDITOR'] as $r)<option value="{{ $r }}">{{ $r }}</option>@endforeach
+            </select>
+            <button class="bg-amber-500 text-slate-900 rounded-lg px-3 py-2 text-xs font-black uppercase tracking-wide">Create</button>
+        </form>
+
         <div class="space-y-2">
             @forelse($company->users as $user)
-                <div class="flex items-center justify-between px-4 py-3 rounded-xl bg-[#1C2A3A]/60 border border-[#334155]/60">
-                    <div>
-                        <div class="text-sm font-bold text-white">{{ $user->name }}</div>
-                        <div class="text-[10px] text-slate-500 mt-0.5">{{ $user->email }}</div>
+                <div class="px-4 py-3 rounded-xl bg-[#1C2A3A]/60 border border-[#334155]/60">
+                    <div class="flex items-center justify-between gap-2">
+                        <div class="min-w-0">
+                            <div class="text-sm font-bold text-white truncate">
+                                {{ $user->name }}
+                                @if($user->disabled_at)<span class="ml-1.5 text-[9px] font-black uppercase text-red-400">Disabled</span>@endif
+                            </div>
+                            <div class="text-[10px] text-slate-500 mt-0.5 truncate">{{ $user->email }}</div>
+                        </div>
+                        <div class="flex items-center gap-2 shrink-0">
+                            <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase
+                                {{ $user->role === 'OWNER' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' :
+                                   ($user->role === 'ACCOUNTANT' ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30' :
+                                   'bg-slate-500/20 text-slate-300 border border-slate-500/30') }}">
+                                {{ $user->role }}
+                            </span>
+                            <button @click="editing === {{ $user->id }} ? editing = null : editing = {{ $user->id }}" class="text-[10px] text-slate-400 hover:text-white" title="Edit">✎</button>
+                            <form method="POST" action="{{ route('admin.users.toggle', $user) }}" class="inline">@csrf
+                                <button class="text-[10px] font-black {{ $user->disabled_at ? 'text-emerald-400 hover:text-emerald-300' : 'text-amber-400 hover:text-amber-300' }}" title="{{ $user->disabled_at ? 'Enable' : 'Disable' }}">{{ $user->disabled_at ? 'ON' : 'OFF' }}</button>
+                            </form>
+                            <form method="POST" action="{{ route('admin.users.destroy', $user) }}" class="inline"
+                                  onsubmit="return confirm('Supprimer {{ $user->email }} ?')">@csrf @method('DELETE')
+                                <button class="text-[10px] text-red-400 hover:text-red-300" title="Delete">🗑</button>
+                            </form>
+                        </div>
                     </div>
-                    <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase
-                        {{ $user->role === 'OWNER' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' :
-                           ($user->role === 'ACCOUNTANT' ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30' :
-                           'bg-slate-500/20 text-slate-300 border border-slate-500/30') }}">
-                        {{ $user->role }}
-                    </span>
+                    <!-- Inline edit -->
+                    <form x-show="editing === {{ $user->id }}" x-cloak method="POST" action="{{ route('admin.users.update', $user) }}"
+                          class="mt-3 grid grid-cols-2 gap-2">
+                        @csrf
+                        <input type="text" name="name" value="{{ $user->name }}" required class="bg-[#0B1120] border border-[#334155] rounded-lg px-3 py-1.5 text-xs text-white outline-none focus:border-amber-500">
+                        <input type="email" name="email" value="{{ $user->email }}" required class="bg-[#0B1120] border border-[#334155] rounded-lg px-3 py-1.5 text-xs text-white outline-none focus:border-amber-500">
+                        <select name="role" class="bg-[#0B1120] border border-[#334155] rounded-lg px-3 py-1.5 text-xs text-white outline-none focus:border-amber-500">
+                            @foreach(['OWNER','ACCOUNTANT','CLERK','AUDITOR'] as $r)<option value="{{ $r }}" {{ $user->role === $r ? 'selected' : '' }}>{{ $r }}</option>@endforeach
+                        </select>
+                        <button class="bg-[#0B1120] border border-amber-500/50 text-amber-300 rounded-lg px-3 py-1.5 text-xs font-black uppercase tracking-wide">Save</button>
+                    </form>
                 </div>
             @empty
                 <div class="text-center text-slate-500 text-sm py-6">No users in this company.</div>
@@ -89,6 +160,28 @@
         </div>
     </div>
 
+</div>
+
+<!-- Danger zone -->
+<div class="mt-6 bg-[#151F2E] border border-red-500/25 rounded-2xl p-6">
+    <h2 class="text-[10px] font-black uppercase tracking-widest text-red-400 mb-1">Danger Zone</h2>
+    <p class="text-xs text-slate-500 mb-4">Suspension blocks all tenant API access immediately. Deletion is a soft-delete (recoverable in the DB).</p>
+    <div class="flex flex-wrap gap-3">
+        @if($company->subscription_status === 'SUSPENDED')
+        <form method="POST" action="{{ route('admin.company.reactivate', $company) }}">@csrf
+            <button class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-emerald-300 bg-emerald-500/10 border border-emerald-500/30 hover:bg-emerald-500/20 transition-all">Reactivate company</button>
+        </form>
+        @else
+        <form method="POST" action="{{ route('admin.company.suspend', $company) }}"
+              onsubmit="return confirm('Suspendre {{ $company->name }} ? Tout accès tenant sera bloqué.')">@csrf
+            <button class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-amber-300 bg-amber-500/10 border border-amber-500/30 hover:bg-amber-500/20 transition-all">Suspend company</button>
+        </form>
+        @endif
+        <form method="POST" action="{{ route('admin.company.destroy', $company) }}"
+              onsubmit="return confirm('SUPPRIMER {{ $company->name }} ? Cette action retire l\'entreprise de la plateforme.')">@csrf @method('DELETE')
+            <button class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-red-300 bg-red-500/10 border border-red-500/30 hover:bg-red-500/20 transition-all">Delete company</button>
+        </form>
+    </div>
 </div>
 
 <!-- Subscription history -->
@@ -115,7 +208,7 @@
                         <td class="py-3 px-4 text-slate-400">{{ $s->status }}</td>
                         <td class="py-3 px-4 font-mono text-slate-400">{{ number_format($s->amount_xaf) }}</td>
                         <td class="py-3 px-4 font-mono text-slate-500 text-[10px]">
-                            {{ $s->expires_at ? \Carbon\Carbon::parse($s->expires_at)->format('Y-m-d') : '—' }}
+                            {{ $s->period_end ? \Carbon\Carbon::parse($s->period_end)->format('Y-m-d') : '—' }}
                         </td>
                         <td class="py-3 px-4 font-mono text-slate-500 text-[10px]">{{ $s->created_at->format('Y-m-d') }}</td>
                     </tr>
