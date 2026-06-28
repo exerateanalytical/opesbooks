@@ -726,9 +726,18 @@
                     <h2 class="text-2xl font-black text-white uppercase tracking-wide" x-text="lang==='FR' ? 'Tableau de Bord' : 'Dashboard'"></h2>
                     <p class="text-xs text-slate-400 mt-1" x-text="today"></p>
                 </div>
-                <div class="text-[10px] font-black text-slate-400 px-3 py-1.5 rounded-xl uppercase tracking-widest"
-                     style="background:#030363;border:1px solid #2A2A72"
-                     x-text="(company?.tax_regime ?? '—') + ' · NIU: ' + (company?.niu ?? '—')"></div>
+                <div class="flex items-center gap-2">
+                    <select x-model="dashPeriod" @change="loadDashboardKpis()"
+                            class="text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-xl"
+                            style="background:#030363;border:1px solid #2A2A72;color:#cbd5e1">
+                        <option value="month" x-text="lang==='FR'?'Ce mois':'This month'"></option>
+                        <option value="quarter" x-text="lang==='FR'?'Ce trimestre':'This quarter'"></option>
+                        <option value="year" x-text="lang==='FR'?'Cette année':'This year'"></option>
+                    </select>
+                    <div class="text-[10px] font-black text-slate-400 px-3 py-1.5 rounded-xl uppercase tracking-widest"
+                         style="background:#030363;border:1px solid #2A2A72"
+                         x-text="(company?.tax_regime ?? '—') + ' · NIU: ' + (company?.niu ?? '—')"></div>
+                </div>
             </div>
 
             <!-- Onboarding checklist -->
@@ -5498,12 +5507,22 @@ function opesApp() {
             } catch(e) { window.opesToast && window.opesToast('error', 'Erreur', e.message); }
         },
 
+        dashPeriod: 'year',
         async loadDashboardKpis() {
             if (!this.company) return;
             try {
                 const now = new Date();
-                const from = `${now.getFullYear()}-01-01`;
-                const to   = now.toISOString().slice(0,10);
+                const y = now.getFullYear();
+                let from;
+                if (this.dashPeriod === 'month') {
+                    from = `${y}-${String(now.getMonth()+1).padStart(2,'0')}-01`;
+                } else if (this.dashPeriod === 'quarter') {
+                    const qStartMonth = Math.floor(now.getMonth()/3)*3 + 1;
+                    from = `${y}-${String(qStartMonth).padStart(2,'0')}-01`;
+                } else {
+                    from = `${y}-01-01`;
+                }
+                const to = now.toISOString().slice(0,10);
                 const data = await this.api(`companies/${this.company.id}/trial-balance?from=${from}&to=${to}`);
                 const accounts = data.accounts ?? [];
                 const find = (code) => accounts.find(a => a.code === code);
