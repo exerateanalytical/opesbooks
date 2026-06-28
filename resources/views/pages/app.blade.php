@@ -671,6 +671,20 @@
             <span class="text-white font-black text-sm tracking-widest uppercase">OPES<span class="text-amber-400">BOOKS</span></span>
         </div>
 
+        <!-- In-app PDF preview modal -->
+        <div x-show="pdfModal.open" x-cloak class="fixed inset-0 z-[100] flex flex-col" style="background:rgba(1,0,40,0.92)" @keydown.escape.window="closePdfModal()">
+            <div class="flex items-center justify-between px-4 py-2.5 shrink-0" style="background:#010048;border-bottom:1px solid #2A2A72">
+                <span class="text-sm font-bold text-white truncate" x-text="pdfModal.title"></span>
+                <div class="flex items-center gap-2">
+                    <button @click="printPdfModal()" class="px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider" style="background:rgba(201,155,14,0.15);color:#E3B420" x-text="lang==='FR'?'🖨 Imprimer':'🖨 Print'"></button>
+                    <button @click="window.open(pdfModal.url,'_blank')" class="px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider glass-btn-dark text-slate-200" x-text="lang==='FR'?'↗ Onglet':'↗ Tab'"></button>
+                    <button @click="downloadPdfModal()" class="px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider glass-btn-dark text-slate-200" x-text="lang==='FR'?'⬇ Télécharger':'⬇ Download'"></button>
+                    <button @click="closePdfModal()" class="px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider" style="background:rgba(244,63,94,0.15);color:rgb(252,165,165)" x-text="lang==='FR'?'✕ Fermer':'✕ Close'"></button>
+                </div>
+            </div>
+            <iframe id="opesPdfFrame" x-show="pdfModal.url" :src="pdfModal.url" class="flex-1 w-full" style="border:0;background:#525659"></iframe>
+        </div>
+
         <!-- Read-only (Auditor) banner -->
         <div x-show="user?.role === 'AUDITOR'" x-cloak class="px-6 pt-5">
             <div class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs" style="background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.3)">
@@ -5316,9 +5330,18 @@ function opesApp() {
             { page:null, href:'/tax-dashboard', icon:'<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>', labelFr:'Bilan Fiscal', labelEn:'Tax Monitor' },
         ],
 
+        // ── In-app PDF viewer (avoids popup-blocker on window.open after fetch) ──
+        pdfModal: { open:false, url:'', title:'' },
+        openPdfModal(url, title) { this.pdfModal = { open:true, url, title: title || 'Document' }; },
+        closePdfModal() { if (this.pdfModal.url) { try { URL.revokeObjectURL(this.pdfModal.url); } catch(e){} } this.pdfModal = { open:false, url:'', title:'' }; },
+        printPdfModal() { const f = document.getElementById('opesPdfFrame'); if (f && f.contentWindow) { f.contentWindow.focus(); f.contentWindow.print(); } },
+        downloadPdfModal() { const a = document.createElement('a'); a.href = this.pdfModal.url; a.download = (this.pdfModal.title || 'document') + '.pdf'; document.body.appendChild(a); a.click(); a.remove(); },
+
         async init() {
             const token = localStorage.getItem('opes_token');
             if (!token) { window.location.href = '/login'; return; }
+            // Global PDF preview entry point — any component calls window.opesShowPdf(url, title).
+            window.opesShowPdf = (url, title='') => this.openPdfModal(url, title);
             window.addEventListener('online',  () => { this.flushOutbox(); });
             window.addEventListener('offline', () => { this.connStatus='OFFLINE'; });
             this.pendingSync = this._outbox().length;
@@ -5626,7 +5649,7 @@ function opesApp() {
             try {
                 const res = await fetch(`/api/v1/companies/${this.company.id}/trial-balance/pdf?${p}`, { headers: { Authorization: 'Bearer ' + localStorage.getItem('opes_token') } });
                 if (!res.ok) { window.opesToast && window.opesToast('error','Balance','Indisponible'); return; }
-                const url = URL.createObjectURL(await res.blob()); window.open(url, '_blank'); setTimeout(()=>URL.revokeObjectURL(url), 60000);
+                const url = URL.createObjectURL(await res.blob()); window.opesShowPdf(url); setTimeout(()=>URL.revokeObjectURL(url), 60000);
             } catch(e) { window.opesToast && window.opesToast('error','Balance', e.message); }
         },
         async printGrandLivre() {
@@ -5637,7 +5660,7 @@ function opesApp() {
             try {
                 const res = await fetch(`/api/v1/companies/${this.company.id}/grand-livre/pdf?${p}`, { headers: { Authorization: 'Bearer ' + localStorage.getItem('opes_token') } });
                 if (!res.ok) { window.opesToast && window.opesToast('error','Grand Livre','Indisponible'); return; }
-                const url = URL.createObjectURL(await res.blob()); window.open(url, '_blank'); setTimeout(()=>URL.revokeObjectURL(url), 60000);
+                const url = URL.createObjectURL(await res.blob()); window.opesShowPdf(url); setTimeout(()=>URL.revokeObjectURL(url), 60000);
             } catch(e) { window.opesToast && window.opesToast('error','Grand Livre', e.message); }
         },
         async loadLedger() {
@@ -5685,7 +5708,7 @@ function opesApp() {
             if (!res.ok) { alert('Invoice PDF not available'); return; }
             const blob = await res.blob();
             const url = URL.createObjectURL(blob);
-            window.open(url, '_blank'); setTimeout(() => URL.revokeObjectURL(url), 60000);
+            window.opesShowPdf(url); setTimeout(() => URL.revokeObjectURL(url), 60000);
         },
 
         async loadSubledgers() {
@@ -5889,7 +5912,7 @@ function invoiceForm() {
                 if (!res.ok) { const err = await res.json(); throw new Error(extractError(err)); }
                 const blob = await res.blob();
                 const url  = URL.createObjectURL(blob);
-                window.open(url, '_blank'); setTimeout(() => URL.revokeObjectURL(url), 60000);
+                window.opesShowPdf(url); setTimeout(() => URL.revokeObjectURL(url), 60000);
             } catch(e) {
                 this.invoiceError = e.message;
             } finally {
@@ -6138,7 +6161,7 @@ function subscriptionPanel() {
                 if (!res.ok) { this.subError = this.lang==='FR' ? 'Aucun reçu disponible (abonnement inactif).' : 'No receipt available (inactive subscription).'; return; }
                 const blob = await res.blob();
                 const url = URL.createObjectURL(blob);
-                window.open(url, '_blank'); setTimeout(() => URL.revokeObjectURL(url), 60000);
+                window.opesShowPdf(url); setTimeout(() => URL.revokeObjectURL(url), 60000);
             } catch(e) {
                 this.subError = e.message;
             } finally {
@@ -6326,7 +6349,7 @@ function customerInvoicesPanel() {
                 });
                 if (!res.ok) { window.opesToast && window.opesToast('error','PDF','Échec du téléchargement.'); return; }
                 const blob = await res.blob(); const url = URL.createObjectURL(blob);
-                window.open(url, '_blank'); setTimeout(() => URL.revokeObjectURL(url), 60000);
+                window.opesShowPdf(url); setTimeout(() => URL.revokeObjectURL(url), 60000);
             } catch(e) { window.opesToast && window.opesToast('error','PDF',e.message); }
         },
         async viewReceipt(inv) {
@@ -6334,7 +6357,7 @@ function customerInvoicesPanel() {
             try {
                 const res = await fetch(`/api/v1/companies/${cid}/customer-invoices/${inv.id}/receipt`, { headers: { 'Authorization':'Bearer '+localStorage.getItem('opes_token') } });
                 if (!res.ok) { window.opesToast && window.opesToast('error','Reçu','Disponible uniquement pour une facture payée.'); return; }
-                const url = URL.createObjectURL(await res.blob()); window.open(url, '_blank'); setTimeout(() => URL.revokeObjectURL(url), 60000);
+                const url = URL.createObjectURL(await res.blob()); window.opesShowPdf(url); setTimeout(() => URL.revokeObjectURL(url), 60000);
             } catch(e) { window.opesToast && window.opesToast('error','Reçu',e.message); }
         },
         async exportDownload(type, fmt) {
@@ -6455,7 +6478,7 @@ function customersPanel() {
                 const res = await fetch(`/api/v1/companies/${cid}/customers/${c.id}/statement`,{headers:{'Authorization':'Bearer '+token}});
                 if(!res.ok){ window.opesToast && window.opesToast('error','Relevé','Indisponible'); return; }
                 const blob = await res.blob(); const url = URL.createObjectURL(blob);
-                window.open(url, '_blank'); setTimeout(() => URL.revokeObjectURL(url), 60000);
+                window.opesShowPdf(url); setTimeout(() => URL.revokeObjectURL(url), 60000);
             } catch(e){ window.opesToast && window.opesToast('error','Relevé',e.message); }
         },
 
@@ -6736,7 +6759,7 @@ function reportsPanel() {
                 const res = await fetch(url, { headers: { Authorization: 'Bearer ' + localStorage.getItem('opes_token') } });
                 if (!res.ok) { window.opesToast && window.opesToast('error', 'PDF', 'Échec'); return; }
                 const blob = await res.blob();
-                window.open(URL.createObjectURL(blob), '_blank');
+                window.opesShowPdf(URL.createObjectURL(blob));
             } catch (e) { window.opesToast && window.opesToast('error', 'PDF', e.message); }
         },
 
@@ -6840,7 +6863,7 @@ function payrollPanel() {
             try {
                 const res = await fetch(`/api/v1/companies/${this._cid}/payroll/periods/${periodId}/payslip/${employeeId}`, { headers: { Authorization: 'Bearer ' + localStorage.getItem('opes_token') } });
                 if (!res.ok) { window.opesToast && window.opesToast('error','Bulletin','Indisponible'); return; }
-                const url = URL.createObjectURL(await res.blob()); window.open(url, '_blank'); setTimeout(()=>URL.revokeObjectURL(url),60000);
+                const url = URL.createObjectURL(await res.blob()); window.opesShowPdf(url); setTimeout(()=>URL.revokeObjectURL(url),60000);
             } catch(e) { window.opesToast && window.opesToast('error','Bulletin', e.message); }
         },
         async viewDipe() {
@@ -6848,7 +6871,7 @@ function payrollPanel() {
             try {
                 const res = await fetch(`/api/v1/companies/${this._cid}/payroll/dipe?year=${year}`, { headers: { Authorization: 'Bearer ' + localStorage.getItem('opes_token') } });
                 if (!res.ok) { window.opesToast && window.opesToast('error','DIPE','Indisponible'); return; }
-                const url = URL.createObjectURL(await res.blob()); window.open(url, '_blank'); setTimeout(()=>URL.revokeObjectURL(url), 60000);
+                const url = URL.createObjectURL(await res.blob()); window.opesShowPdf(url); setTimeout(()=>URL.revokeObjectURL(url), 60000);
             } catch(e) { window.opesToast && window.opesToast('error','DIPE', e.message); }
         },
         async viewBordereau(p) {
@@ -6859,7 +6882,7 @@ function payrollPanel() {
                     body: JSON.stringify({ month: p.period_month, year: p.period_year }),
                 });
                 if (!res.ok) { window.opesToast && window.opesToast('error','Bordereau','Indisponible'); return; }
-                const url = URL.createObjectURL(await res.blob()); window.open(url, '_blank'); setTimeout(()=>URL.revokeObjectURL(url),60000);
+                const url = URL.createObjectURL(await res.blob()); window.opesShowPdf(url); setTimeout(()=>URL.revokeObjectURL(url),60000);
             } catch(e) { window.opesToast && window.opesToast('error','Bordereau', e.message); }
         },
         empError: '',
@@ -6983,7 +7006,7 @@ function supplierInvoicesPanel() {
                 const res = await fetch(`/api/v1/companies/${cid}/supplier-invoices/${inv.id}/pdf`,{headers:{Authorization:'Bearer '+token}});
                 if(!res.ok){ window.opesToast && window.opesToast('error','PDF','Indisponible'); return; }
                 const blob = await res.blob(); const url = URL.createObjectURL(blob);
-                window.open(url, '_blank'); setTimeout(() => URL.revokeObjectURL(url), 60000);
+                window.opesShowPdf(url); setTimeout(() => URL.revokeObjectURL(url), 60000);
             } catch(e){ window.opesToast && window.opesToast('error','PDF',e.message); }
         },
         async init() {
@@ -7161,7 +7184,7 @@ function dsfExportPanel() {
             try {
                 const res = await fetch(url, { headers: { Authorization: 'Bearer ' + localStorage.getItem('opes_token') } });
                 if (!res.ok) { window.opesToast && window.opesToast('error','PDF','Indisponible'); return; }
-                const u = URL.createObjectURL(await res.blob()); window.open(u, '_blank'); setTimeout(()=>URL.revokeObjectURL(u), 60000);
+                const u = URL.createObjectURL(await res.blob()); window.opesShowPdf(u); setTimeout(()=>URL.revokeObjectURL(u), 60000);
             } catch(e) { window.opesToast && window.opesToast('error','PDF', e.message); }
         },
         viewDsfPdf() { this._viewPdf(`/api/v1/companies/${this._cid}/exports/dsf/pdf?fiscal_year=${this.dsfYear}`); },
@@ -7328,7 +7351,7 @@ function quotationsPanel() {
                 const res = await fetch(`/api/v1/companies/${cid}/quotations/${q.id}/pdf`,{headers:{Authorization:'Bearer '+localStorage.getItem('opes_token')}});
                 if(!res.ok){ window.opesToast && window.opesToast('error','PDF','Indisponible'); return; }
                 const blob=await res.blob(); const url=URL.createObjectURL(blob);
-                window.open(url, '_blank'); setTimeout(() => URL.revokeObjectURL(url), 60000);
+                window.opesShowPdf(url); setTimeout(() => URL.revokeObjectURL(url), 60000);
             } catch(e){ window.opesToast && window.opesToast('error','PDF',e.message); }
         },
         async init() {
@@ -7382,7 +7405,7 @@ function purchaseOrdersPanel() {
             try {
                 const res = await fetch(`/api/v1/companies/${this._cid}/${path}`,{headers:{Authorization:'Bearer '+localStorage.getItem('opes_token')}});
                 if(!res.ok){ window.opesToast && window.opesToast('error','PDF','Indisponible'); return; }
-                const url = URL.createObjectURL(await res.blob()); window.open(url,'_blank'); setTimeout(()=>URL.revokeObjectURL(url),60000);
+                const url = URL.createObjectURL(await res.blob()); window.opesShowPdf(url); setTimeout(()=>URL.revokeObjectURL(url),60000);
             } catch(e){ window.opesToast && window.opesToast('error','PDF',e.message); }
         },
         form: { supplier_id:'', order_date: new Date().toISOString().slice(0,10), expected_delivery_date:'', notes:'', lines:[{description:'',quantity:1,unit_price_ht:0}] },
@@ -7457,7 +7480,7 @@ function patentePanel() {
             try {
                 const res = await fetch(`/api/v1/companies/${cid}/patente/${p.id}/pdf`, { headers: { Authorization: 'Bearer ' + localStorage.getItem('opes_token') } });
                 if (!res.ok) { window.opesToast && window.opesToast('error','Patente','Indisponible'); return; }
-                const url = URL.createObjectURL(await res.blob()); window.open(url, '_blank'); setTimeout(()=>URL.revokeObjectURL(url), 60000);
+                const url = URL.createObjectURL(await res.blob()); window.opesShowPdf(url); setTimeout(()=>URL.revokeObjectURL(url), 60000);
             } catch(e) { window.opesToast && window.opesToast('error','Patente', e.message); }
         },
         form: { tax_year: new Date().getFullYear(), patente_number:'', amount_due_xaf:0, due_date:'', notes:'' },
@@ -7554,7 +7577,7 @@ function deliveryNotesPanel() {
             try {
                 const res = await fetch(`/api/v1/companies/${this._cid}/${path}`,{headers:{Authorization:'Bearer '+localStorage.getItem('opes_token')}});
                 if(!res.ok){ window.opesToast && window.opesToast('error','PDF','Indisponible'); return; }
-                const url = URL.createObjectURL(await res.blob()); window.open(url,'_blank'); setTimeout(()=>URL.revokeObjectURL(url),60000);
+                const url = URL.createObjectURL(await res.blob()); window.opesShowPdf(url); setTimeout(()=>URL.revokeObjectURL(url),60000);
             } catch(e){ window.opesToast && window.opesToast('error','PDF',e.message); }
         },
         form: {
