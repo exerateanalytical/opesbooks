@@ -245,6 +245,7 @@ Route::prefix('v1')->name('v1.')->group(function () {
             Route::get('ledger',        [LedgerController::class, 'entries'])->name('ledger');
             Route::get('trial-balance', [LedgerController::class, 'trialBalance'])->name('trial-balance');
             Route::get('trial-balance/pdf', [LedgerController::class, 'trialBalancePdf'])->name('trial-balance.pdf');
+            Route::get('grand-livre/pdf', [LedgerController::class, 'grandLivrePdf'])->name('grand-livre.pdf');
 
             // Invoice PDF generation
             Route::post('invoice/generate',          [InvoicePdfController::class, 'generate'])->name('invoice.generate');
@@ -409,6 +410,8 @@ Route::prefix('v1')->name('v1.')->group(function () {
             Route::middleware(\App\Http\Middleware\RequireRole::class . ':OWNER,ACCOUNTANT')->group(function () {
                 Route::post('exports/dsf',        [DsfExportController::class, 'generate'])->name('exports.dsf');
                 Route::post('exports/tva-monthly',[DsfExportController::class, 'monthlyTva'])->name('exports.tva-monthly');
+                Route::get('exports/dsf/pdf',         [DsfExportController::class, 'generatePdf'])->name('exports.dsf.pdf');
+                Route::get('exports/tva-monthly/pdf', [DsfExportController::class, 'monthlyTvaPdf'])->name('exports.tva-monthly.pdf');
             });
 
             // Audit log (OWNER only)
@@ -436,6 +439,7 @@ Route::prefix('v1')->name('v1.')->group(function () {
                 Route::get('suppliers/{supplier}/withholding-certificate', [WithholdingCertificateController::class, 'generate'])->name('suppliers.withholding-cert');
                 Route::post('payroll/cnps-bordereau', [CnpsBordereauController::class, 'generate'])->name('payroll.cnps-bordereau');
                 Route::get('payroll/periods/{period}/payslip/{employee}', [\App\Http\Controllers\Api\V1\PayrollController::class, 'payslip'])->name('payroll.payslip');
+                Route::get('payroll/dipe', [\App\Http\Controllers\Api\V1\PayrollController::class, 'dipe'])->name('payroll.dipe');
             });
 
             // Customer credit notes
@@ -508,6 +512,7 @@ Route::prefix('v1')->name('v1.')->group(function () {
             Route::middleware(\App\Http\Middleware\RequireRole::class . ':OWNER,ACCOUNTANT')->group(function () {
                 Route::post('patente',                          [PatenteController::class, 'store'])->name('patente.store');
                 Route::post('patente/{patenteRecord}/pay',      [PatenteController::class, 'pay'])->name('patente.pay');
+                Route::get('patente/{patenteRecord}/pdf',       [PatenteController::class, 'pdf'])->name('patente.pdf');
                 Route::delete('patente/{patenteRecord}',        [PatenteController::class, 'destroy'])->name('patente.destroy');
             });
 

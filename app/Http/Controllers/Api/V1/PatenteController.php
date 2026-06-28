@@ -98,4 +98,15 @@ class PatenteController extends Controller
         $patenteRecord->delete();
         return response()->json(['message' => 'Deleted']);
     }
+
+    /** GET /patente/{patenteRecord}/pdf — printable patente notice. */
+    public function pdf(Company $company, PatenteRecord $patenteRecord)
+    {
+        abort_if($patenteRecord->company_id !== $company->id, 404);
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('patente.notice', [
+            'company' => $company,
+            'record'  => $patenteRecord,
+        ])->setPaper('a4');
+        return $pdf->stream("patente-{$patenteRecord->tax_year}.pdf");
+    }
 }

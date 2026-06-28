@@ -189,4 +189,40 @@ class PayrollController extends Controller
 
         return $pdf->stream("bulletin_{$employee->name}_{$period->period_month}_{$period->period_year}.pdf");
     }
+
+    /**
+     * GET /payroll/dipe?year= — DIPE (Déclaration des Informations sur le
+     * Personnel Employé): yearly per-employee summary of gross, CNPS & IRPP.
+     */
+    public function dipe(Request $request, Company $company)
+    {
+        $year = (int) $request->input('year', date('Y'));
+
+        $lines = PayrollLine::with('employee:id,name,cnps_number,position')
+            ->whereHas('period', fn ($q) => $q->where('company_id', $company->id)->where('period_year', $year))
+            ->get();
+
+        $byEmp = [];
+        foreach ($lines as $l) {
+            $eid = $l->employee_id;
+            $byEmp[$eid] ??= [
+                'name' => $l->employee?->name, 'cnps' => $l->employee?->cnps_number,
+                'position' => $l->employee?->position,
+                'gross' => 0, 'cnps_emp' => 0, 'irpp' => 0, 'cac' => 0, 'months' => 0,
+            ];
+            $byEmp[$eid]['gross']    += (float) $l->gross_salary;
+            $byEmp[$eid]['cnps_emp'] += (float) $l->cnps_employee;
+            $byEmp[$eid]['irpp']     += (float) $l->irpp;
+            $byEmp[$eid]['cac']      += (float) $l->cac_irpp;
+            $byEmp[$eid]['months']++;
+        }
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('payroll.dipe', [
+            'company' => $company,
+            'year'    => $year,
+            'rows'    => array_values($byEmp),
+        ])->setPaper('a4', 'landscape');
+
+        return $pdf->stream("dipe-{$year}.pdf");
+    }
 }

@@ -1129,6 +1129,7 @@
                     <input type="date" x-model="ledgerFilter.to" @change="loadLedger()"
                            class="glass-input !w-auto px-3 py-1.5 text-[11px]">
                     <button @click="printTrialBalance()" class="glass-btn-amber px-3 py-1.5 rounded-xl text-[10px] uppercase tracking-widest" x-text="lang==='FR'?'🖨 Balance PDF':'🖨 Balance PDF'"></button>
+                    <button @click="printGrandLivre()" class="glass-btn-dark px-3 py-1.5 rounded-xl text-[10px] uppercase tracking-widest" x-text="lang==='FR'?'🖨 Grand Livre':'🖨 Ledger PDF'"></button>
                 </div>
             </div>
 
@@ -3381,6 +3382,7 @@
                 <div class="flex gap-2">
                     <button @click="tab='employees'" :class="tab==='employees' ? 'glass-btn-dark' : 'glass-btn'" class="px-4 py-2 rounded-xl text-xs uppercase tracking-widest" x-text="lang==='FR' ? 'Employés' : 'Employees'"></button>
                     <button @click="tab='periods'" :class="tab==='periods' ? 'glass-btn-dark' : 'glass-btn'" class="px-4 py-2 rounded-xl text-xs uppercase tracking-widest" x-text="lang==='FR' ? 'Périodes' : 'Pay Periods'"></button>
+                    <button @click="viewDipe()" class="px-4 py-2 rounded-xl text-xs uppercase tracking-widest" style="background:rgba(201,155,14,0.12);color:#E3B420" x-text="lang==='FR' ? '🖨 DIPE' : '🖨 DIPE'"></button>
                 </div>
             </div>
 
@@ -3929,6 +3931,7 @@
                         <span x-show="!dsfLoading" x-text="lang==='FR' ? 'Générer DSF' : 'Generate DSF'"></span>
                         <span x-show="dsfLoading">...</span>
                     </button>
+                    <button @click="viewDsfPdf()" class="glass-btn px-4 py-2 rounded-xl text-xs w-full" x-text="lang==='FR' ? '🖨 Imprimer DSF (PDF)' : '🖨 Print DSF (PDF)'"></button>
                     <div x-show="dsfData" class="text-xs opacity-70">
                         <p x-text="lang==='FR' ? 'CA HT: ' : 'Revenue: '" class="inline"></p>
                         <span class="text-emerald-400 font-bold" x-text="fmtXaf(dsfData?.table_1_compte_resultat?.chiffre_affaires_ht)"></span>
@@ -3950,6 +3953,7 @@
                         <span x-show="!tvaLoading" x-text="lang==='FR' ? 'Calculer TVA D10' : 'Calculate TVA D10'"></span>
                         <span x-show="tvaLoading">...</span>
                     </button>
+                    <button @click="viewTvaPdf()" class="glass-btn px-4 py-2 rounded-xl text-xs w-full" x-text="lang==='FR' ? '🖨 Imprimer Déclaration (PDF)' : '🖨 Print Declaration (PDF)'"></button>
                     <div x-show="tvaData" class="text-xs space-y-1">
                         <div class="flex justify-between"><span class="opacity-50">TVA Collectée</span><span class="text-yellow-400 font-bold" x-text="fmtXaf(tvaData?.tva_collectee)"></span></div>
                         <div class="flex justify-between"><span class="opacity-50">TVA Déductible</span><span class="text-emerald-400 font-bold" x-text="fmtXaf(tvaData?.tva_deductible)"></span></div>
@@ -4413,6 +4417,7 @@
                                 </td>
                                 <td class="px-4 py-2 text-center">
                                     <button x-show="p.status!=='PAID'" @click="payPatente(p)" class="text-amber-400 hover:underline text-xs" x-text="lang==='FR' ? 'Payer' : 'Pay'"></button>
+                                    <button @click="viewPatentePdf(p)" class="text-slate-400 hover:text-white hover:underline text-xs ml-2">🖨 PDF</button>
                                 </td>
                             </tr>
                         </template>
@@ -5624,6 +5629,17 @@ function opesApp() {
                 const url = URL.createObjectURL(await res.blob()); window.open(url, '_blank'); setTimeout(()=>URL.revokeObjectURL(url), 60000);
             } catch(e) { window.opesToast && window.opesToast('error','Balance', e.message); }
         },
+        async printGrandLivre() {
+            if (!this.company) return;
+            const p = new URLSearchParams();
+            if (this.ledgerFilter?.from) p.append('from', this.ledgerFilter.from);
+            if (this.ledgerFilter?.to)   p.append('to', this.ledgerFilter.to);
+            try {
+                const res = await fetch(`/api/v1/companies/${this.company.id}/grand-livre/pdf?${p}`, { headers: { Authorization: 'Bearer ' + localStorage.getItem('opes_token') } });
+                if (!res.ok) { window.opesToast && window.opesToast('error','Grand Livre','Indisponible'); return; }
+                const url = URL.createObjectURL(await res.blob()); window.open(url, '_blank'); setTimeout(()=>URL.revokeObjectURL(url), 60000);
+            } catch(e) { window.opesToast && window.opesToast('error','Grand Livre', e.message); }
+        },
         async loadLedger() {
             if (!this.company) return;
             this.loading = true;
@@ -6827,6 +6843,14 @@ function payrollPanel() {
                 const url = URL.createObjectURL(await res.blob()); window.open(url, '_blank'); setTimeout(()=>URL.revokeObjectURL(url),60000);
             } catch(e) { window.opesToast && window.opesToast('error','Bulletin', e.message); }
         },
+        async viewDipe() {
+            const year = new Date().getFullYear();
+            try {
+                const res = await fetch(`/api/v1/companies/${this._cid}/payroll/dipe?year=${year}`, { headers: { Authorization: 'Bearer ' + localStorage.getItem('opes_token') } });
+                if (!res.ok) { window.opesToast && window.opesToast('error','DIPE','Indisponible'); return; }
+                const url = URL.createObjectURL(await res.blob()); window.open(url, '_blank'); setTimeout(()=>URL.revokeObjectURL(url), 60000);
+            } catch(e) { window.opesToast && window.opesToast('error','DIPE', e.message); }
+        },
         async viewBordereau(p) {
             try {
                 const res = await fetch(`/api/v1/companies/${this._cid}/payroll/cnps-bordereau`, {
@@ -7133,6 +7157,15 @@ function dsfExportPanel() {
         dsfYear: new Date().getFullYear()-1, dsfLoading: false, dsfData: null,
         tvaMonth: new Date().getMonth()+1, tvaYear: new Date().getFullYear(), tvaLoading: false, tvaData: null,
         fmtXaf(v) { if(v===null||v===undefined)return'—'; return Number(v).toLocaleString('fr-CM',{minimumFractionDigits:2})+' XAF'; },
+        async _viewPdf(url) {
+            try {
+                const res = await fetch(url, { headers: { Authorization: 'Bearer ' + localStorage.getItem('opes_token') } });
+                if (!res.ok) { window.opesToast && window.opesToast('error','PDF','Indisponible'); return; }
+                const u = URL.createObjectURL(await res.blob()); window.open(u, '_blank'); setTimeout(()=>URL.revokeObjectURL(u), 60000);
+            } catch(e) { window.opesToast && window.opesToast('error','PDF', e.message); }
+        },
+        viewDsfPdf() { this._viewPdf(`/api/v1/companies/${this._cid}/exports/dsf/pdf?fiscal_year=${this.dsfYear}`); },
+        viewTvaPdf() { this._viewPdf(`/api/v1/companies/${this._cid}/exports/tva-monthly/pdf?month=${this.tvaMonth}&year=${this.tvaYear}`); },
         async init() {
             const token = localStorage.getItem('opes_token');
             const me = await fetch('/api/v1/auth/me',{headers:{Authorization:'Bearer '+token,Accept:'application/json'}}).then(r=>r.json());
@@ -7419,6 +7452,14 @@ function patentePanel() {
         _cid: null, records: [], showForm: false, saving: false, formError: '',
         showDetail: false, detail: null,
         openPatente(p) { this.detail = p; this.showDetail = true; },
+        async viewPatentePdf(p) {
+            const cid = p.company_id || this._cid;
+            try {
+                const res = await fetch(`/api/v1/companies/${cid}/patente/${p.id}/pdf`, { headers: { Authorization: 'Bearer ' + localStorage.getItem('opes_token') } });
+                if (!res.ok) { window.opesToast && window.opesToast('error','Patente','Indisponible'); return; }
+                const url = URL.createObjectURL(await res.blob()); window.open(url, '_blank'); setTimeout(()=>URL.revokeObjectURL(url), 60000);
+            } catch(e) { window.opesToast && window.opesToast('error','Patente', e.message); }
+        },
         form: { tax_year: new Date().getFullYear(), patente_number:'', amount_due_xaf:0, due_date:'', notes:'' },
         async init() {
             const token = localStorage.getItem('opes_token');

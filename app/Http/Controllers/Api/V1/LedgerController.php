@@ -96,4 +96,35 @@ class LedgerController extends Controller
 
         return $pdf->stream('balance-des-comptes.pdf');
     }
+
+    /** GET /grand-livre/pdf — printable General Ledger grouped by account. */
+    public function grandLivrePdf(Request $request, Company $company)
+    {
+        $rows = \Illuminate\Support\Facades\DB::table('journal_lines as jl')
+            ->join('journal_entries as je', 'je.id', '=', 'jl.journal_entry_id')
+            ->join('syscohada_accounts as sa', 'sa.id', '=', 'jl.syscohada_account_id')
+            ->where('je.company_id', $company->id)
+            ->where('je.transaction_status', 'SUCCESSFUL')
+            ->when($request->input('from'), fn ($q, $v) => $q->whereDate('je.posting_date', '>=', $v))
+            ->when($request->input('to'),   fn ($q, $v) => $q->whereDate('je.posting_date', '<=', $v))
+            ->orderBy('sa.code')->orderBy('je.posting_date')
+            ->get(['sa.code', 'sa.label', 'je.posting_date', 'je.reference_id', 'jl.description', 'jl.debit', 'jl.credit']);
+
+        $accounts = [];
+        foreach ($rows as $r) {
+            $accounts[$r->code] ??= ['code' => $r->code, 'label' => $r->label, 'lines' => [], 'debit' => 0.0, 'credit' => 0.0];
+            $accounts[$r->code]['lines'][]  = $r;
+            $accounts[$r->code]['debit']   += (float) $r->debit;
+            $accounts[$r->code]['credit']  += (float) $r->credit;
+        }
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('reports.grand_livre', [
+            'company'  => $company,
+            'accounts' => array_values($accounts),
+            'from'     => $request->input('from'),
+            'to'       => $request->input('to'),
+        ])->setPaper('a4');
+
+        return $pdf->stream('grand-livre.pdf');
+    }
 }
