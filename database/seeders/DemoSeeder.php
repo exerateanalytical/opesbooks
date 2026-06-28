@@ -55,11 +55,11 @@ class DemoSeeder extends Seeder
             ]
         );
 
-        // Super admin (no company — platform-level)
+        // Super admin — uses demo company as anchor (company_id NOT NULL constraint)
         User::firstOrCreate(
             ['email' => 'admin@demo.cm'],
             [
-                'company_id' => null,
+                'company_id' => $company->id,
                 'name'       => 'Platform Admin',
                 'password'   => Hash::make('demo1234'),
                 'role'       => 'SUPER_ADMIN',
