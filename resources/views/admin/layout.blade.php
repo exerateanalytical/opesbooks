@@ -38,6 +38,10 @@
             ['settings', 'Settings', 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z'],
             ['feature-flags', 'Feature Flags', 'M4 21v-7m0 0V5a2 2 0 0 1 2-2h11l-2 4 2 4H6a2 2 0 0 0-2 2z'],
         ],
+        'Account' => [
+            ['administrators', 'Administrators', 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'],
+            ['profile', 'My Profile', 'M5.121 17.804A13 13 0 0112 15c2.5 0 4.847.707 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z'],
+        ],
     ];
 @endphp
 <body class="bg-[#0B1120] text-slate-200 min-h-screen" x-data="{ mobileNav: false }">
@@ -52,6 +56,10 @@
         <span class="text-white font-black text-sm tracking-widest">OPES<span class="text-amber-400">ADMIN</span></span>
     </div>
     <div class="flex items-center gap-3">
+        <a href="{{ route('admin.profile') }}" class="hidden sm:flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-white" title="My profile">
+            <span class="w-6 h-6 rounded-full bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-300 text-[10px]">{{ strtoupper(substr(auth()->user()->name ?? 'A', 0, 1)) }}</span>
+            <span>{{ auth()->user()->name }}</span>
+        </a>
         <a href="{{ route('app') }}" class="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-white">↩ App</a>
         <form method="POST" action="{{ route('admin.logout') }}">@csrf
             <button class="text-[10px] font-black uppercase tracking-widest text-red-400 hover:text-red-300">Logout</button>

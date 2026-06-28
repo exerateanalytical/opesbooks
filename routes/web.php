@@ -78,6 +78,16 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/announcements/{announcement}/toggle', [\App\Http\Controllers\Admin\AdminAnnouncementController::class, 'toggle'])->name('announcements.toggle');
         Route::delete('/announcements/{announcement}',      [\App\Http\Controllers\Admin\AdminAnnouncementController::class, 'destroy'])->name('announcements.destroy');
 
+        // Admin self-service account
+        Route::get('/profile',           [\App\Http\Controllers\Admin\AdminProfileController::class, 'edit'])->name('profile');
+        Route::post('/profile',          [\App\Http\Controllers\Admin\AdminProfileController::class, 'update'])->name('profile.update');
+        Route::post('/profile/password', [\App\Http\Controllers\Admin\AdminProfileController::class, 'password'])->name('profile.password');
+
+        // Platform administrators (manage other SUPER_ADMINs)
+        Route::get('/administrators',                [\App\Http\Controllers\Admin\PlatformAdminController::class, 'index'])->name('administrators');
+        Route::post('/administrators',               [\App\Http\Controllers\Admin\PlatformAdminController::class, 'store'])->name('administrators.store');
+        Route::post('/administrators/{user}/revoke', [\App\Http\Controllers\Admin\PlatformAdminController::class, 'revoke'])->name('administrators.revoke');
+
         // Platform settings / feature flags
         Route::get('/settings',  [\App\Http\Controllers\Admin\AdminSettingsController::class, 'index'])->name('settings');
         Route::post('/settings', [\App\Http\Controllers\Admin\AdminSettingsController::class, 'update'])->name('settings.update');
