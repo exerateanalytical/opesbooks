@@ -175,6 +175,28 @@ class CustomerInvoiceController extends Controller
         return $pdf->stream("facture-{$invoice->invoice_number}.pdf");
     }
 
+    /**
+     * GET /customer-invoices/{invoice}/receipt
+     * Payment receipt (Reçu de paiement) — only for settled invoices.
+     */
+    public function receipt(Company $company, CustomerInvoice $invoice)
+    {
+        abort_if($invoice->company_id !== $company->id, 404);
+        abort_unless($invoice->status === 'PAID', 422, 'Un reçu n\'est disponible que pour une facture payée.');
+        $invoice->loadMissing('customer');
+
+        $receiptNumber = 'REC-' . date('Y', strtotime((string) $invoice->paid_at)) . '-' . str_pad((string) $invoice->id, 5, '0', STR_PAD_LEFT);
+
+        $pdf = Pdf::loadView('receipts.payment', [
+            'company'       => $company,
+            'invoice'       => $invoice,
+            'customer'      => $invoice->customer,
+            'receiptNumber' => $receiptNumber,
+        ])->setPaper('a4');
+
+        return $pdf->stream("recu-{$invoice->invoice_number}.pdf");
+    }
+
     public function markSent(Company $company, CustomerInvoice $invoice): JsonResponse
     {
         abort_if($invoice->company_id !== $company->id, 404);

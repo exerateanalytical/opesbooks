@@ -155,7 +155,7 @@ Route::prefix('v1')->name('v1.')->group(function () {
     });
 
     // ── Authenticated routes ─────────────────────────────────────────────────
-    Route::middleware(['auth:sanctum', \App\Http\Middleware\RequireActiveSubscription::class])
+    Route::middleware(['auth:sanctum', \App\Http\Middleware\RequireActiveSubscription::class, \App\Http\Middleware\EnforceReadOnlyRole::class])
         ->group(function () {
 
         // Universal data export (Excel / CSV / PDF)
@@ -244,6 +244,7 @@ Route::prefix('v1')->name('v1.')->group(function () {
             // Ledger & reporting (all authenticated roles)
             Route::get('ledger',        [LedgerController::class, 'entries'])->name('ledger');
             Route::get('trial-balance', [LedgerController::class, 'trialBalance'])->name('trial-balance');
+            Route::get('trial-balance/pdf', [LedgerController::class, 'trialBalancePdf'])->name('trial-balance.pdf');
 
             // Invoice PDF generation
             Route::post('invoice/generate',          [InvoicePdfController::class, 'generate'])->name('invoice.generate');
@@ -297,7 +298,9 @@ Route::prefix('v1')->name('v1.')->group(function () {
                     Route::get('cash-flow',         [FinancialReportController::class, 'cashFlow'])->name('cash-flow');
                     Route::get('cash-flow/pdf',     [FinancialReportController::class, 'cashFlowPdf'])->name('cash-flow.pdf');
                     Route::get('aged-receivables',  [FinancialReportController::class, 'agedReceivables'])->name('aged-receivables');
+                    Route::get('aged-receivables/pdf', [FinancialReportController::class, 'agedReceivablesPdf'])->name('aged-receivables.pdf');
                     Route::get('aged-payables',     [FinancialReportController::class, 'agedPayables'])->name('aged-payables');
+                    Route::get('aged-payables/pdf', [FinancialReportController::class, 'agedPayablesPdf'])->name('aged-payables.pdf');
                 });
 
                 // Recurring transactions
@@ -342,6 +345,7 @@ Route::prefix('v1')->name('v1.')->group(function () {
             Route::get('customer-invoices',                              [CustomerInvoiceController::class, 'index'])->name('customer-invoices.index');
             Route::get('customer-invoices/{invoice}',                    [CustomerInvoiceController::class, 'show'])->name('customer-invoices.show');
             Route::get('customer-invoices/{invoice}/pdf',                [CustomerInvoiceController::class, 'pdf'])->name('customer-invoices.pdf');
+            Route::get('customer-invoices/{invoice}/receipt',            [CustomerInvoiceController::class, 'receipt'])->name('customer-invoices.receipt');
             Route::middleware(\App\Http\Middleware\RequireRole::class . ':OWNER,ACCOUNTANT')->group(function () {
                 Route::post('customer-invoices',                         [CustomerInvoiceController::class, 'store'])->name('customer-invoices.store');
                 Route::put('customer-invoices/{invoice}',                [CustomerInvoiceController::class, 'update'])->name('customer-invoices.update');

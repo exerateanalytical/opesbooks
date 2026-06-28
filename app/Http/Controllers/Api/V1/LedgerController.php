@@ -82,4 +82,18 @@ class LedgerController extends Controller
             'accounts'     => $rows,
         ]);
     }
+
+    /** GET /trial-balance/pdf — printable Balance des comptes (SYSCOHADA). */
+    public function trialBalancePdf(Request $request, Company $company)
+    {
+        $data = $this->trialBalance($request, $company)->getData(true);
+        $pdf  = \Barryvdh\DomPDF\Facade\Pdf::loadView('reports.trial_balance', [
+            'company' => $company,
+            'data'    => $data,
+            'from'    => $request->input('from'),
+            'to'      => $request->input('to'),
+        ])->setPaper('a4');
+
+        return $pdf->stream('balance-des-comptes.pdf');
+    }
 }

@@ -474,11 +474,11 @@
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3l1.9 4.6L18.5 9.5l-4.6 1.9L12 16l-1.9-4.6L5.5 9.5l4.6-1.9L12 3zM5 16l.9 2.1L8 19l-2.1.9L5 22l-.9-2.1L2 19l2.1-.9L5 16z"/></svg>
                 <span>Assistant IA</span>
             </button>
-            <button @click="setPage('journal')" :class="page==='journal' ? 'nav-item active' : 'nav-item'" x-show="user?.role === 'OWNER' || user?.role === 'ACCOUNTANT'">
+            <button @click="setPage('journal')" :class="page==='journal' ? 'nav-item active' : 'nav-item'" x-show="['OWNER','ACCOUNTANT','AUDITOR'].includes(user?.role)">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
                 <span x-text="lang==='FR' ? 'Journal' : 'Journal'"></span>
             </button>
-            <button @click="setPage('ledger')" :class="page==='ledger' ? 'nav-item active' : 'nav-item'" x-show="user?.role === 'OWNER' || user?.role === 'ACCOUNTANT'">
+            <button @click="setPage('ledger')" :class="page==='ledger' ? 'nav-item active' : 'nav-item'" x-show="['OWNER','ACCOUNTANT','AUDITOR'].includes(user?.role)">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
                 <span x-text="lang==='FR' ? 'Grand Livre' : 'Ledger'"></span>
             </button>
@@ -491,15 +491,15 @@
                 <span x-text="lang==='FR' ? 'Calc. TVA' : 'VAT Calc'"></span>
             </button>
 
-            <button @click="setPage('import')" :class="page==='import' ? 'nav-item active' : 'nav-item'" x-show="user?.role === 'OWNER' || user?.role === 'ACCOUNTANT'">
+            <button @click="setPage('import')" :class="page==='import' ? 'nav-item active' : 'nav-item'" x-show="['OWNER','ACCOUNTANT','AUDITOR'].includes(user?.role)">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
                 <span x-text="lang==='FR' ? 'Import relevé' : 'Bank Import'"></span>
             </button>
-            <button @click="setPage('data-import')" :class="page==='data-import' ? 'nav-item active' : 'nav-item'" x-show="user?.role === 'OWNER' || user?.role === 'ACCOUNTANT'">
+            <button @click="setPage('data-import')" :class="page==='data-import' ? 'nav-item active' : 'nav-item'" x-show="['OWNER','ACCOUNTANT','AUDITOR'].includes(user?.role)">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
                 <span x-text="lang==='FR' ? 'Importer données' : 'Import Data'"></span>
             </button>
-            <button @click="setPage('subledgers')" :class="page==='subledgers' ? 'nav-item active' : 'nav-item'" x-show="user?.role === 'OWNER' || user?.role === 'ACCOUNTANT'">
+            <button @click="setPage('subledgers')" :class="page==='subledgers' ? 'nav-item active' : 'nav-item'" x-show="['OWNER','ACCOUNTANT','AUDITOR'].includes(user?.role)">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
                 <span x-text="lang==='FR' ? 'Sous-Comptes' : 'Sub-Ledgers'"></span>
             </button>
@@ -542,40 +542,40 @@
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
                 <span x-text="lang==='FR' ? 'Projets' : 'Projects'"></span>
             </button>
-            <button @click="setPage('suppliers')" :class="page==='suppliers' ? 'nav-item active' : 'nav-item'" x-show="user?.role === 'OWNER' || user?.role === 'ACCOUNTANT'">
+            <button @click="setPage('suppliers')" :class="page==='suppliers' ? 'nav-item active' : 'nav-item'" x-show="['OWNER','ACCOUNTANT','AUDITOR'].includes(user?.role)">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"/></svg>
                 <span x-text="lang==='FR' ? 'Fournisseurs' : 'Suppliers'"></span>
             </button>
-            <button @click="setPage('reports')" :class="page==='reports' ? 'nav-item active' : 'nav-item'" x-show="user?.role === 'OWNER' || user?.role === 'ACCOUNTANT'">
+            <button @click="setPage('reports')" :class="page==='reports' ? 'nav-item active' : 'nav-item'" x-show="['OWNER','ACCOUNTANT','AUDITOR'].includes(user?.role)">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                 <span x-text="lang==='FR' ? 'Rapports' : 'Reports'"></span>
             </button>
-            <button @click="setPage('recurring')" :class="page==='recurring' ? 'nav-item active' : 'nav-item'" x-show="user?.role === 'OWNER' || user?.role === 'ACCOUNTANT'">
+            <button @click="setPage('recurring')" :class="page==='recurring' ? 'nav-item active' : 'nav-item'" x-show="['OWNER','ACCOUNTANT','AUDITOR'].includes(user?.role)">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
                 <span x-text="lang==='FR' ? 'Récurrents' : 'Recurring'"></span>
             </button>
-            <button @click="setPage('payroll')" :class="page==='payroll' ? 'nav-item active' : 'nav-item'" x-show="user?.role === 'OWNER' || user?.role === 'ACCOUNTANT'">
+            <button @click="setPage('payroll')" :class="page==='payroll' ? 'nav-item active' : 'nav-item'" x-show="['OWNER','ACCOUNTANT','AUDITOR'].includes(user?.role)">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
                 <span x-text="lang==='FR' ? 'Paie' : 'Payroll'"></span>
             </button>
 
-            <button @click="setPage('supplier-invoices')" :class="page==='supplier-invoices' ? 'nav-item active' : 'nav-item'" x-show="user?.role === 'OWNER' || user?.role === 'ACCOUNTANT'">
+            <button @click="setPage('supplier-invoices')" :class="page==='supplier-invoices' ? 'nav-item active' : 'nav-item'" x-show="['OWNER','ACCOUNTANT','AUDITOR'].includes(user?.role)">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                 <span x-text="lang==='FR' ? 'Fact. Fournisseurs' : 'Supplier Invoices'"></span>
             </button>
-            <button @click="setPage('fixed-assets')" :class="page==='fixed-assets' ? 'nav-item active' : 'nav-item'" x-show="user?.role === 'OWNER' || user?.role === 'ACCOUNTANT'">
+            <button @click="setPage('fixed-assets')" :class="page==='fixed-assets' ? 'nav-item active' : 'nav-item'" x-show="['OWNER','ACCOUNTANT','AUDITOR'].includes(user?.role)">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
                 <span x-text="lang==='FR' ? 'Immobilisations' : 'Fixed Assets'"></span>
             </button>
-            <button @click="setPage('reconciliation')" :class="page==='reconciliation' ? 'nav-item active' : 'nav-item'" x-show="user?.role === 'OWNER' || user?.role === 'ACCOUNTANT'">
+            <button @click="setPage('reconciliation')" :class="page==='reconciliation' ? 'nav-item active' : 'nav-item'" x-show="['OWNER','ACCOUNTANT','AUDITOR'].includes(user?.role)">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
                 <span x-text="lang==='FR' ? 'Rapprochement' : 'Reconciliation'"></span>
             </button>
-            <button @click="setPage('budget')" :class="page==='budget' ? 'nav-item active' : 'nav-item'" x-show="user?.role === 'OWNER' || user?.role === 'ACCOUNTANT'">
+            <button @click="setPage('budget')" :class="page==='budget' ? 'nav-item active' : 'nav-item'" x-show="['OWNER','ACCOUNTANT','AUDITOR'].includes(user?.role)">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/></svg>
                 <span x-text="lang==='FR' ? 'Budget' : 'Budget'"></span>
             </button>
-            <button @click="setPage('dsf-export')" :class="page==='dsf-export' ? 'nav-item active' : 'nav-item'" x-show="user?.role === 'OWNER' || user?.role === 'ACCOUNTANT'">
+            <button @click="setPage('dsf-export')" :class="page==='dsf-export' ? 'nav-item active' : 'nav-item'" x-show="['OWNER','ACCOUNTANT','AUDITOR'].includes(user?.role)">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                 <span x-text="lang==='FR' ? 'DSF / TVA D10' : 'DSF / TVA D10'"></span>
             </button>
@@ -587,7 +587,7 @@
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                 <span x-text="lang==='FR' ? 'Clôture Exercice' : 'Fiscal Year'"></span>
             </button>
-            <button @click="setPage('accounts')" :class="page==='accounts' ? 'nav-item active' : 'nav-item'" x-show="user?.role === 'OWNER' || user?.role === 'ACCOUNTANT'">
+            <button @click="setPage('accounts')" :class="page==='accounts' ? 'nav-item active' : 'nav-item'" x-show="['OWNER','ACCOUNTANT','AUDITOR'].includes(user?.role)">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
                 <span x-text="lang==='FR' ? 'Plan Comptable' : 'Chart of Accounts'"></span>
             </button>
@@ -599,15 +599,15 @@
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                 <span x-text="lang==='FR' ? 'Devis' : 'Quotations'"></span>
             </button>
-            <button @click="setPage('purchase-orders')" :class="page==='purchase-orders' ? 'nav-item active' : 'nav-item'" x-show="user?.role === 'OWNER' || user?.role === 'ACCOUNTANT'">
+            <button @click="setPage('purchase-orders')" :class="page==='purchase-orders' ? 'nav-item active' : 'nav-item'" x-show="['OWNER','ACCOUNTANT','AUDITOR'].includes(user?.role)">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
                 <span x-text="lang==='FR' ? 'Bons de Cmd.' : 'Purchase Orders'"></span>
             </button>
-            <button @click="setPage('credit-notes')" :class="page==='credit-notes' ? 'nav-item active' : 'nav-item'" x-show="user?.role === 'OWNER' || user?.role === 'ACCOUNTANT'">
+            <button @click="setPage('credit-notes')" :class="page==='credit-notes' ? 'nav-item active' : 'nav-item'" x-show="['OWNER','ACCOUNTANT','AUDITOR'].includes(user?.role)">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
                 <span x-text="lang==='FR' ? 'Avoirs' : 'Credit Notes'"></span>
             </button>
-            <button @click="setPage('patente')" :class="page==='patente' ? 'nav-item active' : 'nav-item'" x-show="user?.role === 'OWNER' || user?.role === 'ACCOUNTANT'">
+            <button @click="setPage('patente')" :class="page==='patente' ? 'nav-item active' : 'nav-item'" x-show="['OWNER','ACCOUNTANT','AUDITOR'].includes(user?.role)">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/></svg>
                 <span x-text="lang==='FR' ? 'Patente' : 'Patente Tax'"></span>
             </button>
@@ -615,18 +615,18 @@
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>
                 <span x-text="lang==='FR' ? 'Bons Livraison' : 'Delivery Notes'"></span>
             </button>
-            <button @click="setPage('cashflow')" :class="page==='cashflow' ? 'nav-item active' : 'nav-item'" x-show="user?.role === 'OWNER' || user?.role === 'ACCOUNTANT'">
+            <button @click="setPage('cashflow')" :class="page==='cashflow' ? 'nav-item active' : 'nav-item'" x-show="['OWNER','ACCOUNTANT','AUDITOR'].includes(user?.role)">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/></svg>
                 <span x-text="lang==='FR' ? 'Trésorerie Prev.' : 'Cashflow Forecast'"></span>
             </button>
 
             <div class="my-2" style="height:1px;background:#2A2A72"></div>
 
-            <a href="/tax-dashboard" class="nav-item" x-show="user?.role === 'OWNER' || user?.role === 'ACCOUNTANT'">
+            <a href="/tax-dashboard" class="nav-item" x-show="['OWNER','ACCOUNTANT','AUDITOR'].includes(user?.role)">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
                 <span x-text="lang==='FR' ? 'Bilan Fiscal' : 'Tax Monitor'"></span>
             </a>
-            <a href="/dgi-monitor" class="nav-item" x-show="user?.role === 'OWNER' || user?.role === 'ACCOUNTANT'">
+            <a href="/dgi-monitor" class="nav-item" x-show="['OWNER','ACCOUNTANT','AUDITOR'].includes(user?.role)">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.14 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"/></svg>
                 <span x-text="lang==='FR' ? 'Suivi DGI' : 'DGI Monitor'"></span>
             </a>
@@ -669,6 +669,14 @@
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
             </button>
             <span class="text-white font-black text-sm tracking-widest uppercase">OPES<span class="text-amber-400">BOOKS</span></span>
+        </div>
+
+        <!-- Read-only (Auditor) banner -->
+        <div x-show="user?.role === 'AUDITOR'" x-cloak class="px-6 pt-5">
+            <div class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs" style="background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.3)">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgb(165,180,252)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+                <span class="font-bold" style="color:rgb(165,180,252)" x-text="lang==='FR'?'Compte Auditeur — lecture seule. Vous pouvez consulter, exporter et imprimer, mais pas modifier.':'Auditor account — read-only. You can view, export and print, but not edit.'"></span>
+            </div>
         </div>
 
         <!-- 2FA required (company enforces it, user hasn't enabled) -->
@@ -1115,11 +1123,12 @@
                     <p class="text-xs text-slate-400 mt-1"
                        x-text="(lang==='FR'?'Balance de vérification — ':'Trial balance — ') + (ledgerMeta.balanced ? '✔ Équilibrée' : '⚠ Déséquilibrée')"></p>
                 </div>
-                <div class="flex gap-2">
+                <div class="flex gap-2 items-center">
                     <input type="date" x-model="ledgerFilter.from" @change="loadLedger()"
                            class="glass-input !w-auto px-3 py-1.5 text-[11px]">
                     <input type="date" x-model="ledgerFilter.to" @change="loadLedger()"
                            class="glass-input !w-auto px-3 py-1.5 text-[11px]">
+                    <button @click="printTrialBalance()" class="glass-btn-amber px-3 py-1.5 rounded-xl text-[10px] uppercase tracking-widest" x-text="lang==='FR'?'🖨 Balance PDF':'🖨 Balance PDF'"></button>
                 </div>
             </div>
 
@@ -1798,6 +1807,7 @@
                         <select x-model="inviteForm.role" class="glass-input">
                             <option value="ACCOUNTANT">ACCOUNTANT</option>
                             <option value="CLERK">CLERK</option>
+                            <option value="AUDITOR" x-text="lang==='FR'?'AUDITEUR (lecture seule)':'AUDITOR (read-only)'"></option>
                         </select>
                     </div>
                     <div>
@@ -2644,6 +2654,7 @@
 
                         <div class="flex flex-wrap gap-2 pt-1">
                             <button @click="downloadInvoicePdf(detail)" class="glass-btn-dark px-4 py-2 rounded-xl text-xs" x-text="lang==='FR'?'Aperçu PDF':'View PDF'"></button>
+                            <button x-show="detail.status==='PAID'" @click="viewReceipt(detail)" class="px-4 py-2 rounded-xl text-xs" style="background:rgba(16,185,129,0.12);color:rgb(110,231,183)" x-text="lang==='FR'?'🧾 Reçu de paiement':'🧾 Payment receipt'"></button>
                             <button x-show="detail.status==='DRAFT'" @click="markSent(detail); showDetail=false" class="px-4 py-2 rounded-xl text-xs" style="background:rgba(201,155,14,0.12);color:#E3B420" x-text="lang==='FR'?'Envoyer':'Send'"></button>
                             <button x-show="detail.status==='SENT'||detail.status==='OVERDUE'" @click="markPaid(detail); showDetail=false" class="px-4 py-2 rounded-xl text-xs" style="background:rgba(16,185,129,0.12);color:rgb(110,231,183)" x-text="lang==='FR'?'Marquer payée':'Mark paid'"></button>
                         </div>
@@ -3103,8 +3114,9 @@
                 <button @click="load()" class="glass-btn-dark px-5 py-2 rounded-xl text-xs uppercase tracking-widest" x-text="loading ? '…' : (lang==='FR' ? 'Générer' : 'Generate')"></button>
                 <button @click="printReport()" class="glass-btn px-4 py-2 rounded-xl text-xs uppercase tracking-widest" x-text="lang==='FR' ? '🖨 Imprimer PDF' : '🖨 Print PDF'"></button>
             </div>
-            <div x-show="tab==='ar'||tab==='ap'">
+            <div x-show="tab==='ar'||tab==='ap'" class="flex gap-3">
                 <button @click="load()" class="glass-btn-dark px-5 py-2 rounded-xl text-xs uppercase tracking-widest" x-text="loading ? '…' : (lang==='FR' ? 'Actualiser' : 'Refresh')"></button>
+                <button @click="printReport()" class="glass-btn px-4 py-2 rounded-xl text-xs uppercase tracking-widest" x-text="lang==='FR' ? '🖨 Imprimer PDF' : '🖨 Print PDF'"></button>
             </div>
 
             <div x-show="error" class="px-4 py-2 rounded-xl text-sm" style="background:rgba(244,63,94,0.1);color:rgb(252,165,165)" x-text="error"></div>
@@ -5601,6 +5613,17 @@ function opesApp() {
             this.loading = false;
         },
 
+        async printTrialBalance() {
+            if (!this.company) return;
+            const p = new URLSearchParams();
+            if (this.ledgerFilter?.from) p.append('from', this.ledgerFilter.from);
+            if (this.ledgerFilter?.to)   p.append('to', this.ledgerFilter.to);
+            try {
+                const res = await fetch(`/api/v1/companies/${this.company.id}/trial-balance/pdf?${p}`, { headers: { Authorization: 'Bearer ' + localStorage.getItem('opes_token') } });
+                if (!res.ok) { window.opesToast && window.opesToast('error','Balance','Indisponible'); return; }
+                const url = URL.createObjectURL(await res.blob()); window.open(url, '_blank'); setTimeout(()=>URL.revokeObjectURL(url), 60000);
+            } catch(e) { window.opesToast && window.opesToast('error','Balance', e.message); }
+        },
         async loadLedger() {
             if (!this.company) return;
             this.loading = true;
@@ -6290,6 +6313,14 @@ function customerInvoicesPanel() {
                 window.open(url, '_blank'); setTimeout(() => URL.revokeObjectURL(url), 60000);
             } catch(e) { window.opesToast && window.opesToast('error','PDF',e.message); }
         },
+        async viewReceipt(inv) {
+            const cid = inv.company_id || this._cid;
+            try {
+                const res = await fetch(`/api/v1/companies/${cid}/customer-invoices/${inv.id}/receipt`, { headers: { 'Authorization':'Bearer '+localStorage.getItem('opes_token') } });
+                if (!res.ok) { window.opesToast && window.opesToast('error','Reçu','Disponible uniquement pour une facture payée.'); return; }
+                const url = URL.createObjectURL(await res.blob()); window.open(url, '_blank'); setTimeout(() => URL.revokeObjectURL(url), 60000);
+            } catch(e) { window.opesToast && window.opesToast('error','Reçu',e.message); }
+        },
         async exportDownload(type, fmt) {
             try {
                 const res = await fetch(`/api/v1/companies/${this._cid}/export/${type}?format=${fmt}`, {
@@ -6682,6 +6713,8 @@ function reportsPanel() {
             if (this.tab === 'pl') url = `${base}/reports/pl/pdf?from=${this.from}&to=${this.to}`;
             else if (this.tab === 'bs') url = `${base}/reports/balance-sheet/pdf?as_of=${this.asOf}`;
             else if (this.tab === 'cf') url = `${base}/reports/cash-flow/pdf?from=${this.from}&to=${this.to}`;
+            else if (this.tab === 'ar') url = `${base}/reports/aged-receivables/pdf`;
+            else if (this.tab === 'ap') url = `${base}/reports/aged-payables/pdf`;
             else { window.opesToast && window.opesToast('info', this.lang==='FR'?'PDF non disponible pour cet onglet':'PDF not available for this tab'); return; }
             try {
                 const res = await fetch(url, { headers: { Authorization: 'Bearer ' + localStorage.getItem('opes_token') } });

@@ -79,6 +79,24 @@ class FinancialReportController extends Controller
         ], ['label' => 'Trésorerie nette', 'amount' => $d['net_cash_flow'], 'positive' => $d['net_cash_flow'] >= 0], "flux_tresorerie");
     }
 
+    /** GET /reports/aged-receivables/pdf */
+    public function agedReceivablesPdf(Company $company)
+    {
+        return $this->renderAged($company, 'Balance Âgée des Créances (Clients)', $this->svc->agedReceivables($company), 'creances_agees');
+    }
+
+    /** GET /reports/aged-payables/pdf */
+    public function agedPayablesPdf(Company $company)
+    {
+        return $this->renderAged($company, 'Balance Âgée des Dettes (Fournisseurs)', $this->svc->agedPayables($company), 'dettes_agees');
+    }
+
+    private function renderAged(Company $company, string $title, array $data, string $file)
+    {
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('reports.aged', compact('company', 'title', 'data'))->setPaper('a4');
+        return $pdf->stream("{$file}.pdf");
+    }
+
     private function render(Company $company, string $title, string $subtitle, array $groups, array $highlight, string $file)
     {
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('reports.statement', compact('company', 'title', 'subtitle', 'groups', 'highlight'))->setPaper('a4');
