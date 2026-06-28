@@ -44,7 +44,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/login',   [\App\Http\Controllers\Admin\AdminAuthController::class, 'showLogin'])->name('login');
     Route::post('/login',  [\App\Http\Controllers\Admin\AdminAuthController::class, 'login'])->name('login.post');
     Route::post('/logout', [\App\Http\Controllers\Admin\AdminAuthController::class, 'logout'])->name('logout');
-    Route::middleware(['auth', 'superadmin'])->group(function () {
+    Route::middleware(['auth', 'superadmin', 'audit'])->group(function () {
         Route::get('/',                          [\App\Http\Controllers\Admin\AdminDashboardController::class, 'index'])->name('dashboard');
         Route::get('/users',                     [\App\Http\Controllers\Admin\AdminDashboardController::class, 'users'])->name('users');
 

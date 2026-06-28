@@ -65,11 +65,28 @@ class AdminDashboardController extends Controller
 
     public function impersonate(Request $request, User $user)
     {
-        $token = $user->createToken('admin-impersonate', ['*'], now()->addHour())->plainTextToken;
+        // Authorization lives in the controller, not just the Blade template:
+        // an admin may never assume another platform admin's identity, nor their own.
+        if ($user->isSuperAdmin()) {
+            abort(403, 'Cannot impersonate another platform admin.');
+        }
+        if ($user->id === $request->user()->id) {
+            abort(403, 'Cannot impersonate yourself.');
+        }
+
+        $adminId = $request->user()->id;
+
+        // The token carries an impersonated_by:<adminId> ability so tenant-side
+        // requests are attributable to the acting admin, and is short-lived.
+        $newToken = $user->createToken(
+            'admin-impersonate',
+            ['*', 'impersonated_by:' . $adminId],
+            now()->addHour()
+        );
 
         // Audit trail: record who impersonated whom.
         \App\Models\AuditLog::create([
-            'user_id'    => $request->user()->id,
+            'user_id'    => $adminId,
             'company_id' => $user->company_id,
             'action'     => 'IMPERSONATE',
             'model_type' => User::class,
@@ -79,32 +96,43 @@ class AdminDashboardController extends Controller
             'created_at' => now(),
         ]);
 
-        // Dedicated impersonation log (start).
+        // Dedicated impersonation log (start) — now records the target and the
+        // token id so the session can be revoked precisely on exit.
         \App\Models\AdminImpersonationLog::create([
-            'admin_user_id' => $request->user()->id,
-            'company_id'    => $user->company_id,
-            'started_at'    => now(),
-            'ip_address'    => $request->ip(),
-            'created_at'    => now(),
+            'admin_user_id'  => $adminId,
+            'target_user_id' => $user->id,
+            'target_email'   => $user->email,
+            'token_id'       => $newToken->accessToken->id,
+            'company_id'     => $user->company_id,
+            'started_at'     => now(),
+            'ip_address'     => $request->ip(),
+            'created_at'     => now(),
         ]);
 
         $company = $user->company;
 
         return response()->json([
-            'token'        => $token,
+            'token'        => $newToken->plainTextToken,
             'user'         => $user->only('id', 'name', 'email', 'role'),
             'company_name' => $company?->name,
         ]);
     }
 
-    /** GET /admin/impersonate/leave — end the active impersonation and return to admin. */
+    /** GET /admin/impersonate/leave — end the active impersonation, revoke its token, return to admin. */
     public function leaveImpersonation(Request $request)
     {
-        \App\Models\AdminImpersonationLog::where('admin_user_id', $request->user()->id)
+        $log = \App\Models\AdminImpersonationLog::where('admin_user_id', $request->user()->id)
             ->whereNull('ended_at')
             ->latest('id')
-            ->limit(1)
-            ->update(['ended_at' => now()]);
+            ->first();
+
+        if ($log) {
+            $log->update(['ended_at' => now()]);
+            // Revoke the impersonation token so a copied bearer can't outlive the exit.
+            if ($log->token_id) {
+                \Laravel\Sanctum\PersonalAccessToken::where('id', $log->token_id)->delete();
+            }
+        }
 
         return redirect()->route('admin.companies')->with('success', 'Impersonnification terminée.');
     }

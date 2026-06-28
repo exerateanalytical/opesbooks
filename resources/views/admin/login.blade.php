@@ -45,6 +45,12 @@
                     <label class="block text-[10px] font-black uppercase tracking-widest mb-1.5" style="color:var(--c-muted)">Password</label>
                     <input type="password" name="password" required class="field" placeholder="••••••••">
                 </div>
+                <div>
+                    <label class="block text-[10px] font-black uppercase tracking-widest mb-1.5" style="color:var(--c-muted)">Code 2FA <span style="color:var(--c-faint)">— si activé</span></label>
+                    <input type="text" name="code" inputmode="numeric" autocomplete="one-time-code"
+                           value="{{ old('code') }}" class="field" placeholder="123456 (laisser vide si non activé)"
+                           @if($errors->has('code')) autofocus @endif>
+                </div>
                 <button type="submit"
                         class="w-full mt-2 py-2.5 rounded-xl text-sm font-black uppercase tracking-widest transition-all"
                         style="background:#F59E0B;color:#0B1120;box-shadow:0 2px 8px rgba(245,158,11,0.3)">
@@ -53,14 +59,16 @@
             </form>
         </div>
 
+        @if(app()->environment('local', 'demo'))
         <div class="mt-4 rounded-xl p-4" style="background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.18)">
-            <p class="text-[10px] font-black uppercase tracking-widest mb-2.5 text-center" style="color:#F59E0B">Demo Access</p>
+            <p class="text-[10px] font-black uppercase tracking-widest mb-2.5 text-center" style="color:#F59E0B">Demo Access · {{ app()->environment() }}</p>
             <button type="button" onclick="document.querySelector('[name=email]').value='admin@demo.cm';document.querySelector('[name=password]').value='demo1234'"
                     class="w-full py-2 rounded-lg text-xs font-bold transition-all"
                     style="background:rgba(245,158,11,0.12);color:#F59E0B;border:1px solid rgba(245,158,11,0.25)">
                 admin@demo.cm · demo1234
             </button>
         </div>
+        @endif
 
         <p class="text-center text-xs mt-4 uppercase tracking-widest" style="color:var(--c-faint)">
             Restricted to SUPER_ADMIN accounts only

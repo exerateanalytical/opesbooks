@@ -27,7 +27,8 @@ class AuditActivity
         $companyId = $request->route('company')?->id ?? null;
         $statusCode = $response->getStatusCode();
 
-        if ($statusCode >= 200 && $statusCode < 300) {
+        // 2xx (JSON API) and 3xx (web POST-redirect-GET) both indicate a successful mutation.
+        if ($statusCode >= 200 && $statusCode < 400) {
             try {
                 AuditLog::create([
                     'user_id'    => $user->id,
@@ -36,7 +37,7 @@ class AuditActivity
                     'model_type' => null,
                     'model_id'   => null,
                     'old_values' => null,
-                    'new_values' => $request->except(['password', 'password_confirmation']),
+                    'new_values' => $request->except(['password', 'password_confirmation', 'code', '_token', '_method']),
                     'ip_address' => $request->ip(),
                 ]);
             } catch (\Throwable) {

@@ -54,6 +54,33 @@ class User extends Authenticatable
         return ! is_null($this->two_factor_confirmed_at);
     }
 
+    /**
+     * Verify a TOTP or single-use recovery code against this user's 2FA secret.
+     * Consumes the recovery code when one is used. Returns false for empty input.
+     */
+    public function verifyTwoFactorCode(string $code): bool
+    {
+        $code = trim($code);
+        if ($code === '') {
+            return false;
+        }
+
+        if ($this->two_factor_secret
+            && (new \PragmaRX\Google2FAQRCode\Google2FA())->verifyKey($this->two_factor_secret, $code)) {
+            return true;
+        }
+
+        $recovery = $this->two_factor_recovery_codes ?? [];
+        if (in_array($code, $recovery, true)) {
+            $this->forceFill([
+                'two_factor_recovery_codes' => array_values(array_diff($recovery, [$code])),
+            ])->save();
+            return true;
+        }
+
+        return false;
+    }
+
     public function company()
     {
         return $this->belongsTo(Company::class);

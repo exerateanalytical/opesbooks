@@ -20,6 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'active_subscription'  => \App\Http\Middleware\RequireActiveSubscription::class,
             'superadmin'           => \App\Http\Middleware\RequireSuperAdmin::class,
             'apikey'               => \App\Http\Middleware\AuthenticateApiKey::class,
+            'audit'                => \App\Http\Middleware\AuditActivity::class,
         ]);
 
         // Log all mutating API requests to audit_logs
