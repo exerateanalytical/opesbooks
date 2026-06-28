@@ -291,8 +291,11 @@ Route::prefix('v1')->name('v1.')->group(function () {
                 // Financial reports
                 Route::prefix('reports')->name('reports.')->group(function () {
                     Route::get('pl',                [FinancialReportController::class, 'profitAndLoss'])->name('pl');
+                    Route::get('pl/pdf',            [FinancialReportController::class, 'profitAndLossPdf'])->name('pl.pdf');
                     Route::get('balance-sheet',     [FinancialReportController::class, 'balanceSheet'])->name('balance-sheet');
+                    Route::get('balance-sheet/pdf', [FinancialReportController::class, 'balanceSheetPdf'])->name('balance-sheet.pdf');
                     Route::get('cash-flow',         [FinancialReportController::class, 'cashFlow'])->name('cash-flow');
+                    Route::get('cash-flow/pdf',     [FinancialReportController::class, 'cashFlowPdf'])->name('cash-flow.pdf');
                     Route::get('aged-receivables',  [FinancialReportController::class, 'agedReceivables'])->name('aged-receivables');
                     Route::get('aged-payables',     [FinancialReportController::class, 'agedPayables'])->name('aged-payables');
                 });
@@ -428,6 +431,7 @@ Route::prefix('v1')->name('v1.')->group(function () {
                 Route::get('suppliers/{supplier}/statement',  [StatementController::class, 'supplierStatement'])->name('suppliers.statement');
                 Route::get('suppliers/{supplier}/withholding-certificate', [WithholdingCertificateController::class, 'generate'])->name('suppliers.withholding-cert');
                 Route::post('payroll/cnps-bordereau', [CnpsBordereauController::class, 'generate'])->name('payroll.cnps-bordereau');
+                Route::get('payroll/periods/{period}/payslip/{employee}', [\App\Http\Controllers\Api\V1\PayrollController::class, 'payslip'])->name('payroll.payslip');
             });
 
             // Customer credit notes

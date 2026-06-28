@@ -163,4 +163,30 @@ class PayrollController extends Controller
         $period->update(['status' => 'POSTED', 'journal_entry_id' => $entry->id]);
         return response()->json($period->load('journalEntry'));
     }
+
+    /**
+     * GET /payroll/periods/{period}/payslip/{employee}
+     * Printable pay slip (bulletin de paie) for one employee in a period.
+     */
+    public function payslip(Company $company, PayrollPeriod $period, Employee $employee)
+    {
+        abort_if($period->company_id !== $company->id, 404);
+        abort_if($employee->company_id !== $company->id, 404);
+
+        $line = PayrollLine::where('payroll_period_id', $period->id)
+            ->where('employee_id', $employee->id)
+            ->firstOrFail();
+
+        $months = ['', 'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+                   'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('payroll.payslip', [
+            'company'     => $company,
+            'employee'    => $employee,
+            'line'        => $line,
+            'periodLabel' => ($months[$period->period_month] ?? $period->period_month) . ' ' . $period->period_year,
+        ])->setPaper('a4');
+
+        return $pdf->stream("bulletin_{$employee->name}_{$period->period_month}_{$period->period_year}.pdf");
+    }
 }

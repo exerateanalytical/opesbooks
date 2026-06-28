@@ -3095,11 +3095,13 @@
                 <div><label class="block text-xs opacity-60 mb-1" x-text="lang==='FR' ? 'Au' : 'To'"></label>
                     <input x-model="to" type="date" class="glass-input px-3 py-2 rounded-xl text-sm"></div>
                 <button @click="load()" class="glass-btn-dark px-5 py-2 rounded-xl text-xs uppercase tracking-widest" x-text="loading ? '…' : (lang==='FR' ? 'Générer' : 'Generate')"></button>
+                <button @click="printReport()" class="glass-btn px-4 py-2 rounded-xl text-xs uppercase tracking-widest" x-text="lang==='FR' ? '🖨 Imprimer PDF' : '🖨 Print PDF'"></button>
             </div>
             <div x-show="tab==='bs'" class="flex gap-3 items-end flex-wrap">
                 <div><label class="block text-xs opacity-60 mb-1" x-text="lang==='FR' ? 'Au' : 'As of'"></label>
                     <input x-model="asOf" type="date" class="glass-input px-3 py-2 rounded-xl text-sm"></div>
                 <button @click="load()" class="glass-btn-dark px-5 py-2 rounded-xl text-xs uppercase tracking-widest" x-text="loading ? '…' : (lang==='FR' ? 'Générer' : 'Generate')"></button>
+                <button @click="printReport()" class="glass-btn px-4 py-2 rounded-xl text-xs uppercase tracking-widest" x-text="lang==='FR' ? '🖨 Imprimer PDF' : '🖨 Print PDF'"></button>
             </div>
             <div x-show="tab==='ar'||tab==='ap'">
                 <button @click="load()" class="glass-btn-dark px-5 py-2 rounded-xl text-xs uppercase tracking-widest" x-text="loading ? '…' : (lang==='FR' ? 'Actualiser' : 'Refresh')"></button>
@@ -3477,6 +3479,7 @@
                                     <th class="text-right px-3 py-1.5 opacity-50">CNPS Sal.</th>
                                     <th class="text-right px-3 py-1.5 opacity-50">IRPP+CAC</th>
                                     <th class="text-right px-3 py-1.5 opacity-50" x-text="lang==='FR' ? 'Net' : 'Net'"></th>
+                                    <th class="text-center px-3 py-1.5 opacity-50" x-text="lang==='FR' ? 'Bulletin' : 'Payslip'"></th>
                                 </tr></thead>
                                 <tbody>
                                     <template x-for="l in p.lines" :key="l.id">
@@ -3486,6 +3489,9 @@
                                             <td class="px-3 py-1.5 text-right text-red-400" x-text="fmtXaf(l.cnps_employee)"></td>
                                             <td class="px-3 py-1.5 text-right text-red-400" x-text="fmtXaf((l.irpp??0)+(l.cac_irpp??0))"></td>
                                             <td class="px-3 py-1.5 text-right text-emerald-400 font-bold" x-text="fmtXaf(l.net_salary)"></td>
+                                            <td class="px-3 py-1.5 text-center">
+                                                <button @click="downloadPayslip(p.id, l.employee_id || l.employee?.id)" class="text-[10px] font-black px-2 py-1 rounded-lg uppercase tracking-wider" style="background:rgba(201,155,14,0.12);color:#E3B420" x-text="lang==='FR'?'🖨 PDF':'🖨 PDF'"></button>
+                                            </td>
                                         </tr>
                                     </template>
                                 </tbody>
@@ -6672,6 +6678,20 @@ function reportsPanel() {
         result: null,
         error: '',
         _cid: null,
+        async printReport() {
+            const base = `/api/v1/companies/${this._cid}`;
+            let url;
+            if (this.tab === 'pl') url = `${base}/reports/pl/pdf?from=${this.from}&to=${this.to}`;
+            else if (this.tab === 'bs') url = `${base}/reports/balance-sheet/pdf?as_of=${this.asOf}`;
+            else if (this.tab === 'cf') url = `${base}/reports/cash-flow/pdf?from=${this.from}&to=${this.to}`;
+            else { window.opesToast && window.opesToast('info', this.lang==='FR'?'PDF non disponible pour cet onglet':'PDF not available for this tab'); return; }
+            try {
+                const res = await fetch(url, { headers: { Authorization: 'Bearer ' + localStorage.getItem('opes_token') } });
+                if (!res.ok) { window.opesToast && window.opesToast('error', 'PDF', 'Échec'); return; }
+                const blob = await res.blob();
+                window.open(URL.createObjectURL(blob), '_blank');
+            } catch (e) { window.opesToast && window.opesToast('error', 'PDF', e.message); }
+        },
 
         async init() {
             const token = localStorage.getItem('opes_token');
@@ -6768,6 +6788,14 @@ function payrollPanel() {
         periods: [],
         showEmpForm: false,
         empSaving: false,
+        async downloadPayslip(periodId, employeeId) {
+            if (!employeeId) { window.opesToast && window.opesToast('error','Bulletin','Employé introuvable'); return; }
+            try {
+                const res = await fetch(`/api/v1/companies/${this._cid}/payroll/periods/${periodId}/payslip/${employeeId}`, { headers: { Authorization: 'Bearer ' + localStorage.getItem('opes_token') } });
+                if (!res.ok) { window.opesToast && window.opesToast('error','Bulletin','Indisponible'); return; }
+                window.open(URL.createObjectURL(await res.blob()), '_blank');
+            } catch(e) { window.opesToast && window.opesToast('error','Bulletin', e.message); }
+        },
         empError: '',
         empForm: { name:'', position:'', gross_salary_xaf:'', hire_date:'', cnps_number:'' },
         periodForm: { period_month: new Date().getMonth()+1, period_year: new Date().getFullYear() },
