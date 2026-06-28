@@ -22,13 +22,20 @@ class AdminInsightsController extends Controller
     {
         $companies = Company::withCount('users')
             ->with(['subscriptions' => fn ($q) => $q->latest()])
-            ->when($request->search, fn ($q, $s) => $q->where('name', 'like', "%{$s}%")
-                ->orWhere('niu', 'like', "%{$s}%"))
+            ->when($request->boolean('trashed'), fn ($q) => $q->onlyTrashed())
+            ->when($request->search, fn ($q, $s) => $q->where(function ($w) use ($s) {
+                $w->where('name', 'like', "%{$s}%")
+                  ->orWhere('niu', 'like', "%{$s}%")
+                  ->orWhere('rccm', 'like', "%{$s}%")
+                  ->orWhereHas('users', fn ($u) => $u->where('email', 'like', "%{$s}%"));
+            }))
             ->latest()
             ->paginate(25)
             ->withQueryString();
 
-        return view('admin.companies', compact('companies'));
+        $trashedCount = Company::onlyTrashed()->count();
+
+        return view('admin.companies', compact('companies', 'trashedCount'));
     }
 
     public function subscriptions(Request $request)

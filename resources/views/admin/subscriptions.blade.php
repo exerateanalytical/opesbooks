@@ -61,23 +61,9 @@
                 @forelse($subscriptions as $sub)
                     <tr class="hover:bg-[#1C2A3A]/40 transition-colors">
                         <td class="py-3.5 px-6 font-bold text-white">{{ $sub->company?->name ?? '—' }}</td>
-                        <td class="py-3.5 px-4">
-                            <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase
-                                {{ $sub->plan === 'ENTERPRISE' ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30' :
-                                   ($sub->plan === 'GROWTH' ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30' :
-                                   'bg-slate-500/20 text-slate-300 border border-slate-500/30') }}">
-                                {{ $sub->plan }}
-                            </span>
-                        </td>
+                        <td class="py-3.5 px-4">@include('admin.partials.plan_badge', ['plan' => $sub->plan])</td>
                         <td class="py-3.5 px-4 text-slate-300 font-mono text-[11px]">{{ number_format($sub->amount_xaf) }} XAF</td>
-                        <td class="py-3.5 px-4">
-                            <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase
-                                {{ $sub->status === 'ACTIVE' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' :
-                                   ($sub->status === 'SUSPENDED' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' :
-                                   'bg-red-500/20 text-red-300 border border-red-500/30') }}">
-                                {{ $sub->status }}
-                            </span>
-                        </td>
+                        <td class="py-3.5 px-4">@include('admin.partials.sub_status_badge', ['status' => $sub->status])</td>
                         <td class="py-3.5 px-4 text-slate-500 font-mono text-[10px]">
                             {{ $sub->period_end ? \Carbon\Carbon::parse($sub->period_end)->format('Y-m-d') : '—' }}
                         </td>

@@ -23,11 +23,12 @@
     <div class="flex items-center gap-3">
         <h1 class="text-2xl font-black text-white uppercase tracking-wide">{{ $company->name }}</h1>
         @php $st = $company->subscription_status; @endphp
-        <span class="px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wide
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wide
             {{ $st === 'ACTIVE' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' :
                ($st === 'SUSPENDED' ? 'bg-red-500/20 text-red-300 border border-red-500/30' :
-               'bg-amber-500/20 text-amber-300 border border-amber-500/30') }}">
-            {{ $st ?? 'ACTIVE' }}
+               'bg-amber-500/20 text-amber-300 border border-amber-500/30') }}"
+            title="API access state enforced by the subscription middleware">
+            <span class="opacity-60">Access</span> {{ $st ?? 'ACTIVE' }}
         </span>
     </div>
     <div class="flex flex-wrap gap-3 mt-2">
@@ -79,7 +80,7 @@
                 </select>
             </div>
             <div>
-                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Status</label>
+                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Subscription status <span class="text-slate-600">· syncs access</span></label>
                 <select name="status" class="w-full bg-[#1C2A3A] border border-[#334155] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#F59E0B]/60 transition-all">
                     @foreach(['ACTIVE','SUSPENDED','CANCELLED'] as $status)
                         <option value="{{ $status }}" {{ ($sub?->status === $status) ? 'selected' : '' }}>{{ $status }}</option>
@@ -225,7 +226,7 @@
 </div>
 
 <!-- Subscription history -->
-@if($company->subscriptions->count() > 1)
+@if($company->subscriptions->count() > 0)
 <div class="mt-6 bg-[#151F2E] border border-[#253347] rounded-2xl overflow-hidden">
     <div class="px-6 py-4 border-b border-[#253347]">
         <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Subscription History</span>
@@ -239,18 +240,22 @@
                     <th class="py-3 px-4">Amount (XAF)</th>
                     <th class="py-3 px-4">Expires</th>
                     <th class="py-3 px-4">Created</th>
+                    <th class="py-3 px-4"></th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-slate-800/40">
                 @foreach($company->subscriptions as $s)
-                    <tr class="hover:bg-[#1C2A3A]/30 transition-colors">
-                        <td class="py-3 px-6 font-bold text-white">{{ $s->plan }}</td>
-                        <td class="py-3 px-4 text-slate-400">{{ $s->status }}</td>
+                    <tr class="hover:bg-[#1C2A3A]/30 transition-colors {{ $loop->first ? 'bg-amber-500/[0.04]' : '' }}">
+                        <td class="py-3 px-6">@include('admin.partials.plan_badge', ['plan' => $s->plan])</td>
+                        <td class="py-3 px-4">@include('admin.partials.sub_status_badge', ['status' => $s->status])</td>
                         <td class="py-3 px-4 font-mono text-slate-400">{{ number_format($s->amount_xaf) }}</td>
                         <td class="py-3 px-4 font-mono text-slate-500 text-[10px]">
                             {{ $s->period_end ? \Carbon\Carbon::parse($s->period_end)->format('Y-m-d') : '—' }}
                         </td>
                         <td class="py-3 px-4 font-mono text-slate-500 text-[10px]">{{ $s->created_at->format('Y-m-d') }}</td>
+                        <td class="py-3 px-4">
+                            @if($loop->first)<span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase bg-amber-500/20 text-amber-300 border border-amber-500/30">Current</span>@endif
+                        </td>
                     </tr>
                 @endforeach
             </tbody>

@@ -56,7 +56,10 @@ class AdminDashboardController extends Controller
 
     public function company(Company $company)
     {
-        $company->load(['users', 'subscriptions']);
+        // Order subscriptions newest-first so the detail form prefills the SAME
+        // row updateSubscription() writes to (it targets ->latest()->first()),
+        // and the history table reads most-recent-first.
+        $company->load(['users', 'subscriptions' => fn ($q) => $q->latest()]);
 
         // Operational health snapshot for dunning / engagement assessment.
         $health = [
@@ -76,6 +79,8 @@ class AdminDashboardController extends Controller
     public function suspendCompany(Request $request, Company $company)
     {
         $company->update(['subscription_status' => 'SUSPENDED']);
+        // Keep the latest subscription row consistent with the access state.
+        $company->subscriptions()->latest()->first()?->update(['status' => 'SUSPENDED']);
         return back()->with('success', "Entreprise suspendue : {$company->name}");
     }
 
@@ -83,6 +88,7 @@ class AdminDashboardController extends Controller
     public function reactivateCompany(Request $request, Company $company)
     {
         $company->update(['subscription_status' => 'ACTIVE']);
+        $company->subscriptions()->latest()->first()?->update(['status' => 'ACTIVE']);
         return back()->with('success', "Entreprise réactivée : {$company->name}");
     }
 
@@ -124,6 +130,14 @@ class AdminDashboardController extends Controller
         ];
 
         return view('admin.company_data', compact('company', 'tab', 'records', 'counts'));
+    }
+
+    /** POST /admin/companies/{id}/restore — undo a soft-delete. */
+    public function restoreCompany(Request $request, $id)
+    {
+        $company = Company::withTrashed()->findOrFail($id);
+        $company->restore();
+        return back()->with('success', "Entreprise restaurée : {$company->name}");
     }
 
     /** GET /admin/companies/{company}/export — data-portability export (JSON download). */
@@ -184,10 +198,13 @@ class AdminDashboardController extends Controller
             $company->subscriptions()->create(array_merge($attributes, ['period_start' => now()]));
         }
 
-        // Keep the company plan pointer + negotiated price in sync.
+        // Keep the company plan pointer + negotiated price + access state in sync.
+        // company.subscription_status (ACTIVE/PAST_DUE/SUSPENDED) is what the API
+        // gate enforces; map the subscription status onto it so the two agree.
         $company->update([
-            'plan_slug'        => $data['plan'],
-            'custom_price_xaf' => $hasCustom ? (int) $customPrice : null,
+            'plan_slug'           => $data['plan'],
+            'custom_price_xaf'    => $hasCustom ? (int) $customPrice : null,
+            'subscription_status' => $data['status'] === 'ACTIVE' ? 'ACTIVE' : 'SUSPENDED',
         ]);
 
         // Proration note when the plan changes mid-period (advisory — manual billing model).

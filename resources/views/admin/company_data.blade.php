@@ -15,6 +15,10 @@
     $fmt = fn($v) => number_format((float) $v, 0, ',', ' ');
     $thc = 'py-3 px-4 text-left';
     $tdc = 'py-3 px-4';
+    $cols = [
+        'customers' => 6, 'suppliers' => 5, 'projects' => 6, 'transactions' => 5,
+        'customer_invoices' => 5, 'supplier_invoices' => 5, 'employees' => 5,
+    ][$tab] ?? 6;
 @endphp
 
 @section('content')
@@ -135,7 +139,7 @@
                         @endswitch
                     </tr>
                 @empty
-                    <tr><td colspan="7" class="py-12 text-center text-slate-500 text-sm">Aucune donnée pour « {{ $tabs[$tab] }} ».</td></tr>
+                    <tr><td colspan="{{ $cols }}" class="py-12 text-center text-slate-500 text-sm">Aucune donnée pour « {{ $tabs[$tab] }} ».</td></tr>
                 @endforelse
             </tbody>
         </table>

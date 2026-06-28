@@ -63,14 +63,7 @@
             <tbody class="text-xs font-medium divide-y divide-slate-800/60">
                 @forelse($byPlan as $row)
                     <tr class="hover:bg-[#1C2A3A]/40 transition-colors">
-                        <td class="py-3.5 px-6">
-                            <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase
-                                {{ $row->plan === 'ENTERPRISE' ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30' :
-                                   ($row->plan === 'GROWTH' ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30' :
-                                   'bg-slate-500/20 text-slate-300 border border-slate-500/30') }}">
-                                {{ $row->plan }}
-                            </span>
-                        </td>
+                        <td class="py-3.5 px-6">@include('admin.partials.plan_badge', ['plan' => $row->plan])</td>
                         <td class="py-3.5 px-4 text-center text-slate-300 font-bold">{{ number_format($row->n) }}</td>
                         <td class="py-3.5 px-4 text-right text-slate-300 font-mono text-[11px]">{{ number_format($row->total) }} XAF</td>
                     </tr>
@@ -102,14 +95,7 @@
                 @forelse($recent as $tx)
                     <tr class="hover:bg-[#1C2A3A]/40 transition-colors">
                         <td class="py-3.5 px-6 font-bold text-white">{{ $tx->company?->name ?? '—' }}</td>
-                        <td class="py-3.5 px-4">
-                            <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase
-                                {{ $tx->plan === 'ENTERPRISE' ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30' :
-                                   ($tx->plan === 'GROWTH' ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30' :
-                                   'bg-slate-500/20 text-slate-300 border border-slate-500/30') }}">
-                                {{ $tx->plan }}
-                            </span>
-                        </td>
+                        <td class="py-3.5 px-4">@include('admin.partials.plan_badge', ['plan' => $tx->plan])</td>
                         <td class="py-3.5 px-4 text-slate-300 font-mono text-[11px]">{{ number_format($tx->amount_xaf) }} XAF</td>
                         <td class="py-3.5 px-4">
                             <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase
