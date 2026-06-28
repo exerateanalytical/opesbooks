@@ -7,5 +7,5 @@
 @endsection
 
 @section('action')
-<a href="{{ url('/onboarding') }}" style="display:inline-block;background:#F59E0B;color:#0B1120;text-decoration:none;font-weight:700;padding:12px 22px;border-radius:8px;font-size:14px;">Configurer mon espace</a>
+<a href="{{ url('/onboarding') }}" style="display:inline-block;background:#C99B0E;color:#010048;text-decoration:none;font-weight:700;padding:12px 22px;border-radius:8px;font-size:14px;">Configurer mon espace</a>
 @endsection
