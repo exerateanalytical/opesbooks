@@ -69,6 +69,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/billing',                   [\App\Http\Controllers\Admin\AdminInsightsController::class, 'billing'])->name('billing');
         Route::post('/companies/{company}/payments', [\App\Http\Controllers\Admin\AdminInsightsController::class, 'recordPayment'])->name('payments.record');
         Route::get('/payments/{payment}/receipt',    [\App\Http\Controllers\Admin\AdminInsightsController::class, 'receipt'])->name('payments.receipt');
+        Route::post('/payments/{payment}/refund',    [\App\Http\Controllers\Admin\AdminInsightsController::class, 'refundPayment'])->name('payments.refund');
+        Route::get('/companies/{company}/invoice',   [\App\Http\Controllers\Admin\AdminInsightsController::class, 'platformInvoice'])->name('company.invoice');
+
+        // Plans & pricing
+        Route::get('/plans',         [\App\Http\Controllers\Admin\AdminPlanController::class, 'index'])->name('plans');
+        Route::post('/plans/{plan}', [\App\Http\Controllers\Admin\AdminPlanController::class, 'update'])->name('plans.update');
 
         // API product
         Route::get('/api-keys',                  [\App\Http\Controllers\Admin\AdminApiKeyController::class, 'index'])->name('api-keys');

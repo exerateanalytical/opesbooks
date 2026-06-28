@@ -3,9 +3,13 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Company;
-use App\Models\User;
+use App\Models\Payment;
+use App\Models\PlanConfig;
 use App\Models\Subscription;
+use App\Models\SubscriptionEvent;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class AdminDashboardController extends Controller
 {
@@ -15,8 +19,10 @@ class AdminDashboardController extends Controller
             'total_companies'    => Company::count(),
             'total_users'        => User::whereNotIn('role', ['SUPER_ADMIN'])->count(),
             'active_subs'        => Subscription::where('status', 'ACTIVE')->count(),
-            'revenue_this_month' => Subscription::where('status', 'ACTIVE')
+            // Realized revenue this month = completed payments, not sub created_at.
+            'revenue_this_month' => Payment::where('status', 'completed')
                 ->whereMonth('created_at', now()->month)
+                ->whereYear('created_at', now()->year)
                 ->sum('amount_xaf'),
         ];
         $companies = Company::with(['users', 'subscriptions' => fn($q) => $q->latest()])->latest()->paginate(20);
@@ -50,7 +56,9 @@ class AdminDashboardController extends Controller
             'payments_total'  => (float) $company->payments()->where('status', 'completed')->sum('amount_xaf'),
         ];
 
-        return view('admin.company', compact('company', 'health'));
+        $plans = PlanConfig::where('is_active', true)->orderBy('sort_order')->get();
+
+        return view('admin.company', compact('company', 'health', 'plans'));
     }
 
     /** POST /admin/companies/{company}/suspend — hard suspend (blocks tenant API access). */
@@ -79,30 +87,66 @@ class AdminDashboardController extends Controller
 
     public function updateSubscription(Request $request, Company $company)
     {
+        $slugs = PlanConfig::pluck('slug')->all();
+
         $data = $request->validate([
-            'plan'       => 'required|in:STARTER,GROWTH,ENTERPRISE',
-            'status'     => 'required|in:ACTIVE,SUSPENDED,CANCELLED',
-            'expires_at' => 'required|date',
+            'plan'             => ['required', Rule::in($slugs)],
+            'status'           => 'required|in:ACTIVE,SUSPENDED,CANCELLED',
+            'expires_at'       => 'required|date',
+            'custom_price_xaf' => 'nullable|integer|min:0',
         ]);
+
+        $plan = PlanConfig::where('slug', $data['plan'])->first();
+        $sub  = $company->subscriptions()->latest()->first();
+        $fromPlan = $sub?->plan;
+
+        $customPrice = $data['custom_price_xaf'] ?? null;
+        $hasCustom = $customPrice !== null && $customPrice !== '';
+        $amount = $hasCustom ? (int) $customPrice : (int) ($plan?->price_xaf_monthly ?? 0);
 
         // The form field is "expires_at"; the column is "period_end".
         $attributes = [
             'plan'       => $data['plan'],
             'status'     => $data['status'],
             'period_end' => $data['expires_at'],
+            'amount_xaf' => $amount,
         ];
 
-        $sub = $company->subscriptions()->latest()->first();
         if ($sub) {
             $sub->update($attributes);
         } else {
-            $company->subscriptions()->create(array_merge($attributes, [
-                'amount_xaf'   => 0,
-                'period_start' => now(),
-            ]));
+            $company->subscriptions()->create(array_merge($attributes, ['period_start' => now()]));
         }
 
-        return back()->with('success', 'Subscription updated.');
+        // Keep the company plan pointer + negotiated price in sync.
+        $company->update([
+            'plan_slug'        => $data['plan'],
+            'custom_price_xaf' => $hasCustom ? (int) $customPrice : null,
+        ]);
+
+        // Proration note when the plan changes mid-period (advisory — manual billing model).
+        $prorationNote = null;
+        if ($fromPlan && $fromPlan !== $data['plan']) {
+            $oldPlan = PlanConfig::where('slug', $fromPlan)->first();
+            $end = \Carbon\Carbon::parse($data['expires_at'])->startOfDay();
+            $remainingDays = max(0, (int) now()->startOfDay()->diffInDays($end, false));
+            $delta = (int) round((($plan?->price_xaf_monthly ?? 0) - ($oldPlan?->price_xaf_monthly ?? 0)) * ($remainingDays / 30));
+            $prorationNote = 'Proration ' . ($delta >= 0 ? '+' : '') . number_format($delta, 0, '.', ' ') . ' XAF (' . $remainingDays . ' j restants)';
+        }
+
+        // Explicit subscription-change event (in addition to the generic admin audit log).
+        SubscriptionEvent::create([
+            'company_id'    => $company->id,
+            'admin_user_id' => $request->user()->id,
+            'event_type'    => $fromPlan && $fromPlan !== $data['plan'] ? 'plan_changed' : 'subscription_updated',
+            'from_plan'     => $fromPlan,
+            'to_plan'       => $data['plan'],
+            'amount_xaf'    => $amount,
+            'notes'         => $prorationNote,
+            'created_at'    => now(),
+        ]);
+
+        return back()->with('success', 'Subscription updated.' . ($prorationNote ? ' ' . $prorationNote : ''));
     }
 
     public function impersonate(Request $request, User $user)

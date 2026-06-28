@@ -12,6 +12,7 @@
     <div class="bg-[#151F2E] border border-[#253347] rounded-2xl p-5">
         <div class="text-[9px] font-black uppercase tracking-widest text-slate-500">MRR</div>
         <div class="text-3xl font-black text-amber-400 mt-2">{{ number_format($metrics['mrr']) }} <span class="text-sm font-bold text-slate-500">XAF</span></div>
+        <div class="text-[10px] text-slate-500 mt-1">Encaissé ce mois : <span class="text-emerald-400 font-bold">{{ number_format($metrics['realized_mtd'] ?? 0) }} XAF</span></div>
     </div>
     <div class="bg-[#151F2E] border border-[#253347] rounded-2xl p-5">
         <div class="text-[9px] font-black uppercase tracking-widest text-slate-500">ARR</div>
@@ -154,10 +155,21 @@
                         <td class="py-3.5 px-4 text-slate-400">{{ str_replace('_', ' ', ucfirst($p->payment_method)) }}</td>
                         <td class="py-3.5 px-4 font-mono text-[10px] text-slate-500">{{ $p->reference ?? '—' }}</td>
                         <td class="py-3.5 px-4">
-                            <a href="{{ route('admin.payments.receipt', $p) }}"
-                               class="px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wide bg-[#1C2A3A] hover:bg-slate-700 text-slate-300 hover:text-white border border-[#334155]">
-                                {{ $p->receipt_number }}
-                            </a>
+                            <div class="flex items-center gap-2">
+                                <a href="{{ route('admin.payments.receipt', $p) }}"
+                                   class="px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wide bg-[#1C2A3A] hover:bg-slate-700 text-slate-300 hover:text-white border border-[#334155]">
+                                    {{ $p->receipt_number }}
+                                </a>
+                                @if($p->status === 'refunded')
+                                    <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase bg-red-500/20 text-red-300 border border-red-500/30">Remboursé</span>
+                                @elseif($p->status === 'completed')
+                                    <form method="POST" action="{{ route('admin.payments.refund', $p) }}"
+                                          onsubmit="return confirm('Rembourser {{ $p->receipt_number }} ({{ number_format($p->amount_xaf) }} XAF) ?')">
+                                        @csrf
+                                        <button class="px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wide bg-red-500/10 hover:bg-red-500/20 text-red-300 border border-red-500/30 transition-all">Refund</button>
+                                    </form>
+                                @endif
+                            </div>
                         </td>
                     </tr>
                 @empty

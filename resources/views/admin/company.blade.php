@@ -61,8 +61,10 @@
             <div>
                 <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Plan</label>
                 <select name="plan" class="w-full bg-[#1C2A3A] border border-[#334155] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#F59E0B]/60 transition-all">
-                    @foreach(['STARTER','GROWTH','ENTERPRISE'] as $plan)
-                        <option value="{{ $plan }}" {{ ($sub?->plan === $plan) ? 'selected' : '' }}>{{ $plan }}</option>
+                    @foreach($plans as $p)
+                        <option value="{{ $p->slug }}" {{ (($sub?->plan ?? $company->plan_slug) === $p->slug) ? 'selected' : '' }}>
+                            {{ $p->name }} — {{ number_format($p->price_xaf_monthly) }} XAF/mois
+                        </option>
                     @endforeach
                 </select>
             </div>
@@ -74,11 +76,19 @@
                     @endforeach
                 </select>
             </div>
-            <div>
-                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Expires At</label>
-                <input type="date" name="expires_at"
-                       value="{{ $sub?->period_end ? \Carbon\Carbon::parse($sub->period_end)->format('Y-m-d') : '' }}"
-                       class="w-full bg-[#1C2A3A] border border-[#334155] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#F59E0B]/60 transition-all">
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Expires At</label>
+                    <input type="date" name="expires_at"
+                           value="{{ $sub?->period_end ? \Carbon\Carbon::parse($sub->period_end)->format('Y-m-d') : '' }}"
+                           class="w-full bg-[#1C2A3A] border border-[#334155] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#F59E0B]/60 transition-all">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Custom price (XAF)</label>
+                    <input type="number" name="custom_price_xaf" min="0" placeholder="plan price"
+                           value="{{ $company->custom_price_xaf }}"
+                           class="w-full bg-[#1C2A3A] border border-[#334155] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#F59E0B]/60 transition-all">
+                </div>
             </div>
             @if($errors->any())
                 <div class="px-4 py-3 rounded-xl bg-red-500/15 border border-red-500/30 text-red-300 text-xs font-semibold">
@@ -90,6 +100,10 @@
                 Update Subscription
             </button>
         </form>
+        <a href="{{ route('admin.company.invoice', $company) }}" target="_blank"
+           class="mt-3 block text-center py-2 rounded-xl text-xs font-black uppercase tracking-widest text-slate-300 bg-[#1C2A3A] border border-[#334155] hover:border-amber-500 transition-all">
+            ↗ Proforma invoice (PDF)
+        </a>
     </div>
 
     <!-- Users list + management -->

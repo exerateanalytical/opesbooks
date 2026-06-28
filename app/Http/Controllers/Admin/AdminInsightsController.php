@@ -52,8 +52,9 @@ class AdminInsightsController extends Controller
     {
         $mrr = (float) Subscription::where('status', 'ACTIVE')->sum('amount_xaf');
 
-        // Revenue by month (last 6 months) — DB-agnostic via PHP grouping.
-        $rows = Subscription::where('status', 'ACTIVE')
+        // Realized revenue by month (last 6 months) = completed payments, not
+        // sub created_at — DB-agnostic via PHP grouping.
+        $rows = Payment::where('status', 'completed')
             ->where('created_at', '>=', now()->subMonths(6)->startOfMonth())
             ->get(['amount_xaf', 'created_at']);
 
@@ -82,6 +83,10 @@ class AdminInsightsController extends Controller
             'active'        => Subscription::where('status', 'ACTIVE')->count(),
             'avg_per_co'    => Subscription::where('status', 'ACTIVE')->avg('amount_xaf') ?? 0,
             'churn_rate'    => $this->churnRate(),
+            // Realized cash collected this calendar month (completed payments).
+            'realized_mtd'  => (float) Payment::where('status', 'completed')
+                ->whereMonth('created_at', now()->month)->whereYear('created_at', now()->year)
+                ->sum('amount_xaf'),
         ];
 
         return view('admin.billing', compact('metrics', 'byMonth', 'byPlan', 'recent', 'byMethod', 'payments'));
@@ -140,6 +145,39 @@ class AdminInsightsController extends Controller
         $payment->load('company');
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('admin.receipt', compact('payment'));
         return $pdf->stream("{$payment->receipt_number}.pdf");
+    }
+
+    /** POST /admin/payments/{payment}/refund — reverse a completed payment. */
+    public function refundPayment(Request $request, Payment $payment)
+    {
+        if ($payment->status !== 'completed') {
+            return back()->withErrors(['payment' => 'Seuls les paiements complétés peuvent être remboursés.']);
+        }
+
+        $payment->update(['status' => 'refunded']);
+
+        SubscriptionEvent::create([
+            'company_id'    => $payment->company_id,
+            'admin_user_id' => $request->user()->id,
+            'event_type'    => 'refund',
+            'to_plan'       => $payment->plan_slug,
+            'amount_xaf'    => -1 * (int) $payment->amount_xaf,
+            'notes'         => 'Remboursement de ' . $payment->receipt_number,
+            'created_at'    => now(),
+        ]);
+
+        return back()->with('success', "Paiement {$payment->receipt_number} remboursé.");
+    }
+
+    /** GET /admin/companies/{company}/invoice — proforma platform invoice (Opesware → tenant). */
+    public function platformInvoice(Company $company)
+    {
+        $plan   = PlanConfig::where('slug', $company->plan_slug)->first();
+        $amount = (int) ($company->custom_price_xaf ?: ($plan?->price_xaf_monthly ?? 0));
+        $invoiceNumber = 'PF-' . now()->format('Y') . '-' . str_pad((string) $company->id, 5, '0', STR_PAD_LEFT);
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('admin.platform_invoice', compact('company', 'plan', 'amount', 'invoiceNumber'));
+        return $pdf->stream("{$invoiceNumber}.pdf");
     }
 
     public function audit(Request $request)
