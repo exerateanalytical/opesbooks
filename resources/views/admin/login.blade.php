@@ -53,7 +53,16 @@
             </form>
         </div>
 
-        <p class="text-center text-xs mt-6 uppercase tracking-widest" style="color:var(--c-faint)">
+        <div class="mt-4 rounded-xl p-4" style="background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.18)">
+            <p class="text-[10px] font-black uppercase tracking-widest mb-2.5 text-center" style="color:#F59E0B">Demo Access</p>
+            <button type="button" onclick="document.querySelector('[name=email]').value='admin@demo.cm';document.querySelector('[name=password]').value='demo1234'"
+                    class="w-full py-2 rounded-lg text-xs font-bold transition-all"
+                    style="background:rgba(245,158,11,0.12);color:#F59E0B;border:1px solid rgba(245,158,11,0.25)">
+                admin@demo.cm · demo1234
+            </button>
+        </div>
+
+        <p class="text-center text-xs mt-4 uppercase tracking-widest" style="color:var(--c-faint)">
             Restricted to SUPER_ADMIN accounts only
         </p>
     </div>

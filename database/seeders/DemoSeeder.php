@@ -54,5 +54,16 @@ class DemoSeeder extends Seeder
                 'role'       => 'ACCOUNTANT',
             ]
         );
+
+        // Super admin (no company — platform-level)
+        User::firstOrCreate(
+            ['email' => 'admin@demo.cm'],
+            [
+                'company_id' => null,
+                'name'       => 'Platform Admin',
+                'password'   => Hash::make('demo1234'),
+                'role'       => 'SUPER_ADMIN',
+            ]
+        );
     }
 }
