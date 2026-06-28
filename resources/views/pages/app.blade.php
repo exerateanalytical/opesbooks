@@ -3455,6 +3455,9 @@
                                 <button x-show="p.status==='DRAFT'" @click="postPeriod(p)"
                                     class="glass-btn-dark px-4 py-1.5 rounded-xl text-xs uppercase tracking-widest"
                                     x-text="lang==='FR' ? 'Comptabiliser' : 'Post to Journal'"></button>
+                                <button @click="viewBordereau(p)"
+                                    class="px-4 py-1.5 rounded-xl text-xs uppercase tracking-widest" style="background:rgba(201,155,14,0.12);color:#E3B420"
+                                    x-text="lang==='FR' ? '🖨 Bordereau CNPS' : '🖨 CNPS Bordereau'"></button>
                             </div>
                         </div>
                         <div class="grid grid-cols-3 gap-3 text-sm">
@@ -6788,8 +6791,19 @@ function payrollPanel() {
             try {
                 const res = await fetch(`/api/v1/companies/${this._cid}/payroll/periods/${periodId}/payslip/${employeeId}`, { headers: { Authorization: 'Bearer ' + localStorage.getItem('opes_token') } });
                 if (!res.ok) { window.opesToast && window.opesToast('error','Bulletin','Indisponible'); return; }
-                window.open(URL.createObjectURL(await res.blob()), '_blank');
+                const url = URL.createObjectURL(await res.blob()); window.open(url, '_blank'); setTimeout(()=>URL.revokeObjectURL(url),60000);
             } catch(e) { window.opesToast && window.opesToast('error','Bulletin', e.message); }
+        },
+        async viewBordereau(p) {
+            try {
+                const res = await fetch(`/api/v1/companies/${this._cid}/payroll/cnps-bordereau`, {
+                    method: 'POST',
+                    headers: { Authorization: 'Bearer ' + localStorage.getItem('opes_token'), 'Content-Type': 'application/json', Accept: 'application/json' },
+                    body: JSON.stringify({ month: p.period_month, year: p.period_year }),
+                });
+                if (!res.ok) { window.opesToast && window.opesToast('error','Bordereau','Indisponible'); return; }
+                const url = URL.createObjectURL(await res.blob()); window.open(url, '_blank'); setTimeout(()=>URL.revokeObjectURL(url),60000);
+            } catch(e) { window.opesToast && window.opesToast('error','Bordereau', e.message); }
         },
         empError: '',
         empForm: { name:'', position:'', gross_salary_xaf:'', hire_date:'', cnps_number:'' },
