@@ -8,6 +8,12 @@ Route::get('/login',      fn () => view('pages.login'))->name('login');
 Route::get('/app',        fn () => view('pages.app'))->name('app');
 Route::get('/onboarding', fn () => view('pages.onboarding'))->name('onboarding');
 Route::get('/offline',    fn () => view('offline'))->name('offline');
+
+// Public document verifier (scanned from any document QR) — stateless HMAC check.
+Route::get('/verify', function (\Illuminate\Http\Request $request) {
+    $data = app(\App\Services\DocumentStamp::class)->verify($request->query('d'), $request->query('s'));
+    return view('verify', ['data' => $data, 'valid' => $data !== null]);
+})->name('verify');
 Route::get('/about', fn () => view('pages.about'))->name('about');
 
 // Public marketing site (conversion funnel)

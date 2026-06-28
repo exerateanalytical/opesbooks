@@ -29,16 +29,7 @@
 @php $fmt = fn($v) => number_format((float)$v, 0, ',', ' '); @endphp
 <body>
 <div class="page">
-    <div class="header">
-        <div>
-            <div class="brand">{{ strtoupper($company->name ?? 'OPESBOOKS') }}</div>
-            <div class="brand-meta">@if($company->niu) NIU : {{ $company->niu }} @endif @if($company->rccm) · RCCM : {{ $company->rccm }} @endif</div>
-        </div>
-        <div class="doc-label">
-            <h1>Balance des Comptes</h1>
-            <div class="sub">{{ $from ? "Du $from au $to" : 'Cumul' }}</div>
-        </div>
-    </div>
+    @include('documents.letterhead', ['title' => 'Balance des Comptes', 'subtitle' => $from ? "Du $from au $to" : 'Cumul'])
     <div class="syscohada">Référentiel SYSCOHADA révisé · Francs CFA (XAF) ·
         <span class="badge {{ $data['balanced'] ? 'ok' : 'bad' }}">{{ $data['balanced'] ? 'Équilibrée' : 'Déséquilibrée' }}</span>
     </div>
@@ -69,7 +60,7 @@
             </tr>
         </tbody>
     </table>
-    <div class="footer">Généré par OPESBooks · Balance des comptes conforme SYSCOHADA révisé.</div>
+    @include('documents.footer', ['docType' => 'BALANCE', 'extraFooter' => 'Balance des comptes conforme SYSCOHADA révisé.'])
 </div>
 </body>
 </html>

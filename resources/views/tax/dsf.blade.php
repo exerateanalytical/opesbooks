@@ -13,11 +13,7 @@ tr.tot td{background:#eef2f7;font-weight:900;color:#010048}
 </style></head>
 @php $fmt=fn($v)=>number_format((float)$v,0,',',' '); $t1=$dsf['table_1_compte_resultat']; @endphp
 <body><div class="page">
-<div class="header">
-  <div><div class="brand">{{ strtoupper($dsf['meta']['company_name'] ?? 'OPESBOOKS') }}</div>
-  <div class="brand-meta">NIU : {{ $dsf['meta']['company_niu'] ?: '—' }} · RCCM : {{ $dsf['meta']['company_rccm'] ?: '—' }}<br>{{ $dsf['meta']['tax_center'] ?: '' }} · Régime : {{ $dsf['meta']['tax_regime'] ?: '' }}</div></div>
-  <div class="doc-label"><h1>DSF — Liasse Fiscale</h1><div class="y">Exercice {{ $dsf['meta']['fiscal_year'] }}</div></div>
-</div>
+@include('documents.letterhead', ['title' => 'DSF — Liasse Fiscale', 'subtitle' => 'Exercice ' . $dsf['meta']['fiscal_year'], 'docRef' => 'DSF-' . $dsf['meta']['fiscal_year']])
 <div class="legal">Déclaration Statistique et Fiscale · Synthèse SYSCOHADA révisé · Francs CFA (XAF)</div>
 
 <div class="tbl-title">Tableau 1 — Compte de Résultat</div>
@@ -54,5 +50,5 @@ tr.tot td{background:#eef2f7;font-weight:900;color:#010048}
   <tr class="tot"><td colspan="2">Total Passif</td><td class="r amount">{{ $fmt($dsf['table_3_bilan_passif']['total'] ?? 0) }}</td></tr>
 </tbody></table>
 
-<div style="border-top:1px solid #e2e8f0;padding-top:10px;margin-top:16px;font-size:7pt;color:#94a3b8;text-align:center">Généré par OPESBooks · Synthèse DSF conforme au référentiel SYSCOHADA révisé. Document de travail — à reporter sur le formulaire officiel DGI.</div>
+@include('documents.footer', ['docType' => 'DSF', 'docRef' => 'DSF-' . $dsf['meta']['fiscal_year'], 'extraFooter' => 'Synthèse SYSCOHADA — à reporter sur le formulaire officiel DGI.'])
 </div></body></html>

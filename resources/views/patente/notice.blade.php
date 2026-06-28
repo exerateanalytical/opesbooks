@@ -13,11 +13,7 @@ table{width:100%;border-collapse:collapse;margin-bottom:20px}td{padding:8px 12px
 </style></head>
 @php $fmt=fn($v)=>number_format((float)$v,0,',',' ').' XAF'; @endphp
 <body><div class="page">
-<div class="header">
-  <div><div class="brand">{{ strtoupper($company->name ?? 'OPESBOOKS') }}</div>
-  <div class="brand-meta">@if($company->niu)NIU : {{ $company->niu }} @endif @if($company->rccm)· RCCM : {{ $company->rccm }}@endif<br>@if($company->tax_center){{ $company->tax_center }}@endif</div></div>
-  <div class="doc-label"><h1>Patente</h1><div class="y">Exercice {{ $record->tax_year }}</div></div>
-</div>
+@include('documents.letterhead', ['title' => 'Patente', 'subtitle' => 'Exercice ' . $record->tax_year, 'docRef' => $record->patente_number ?: ('PAT-' . $record->tax_year)])
 <p style="font-size:10pt;color:#334155;line-height:1.7;margin-bottom:6px">Contribution des patentes due au titre de l'exercice <strong>{{ $record->tax_year }}</strong> par <strong>{{ $company->name }}</strong>.</p>
 <div class="amount-box"><span class="lbl">Montant de la patente</span><span class="val">{{ $fmt($record->amount_due_xaf) }}</span></div>
 <table>
@@ -30,5 +26,5 @@ table{width:100%;border-collapse:collapse;margin-bottom:20px}td{padding:8px 12px
   <tr><td class="k">Statut</td><td class="v"><span class="badge {{ $record->status }}">{{ $record->status }}</span></td></tr>
   @if($record->notes)<tr><td class="k">Notes</td><td class="v">{{ $record->notes }}</td></tr>@endif
 </table>
-<div class="footer">Généré par OPESBooks · Avis de patente — contribution spécifique camerounaise calculée sur le chiffre d'affaires.</div>
+@include('documents.footer', ['docType' => 'PATENTE', 'docRef' => $record->patente_number ?: ('PAT-' . $record->tax_year), 'extraFooter' => 'Avis de patente — contribution calculée sur le chiffre d\'affaires.'])
 </div></body></html>

@@ -15,11 +15,7 @@ tr.sub td{background:#f8fafc;font-weight:900;color:#010048;border-top:1px solid 
 </style></head>
 @php $fmt=fn($v)=>number_format((float)$v,0,',',' '); @endphp
 <body><div class="page">
-<div class="header">
-  <div><div class="brand">{{ strtoupper($company->name ?? 'OPESBOOKS') }}</div>
-  <div class="brand-meta">@if($company->niu)NIU : {{ $company->niu }}@endif @if($company->rccm)· RCCM : {{ $company->rccm }}@endif</div></div>
-  <div class="doc-label"><h1>Grand Livre</h1><div class="sub">{{ $from ? "Du $from au $to" : 'Cumul' }}</div></div>
-</div>
+@include('documents.letterhead', ['title' => 'Grand Livre', 'subtitle' => $from ? "Du $from au $to" : 'Cumul'])
 <div class="legal">Grand Livre des comptes · Référentiel SYSCOHADA révisé · Francs CFA (XAF)</div>
 
 @forelse($accounts as $a)
@@ -45,5 +41,5 @@ tr.sub td{background:#f8fafc;font-weight:900;color:#010048;border-top:1px solid 
 <p style="text-align:center;color:#94a3b8;font-style:italic;padding:20px">Aucun mouvement sur la période.</p>
 @endforelse
 
-<div class="footer">Généré par OPESBooks · Grand Livre conforme SYSCOHADA révisé.</div>
+@include('documents.footer', ['docType' => 'GLIVRE', 'extraFooter' => 'Grand Livre conforme SYSCOHADA révisé.'])
 </div></body></html>

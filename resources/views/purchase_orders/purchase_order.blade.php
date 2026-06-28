@@ -140,6 +140,7 @@
             <div style="color:#64748b;font-size:7pt">Responsable Achats</div>
         </div>
     </div>
+    @include('documents.footer', ['docType' => 'BC'])
 
     <div class="footer">
         {{ $company->name }} — NIU: {{ $company->niu }} — Bon de Commande {{ $po->po_number }} — Généré par Opes Books © {{ date('Y') }}

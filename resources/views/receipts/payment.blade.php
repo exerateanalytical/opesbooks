@@ -34,21 +34,7 @@
 @php $fmt = fn($v) => number_format((float)$v, 0, ',', ' ') . ' XAF'; @endphp
 <body>
 <div class="page">
-    <div class="header">
-        <div>
-            <div class="brand">{{ strtoupper($company->name ?? 'OPESBOOKS') }}</div>
-            <div class="brand-meta">
-                @if($company->niu) NIU : {{ $company->niu }} @endif
-                @if($company->rccm) · RCCM : {{ $company->rccm }} @endif<br>
-                @if($company->address) {{ $company->address }} @endif
-            </div>
-        </div>
-        <div class="doc-label">
-            <h1>Reçu de Paiement</h1>
-            <div class="num">{{ $receiptNumber }}</div>
-            <div class="date">{{ \Illuminate\Support\Carbon::parse($invoice->paid_at)->format('d/m/Y') }}</div>
-        </div>
-    </div>
+    @include('documents.letterhead', ['title' => 'Reçu de Paiement', 'subtitle' => \Illuminate\Support\Carbon::parse($invoice->paid_at)->format('d/m/Y'), 'docRef' => $receiptNumber])
 
     <p class="intro">
         Reçu de <strong>{{ $customer->name ?? '—' }}</strong>@if($customer && $customer->niu) (NIU {{ $customer->niu }})@endif
@@ -77,9 +63,7 @@
         </div>
     </div>
 
-    <div class="footer">
-        Reçu généré par OPESBooks · {{ $receiptNumber }} · Ce reçu atteste du règlement intégral de la facture mentionnée.
-    </div>
+    @include('documents.footer', ['docType' => 'RECU', 'docRef' => $receiptNumber, 'extraFooter' => 'Ce reçu atteste du règlement intégral de la facture mentionnée.'])
 </div>
 </body>
 </html>

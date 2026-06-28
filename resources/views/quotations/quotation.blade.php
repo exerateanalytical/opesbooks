@@ -140,6 +140,7 @@
             <div style="color:#64748b;font-size:7pt">Représentant autorisé</div>
         </div>
     </div>
+    @include('documents.footer', ['docType' => 'DEVIS'])
 
     <div class="footer">
         {{ $company->name }} — NIU: {{ $company->niu }} — {{ $company->address }} — Généré par Opes Books © {{ date('Y') }}

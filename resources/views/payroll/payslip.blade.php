@@ -39,20 +39,7 @@
 </head>
 <body>
 <div class="page">
-    <div class="header">
-        <div>
-            <div class="brand">{{ strtoupper($company->name ?? 'OPESBOOKS') }}</div>
-            <div class="brand-meta">
-                @if($company->niu) NIU : {{ $company->niu }} @endif
-                @if($company->rccm) · RCCM : {{ $company->rccm }} @endif<br>
-                @if($company->address) {{ $company->address }} @endif
-            </div>
-        </div>
-        <div class="doc-label">
-            <h1>Bulletin de Paie</h1>
-            <div class="period">{{ $periodLabel }}</div>
-        </div>
-    </div>
+    @include('documents.letterhead', ['title' => 'Bulletin de Paie', 'subtitle' => $periodLabel, 'docRef' => 'BP-' . ($employee->id ?? '') . '-' . str_replace(' ', '', $periodLabel)])
 
     <div class="parties">
         <div class="box">
@@ -105,9 +92,7 @@
         <div><div class="line">Signature de l'employé</div></div>
     </div>
 
-    <div class="footer">
-        Bulletin généré par OPESBooks · {{ $periodLabel }} · Conforme au Code du Travail camerounais (CNPS, IRPP, CAC).
-    </div>
+    @include('documents.footer', ['docType' => 'BULLETIN', 'docRef' => 'BP-' . ($employee->id ?? '') . '-' . str_replace(' ', '', $periodLabel), 'extraFooter' => 'Conforme au Code du Travail camerounais (CNPS, IRPP, CAC).'])
 </div>
 </body>
 </html>

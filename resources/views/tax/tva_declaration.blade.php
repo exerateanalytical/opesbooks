@@ -16,11 +16,7 @@ tr.sec td{background:#eef2f7;font-weight:900;color:#010048;font-size:8pt;text-tr
 </style></head>
 @php $fmt=fn($v)=>number_format((float)$v,0,',',' '); @endphp
 <body><div class="page">
-<div class="header">
-  <div><div class="brand">{{ strtoupper($company->name ?? 'OPESBOOKS') }}</div>
-  <div class="brand-meta">NIU : {{ $tva['company_niu'] ?: '—' }} @if($company->rccm)· RCCM : {{ $company->rccm }}@endif<br>Centre des Impôts : {{ $tva['tax_center'] ?: '—' }}</div></div>
-  <div class="doc-label"><h1>Déclaration TVA</h1><div class="p">Période {{ $tva['period'] }}</div></div>
-</div>
+@include('documents.letterhead', ['title' => 'Déclaration TVA', 'subtitle' => 'Période ' . $tva['period'], 'docRef' => 'TVA-' . str_replace('/', '-', $tva['period'])])
 <div class="legal">Déclaration mensuelle de TVA &amp; CAC · à déposer au plus tard le 15 du mois suivant · Francs CFA (XAF)</div>
 <table>
   <thead><tr><th>Rubrique</th><th class="r">Montant</th></tr></thead>
@@ -36,5 +32,5 @@ tr.sec td{background:#eef2f7;font-weight:900;color:#010048;font-size:8pt;text-tr
 </table>
 <div class="total-box"><span class="lbl">Total à payer (TVA + CAC)</span><span class="val">{{ $fmt($tva['total_a_payer']) }} XAF</span></div>
 <div class="sign"><div class="line">Signature du contribuable / Cachet</div></div>
-<div class="footer">Généré par OPESBooks · Déclaration conforme au Code Général des Impôts du Cameroun (TVA 17,5 % + CAC 10 %).</div>
+@include('documents.footer', ['docType' => 'TVA-D10', 'docRef' => 'TVA-' . str_replace('/', '-', $tva['period']), 'extraFooter' => 'Conforme au CGI du Cameroun (TVA 17,5 % + CAC 10 %).'])
 </div></body></html>

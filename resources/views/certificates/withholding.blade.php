@@ -131,6 +131,7 @@
             <div style="color:#64748b">{{ $company->tax_center }}</div>
         </div>
     </div>
+    @include('documents.footer', ['docType' => 'ATTEST-PRECOMPTE'])
 
     <div class="footer">
         {{ $company->name }} — {{ $company->address }} — Généré par Opes Books © {{ date('Y') }}

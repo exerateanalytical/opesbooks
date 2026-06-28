@@ -97,6 +97,7 @@
             <div style="color:#64748b;font-size:7pt">Responsable Comptable</div>
         </div>
     </div>
+    @include('documents.footer', ['docType' => 'AVOIR-FOURN'])
 
     <div class="footer">
         {{ $company->name }} — NIU: {{ $company->niu }} — Avoir {{ $cn->credit_note_number }} — Généré par Opes Books © {{ date('Y') }}

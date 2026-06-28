@@ -28,13 +28,7 @@
 @php $fmt = fn($v) => number_format((float)$v, 0, ',', ' '); @endphp
 <body>
 <div class="page">
-    <div class="header">
-        <div>
-            <div class="brand">{{ strtoupper($company->name ?? 'OPESBOOKS') }}</div>
-            <div class="brand-meta">@if($company->niu) NIU : {{ $company->niu }} @endif</div>
-        </div>
-        <div class="doc-label"><h1>{{ $title }}</h1></div>
-    </div>
+    @include('documents.letterhead', ['title' => $title])
 
     <div class="buckets">
         @foreach([['current','Courant'],['1_30','1–30 j'],['31_60','31–60 j'],['61_90','61–90 j'],['over_90','+90 j']] as $b)
@@ -64,7 +58,7 @@
             </tr>
         </tbody>
     </table>
-    <div class="footer">Généré par OPESBooks · Analyse des encours par ancienneté.</div>
+    @include('documents.footer', ['docType' => 'AGE', 'extraFooter' => 'Analyse des encours par ancienneté.'])
 </div>
 </body>
 </html>

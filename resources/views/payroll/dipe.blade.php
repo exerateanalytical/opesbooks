@@ -14,11 +14,7 @@ tr.tot td{background:#010048;color:#fff;font-weight:900}tr.tot td.amount{color:#
 @php $fmt=fn($v)=>number_format((float)$v,0,',',' ');
 $tg=0;$tc=0;$ti=0;$ta=0; foreach($rows as $r){$tg+=$r['gross'];$tc+=$r['cnps_emp'];$ti+=$r['irpp'];$ta+=$r['cac'];} @endphp
 <body><div class="page">
-<div class="header">
-  <div><div class="brand">{{ strtoupper($company->name ?? 'OPESBOOKS') }}</div>
-  <div class="brand-meta">NIU : {{ $company->niu ?: '—' }} @if($company->rccm)· RCCM : {{ $company->rccm }}@endif</div></div>
-  <div class="doc-label"><h1>DIPE</h1><div class="y">Exercice {{ $year }}</div></div>
-</div>
+@include('documents.letterhead', ['title' => 'DIPE', 'subtitle' => 'Exercice ' . $year, 'docRef' => 'DIPE-' . $year])
 <div class="legal">Déclaration des Informations sur le Personnel Employé · Cumuls annuels par salarié · Francs CFA (XAF)</div>
 <table>
   <thead><tr>
@@ -41,5 +37,5 @@ $tg=0;$tc=0;$ti=0;$ta=0; foreach($rows as $r){$tg+=$r['gross'];$tc+=$r['cnps_emp
       <td class="r amount">{{ $fmt($ti) }}</td><td class="r amount">{{ $fmt($ta) }}</td></tr>
   </tbody>
 </table>
-<div class="footer">Généré par OPESBooks · DIPE conforme aux obligations déclaratives camerounaises (CNPS / DGI).</div>
+@include('documents.footer', ['docType' => 'DIPE', 'docRef' => 'DIPE-' . $year, 'extraFooter' => 'Conforme aux obligations déclaratives camerounaises (CNPS / DGI).'])
 </div></body></html>

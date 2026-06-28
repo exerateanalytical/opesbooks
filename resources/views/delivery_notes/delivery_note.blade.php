@@ -147,6 +147,7 @@
             @endif
         </div>
     </div>
+    @include('documents.footer', ['docType' => 'BL'])
 
     <div class="footer">
         {{ $company->name }} — NIU: {{ $company->niu }} — Bon de Livraison {{ $dn->dn_number }} — Généré par Opes Books © {{ date('Y') }}

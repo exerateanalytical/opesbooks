@@ -134,6 +134,7 @@
             <div style="color:#64748b">Date de réception: ___/___/______</div>
         </div>
     </div>
+    @include('documents.footer', ['docType' => 'BORDEREAU-CNPS'])
 
     <div class="footer">
         {{ $company->name }} — NIU: {{ $company->niu }} — Bordereau CNPS {{ $period_label }} — Généré par Opes Books © {{ date('Y') }}

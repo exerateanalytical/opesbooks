@@ -34,19 +34,7 @@
 <body>
 @php $fmt = fn($v) => number_format((float)$v, 0, ',', ' ') . ' XAF'; @endphp
 <div class="page">
-    <div class="header">
-        <div>
-            <div class="brand">{{ strtoupper($company->name ?? 'OPESBOOKS') }}</div>
-            <div class="brand-meta">
-                @if($company->niu) NIU : {{ $company->niu }} @endif
-                @if($company->rccm) · RCCM : {{ $company->rccm }} @endif
-            </div>
-        </div>
-        <div class="doc-label">
-            <h1>{{ $title }}</h1>
-            <div class="sub">{{ $subtitle }}</div>
-        </div>
-    </div>
+    @include('documents.letterhead', ['title' => $title, 'subtitle' => $subtitle])
     <div class="syscohada">Référentiel SYSCOHADA révisé · Montants en Francs CFA (XAF)</div>
 
     @foreach($groups as $g)
@@ -76,9 +64,7 @@
         <span class="val">{{ $fmt($highlight['amount']) }}</span>
     </div>
 
-    <div class="footer">
-        Généré par OPESBooks · {{ $subtitle }} · Document conforme au plan comptable SYSCOHADA révisé.
-    </div>
+    @include('documents.footer', ['docType' => 'ETAT', 'extraFooter' => 'Document conforme au plan comptable SYSCOHADA révisé.'])
 </div>
 </body>
 </html>
