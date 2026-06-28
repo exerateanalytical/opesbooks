@@ -161,6 +161,6 @@ class CustomerQuotationController extends Controller
             'lines'     => $quotation->lines,
         ])->setPaper('a4');
 
-        return $pdf->download("DEV-{$quotation->quotation_number}.pdf");
+        return $pdf->stream("DEV-{$quotation->quotation_number}.pdf");
     }
 }

@@ -140,7 +140,7 @@ class SupplierInvoiceController extends Controller
             'lang'          => $lang,
         ])->setPaper('a4');
 
-        return $pdf->download("facture-fournisseur-{$invoice->invoice_number}.pdf");
+        return $pdf->stream("facture-fournisseur-{$invoice->invoice_number}.pdf");
     }
 
     public function pay(Request $request, Company $company, SupplierInvoice $invoice)

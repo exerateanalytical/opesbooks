@@ -172,7 +172,7 @@ class CustomerInvoiceController extends Controller
             'lang'          => $lang,
         ])->setPaper('a4');
 
-        return $pdf->download("facture-{$invoice->invoice_number}.pdf");
+        return $pdf->stream("facture-{$invoice->invoice_number}.pdf");
     }
 
     public function markSent(Company $company, CustomerInvoice $invoice): JsonResponse

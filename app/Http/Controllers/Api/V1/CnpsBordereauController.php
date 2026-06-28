@@ -54,6 +54,6 @@ class CnpsBordereauController extends Controller
             'generated_at'   => now()->format('d/m/Y H:i'),
         ])->setPaper('a4');
 
-        return $pdf->download("bordereau_cnps_{$year}_{$month}.pdf");
+        return $pdf->stream("bordereau_cnps_{$year}_{$month}.pdf");
     }
 }

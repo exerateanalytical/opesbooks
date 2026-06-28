@@ -113,7 +113,7 @@ class InvoicePdfController extends Controller
 
         $filename = 'OPES-INV-' . $data['invoice_number'] . '-' . date('Ymd') . '.pdf';
 
-        return $pdf->download($filename);
+        return $pdf->stream($filename);
     }
 
     /**
@@ -162,6 +162,6 @@ class InvoicePdfController extends Controller
 
         $pdf->setPaper('A4', 'portrait');
 
-        return $pdf->download('OPES-' . $entry->reference_id . '.pdf');
+        return $pdf->stream('OPES-' . $entry->reference_id . '.pdf');
     }
 }

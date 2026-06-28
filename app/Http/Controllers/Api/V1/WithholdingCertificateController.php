@@ -47,6 +47,6 @@ class WithholdingCertificateController extends Controller
             'generated_at'     => now()->format('d/m/Y H:i'),
         ])->setPaper('a4');
 
-        return $pdf->download("attestation_precompte_{$supplier->id}_{$from}_{$to}.pdf");
+        return $pdf->stream("attestation_precompte_{$supplier->id}_{$from}_{$to}.pdf");
     }
 }

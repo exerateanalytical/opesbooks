@@ -132,7 +132,7 @@ class SubscriptionController extends Controller
             'receiptNumber' => $receiptNumber,
         ])->setPaper([0, 0, 300, 500], 'portrait');
 
-        return $pdf->download("recu-abonnement-{$receiptNumber}.pdf");
+        return $pdf->stream("recu-abonnement-{$receiptNumber}.pdf");
     }
 
     private function buildAggregatorPayload(Subscription $subscription, Company $company): array

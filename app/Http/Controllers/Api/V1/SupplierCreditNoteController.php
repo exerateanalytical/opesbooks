@@ -116,6 +116,6 @@ class SupplierCreditNoteController extends Controller
             'originalInvoice' => $originalInvoice,
         ])->setPaper('a4');
 
-        return $pdf->download("AV-{$creditNote->credit_note_number}.pdf");
+        return $pdf->stream("AV-{$creditNote->credit_note_number}.pdf");
     }
 }

@@ -139,7 +139,7 @@ class AdminInsightsController extends Controller
     {
         $payment->load('company');
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('admin.receipt', compact('payment'));
-        return $pdf->download("{$payment->receipt_number}.pdf");
+        return $pdf->stream("{$payment->receipt_number}.pdf");
     }
 
     public function audit(Request $request)

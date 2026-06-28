@@ -146,6 +146,6 @@ class PurchaseOrderController extends Controller
             'lines'    => $purchaseOrder->lines,
         ])->setPaper('a4');
 
-        return $pdf->download("BC-{$purchaseOrder->po_number}.pdf");
+        return $pdf->stream("BC-{$purchaseOrder->po_number}.pdf");
     }
 }

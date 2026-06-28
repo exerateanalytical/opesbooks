@@ -51,7 +51,7 @@ class StatementController extends Controller
             'generated_at'    => now()->format('d/m/Y H:i'),
         ])->setPaper('a4');
 
-        return $pdf->download("releve_client_{$customer->id}_{$from}_{$to}.pdf");
+        return $pdf->stream("releve_client_{$customer->id}_{$from}_{$to}.pdf");
     }
 
     public function supplierStatement(Request $request, Company $company, Supplier $supplier)
@@ -89,6 +89,6 @@ class StatementController extends Controller
             'generated_at'=> now()->format('d/m/Y H:i'),
         ])->setPaper('a4');
 
-        return $pdf->download("releve_fournisseur_{$supplier->id}_{$from}_{$to}.pdf");
+        return $pdf->stream("releve_fournisseur_{$supplier->id}_{$from}_{$to}.pdf");
     }
 }

@@ -1062,7 +1062,7 @@
                         </table>
                     </div>
                     <div class="flex flex-wrap gap-2">
-                        <button @click="downloadInvoice(journalDetail)" class="glass-btn-dark px-4 py-2 rounded-xl text-xs" x-text="lang==='FR'?'Télécharger PDF':'Download PDF'"></button>
+                        <button @click="downloadInvoice(journalDetail)" class="glass-btn-dark px-4 py-2 rounded-xl text-xs" x-text="lang==='FR'?'Aperçu PDF':'View PDF'"></button>
                         <button @click="openAttachments(journalDetail)" class="px-4 py-2 rounded-xl text-xs" style="background:rgba(16,185,129,0.1);color:rgb(110,231,183)" x-text="lang==='FR'?'Pièces jointes':'Attachments'"></button>
                         <button @click="forceDgiSync(journalDetail)" class="px-4 py-2 rounded-xl text-xs" style="background:rgba(99,102,241,0.1);color:rgb(165,180,252)" x-text="lang==='FR'?'Synchroniser DGI':'Sync DGI'"></button>
                     </div>
@@ -2643,7 +2643,7 @@
                         <div x-show="detail.notes" class="glass-card rounded-2xl p-4 text-xs text-slate-300"><p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Notes</p><span x-text="detail.notes"></span></div>
 
                         <div class="flex flex-wrap gap-2 pt-1">
-                            <button @click="downloadInvoicePdf(detail)" class="glass-btn-dark px-4 py-2 rounded-xl text-xs" x-text="lang==='FR'?'Télécharger PDF':'Download PDF'"></button>
+                            <button @click="downloadInvoicePdf(detail)" class="glass-btn-dark px-4 py-2 rounded-xl text-xs" x-text="lang==='FR'?'Aperçu PDF':'View PDF'"></button>
                             <button x-show="detail.status==='DRAFT'" @click="markSent(detail); showDetail=false" class="px-4 py-2 rounded-xl text-xs" style="background:rgba(201,155,14,0.12);color:#E3B420" x-text="lang==='FR'?'Envoyer':'Send'"></button>
                             <button x-show="detail.status==='SENT'||detail.status==='OVERDUE'" @click="markPaid(detail); showDetail=false" class="px-4 py-2 rounded-xl text-xs" style="background:rgba(16,185,129,0.12);color:rgb(110,231,183)" x-text="lang==='FR'?'Marquer payée':'Mark paid'"></button>
                         </div>
@@ -2953,7 +2953,7 @@
                                             <template x-if="dn.status==='DELIVERED'">
                                                 <button @click="markStatus(dn,'SIGNED')" class="glass-btn px-2 py-1 rounded-lg text-xs" x-text="lang==='FR' ? 'Signé' : 'Signed'"></button>
                                             </template>
-                                            <a :href="`/api/v1/companies/${_cid}/delivery-notes/${dn.id}/pdf`" target="_blank" class="glass-btn-dark px-2 py-1 rounded-lg text-xs">PDF</a>
+                                            <button @click="viewPdf(`delivery-notes/${dn.id}/pdf`)" class="glass-btn-dark px-2 py-1 rounded-lg text-xs">PDF</button>
                                         </div>
                                     </td>
                                 </tr>
@@ -3007,7 +3007,7 @@
                             </table>
                         </div>
                         <div x-show="detail.notes" class="glass-card rounded-2xl p-4 text-xs text-slate-300"><p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Notes</p><span x-text="detail.notes"></span></div>
-                        <a :href="`/api/v1/companies/${_cid}/delivery-notes/${detail.id}/pdf`" target="_blank" class="glass-btn-dark px-4 py-2 rounded-xl text-xs inline-block" x-text="lang==='FR'?'Télécharger PDF':'Download PDF'"></a>
+                        <button @click="viewPdf(`delivery-notes/${detail.id}/pdf`)" class="glass-btn-dark px-4 py-2 rounded-xl text-xs" x-text="lang==='FR'?'Aperçu PDF':'View PDF'"></button>
                     </div>
                     </template>
                 </div>
@@ -3620,7 +3620,7 @@
                         </div>
                         <div x-show="detail.notes" class="glass-card rounded-2xl p-4 text-xs text-slate-300"><p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Notes</p><span x-text="detail.notes"></span></div>
                         <div class="flex flex-wrap gap-2">
-                            <button @click="downloadPdf(detail)" class="glass-btn-dark px-4 py-2 rounded-xl text-xs" x-text="lang==='FR'?'Télécharger PDF':'Download PDF'"></button>
+                            <button @click="downloadPdf(detail)" class="glass-btn-dark px-4 py-2 rounded-xl text-xs" x-text="lang==='FR'?'Aperçu PDF':'View PDF'"></button>
                             <button x-show="detail.status!=='PAID'" @click="payInvoice(detail); showDetail=false" class="px-4 py-2 rounded-xl text-xs" style="background:rgba(16,185,129,0.12);color:rgb(110,231,183)" x-text="lang==='FR'?'Marquer payée':'Mark paid'"></button>
                         </div>
                     </div>
@@ -4194,7 +4194,7 @@
                             </table>
                         </div>
                         <div x-show="detail.notes" class="glass-card rounded-2xl p-4 text-xs text-slate-300"><p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Notes</p><span x-text="detail.notes"></span></div>
-                        <button @click="downloadPdf(detail)" class="glass-btn-dark px-4 py-2 rounded-xl text-xs" x-text="lang==='FR'?'Télécharger PDF':'Download PDF'"></button>
+                        <button @click="downloadPdf(detail)" class="glass-btn-dark px-4 py-2 rounded-xl text-xs" x-text="lang==='FR'?'Aperçu PDF':'View PDF'"></button>
                     </div>
                     </template>
                 </div>
@@ -4306,7 +4306,7 @@
                             </table>
                         </div>
                         <div x-show="detail.notes" class="glass-card rounded-2xl p-4 text-xs text-slate-300"><p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Notes</p><span x-text="detail.notes"></span></div>
-                        <a :href="`/api/v1/companies/${_cid}/purchase-orders/${detail.id}/pdf`" target="_blank" class="glass-btn-dark px-4 py-2 rounded-xl text-xs inline-block" x-text="lang==='FR'?'Télécharger PDF':'Download PDF'"></a>
+                        <button @click="viewPdf(`purchase-orders/${detail.id}/pdf`)" class="glass-btn-dark px-4 py-2 rounded-xl text-xs" x-text="lang==='FR'?'Aperçu PDF':'View PDF'"></button>
                     </div>
                     </template>
                 </div>
@@ -5643,9 +5643,7 @@ function opesApp() {
             if (!res.ok) { alert('Invoice PDF not available'); return; }
             const blob = await res.blob();
             const url = URL.createObjectURL(blob);
-            const a = document.createElement('a'); a.href = url;
-            a.download = `FACTURE-${txn.reference_id}.pdf`; a.click();
-            URL.revokeObjectURL(url);
+            window.open(url, '_blank'); setTimeout(() => URL.revokeObjectURL(url), 60000);
         },
 
         async loadSubledgers() {
@@ -5849,9 +5847,7 @@ function invoiceForm() {
                 if (!res.ok) { const err = await res.json(); throw new Error(extractError(err)); }
                 const blob = await res.blob();
                 const url  = URL.createObjectURL(blob);
-                const a    = document.createElement('a');
-                a.href=url; a.download='OPES-'+this.form.invoice_number+'.pdf'; a.click();
-                URL.revokeObjectURL(url);
+                window.open(url, '_blank'); setTimeout(() => URL.revokeObjectURL(url), 60000);
             } catch(e) {
                 this.invoiceError = e.message;
             } finally {
@@ -6100,8 +6096,7 @@ function subscriptionPanel() {
                 if (!res.ok) { this.subError = this.lang==='FR' ? 'Aucun reçu disponible (abonnement inactif).' : 'No receipt available (inactive subscription).'; return; }
                 const blob = await res.blob();
                 const url = URL.createObjectURL(blob);
-                const a = document.createElement('a'); a.href = url; a.download = 'recu-abonnement.pdf'; a.click();
-                URL.revokeObjectURL(url);
+                window.open(url, '_blank'); setTimeout(() => URL.revokeObjectURL(url), 60000);
             } catch(e) {
                 this.subError = e.message;
             } finally {
@@ -6289,7 +6284,7 @@ function customerInvoicesPanel() {
                 });
                 if (!res.ok) { window.opesToast && window.opesToast('error','PDF','Échec du téléchargement.'); return; }
                 const blob = await res.blob(); const url = URL.createObjectURL(blob);
-                const a = document.createElement('a'); a.href = url; a.download = `${inv.invoice_number||'facture'}.pdf`; a.click(); URL.revokeObjectURL(url);
+                window.open(url, '_blank'); setTimeout(() => URL.revokeObjectURL(url), 60000);
             } catch(e) { window.opesToast && window.opesToast('error','PDF',e.message); }
         },
         async exportDownload(type, fmt) {
@@ -6410,7 +6405,7 @@ function customersPanel() {
                 const res = await fetch(`/api/v1/companies/${cid}/customers/${c.id}/statement`,{headers:{'Authorization':'Bearer '+token}});
                 if(!res.ok){ window.opesToast && window.opesToast('error','Relevé','Indisponible'); return; }
                 const blob = await res.blob(); const url = URL.createObjectURL(blob);
-                const a=document.createElement('a'); a.href=url; a.download=`releve_${(c.name||'client').replace(/\s+/g,'_')}.pdf`; a.click(); URL.revokeObjectURL(url);
+                window.open(url, '_blank'); setTimeout(() => URL.revokeObjectURL(url), 60000);
             } catch(e){ window.opesToast && window.opesToast('error','Relevé',e.message); }
         },
 
@@ -6917,7 +6912,7 @@ function supplierInvoicesPanel() {
                 const res = await fetch(`/api/v1/companies/${cid}/supplier-invoices/${inv.id}/pdf`,{headers:{Authorization:'Bearer '+token}});
                 if(!res.ok){ window.opesToast && window.opesToast('error','PDF','Indisponible'); return; }
                 const blob = await res.blob(); const url = URL.createObjectURL(blob);
-                const a=document.createElement('a'); a.href=url; a.download=`${inv.invoice_number||'facture'}.pdf`; a.click(); URL.revokeObjectURL(url);
+                window.open(url, '_blank'); setTimeout(() => URL.revokeObjectURL(url), 60000);
             } catch(e){ window.opesToast && window.opesToast('error','PDF',e.message); }
         },
         async init() {
@@ -7253,7 +7248,7 @@ function quotationsPanel() {
                 const res = await fetch(`/api/v1/companies/${cid}/quotations/${q.id}/pdf`,{headers:{Authorization:'Bearer '+localStorage.getItem('opes_token')}});
                 if(!res.ok){ window.opesToast && window.opesToast('error','PDF','Indisponible'); return; }
                 const blob=await res.blob(); const url=URL.createObjectURL(blob);
-                const a=document.createElement('a'); a.href=url; a.download=`${q.quotation_number||'devis'}.pdf`; a.click(); URL.revokeObjectURL(url);
+                window.open(url, '_blank'); setTimeout(() => URL.revokeObjectURL(url), 60000);
             } catch(e){ window.opesToast && window.opesToast('error','PDF',e.message); }
         },
         async init() {
@@ -7302,6 +7297,13 @@ function purchaseOrdersPanel() {
             const cid = po.company_id || this._cid;
             try { this.detail = await fetch(`/api/v1/companies/${cid}/purchase-orders/${po.id}`,{headers:{Authorization:'Bearer '+localStorage.getItem('opes_token'),Accept:'application/json'}}).then(r=>r.json()); }
             catch(e){ this.detail = po; }
+        },
+        async viewPdf(path) {
+            try {
+                const res = await fetch(`/api/v1/companies/${this._cid}/${path}`,{headers:{Authorization:'Bearer '+localStorage.getItem('opes_token')}});
+                if(!res.ok){ window.opesToast && window.opesToast('error','PDF','Indisponible'); return; }
+                const url = URL.createObjectURL(await res.blob()); window.open(url,'_blank'); setTimeout(()=>URL.revokeObjectURL(url),60000);
+            } catch(e){ window.opesToast && window.opesToast('error','PDF',e.message); }
         },
         form: { supplier_id:'', order_date: new Date().toISOString().slice(0,10), expected_delivery_date:'', notes:'', lines:[{description:'',quantity:1,unit_price_ht:0}] },
         async init() {
@@ -7459,6 +7461,13 @@ function deliveryNotesPanel() {
             const cid = dn.company_id || this._cid;
             try { this.detail = await fetch(`/api/v1/companies/${cid}/delivery-notes/${dn.id}`,{headers:{Authorization:'Bearer '+localStorage.getItem('opes_token'),Accept:'application/json'}}).then(r=>r.json()); }
             catch(e){ this.detail = dn; }
+        },
+        async viewPdf(path) {
+            try {
+                const res = await fetch(`/api/v1/companies/${this._cid}/${path}`,{headers:{Authorization:'Bearer '+localStorage.getItem('opes_token')}});
+                if(!res.ok){ window.opesToast && window.opesToast('error','PDF','Indisponible'); return; }
+                const url = URL.createObjectURL(await res.blob()); window.open(url,'_blank'); setTimeout(()=>URL.revokeObjectURL(url),60000);
+            } catch(e){ window.opesToast && window.opesToast('error','PDF',e.message); }
         },
         form: {
             dn_type:'OUT', delivery_date: new Date().toISOString().slice(0,10),

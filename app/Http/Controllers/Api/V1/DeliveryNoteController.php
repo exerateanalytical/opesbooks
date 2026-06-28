@@ -116,6 +116,6 @@ class DeliveryNoteController extends Controller
             'supplier'     => $deliveryNote->supplier,
         ])->setPaper('a4');
 
-        return $pdf->download("BL-{$deliveryNote->dn_number}.pdf");
+        return $pdf->stream("BL-{$deliveryNote->dn_number}.pdf");
     }
 }
