@@ -109,8 +109,10 @@ return [
 
         /**
          * Whether to enable font subsetting or not.
+         * Enabled: embeds only the glyphs actually used, shrinking each PDF from
+         * ~1.1 MB to ~100 KB (DejaVu fonts are ~1 MB each otherwise).
          */
-        'enable_font_subsetting' => false,
+        'enable_font_subsetting' => true,
 
         /**
          * The PDF rendering backend to use
