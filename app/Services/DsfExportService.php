@@ -69,7 +69,10 @@ class DsfExportService
                 'tva_collectee'           => $get('443100','credit'),
                 'tva_deductible'          => $get('445200','debit') + $get('445100','debit'),
                 'tva_nette_due'           => $get('443100','credit') - $get('445200','debit') - $get('445100','debit'),
-                'irpp_retenu'             => $get('447000','credit') + $get('447100','credit'),
+                // 447000 = salary withholdings owed to the State (IRPP + CAC + RAV);
+                // 447100 = supplier précompte (advance IR on purchases) — a distinct tax.
+                'irpp_retenu'             => $get('447000','credit'),
+                'precompte_retenu'        => $get('447100','credit'),
                 'cnps_salarie'            => $get('431000','credit'),
             ],
 

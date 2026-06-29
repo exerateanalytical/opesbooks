@@ -58,18 +58,23 @@ class SyncInvoiceToDgiPortalJob implements ShouldQueue
             ->select('syscohada_accounts.code', 'journal_lines.debit', 'journal_lines.credit')
             ->get();
 
-        $baseHt   = 0.00;
-        $totalTax = 0.00;
+        $baseHt    = 0.00;
+        $totalTva  = 0.00;
+        $totalCac  = 0.00;
 
         foreach ($lines as $line) {
             if (in_array($line->code, ['701100', '706000'])) {
                 $baseHt += (float) $line->credit;
             }
-            if ($line->code === '443100') {
-                $totalTax += (float) $line->credit;
+            if ($line->code === '443100') {           // TVA collectée
+                $totalTva += (float) $line->credit;
+            }
+            if ($line->code === '448600') {           // CAC (10% of TVA) — previously omitted
+                $totalCac += (float) $line->credit;
             }
         }
 
+        $totalTax = $totalTva + $totalCac;            // total tax now includes CAC
         $totalTtc = $baseHt + $totalTax;
 
         try {
@@ -81,6 +86,8 @@ class SyncInvoiceToDgiPortalJob implements ShouldQueue
                 'invoice_reference' => $entry->reference_id,
                 'crypto_hash'       => $entry->invoice_crypto_hash,
                 'amount_ht'         => $baseHt,
+                'amount_tva'        => $totalTva,
+                'amount_cac'        => $totalCac,
                 'amount_tax'        => $totalTax,
                 'amount_ttc'        => $totalTtc,
                 'currency'          => 'XAF',
