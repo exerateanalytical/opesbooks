@@ -197,31 +197,65 @@ class FirmController extends Controller
             return response()->json(['message' => 'Company already in portfolio.'], 409);
         }
 
+        // Engagement starts PENDING — no firm staff access is granted until the
+        // client company's OWNER approves the request. This prevents a firm from
+        // attaching (and reading the books of) any company without its consent.
         $firm->clients()->attach($data['company_id'], [
             'engagement_type'        => $data['engagement_type'] ?? 'FULL_OUTSOURCE',
             'billing_mode'           => $data['billing_mode'] ?? 'FIRM_PAYS',
             'notes'                  => $data['notes'] ?? null,
             'assigned_accountant_id' => $data['assigned_accountant_id'] ?? null,
-            'is_active'              => true,
-            'onboarded_at'           => now(),
+            'is_active'              => false,
+            'onboarded_at'           => null,
         ]);
-
-        // Grant all active firm staff access to this new client company
-        $firm->activeStaff()->each(function (User $staff) use ($data) {
-            if (! $staff->belongsToCompany($data['company_id'])) {
-                $staff->companies()->attach($data['company_id'], [
-                    'role'       => 'ACCOUNTANT',
-                    'is_default' => false,
-                ]);
-            }
-        });
 
         $company = Company::findOrFail($data['company_id']);
 
         return response()->json([
-            'message' => 'Client added to portfolio.',
+            'message' => 'Demande d\'engagement envoyée — en attente de l\'approbation du client.',
             'client'  => $this->clientPayload($company, $firm),
         ], 201);
+    }
+
+    /** GET /api/v1/companies/{company}/firm-requests — pending firm engagement requests (client OWNER). */
+    public function pendingFirmRequests(Request $request, Company $company): JsonResponse
+    {
+        $requests = $company->firms()
+            ->wherePivot('is_active', false)
+            ->get()
+            ->map(fn ($firm) => [
+                'firm_id'         => $firm->id,
+                'firm_name'       => $firm->name,
+                'engagement_type' => $firm->pivot->engagement_type,
+                'requested_at'    => $firm->pivot->created_at,
+            ]);
+
+        return response()->json(['requests' => $requests]);
+    }
+
+    /** POST /api/v1/companies/{company}/firm-requests/{firm}/approve — client OWNER grants the firm access. */
+    public function approveFirmRequest(Request $request, Company $company, Firm $firm): JsonResponse
+    {
+        $pending = $firm->clients()->where('companies.id', $company->id)->wherePivot('is_active', false)->exists();
+        abort_unless($pending, 404, 'No pending request from this firm.');
+
+        $firm->clients()->updateExistingPivot($company->id, ['is_active' => true, 'onboarded_at' => now()]);
+
+        // Now grant the firm's active staff accountant access to this company.
+        $firm->activeStaff()->each(function (User $staff) use ($company) {
+            if (! $staff->belongsToCompany($company->id)) {
+                $staff->companies()->attach($company->id, ['role' => 'ACCOUNTANT', 'is_default' => false]);
+            }
+        });
+
+        return response()->json(['message' => "Cabinet « {$firm->name} » approuvé."]);
+    }
+
+    /** POST /api/v1/companies/{company}/firm-requests/{firm}/reject — client OWNER declines the request. */
+    public function rejectFirmRequest(Request $request, Company $company, Firm $firm): JsonResponse
+    {
+        $firm->clients()->detach($company->id);
+        return response()->json(['message' => 'Demande refusée.']);
     }
 
     /** DELETE /api/v1/firm/clients/{company} */
@@ -277,8 +311,10 @@ class FirmController extends Controller
 
         if (! $firm) return response()->json(['message' => 'No firm associated.'], 404);
 
-        $inPortfolio = $firm->clients()->where('companies.id', $company->id)->exists();
-        if (! $inPortfolio) return response()->json(['message' => 'Company not in firm portfolio.'], 403);
+        // Only an APPROVED (active) engagement may be opened — a pending request
+        // grants no access until the client OWNER approves it.
+        $active = $firm->clients()->wherePivot('is_active', true)->where('companies.id', $company->id)->exists();
+        if (! $active) return response()->json(['message' => 'Aucun engagement actif pour cette entreprise.'], 403);
 
         // Fix #14: JUNIOR/ASSISTANT can only open clients assigned to them
         $firmPivot = $firm->pivot;
@@ -363,18 +399,18 @@ class FirmController extends Controller
         $firm = $user->primaryFirm();
 
         $q = trim($request->query('q', ''));
-        if (strlen($q) < 2) return response()->json(['companies' => []]);
+        // Exact-NIU lookup only — a firm onboards a client whose NIU it already
+        // knows. Partial name/NIU search is disabled to prevent enumerating every
+        // company on the platform.
+        if (strlen($q) < 4) return response()->json(['companies' => []]);
 
         $alreadyInPortfolio = $firm
             ? $firm->clients()->pluck('companies.id')
             : collect();
 
-        $companies = Company::where(function ($query) use ($q) {
-                $query->where('name', 'like', "%{$q}%")
-                      ->orWhere('niu', 'like', "%{$q}%");
-            })
+        $companies = Company::where('niu', $q)
             ->whereNotIn('id', $alreadyInPortfolio)
-            ->limit(10)
+            ->limit(5)
             ->get(['id', 'name', 'niu', 'tax_regime', 'subscription_status']);
 
         return response()->json(['companies' => $companies]);

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class SyscohadaAccount extends Model
 {
-    protected $fillable = ['code', 'label', 'class_digit', 'is_active'];
+    protected $fillable = ['company_id', 'code', 'label', 'class_digit', 'is_active'];
 
     public function journalLines()
     {

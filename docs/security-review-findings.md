@@ -26,21 +26,22 @@ verified the authenticated user belonged to the `{company}` in the URL.
 
 ---
 
-## ⚖️ Needs a design decision (documented, not rushed)
+## ✅ Fixed — firm client-consent flow & chart scoping
 
-- **Firm `addClient` lets any firm attach ANY company** *(HIGH)* —
-  `FirmController.php:180-225`. A firm user can attach an arbitrary `company_id` to their
-  portfolio and gain full access to that tenant's books, with **no client consent**. Needs
-  a client-authorization / invitation flow (the company's OWNER must approve) before a firm
-  can onboard it. This is a product decision, not a one-line fix.
-- **Firm `searchCompanies` enumerates every tenant** *(HIGH)* — `FirmController.php:359-381`
-  leaks name/NIU/tax_regime/subscription_status of all companies. Tie to the same
-  consent model (only show companies that invited the firm), or restrict to exact-NIU lookup.
-- **ChartOfAccounts mutates the GLOBAL shared chart** *(MEDIUM)* —
-  `ChartOfAccountsController.php:22-53`. `store`/`update` write to `syscohada_accounts`
-  (shared by all tenants) — a tenant can rename a standard account for everyone. Proper fix:
-  add a nullable `company_id` (null = standard/read-only, set = tenant's custom account) and
-  scope store/update/index to it.
+- **Firm `addClient` no longer grants access without consent** *(HIGH, fixed)* — adding a
+  client now creates a **PENDING** engagement (`is_active = false`) and grants no firm staff
+  access. The client company's OWNER must approve via the new endpoints
+  `GET/POST /companies/{company}/firm-requests[/{firm}/approve|reject]` before any access is
+  granted, and `openClient` now requires an **active** engagement. Verified: after addClient,
+  0 firm staff have access until approval.
+- **Firm `searchCompanies`** *(HIGH, fixed)* — now an **exact-NIU** lookup only (≥4 chars), so
+  a firm can onboard a client whose NIU it already knows but can no longer enumerate every
+  company by partial name/NIU.
+- **ChartOfAccounts per-tenant scoping** *(MEDIUM, fixed)* — added a nullable `company_id`
+  (NULL = standard/shared, read-only; set = the tenant's own custom account). `index` returns
+  standard + the company's own accounts; `store` creates company-owned accounts; `update`
+  rejects edits to standard/other-tenant accounts (403). Verified: editing a standard account
+  returns 403, label unchanged. Codes stay globally unique so the posting layer is unaffected.
 
 ---
 

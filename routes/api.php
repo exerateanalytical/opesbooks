@@ -257,6 +257,14 @@ Route::prefix('v1')->name('v1.')->group(function () {
                 ->middleware(\App\Http\Middleware\RequireRole::class . ':OWNER')
                 ->name('logo.upload');
 
+            // Accounting-firm engagement requests — the client OWNER approves/declines
+            // a firm before it gains access to the books.
+            Route::get('firm-requests', [FirmController::class, 'pendingFirmRequests'])->name('firm-requests');
+            Route::post('firm-requests/{firm}/approve', [FirmController::class, 'approveFirmRequest'])
+                ->middleware(\App\Http\Middleware\RequireRole::class . ':OWNER')->name('firm-requests.approve');
+            Route::post('firm-requests/{firm}/reject', [FirmController::class, 'rejectFirmRequest'])
+                ->middleware(\App\Http\Middleware\RequireRole::class . ':OWNER')->name('firm-requests.reject');
+
             // OWNER/ACCOUNTANT-only operations
             Route::middleware(\App\Http\Middleware\RequireRole::class . ':OWNER,ACCOUNTANT')
                 ->group(function () {
