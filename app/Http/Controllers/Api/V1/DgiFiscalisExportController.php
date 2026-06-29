@@ -39,6 +39,7 @@ class DgiFiscalisExportController extends Controller
                 $join->on('journal_entries.id', '=', 'journal_lines.journal_entry_id')
                     ->where('journal_entries.company_id', $company->id)
                     ->whereIn('journal_entries.transaction_status', ['SUCCESSFUL'])
+                    ->whereNull('journal_entries.deleted_at')
                     ->whereDate('journal_entries.posting_date', '>=', $dateFrom)
                     ->whereDate('journal_entries.posting_date', '<=', $dateTo);
             })

@@ -146,6 +146,7 @@ class FinancialStatementService
             WHERE je.company_id = ?
               AND je.posting_date BETWEEN ? AND ?
               AND je.deleted_at IS NULL
+              AND je.transaction_status = 'SUCCESSFUL'
             GROUP BY sa.code, sa.label
             ORDER BY sa.code
         ", [$companyId, $from, $to]);
