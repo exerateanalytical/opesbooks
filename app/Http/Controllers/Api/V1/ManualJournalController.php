@@ -31,7 +31,7 @@ class ManualJournalController extends Controller
             'source_pipeline'  => ['required', Rule::in(['MANUAL_CASH', 'MANUAL_BANK', 'MANUAL_INVOICE', 'MANUAL_ENTRY'])],
             'memo'             => 'required|string|max:500',
             'lines'            => 'required|array|min:2',
-            'lines.*.account_code' => 'required|string|exists:syscohada_accounts,code',
+            'lines.*.account_code' => ['required', 'string', Rule::exists('syscohada_accounts', 'code')->where('is_active', true)],
             'lines.*.debit'        => 'required|numeric|min:0',
             'lines.*.credit'       => 'required|numeric|min:0',
             'lines.*.description'  => 'nullable|string|max:255',

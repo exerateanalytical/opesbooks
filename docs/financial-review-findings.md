@@ -83,15 +83,15 @@ plafond 750 000 XAF · IRPP progressive + CAC 10% of IRPP · XAF = whole francs.
 
 ---
 
-## 🔧 Remaining software fixes (no tax judgment — can do on request)
+## 🔧 Remaining software fixes (no tax judgment)
 
-- **Idempotency**: a PAID invoice can be credit-noted repeatedly / withholding re-recorded,
-  double-reversing TVA — `CustomerInvoiceController` creditNote/recordWithholding. *(MEDIUM)*
-- **Inactive account → 500**: `ManualJournalController.php:34` validates `exists` but
-  `findByCode` rejects inactive → ModelNotFoundException inside the transaction. *(MEDIUM)*
-- **DGI sync re-send**: `SyncInvoiceToDgiPortalJob` has no row lock / status guard against
-  concurrent or post-certification re-transmission. *(MEDIUM)*
-- **Float money**: several spots round XAF to 2 decimals / use float sums (reports, ledger
+- ✅ **Idempotency** — a PAID invoice can no longer be credit-noted twice, and withholding
+  can only be recorded once per invoice (was double-reversing TVA). *Fixed.*
+- ✅ **Inactive account → 500** — `ManualJournalController` now rejects inactive account codes
+  at validation (422) instead of 500-ing inside the posting transaction. *Fixed.*
+- ⏳ **DGI sync re-send**: `SyncInvoiceToDgiPortalJob` has no row lock / status guard against
+  concurrent or post-certification re-transmission (it does early-return on APPROVED). *(MEDIUM)*
+- ⏳ **Float money**: several spots round XAF to 2 decimals / use float sums (reports, ledger
   PDF, supplier invoicing, DGI export) — should be integer/BigDecimal. *(MEDIUM)*
 
 ---

@@ -245,6 +245,8 @@ class CustomerInvoiceController extends Controller
     {
         abort_if($invoice->company_id !== $company->id, 404);
         abort_if($invoice->status !== 'PAID', 422, 'Credit notes can only be issued on PAID invoices.');
+        // Idempotency: a single invoice may only be credit-noted once.
+        abort_if(CustomerInvoice::where('credit_note_for_id', $invoice->id)->exists(), 422, 'This invoice has already been credit-noted.');
 
         // Post reversal journal entry:
         // Dr 411100 (Clients)  — reverse receivable
@@ -298,6 +300,8 @@ class CustomerInvoiceController extends Controller
     {
         abort_if($invoice->company_id !== $company->id, 404);
         abort_if(!in_array($invoice->status, ['SENT', 'OVERDUE', 'PARTIAL']), 422, 'Invoice must be outstanding.');
+        // Idempotency: withholding can only be recorded once per invoice.
+        abort_if((float) $invoice->withholding_received > 0, 422, 'Withholding has already been recorded for this invoice.');
 
         $data = $request->validate([
             'withholding_received' => 'required|numeric|min:0',
