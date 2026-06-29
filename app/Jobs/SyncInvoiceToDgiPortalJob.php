@@ -29,13 +29,26 @@ class SyncInvoiceToDgiPortalJob implements ShouldQueue
             return;
         }
 
+        // Atomically claim this entry so concurrent workers can't double-
+        // télétransmit it, and an already-APPROVED entry is never re-sent.
+        // Only PENDING / REJECTED entries are claimable; the claim flips the
+        // status to SYNCING in a single conditional UPDATE.
+        $claimed = DB::table('journal_entries')
+            ->where('id', $this->journalEntryId)
+            ->whereIn('dgi_sync_status', ['PENDING', 'REJECTED'])
+            ->update(['dgi_sync_status' => 'SYNCING', 'updated_at' => now()]);
+
+        if ($claimed === 0) {
+            return; // APPROVED, already SYNCING elsewhere, or entry gone
+        }
+
         $entry = DB::table('journal_entries')
             ->join('companies', 'journal_entries.company_id', '=', 'companies.id')
             ->where('journal_entries.id', $this->journalEntryId)
             ->select('journal_entries.*', 'companies.niu', 'companies.name as company_name')
             ->first();
 
-        if (! $entry || $entry->dgi_sync_status === 'APPROVED') {
+        if (! $entry) {
             return;
         }
 

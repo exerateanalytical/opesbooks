@@ -89,10 +89,13 @@ plafond 750 000 XAF · IRPP progressive + CAC 10% of IRPP · XAF = whole francs.
   can only be recorded once per invoice (was double-reversing TVA). *Fixed.*
 - ✅ **Inactive account → 500** — `ManualJournalController` now rejects inactive account codes
   at validation (422) instead of 500-ing inside the posting transaction. *Fixed.*
-- ⏳ **DGI sync re-send**: `SyncInvoiceToDgiPortalJob` has no row lock / status guard against
-  concurrent or post-certification re-transmission (it does early-return on APPROVED). *(MEDIUM)*
+- ✅ **DGI sync re-send** — `SyncInvoiceToDgiPortalJob` now atomically claims an entry
+  (PENDING/REJECTED → SYNCING in one conditional UPDATE) so concurrent workers can't
+  double-télétransmit and an APPROVED entry is never re-sent. *Fixed.*
 - ⏳ **Float money**: several spots round XAF to 2 decimals / use float sums (reports, ledger
-  PDF, supplier invoicing, DGI export) — should be integer/BigDecimal. *(MEDIUM)*
+  PDF, supplier invoicing, DGI export). **Coupled to the tax-engine rounding scale (items 6–7
+  above)** — summing as whole francs only makes sense once the per-amount scale is confirmed,
+  so this is held with the tax-rule items rather than changed blindly. *(MEDIUM)*
 
 ---
 
