@@ -201,7 +201,27 @@ class CustomerInvoiceController extends Controller
     {
         abort_if($invoice->company_id !== $company->id, 404);
         abort_if($invoice->status !== 'DRAFT', 422, 'Only DRAFT invoices can be sent.');
-        $invoice->update(['status' => 'SENT']);
+
+        // Recognise the sale in the general ledger on issuance (accrual basis):
+        // Dr 411100 Clients (TTC) / Cr 701100 Ventes (HT) / Cr 443100 TVA / Cr 448600 CAC.
+        // The DRAFT guard above makes this idempotent (a sent invoice can't re-post).
+        \Illuminate\Support\Facades\DB::transaction(function () use ($company, $invoice) {
+            $entry = $this->poster->post([
+                'company_id'      => $company->id,
+                'posting_date'    => optional($invoice->invoice_date)->format('Y-m-d') ?? now()->toDateString(),
+                'reference_id'    => 'FAC-' . $invoice->invoice_number,
+                'memo'            => "Facture client {$invoice->invoice_number}",
+                'posting_type'    => 'STANDARD',
+                'source_pipeline' => 'MANUAL_INVOICE',
+            ], [
+                ['account_code' => '411100', 'debit' => $invoice->amount_ttc, 'credit' => 0],
+                ['account_code' => '701100', 'debit' => 0, 'credit' => $invoice->amount_ht],
+                ['account_code' => '443100', 'debit' => 0, 'credit' => $invoice->tva_amount],
+                ['account_code' => '448600', 'debit' => 0, 'credit' => $invoice->cac_amount],
+            ]);
+
+            $invoice->update(['status' => 'SENT', 'journal_entry_id' => $entry->id]);
+        });
 
         // Email the client a copy (best-effort).
         $invoice->loadMissing('customer');
@@ -308,8 +328,8 @@ class CustomerInvoiceController extends Controller
             'payment_date'         => 'required|date',
         ]);
 
-        $withholdingAmt = round((float) $data['withholding_received'], 2);
-        $netReceivable  = round($invoice->amount_ttc - $withholdingAmt, 2);
+        $withholdingAmt = round((float) $data['withholding_received'], 0);
+        $netReceivable  = max(0, round($invoice->amount_ttc - $withholdingAmt, 0));
 
         // Post GL entry: Dr 447200 (Créances Précompte) Cr 411000 (Clients)
         $this->poster->post([
@@ -321,7 +341,8 @@ class CustomerInvoiceController extends Controller
             'source_pipeline' => 'MANUAL_INVOICE',
         ], [
             ['account_code' => '447200', 'debit' => $withholdingAmt, 'credit' => 0],
-            ['account_code' => '411000', 'debit' => 0,               'credit' => $withholdingAmt],
+            // 411100 Clients — same control account the invoice/credit-note use.
+            ['account_code' => '411100', 'debit' => 0,               'credit' => $withholdingAmt],
         ]);
 
         $invoice->update([

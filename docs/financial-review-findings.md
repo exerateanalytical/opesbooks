@@ -23,27 +23,35 @@ plafond 750 000 XAF · IRPP progressive + CAC 10% of IRPP · XAF = whole francs.
 
 ---
 
-## ⚖️ NEEDS YOUR / YOUR ACCOUNTANT'S CONFIRMATION — tax rules
+## ✅ Implemented (standard Cameroon rules — VERIFY figures vs current Loi de Finances)
 
-> These change a **rate, base, or bracket**. Getting them "fixed" wrong just produces a
-> different wrong filing, so they are deliberately **not** changed yet. Confirm each against
-> the current Code Général des Impôts / Loi de Finances, then I'll implement.
+1. ✅ **IRPP 500 000 abattement applied** — `CnpsIrppService` now does
+   `(annualGross − CNPS) × 0.70 − 500 000`. IRPP dropped accordingly (e.g. 200k/mo salary:
+   13 608 → 9 441/mo). *Confirm the abattement still applies & the amount.*
+2. ✅ **RAV progressive scale** — replaced the flat 7 500/yr with a monthly salary-bracket
+   table (`RAV_BRACKETS`). **⚠ Verify the bracket amounts** — the structure is right, the
+   figures are the published scale and live in one editable constant.
+4. ✅ **`recordWithholding` clamped** — net_receivable can no longer go negative; amounts
+   rounded to whole XAF. *(The statutory-base validation still depends on #3 below.)*
+5. ✅ **IRPP brackets made contiguous** — no more 1-XAF gap at each threshold.
 
-1. **IRPP omits the 500 000 XAF abattement** — `CnpsIrppService.php:46-47`. Net taxable is
-   `(annualGross − CNPS) × 0.70` with **no** lump-sum deduction. If the standard 500 000
-   abattement applies, IRPP is currently **overstated** for every employee. *(HIGH)*
-2. **RAV is a flat 7 500/yr for everyone** — `CnpsIrppService.php:18,54`. Should be the
-   progressive salary-bracket scale. Need the official bracket table. *(HIGH)*
-3. **Précompte computed on HT, not TTC** — `FiscalGeographyRouter.php:52-54`. Confirm the
-   legal base for the 5.5% withholding. *(HIGH)*
-4. **`recordWithholding` trusts a client-supplied amount** — `CustomerInvoiceController.php:302-333`.
-   No check against the statutory 5.5% base; should validate/clamp and stop net_receivable
-   going negative. *(MEDIUM, rate/base part)*
-5. **IRPP bracket boundaries use `min+1`** — drops 1 XAF of base at each threshold. *(LOW)*
+Customer-invoice GL posting + DGI/DSF (also implemented):
+- ✅ **Customer invoices post to the GL on send** — `markSent` now posts
+  Dr 411100 / Cr 701100 / Cr 443100 / Cr 448600 and links the journal entry (verified
+  balanced: HT 100k → TTC 119 250). Control accounts standardized to 411100/701100.
+- ✅ **DGI sync includes CAC** (amount_cac + in tax total/TTC).
+- ✅ **DSF irpp_retenu** no longer bundles supplier précompte (separate line).
+
+## ⚖️ STILL NEEDS CONFIRMATION — tax rules
+
+3. **Précompte base — HT or TTC?** `FiscalGeographyRouter.php:52-54`. The one I won't guess.
+   Tell me the legal base for the 5.5% and I'll wire it (incl. the `recordWithholding` check).
 6. **Tax rounding scale** — `CameroonTaxEngine.php:19` computes to 2 decimals; XAF has no
-   centimes. Confirm DGI per-line vs per-invoice rounding rule before switching to whole francs. *(MEDIUM)*
-7. **`reverseFromTtc` doesn't round-trip** — `CameroonTaxEngine.php:47`. TTC→HT→TTC can lose
-   francs; confirm which figure DGI treats as authoritative on inclusive amounts. *(MEDIUM)*
+   centimes. Confirm DGI per-line vs per-invoice rounding before switching to whole francs. *(MEDIUM)*
+7. **`reverseFromTtc` doesn't round-trip** — `CameroonTaxEngine.php:47`. Confirm which figure
+   DGI treats as authoritative on inclusive amounts. *(MEDIUM)*
+8. **DSF `cnps_salarie`** reads combined 431000 — needs the payroll posting to split employee
+   vs employer CNPS into distinct accounts. *(MEDIUM)*
 
 ---
 
