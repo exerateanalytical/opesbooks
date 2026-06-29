@@ -80,7 +80,7 @@ class FixedAssetController extends Controller
             'year'  => 'required|integer|min:2020|max:2099',
         ]);
 
-        $processed = $this->svc->runMonthlyDepreciation($data['month'], $data['year']);
+        $processed = $this->svc->runMonthlyDepreciation($data['month'], $data['year'], $company->id);
 
         return response()->json(['processed' => $processed, 'period' => sprintf('%02d/%d', $data['month'], $data['year'])]);
     }

@@ -14,11 +14,12 @@ class RecurringTransactionService
      * Process all due recurring transactions for all companies.
      * Called by the scheduler daily.
      */
-    public function processDue(): int
+    public function processDue(?int $companyId = null): int
     {
         $processed = 0;
         $due = RecurringTransaction::where('is_active', true)
             ->where('next_run_date', '<=', now()->toDateString())
+            ->when($companyId, fn ($q) => $q->where('company_id', $companyId))
             ->with('company')
             ->get();
 

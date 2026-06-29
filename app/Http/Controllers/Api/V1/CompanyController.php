@@ -11,9 +11,24 @@ use Illuminate\Validation\Rule;
 
 class CompanyController extends Controller
 {
-    public function index(): JsonResponse
+    /** Abort unless the caller is a member of (or actively in) this company. */
+    private function ensureAccess(Company $company): void
     {
-        return response()->json(Company::all());
+        $user = auth()->user();
+        abort_unless(
+            $user && ((int) $user->company_id === (int) $company->id || $user->belongsToCompany($company->id)),
+            403,
+            'You do not have access to this company.'
+        );
+    }
+
+    public function index(Request $request): JsonResponse
+    {
+        // Only the companies this user belongs to — never the whole platform.
+        $ids = $request->user()->companies()->pluck('companies.id')
+            ->push($request->user()->company_id)->filter()->unique();
+
+        return response()->json(Company::whereIn('id', $ids)->get());
     }
 
     public function store(Request $request): JsonResponse
@@ -36,6 +51,7 @@ class CompanyController extends Controller
 
     public function show(Company $company): JsonResponse
     {
+        $this->ensureAccess($company);
         $data = $company->toArray();
         $data['logo_url'] = $company->logo_path ? Storage::url($company->logo_path) : null;
         return response()->json($data);
@@ -43,6 +59,7 @@ class CompanyController extends Controller
 
     public function update(Request $request, Company $company): JsonResponse
     {
+        $this->ensureAccess($company);
         $data = $request->validate([
             'name'                => 'sometimes|string|max:255',
             'niu'                 => ['sometimes', 'string', 'max:20', Rule::unique('companies', 'niu')->ignore($company->id)],
@@ -84,6 +101,7 @@ class CompanyController extends Controller
 
     public function destroy(Company $company): JsonResponse
     {
+        $this->ensureAccess($company);
         $company->delete();
 
         return response()->json(null, 204);

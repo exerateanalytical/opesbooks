@@ -12,6 +12,18 @@ class OfflineSyncController extends Controller
 {
     public function __construct(private OfflineSyncService $sync) {}
 
+    /** Resolve the company by NIU and verify the caller belongs to it. */
+    private function resolveOwnedCompany(Request $request, string $niu): Company
+    {
+        $company = Company::where('niu', $niu)->firstOrFail();
+        abort_unless(
+            (int) $request->user()->company_id === (int) $company->id || $request->user()->belongsToCompany($company->id),
+            403,
+            'You do not have access to this company.'
+        );
+        return $company;
+    }
+
     /**
      * POST /api/v1/sync/push
      * Receives an offline bundle from the client and merges it into MySQL.
@@ -33,7 +45,7 @@ class OfflineSyncController extends Controller
             'raw_payloads'                           => 'nullable|array',
         ]);
 
-        $company = Company::where('niu', $data['company_niu'])->firstOrFail();
+        $company = $this->resolveOwnedCompany($request, $data['company_niu']);
         $result  = $this->sync->processBundle($company, $data);
 
         return response()->json([
@@ -53,7 +65,7 @@ class OfflineSyncController extends Controller
             'since'       => 'required|date',
         ]);
 
-        $company = Company::where('niu', $data['company_niu'])->firstOrFail();
+        $company = $this->resolveOwnedCompany($request, $data['company_niu']);
         $delta   = $this->sync->pullDelta($company, $data['since']);
 
         return response()->json($delta);
@@ -66,7 +78,7 @@ class OfflineSyncController extends Controller
     public function status(Request $request): JsonResponse
     {
         $request->validate(['company_niu' => 'required|string']);
-        $company = Company::where('niu', $request->company_niu)->firstOrFail();
+        $company = $this->resolveOwnedCompany($request, $request->company_niu);
 
         return response()->json($this->sync->status($company));
     }

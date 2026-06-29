@@ -238,8 +238,9 @@ Route::prefix('v1')->name('v1.')->group(function () {
             Route::get('status',   [OfflineSyncController::class, 'status'])->name('status');
         });
 
-        // Per-company routes
-        Route::prefix('companies/{company}')->name('companies.')->group(function () {
+        // Per-company routes — EnsureCompanyAccess verifies the caller belongs to
+        // the {company} in the URL (tenant isolation for the whole group).
+        Route::prefix('companies/{company}')->middleware(\App\Http\Middleware\EnsureCompanyAccess::class)->name('companies.')->group(function () {
 
             // Ledger & reporting (all authenticated roles)
             Route::get('ledger',        [LedgerController::class, 'entries'])->name('ledger');

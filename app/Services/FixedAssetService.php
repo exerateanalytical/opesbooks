@@ -40,11 +40,12 @@ class FixedAssetService
      * Dr 681xxx (Dotation aux amortissements)
      * Cr 28xxxx (Amortissements cumulés)
      */
-    public function runMonthlyDepreciation(int $month, int $year): int
+    public function runMonthlyDepreciation(int $month, int $year, ?int $companyId = null): int
     {
         $processed = 0;
         $assets = FixedAsset::where('is_active', true)
             ->whereNull('disposal_date')
+            ->when($companyId, fn ($q) => $q->where('company_id', $companyId))
             ->with('company')
             ->get();
 

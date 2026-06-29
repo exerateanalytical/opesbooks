@@ -66,7 +66,7 @@ class RecurringTransactionController extends Controller
 
     public function runNow(Company $company): JsonResponse
     {
-        $count = $this->svc->processDue();
+        $count = $this->svc->processDue($company->id);
         return response()->json(['message' => "Processed {$count} recurring transaction(s)."]);
     }
 }
