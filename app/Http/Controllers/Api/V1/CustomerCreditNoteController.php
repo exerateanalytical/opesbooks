@@ -55,12 +55,12 @@ class CustomerCreditNoteController extends Controller
         $number = $prefix . str_pad($last + 1, 4, '0', STR_PAD_LEFT);
 
         $entry = $this->posting->post([
-            'company_id'   => $company->id,
-            'entry_date'   => $data['credit_note_date'],
-            'reference'    => $number,
-            'description'  => "Avoir client: {$customer->name}" . ($data['reason'] ? " — {$data['reason']}" : ''),
-            'posting_type' => 'ADJUSTMENT',
-            'source'       => 'CREDIT_NOTE',
+            'company_id'      => $company->id,
+            'posting_date'    => $data['credit_note_date'],
+            'reference_id'    => $number,
+            'memo'            => "Avoir client: {$customer->name}" . ($data['reason'] ? " — {$data['reason']}" : ''),
+            'posting_type'    => 'ADJUSTMENT',
+            'source_pipeline' => 'MANUAL_INVOICE',
         ], [
             // Reverse the original sale: Dr Revenue / Cr Customer
             ['account_code' => '701000', 'debit' => $amountHt,  'credit' => 0],

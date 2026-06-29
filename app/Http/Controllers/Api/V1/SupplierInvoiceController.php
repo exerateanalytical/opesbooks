@@ -42,23 +42,27 @@ class SupplierInvoiceController extends Controller
 
         $amountTtc  = $data['amount_ht'] + $data['tva_amount'] + ($data['cac_amount'] ?? 0);
 
-        $invoice = SupplierInvoice::create([
-            'company_id'     => $company->id,
-            'supplier_id'    => $data['supplier_id'],
-            'invoice_number' => $data['invoice_number'],
-            'supplier_ref'   => $data['supplier_ref'] ?? null,
-            'invoice_date'   => $data['invoice_date'],
-            'due_date'       => $data['due_date'] ?? null,
-            'amount_ht'      => $data['amount_ht'],
-            'tva_amount'     => $data['tva_amount'],
-            'cac_amount'     => $data['cac_amount'] ?? 0,
-            'amount_ttc'     => $amountTtc,
-            'net_payable'    => $amountTtc,
-            'status'         => 'DRAFT',
-            'notes'          => $data['notes'] ?? null,
-        ]);
+        // Atomic: if posting throws (e.g. ledger imbalance), the DRAFT is rolled
+        // back rather than left orphaned.
+        $invoice = \Illuminate\Support\Facades\DB::transaction(function () use ($company, $data, $amountTtc) {
+            $invoice = SupplierInvoice::create([
+                'company_id'     => $company->id,
+                'supplier_id'    => $data['supplier_id'],
+                'invoice_number' => $data['invoice_number'],
+                'supplier_ref'   => $data['supplier_ref'] ?? null,
+                'invoice_date'   => $data['invoice_date'],
+                'due_date'       => $data['due_date'],
+                'amount_ht'      => $data['amount_ht'],
+                'tva_amount'     => $data['tva_amount'],
+                'cac_amount'     => $data['cac_amount'] ?? 0,
+                'amount_ttc'     => $amountTtc,
+                'net_payable'    => $amountTtc,
+                'status'         => 'DRAFT',
+                'notes'          => $data['notes'] ?? null,
+            ]);
 
-        $invoice = $this->svc->post($invoice, $data['expense_account']);
+            return $this->svc->post($invoice, $data['expense_account']);
+        });
 
         return response()->json($invoice->load('supplier'), 201);
     }

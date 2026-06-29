@@ -9,13 +9,14 @@ class PayrollPeriod extends Model
     protected $fillable = [
         'company_id', 'period_month', 'period_year', 'status',
         'total_gross', 'total_cnps_employee', 'total_cnps_employer',
-        'total_irpp', 'total_cac_irpp', 'total_net', 'total_tsr', 'journal_entry_id',
+        'total_irpp', 'total_cac_irpp', 'total_net', 'total_tsr', 'total_rav', 'journal_entry_id',
     ];
 
     protected $casts = [
         'total_gross' => 'float', 'total_cnps_employee' => 'float',
         'total_cnps_employer' => 'float', 'total_irpp' => 'float',
         'total_cac_irpp' => 'float', 'total_net' => 'float', 'total_tsr' => 'float',
+        'total_rav' => 'float',
     ];
 
     public function company()      { return $this->belongsTo(Company::class); }

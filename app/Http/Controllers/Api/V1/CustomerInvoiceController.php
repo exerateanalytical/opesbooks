@@ -309,12 +309,12 @@ class CustomerInvoiceController extends Controller
 
         // Post GL entry: Dr 447200 (Créances Précompte) Cr 411000 (Clients)
         $this->poster->post([
-            'company_id'   => $company->id,
-            'entry_date'   => $data['payment_date'],
-            'reference'    => 'PRC-' . $invoice->invoice_number,
-            'description'  => "Précompte client reçu — facture {$invoice->invoice_number}",
-            'posting_type' => 'STANDARD',
-            'source'       => 'CUSTOMER_INVOICE',
+            'company_id'      => $company->id,
+            'posting_date'    => $data['payment_date'],
+            'reference_id'    => 'PRC-' . $invoice->invoice_number,
+            'memo'            => "Précompte client reçu — facture {$invoice->invoice_number}",
+            'posting_type'    => 'STANDARD',
+            'source_pipeline' => 'MANUAL_INVOICE',
         ], [
             ['account_code' => '447200', 'debit' => $withholdingAmt, 'credit' => 0],
             ['account_code' => '411000', 'debit' => 0,               'credit' => $withholdingAmt],

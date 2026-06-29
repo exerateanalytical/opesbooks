@@ -95,11 +95,11 @@ class PayrollController extends Controller
             'status'       => 'DRAFT',
         ]);
 
-        $totals = ['gross' => 0, 'cnps_e' => 0, 'cnps_r' => 0, 'irpp' => 0, 'cac' => 0, 'net' => 0, 'tsr' => 0];
+        $totals = ['gross' => 0, 'cnps_e' => 0, 'cnps_r' => 0, 'irpp' => 0, 'cac' => 0, 'net' => 0, 'tsr' => 0, 'rav' => 0];
 
         foreach ($employees as $emp) {
             $calc    = $this->cnps->calculate($emp->gross_salary_xaf);
-            $tsrAmt  = round($emp->gross_salary_xaf * 0.01, 2); // TSR = 1% of gross, employer charge
+            $tsrAmt  = round($emp->gross_salary_xaf * 0.01, 0); // TSR = 1% of gross, employer charge (whole XAF)
             PayrollLine::create([
                 'payroll_period_id' => $period->id,
                 'employee_id'       => $emp->id,
@@ -114,6 +114,7 @@ class PayrollController extends Controller
             $totals['cac']    += $calc['cac_irpp'];
             $totals['net']    += $calc['net_salary'];
             $totals['tsr']    += $tsrAmt;
+            $totals['rav']    += $calc['rav'] ?? 0;
         }
 
         $period->update([
@@ -124,6 +125,7 @@ class PayrollController extends Controller
             'total_cac_irpp'       => $totals['cac'],
             'total_net'            => $totals['net'],
             'total_tsr'            => $totals['tsr'],
+            'total_rav'            => $totals['rav'],
         ]);
 
         return response()->json($period->load('lines.employee'), 201);
@@ -142,7 +144,7 @@ class PayrollController extends Controller
         // Cr 421 (Personnel — rémunérations dues) — net à payer
         // Cr 431 (CNPS — part salariale)
         // Cr 432 (CNPS — part patronale)
-        // Cr 447 (État — IRPP + CAC)
+        // Cr 447 (État — IRPP + CAC + RAV, all withheld from salary for the State)
         $entry = $this->poster->post([
             'company_id'      => $company->id,
             'posting_date'    => now()->toDateString(),
@@ -156,7 +158,9 @@ class PayrollController extends Controller
             ['account_code' => '664100', 'debit' => $period->total_tsr ?? 0, 'credit' => 0],
             ['account_code' => '421100', 'debit' => 0, 'credit' => $period->total_net],
             ['account_code' => '431000', 'debit' => 0, 'credit' => $period->total_cnps_employee + $period->total_cnps_employer],
-            ['account_code' => '447000', 'debit' => 0, 'credit' => $period->total_irpp + $period->total_cac_irpp],
+            // 447000 (État) now also carries RAV, which was previously withheld from
+            // net pay but never credited — the cause of the unbalanced entry.
+            ['account_code' => '447000', 'debit' => 0, 'credit' => $period->total_irpp + $period->total_cac_irpp + ($period->total_rav ?? 0)],
             ['account_code' => '447300', 'debit' => 0, 'credit' => $period->total_tsr ?? 0],
         ]);
 
