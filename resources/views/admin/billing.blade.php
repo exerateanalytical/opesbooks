@@ -97,13 +97,7 @@
                         <td class="py-3.5 px-6 font-bold text-white">{{ $tx->company?->name ?? '—' }}</td>
                         <td class="py-3.5 px-4">@include('admin.partials.plan_badge', ['plan' => $tx->plan])</td>
                         <td class="py-3.5 px-4 text-slate-300 font-mono text-[11px]">{{ number_format($tx->amount_xaf) }} XAF</td>
-                        <td class="py-3.5 px-4">
-                            <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase
-                                {{ $tx->status === 'ACTIVE' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' :
-                                   ($tx->status === 'SUSPENDED' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' :
-                                   'bg-red-500/20 text-red-300 border border-red-500/30') }}">
-                                {{ $tx->status }}
-                            </span>
+                        <td class="py-3.5 px-4">@include('admin.partials.sub_status_badge', ['status' => $tx->status])
                         </td>
                         <td class="py-3.5 px-4 text-slate-500 font-mono text-[10px]">{{ $tx->created_at->format('Y-m-d') }}</td>
                     </tr>

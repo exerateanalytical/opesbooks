@@ -63,7 +63,7 @@ class ApiKey extends Model
         return in_array('*', $scopes, true) || in_array($scope, $scopes, true);
     }
 
-    /** Masked display form, e.g. ob_live_sk_••••3f9a */
+    /** Masked display form: env prefix + first 4 secret chars, e.g. ob_live_sk_3f9a••••. */
     public function maskedKey(): string
     {
         return $this->key_prefix . '••••';

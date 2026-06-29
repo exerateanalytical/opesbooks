@@ -48,6 +48,8 @@ class AdminInsightsController extends Controller
 
         $stats = [
             'active'    => Subscription::where('status', 'ACTIVE')->count(),
+            'pending'   => Subscription::where('status', 'PENDING')->count(),
+            'past_due'  => Subscription::where('status', 'PAST_DUE')->count(),
             'suspended' => Subscription::where('status', 'SUSPENDED')->count(),
             'cancelled' => Subscription::where('status', 'CANCELLED')->count(),
         ];
@@ -72,9 +74,11 @@ class AdminInsightsController extends Controller
         }
         ksort($byMonth);
 
+        // Group on a normalised (lower-cased) plan so legacy uppercase API rows
+        // ('STARTER') and admin slug rows ('starter') don't split into two lines.
         $byPlan = Subscription::where('status', 'ACTIVE')
-            ->select('plan', DB::raw('COUNT(*) as n'), DB::raw('SUM(amount_xaf) as total'))
-            ->groupBy('plan')->get();
+            ->select(DB::raw('LOWER(plan) as plan'), DB::raw('COUNT(*) as n'), DB::raw('SUM(amount_xaf) as total'))
+            ->groupBy(DB::raw('LOWER(plan)'))->get();
 
         $recent = Subscription::with('company')->latest()->limit(15)->get();
 
@@ -168,7 +172,8 @@ class AdminInsightsController extends Controller
     public function receipt(Payment $payment)
     {
         $payment->load('company');
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('admin.receipt', compact('payment'));
+        $planName = PlanConfig::where('slug', $payment->plan_slug)->value('name');
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('admin.receipt', compact('payment', 'planName'));
         return $pdf->stream("{$payment->receipt_number}.pdf");
     }
 
@@ -181,12 +186,14 @@ class AdminInsightsController extends Controller
 
         $payment->update(['status' => 'refunded']);
 
+        // Store the magnitude — event_type='refund' denotes the sign. The
+        // amount_xaf column is UNSIGNED, so a negative value would error on MySQL.
         SubscriptionEvent::create([
             'company_id'    => $payment->company_id,
             'admin_user_id' => $request->user()->id,
             'event_type'    => 'refund',
             'to_plan'       => $payment->plan_slug,
-            'amount_xaf'    => -1 * (int) $payment->amount_xaf,
+            'amount_xaf'    => (int) $payment->amount_xaf,
             'notes'         => 'Remboursement de ' . $payment->receipt_number,
             'created_at'    => now(),
         ]);
@@ -208,9 +215,17 @@ class AdminInsightsController extends Controller
     public function audit(Request $request)
     {
         $logs = AuditLog::with(['user', 'company'])
-            ->when($request->search, fn ($q, $s) => $q->where('action', 'like', "%{$s}%")
-                ->orWhere('model_type', 'like', "%{$s}%"))
-            ->when($request->action, fn ($q, $a) => $q->where('action', $a))
+            ->when($request->search, fn ($q, $s) => $q->where(function ($w) use ($s) {
+                $w->where('action', 'like', "%{$s}%")
+                  ->orWhere('model_type', 'like', "%{$s}%")
+                  ->orWhere('ip_address', 'like', "%{$s}%")
+                  ->orWhereHas('user', fn ($u) => $u->where('name', 'like', "%{$s}%")->orWhere('email', 'like', "%{$s}%"))
+                  ->orWhereHas('company', fn ($c) => $c->where('name', 'like', "%{$s}%"));
+            }))
+            // Stored actions are 'IMPERSONATE' or 'METHOD:path' (POST:..., DELETE:...).
+            ->when($request->action, fn ($q, $a) => $a === 'IMPERSONATE'
+                ? $q->where('action', $a)
+                : $q->where('action', 'like', $a . ':%'))
             ->latest('created_at')
             ->paginate(50)
             ->withQueryString();
@@ -220,10 +235,14 @@ class AdminInsightsController extends Controller
 
     public function system()
     {
+        // Queue is degraded when a large backlog has piled up (worker stalled/absent).
+        $pending = Schema::hasTable('jobs') ? DB::table('jobs')->count() : null;
+        $queueOk = $pending !== null && $pending < 100;
+
         $services = [
             'Database'     => $this->checkDatabase(),
             'Cache'        => $this->checkCache(),
-            'Queue'        => ['ok' => Schema::hasTable('jobs'), 'detail' => Schema::hasTable('jobs') ? (DB::table('jobs')->count() . ' pending') : 'no jobs table'],
+            'Queue'        => ['ok' => $queueOk, 'detail' => $pending === null ? 'no jobs table' : ($pending . ' pending' . ($pending >= 100 ? ' (backlog)' : ''))],
             'Storage'      => ['ok' => is_writable(storage_path()), 'detail' => is_writable(storage_path()) ? 'writable' : 'not writable'],
         ];
 
@@ -260,6 +279,10 @@ class AdminInsightsController extends Controller
     public function retryJob(string $uuid)
     {
         \Illuminate\Support\Facades\Artisan::call('queue:retry', ['id' => [$uuid]]);
+        $out = \Illuminate\Support\Facades\Artisan::output();
+        if (stripos($out, 'Unable to find') !== false) {
+            return back()->withErrors(['job' => 'Job introuvable (déjà relancé ou supprimé).']);
+        }
         return back()->with('success', 'Job relancé.');
     }
 
@@ -267,6 +290,10 @@ class AdminInsightsController extends Controller
     public function deleteJob(string $uuid)
     {
         \Illuminate\Support\Facades\Artisan::call('queue:forget', ['id' => $uuid]);
+        $out = \Illuminate\Support\Facades\Artisan::output();
+        if (stripos($out, 'No failed job') !== false || stripos($out, 'Unable to find') !== false) {
+            return back()->withErrors(['job' => 'Job introuvable.']);
+        }
         return back()->with('success', 'Job supprimé.');
     }
 
@@ -298,7 +325,7 @@ class AdminInsightsController extends Controller
                 lines: [$data['message']],
             ));
         } catch (\Throwable $e) {
-            return back()->with('success', 'Notification in-app envoyée (email indisponible).');
+            return back()->with('warning', 'Notification in-app envoyée, mais email indisponible.');
         }
 
         return back()->with('success', 'Message envoyé aux propriétaires.');

@@ -15,8 +15,8 @@
     <select name="action"
             class="bg-[#1C2A3A] border border-[#334155] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#F59E0B]/60">
         <option value="" @selected(request('action') === '' || request('action') === null)>All Actions</option>
-        @foreach(['CREATE','UPDATE','DELETE','IMPERSONATE','LOGIN'] as $act)
-            <option value="{{ $act }}" @selected(request('action') === $act)>{{ $act }}</option>
+        @foreach(['POST' => 'Create (POST)', 'PUT' => 'Update (PUT)', 'PATCH' => 'Modify (PATCH)', 'DELETE' => 'Delete', 'IMPERSONATE' => 'Impersonate'] as $val => $label)
+            <option value="{{ $val }}" @selected(request('action') === $val)>{{ $label }}</option>
         @endforeach
     </select>
     <button type="submit"
@@ -41,13 +41,13 @@
             <tbody class="text-xs font-medium divide-y divide-slate-800/60">
                 @forelse($logs as $log)
                     @php
-                        $a = strtoupper($log->action);
-                        $actionColor = match($a) {
-                            'CREATE', 'CREATED' => 'text-emerald-400',
-                            'UPDATE' => 'text-blue-400',
+                        // Actions are 'IMPERSONATE' or 'METHOD:path' — colour by the verb prefix.
+                        $verb = strtoupper(strtok($log->action, ':'));
+                        $actionColor = match($verb) {
+                            'POST' => 'text-emerald-400',
+                            'PUT', 'PATCH' => 'text-blue-400',
                             'DELETE' => 'text-red-400',
                             'IMPERSONATE' => 'text-amber-400',
-                            'LOGIN' => 'text-slate-400',
                             default => 'text-slate-300',
                         };
                     @endphp
@@ -58,7 +58,9 @@
                         <td class="py-3.5 px-4">
                             <span class="font-black uppercase text-[10px] {{ $actionColor }}">{{ $log->action }}</span>
                         </td>
-                        <td class="py-3.5 px-4 text-slate-400">{{ class_basename($log->model_type) }} #{{ $log->model_id }}</td>
+                        <td class="py-3.5 px-4 text-slate-400">
+                            @if($log->model_type){{ class_basename($log->model_type) }} #{{ $log->model_id }}@else<span class="text-slate-600">—</span>@endif
+                        </td>
                         <td class="py-3.5 px-4 font-mono text-[10px] text-slate-500">{{ $log->ip_address }}</td>
                     </tr>
                 @empty

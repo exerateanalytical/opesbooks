@@ -17,6 +17,8 @@
             <div class="flex items-center gap-3">
                 <span class="text-sm font-black text-white uppercase tracking-wide">{{ $plan->name }}</span>
                 <span class="text-[10px] font-mono text-slate-500">{{ $plan->slug }}</span>
+                @php $onPlan = $usage[$plan->slug] ?? 0; @endphp
+                @if($onPlan > 0)<span class="text-[9px] font-black uppercase tracking-widest text-slate-400 bg-[#1C2A3A] border border-[#334155] rounded px-1.5 py-0.5">{{ $onPlan }} tenant(s)</span>@endif
             </div>
             <label class="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 cursor-pointer">
                 <input type="checkbox" name="is_active" value="1" {{ $plan->is_active ? 'checked' : '' }}
@@ -24,7 +26,7 @@
                 Active
             </label>
         </div>
-        <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 items-end">
+        <div class="grid grid-cols-2 lg:grid-cols-6 gap-3 items-end">
             <div class="col-span-2 lg:col-span-1">
                 <label class="block text-[9px] font-black uppercase tracking-widest mb-1 text-slate-500">Name</label>
                 <input type="text" name="name" value="{{ $plan->name }}" required
@@ -43,6 +45,16 @@
             <div>
                 <label class="block text-[9px] font-black uppercase tracking-widest mb-1 text-slate-500">Max users (-1=∞)</label>
                 <input type="number" name="max_users" value="{{ $plan->max_users }}" min="-1" required
+                       class="w-full bg-[#1C2A3A] border border-[#334155] rounded-lg px-3 py-2 text-xs text-white outline-none focus:border-amber-500">
+            </div>
+            <div>
+                <label class="block text-[9px] font-black uppercase tracking-widest mb-1 text-slate-500">Invoices/mo (-1=∞)</label>
+                <input type="number" name="max_invoices_per_month" value="{{ $plan->max_invoices_per_month }}" min="-1" required
+                       class="w-full bg-[#1C2A3A] border border-[#334155] rounded-lg px-3 py-2 text-xs text-white outline-none focus:border-amber-500">
+            </div>
+            <div>
+                <label class="block text-[9px] font-black uppercase tracking-widest mb-1 text-slate-500">API calls/hr (0=off)</label>
+                <input type="number" name="api_calls_per_hour" value="{{ $plan->api_calls_per_hour }}" min="-1" required
                        class="w-full bg-[#1C2A3A] border border-[#334155] rounded-lg px-3 py-2 text-xs text-white outline-none focus:border-amber-500">
             </div>
             <button class="px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest text-slate-900 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 transition-all">

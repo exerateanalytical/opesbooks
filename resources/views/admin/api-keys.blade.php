@@ -65,7 +65,7 @@
             </div>
             <div>
                 <label class="block text-[9px] font-black uppercase tracking-widest text-slate-500 mb-1.5">Rate Limit (per hour)</label>
-                <input type="number" name="rate_limit" value="1000" min="1"
+                <input type="number" name="rate_limit" value="1000" min="10" max="100000"
                        class="w-full bg-[#1C2A3A] border border-[#334155] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#F59E0B]/60">
             </div>
             <div>
@@ -108,6 +108,7 @@
                     <th class="py-3 px-4">Scopes</th>
                     <th class="py-3 px-4">Rate</th>
                     <th class="py-3 px-4">Last Used</th>
+                    <th class="py-3 px-4">Expires</th>
                     <th class="py-3 px-4">Status</th>
                     <th class="py-3 px-4">Actions</th>
                 </tr>
@@ -133,13 +134,21 @@
                         </td>
                         <td class="py-3.5 px-4 text-slate-400 font-mono text-[10px]">{{ $key->rate_limit . '/h' }}</td>
                         <td class="py-3.5 px-4 text-slate-500 text-[10px]">{{ $key->last_used_at?->diffForHumans() ?? 'never' }}</td>
+                        @php $expired = $key->status === 'ACTIVE' && $key->expires_at && $key->expires_at->isPast(); @endphp
+                        <td class="py-3.5 px-4 font-mono text-[10px] {{ $expired ? 'text-red-400' : 'text-slate-500' }}">
+                            {{ $key->expires_at?->format('Y-m-d') ?? 'never' }}
+                        </td>
                         <td class="py-3.5 px-4">
-                            <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase
-                                {{ $key->status === 'ACTIVE'
-                                    ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                                    : 'bg-red-500/20 text-red-300 border border-red-500/30' }}">
-                                {{ $key->status }}
-                            </span>
+                            @if($expired)
+                                <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase bg-amber-500/20 text-amber-300 border border-amber-500/30">Expired</span>
+                            @else
+                                <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase
+                                    {{ $key->status === 'ACTIVE'
+                                        ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                                        : 'bg-red-500/20 text-red-300 border border-red-500/30' }}">
+                                    {{ $key->status }}
+                                </span>
+                            @endif
                         </td>
                         <td class="py-3.5 px-4">
                             @if($key->status === 'ACTIVE')
@@ -158,7 +167,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="9" class="py-12 text-center text-slate-500 text-sm">No API keys issued yet.</td>
+                        <td colspan="10" class="py-12 text-center text-slate-500 text-sm">No API keys issued yet.</td>
                     </tr>
                 @endforelse
             </tbody>

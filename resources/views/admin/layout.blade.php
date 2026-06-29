@@ -104,6 +104,11 @@
                 {{ session('success') }}
             </div>
         @endif
+        @if(session('warning'))
+            <div class="mb-6 px-4 py-3 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-300 text-sm font-semibold">
+                {{ session('warning') }}
+            </div>
+        @endif
         @if($errors->any())
             <div class="mb-6 px-4 py-3 rounded-xl bg-red-500/15 border border-red-500/30 text-red-300 text-sm font-semibold">
                 {{ $errors->first() }}

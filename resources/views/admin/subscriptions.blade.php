@@ -8,14 +8,22 @@
     <p class="text-slate-500 text-xs mt-1">Across all tenants</p>
 </div>
 
-<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
     <div class="bg-[#151F2E] border border-[#253347] rounded-2xl p-5">
         <div class="text-[9px] font-black uppercase tracking-widest text-slate-500">Active</div>
         <div class="text-3xl font-black text-emerald-400 mt-2">{{ number_format($stats['active']) }}</div>
     </div>
     <div class="bg-[#151F2E] border border-[#253347] rounded-2xl p-5">
+        <div class="text-[9px] font-black uppercase tracking-widest text-slate-500">Pending</div>
+        <div class="text-3xl font-black text-sky-400 mt-2">{{ number_format($stats['pending']) }}</div>
+    </div>
+    <div class="bg-[#151F2E] border border-[#253347] rounded-2xl p-5">
+        <div class="text-[9px] font-black uppercase tracking-widest text-slate-500">Past Due</div>
+        <div class="text-3xl font-black text-amber-400 mt-2">{{ number_format($stats['past_due']) }}</div>
+    </div>
+    <div class="bg-[#151F2E] border border-[#253347] rounded-2xl p-5">
         <div class="text-[9px] font-black uppercase tracking-widest text-slate-500">Suspended</div>
-        <div class="text-3xl font-black text-amber-400 mt-2">{{ number_format($stats['suspended']) }}</div>
+        <div class="text-3xl font-black text-orange-400 mt-2">{{ number_format($stats['suspended']) }}</div>
     </div>
     <div class="bg-[#151F2E] border border-[#253347] rounded-2xl p-5">
         <div class="text-[9px] font-black uppercase tracking-widest text-slate-500">Cancelled</div>
@@ -27,6 +35,8 @@
     $filters = [
         ['label' => 'All', 'value' => null],
         ['label' => 'ACTIVE', 'value' => 'ACTIVE'],
+        ['label' => 'PENDING', 'value' => 'PENDING'],
+        ['label' => 'PAST_DUE', 'value' => 'PAST_DUE'],
         ['label' => 'SUSPENDED', 'value' => 'SUSPENDED'],
         ['label' => 'CANCELLED', 'value' => 'CANCELLED'],
     ];
@@ -115,6 +125,7 @@
                     <option value="bank_transfer">Virement</option>
                     <option value="cash">Espèces</option>
                     <option value="manual">Manuel</option>
+                    <option value="stripe">Stripe</option>
                 </select>
             </div>
             <div class="grid grid-cols-2 gap-3">

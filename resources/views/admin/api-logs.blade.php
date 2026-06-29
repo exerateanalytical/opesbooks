@@ -19,8 +19,9 @@
         <div class="text-2xl font-black text-amber-400 mt-2">{{ number_format($stats['today']) }}</div>
     </div>
     <div class="bg-[#151F2E] border border-[#253347] rounded-2xl p-5">
-        <div class="text-[9px] font-black uppercase tracking-widest text-slate-500">Errors (24h)</div>
+        <div class="text-[9px] font-black uppercase tracking-widest text-slate-500">Server errors 5xx (24h)</div>
         <div class="text-2xl font-black text-red-400 mt-2">{{ number_format($stats['errors_24h']) }}</div>
+        <div class="text-[10px] text-slate-500 mt-1">{{ number_format($stats['client_4xx_24h'] ?? 0) }} client 4xx</div>
     </div>
     <div class="bg-[#151F2E] border border-[#253347] rounded-2xl p-5">
         <div class="text-[9px] font-black uppercase tracking-widest text-slate-500">Avg Latency</div>
@@ -49,6 +50,17 @@
             <option value="PUT" @selected(request('method') === 'PUT')>PUT</option>
             <option value="DELETE" @selected(request('method') === 'DELETE')>DELETE</option>
         </select>
+        <select name="company_id"
+                class="bg-[#1C2A3A] border border-[#334155] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#F59E0B]/60">
+            <option value="">All Companies</option>
+            @foreach($companies as $co)
+                <option value="{{ $co->id }}" @selected((string) request('company_id') === (string) $co->id)>{{ $co->name }}</option>
+            @endforeach
+        </select>
+        <input type="date" name="from" value="{{ request('from') }}" title="From date"
+               class="bg-[#1C2A3A] border border-[#334155] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#F59E0B]/60">
+        <input type="date" name="to" value="{{ request('to') }}" title="To date"
+               class="bg-[#1C2A3A] border border-[#334155] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#F59E0B]/60">
         <button type="submit"
                 class="px-4 py-2.5 rounded-xl text-sm font-black uppercase tracking-widest text-slate-900 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 transition-all">
             Filter

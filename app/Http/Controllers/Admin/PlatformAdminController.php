@@ -41,14 +41,25 @@ class PlatformAdminController extends Controller
         if ($user->id === $request->user()->id) {
             return back()->withErrors(['email' => 'Vous ne pouvez pas révoquer votre propre accès.']);
         }
-        if (User::where('role', 'SUPER_ADMIN')->count() <= 1) {
-            return back()->withErrors(['email' => 'Impossible de révoquer le dernier administrateur.']);
+        if (User::where('role', 'SUPER_ADMIN')->whereNull('disabled_at')->count() <= 1) {
+            return back()->withErrors(['email' => 'Impossible de révoquer le dernier administrateur actif.']);
         }
 
-        // Offboard: revoke any tokens and remove the platform-admin account.
+        // Soft-revoke: disable + kill tokens, but keep the row so this admin's
+        // past audit-log / announcement attribution is preserved.
         $user->tokens()->delete();
-        $user->delete();
+        $user->update(['disabled_at' => now()]);
 
         return back()->with('success', 'Accès administrateur révoqué.');
+    }
+
+    public function reinstate(Request $request, User $user)
+    {
+        if ($user->role !== 'SUPER_ADMIN') {
+            abort(404);
+        }
+        $user->update(['disabled_at' => null]);
+
+        return back()->with('success', 'Accès administrateur rétabli.');
     }
 }

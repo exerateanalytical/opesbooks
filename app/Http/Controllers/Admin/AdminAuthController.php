@@ -26,7 +26,8 @@ class AdminAuthController extends Controller
         // Constant-ish failure path: wrong creds OR not a platform admin.
         if (! $user
             || ! Hash::check($credentials['password'], $user->password)
-            || $user->role !== 'SUPER_ADMIN') {
+            || $user->role !== 'SUPER_ADMIN'
+            || $user->disabled_at) {
             return back()
                 ->withErrors(['email' => 'Invalid credentials or insufficient role.'])
                 ->withInput($request->only('email'));

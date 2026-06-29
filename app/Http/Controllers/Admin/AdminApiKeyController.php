@@ -42,7 +42,7 @@ class AdminApiKeyController extends Controller
             'company_id'  => 'required|exists:companies,id',
             'name'        => 'required|string|max:100',
             'environment' => 'required|in:live,test',
-            'scopes'      => 'array',
+            'scopes'      => 'required|array|min:1',
             'scopes.*'    => 'string|in:' . implode(',', self::SCOPES),
             'rate_limit'  => 'required|integer|min:10|max:100000',
             'expires_at'  => 'nullable|date|after:today',

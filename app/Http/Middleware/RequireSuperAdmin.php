@@ -13,7 +13,7 @@ class RequireSuperAdmin
     public function handle(Request $request, Closure $next)
     {
         $user = $request->user();
-        if (!$user || $user->role !== 'SUPER_ADMIN') {
+        if (!$user || $user->role !== 'SUPER_ADMIN' || $user->disabled_at) {
             abort(403, 'Platform admin access required.');
         }
 

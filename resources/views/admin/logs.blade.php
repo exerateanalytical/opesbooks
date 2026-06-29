@@ -3,14 +3,23 @@
 @section('title', 'Error Logs')
 
 @section('content')
-<div class="mb-8 flex items-center justify-between">
+<div class="mb-8 flex items-center justify-between gap-4 flex-wrap">
     <div>
-        <h1 class="text-2xl font-black text-white uppercase tracking-wide">Error Logs</h1>
-        <p class="text-slate-500 text-xs mt-1">Most recent application log entries (tail of laravel.log)</p>
+        <h1 class="text-2xl font-black text-white uppercase tracking-wide">{{ $showAll ? 'Application Logs' : 'Error Logs' }}</h1>
+        <p class="text-slate-500 text-xs mt-1">
+            {{ $showAll ? 'All levels' : 'Errors & warnings only' }} — tail of laravel.log
+            @if($truncated)<span class="text-amber-400">· showing last 256&nbsp;KB</span>@endif
+        </p>
     </div>
-    <span class="text-[10px] font-mono font-black px-3 py-1 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30">
-        {{ count($entries) }} entries
-    </span>
+    <div class="flex items-center gap-3">
+        <div class="flex items-center gap-1 bg-[#1C2A3A] border border-[#334155] rounded-xl p-1">
+            <a href="{{ route('admin.logs') }}" class="px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all {{ ! $showAll ? 'bg-red-500/20 text-red-300' : 'text-slate-400 hover:text-white' }}">Errors</a>
+            <a href="{{ route('admin.logs', ['level' => 'all']) }}" class="px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all {{ $showAll ? 'bg-amber-500/20 text-amber-300' : 'text-slate-400 hover:text-white' }}">All</a>
+        </div>
+        <span class="text-[10px] font-mono font-black px-3 py-1 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30">
+            {{ count($entries) }} entries
+        </span>
+    </div>
 </div>
 
 <div class="bg-[#151F2E] border border-[#253347] rounded-2xl overflow-hidden">

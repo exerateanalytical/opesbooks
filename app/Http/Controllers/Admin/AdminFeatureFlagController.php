@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Company;
 use App\Models\FeatureFlag;
 use App\Services\FeatureFlagService;
 use Illuminate\Http\Request;
@@ -19,9 +20,10 @@ class AdminFeatureFlagController extends Controller
 
     public function index()
     {
-        $flags   = FeatureFlag::orderBy('name')->get();
-        $targets = self::TARGETS;
-        return view('admin.feature-flags', compact('flags', 'targets'));
+        $flags     = FeatureFlag::orderBy('name')->get();
+        $targets   = self::TARGETS;
+        $companies = Company::orderBy('name')->get(['id', 'name']);
+        return view('admin.feature-flags', compact('flags', 'targets', 'companies'));
     }
 
     public function update(Request $request, FeatureFlag $flag)
@@ -31,10 +33,14 @@ class AdminFeatureFlagController extends Controller
             'specific_company_ids'   => 'nullable|array',
             'specific_company_ids.*' => 'integer',
         ]);
-        $flag->update([
-            'enabled_for'          => $data['enabled_for'],
-            'specific_company_ids' => $data['specific_company_ids'] ?? null,
-        ]);
+
+        $update = ['enabled_for' => $data['enabled_for']];
+        // Only touch the company list for the 'specific_companies' target, so
+        // switching to another target doesn't silently wipe a saved list.
+        if ($data['enabled_for'] === 'specific_companies') {
+            $update['specific_company_ids'] = $data['specific_company_ids'] ?? [];
+        }
+        $flag->update($update);
         app(FeatureFlagService::class)->clearCache($flag->key);
 
         return back()->with('success', "Fonctionnalité « {$flag->name} » mise à jour.");

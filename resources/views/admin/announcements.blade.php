@@ -38,8 +38,8 @@
                 <select name="target_plan"
                         class="w-full bg-[#1C2A3A] border border-[#334155] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#F59E0B]/60">
                     <option value="" @selected(old('target_plan') === '' || old('target_plan') === null)>All plans</option>
-                    @foreach(['STARTER','GROWTH','ENTERPRISE'] as $p)
-                        <option value="{{ $p }}" @selected(old('target_plan') === $p)>{{ $p }}</option>
+                    @foreach($plans as $p)
+                        <option value="{{ $p->slug }}" @selected(old('target_plan') === $p->slug)>{{ $p->name }}</option>
                     @endforeach
                 </select>
             </div>
@@ -99,7 +99,7 @@
                     <h3 class="font-bold text-white text-sm">{{ $a->title }}</h3>
                     <p class="text-slate-400 text-xs mt-1">{{ $a->body }}</p>
                     <div class="flex flex-wrap items-center gap-x-4 gap-y-1 mt-3 text-[10px] text-slate-500 font-mono">
-                        <span>{{ $a->target_plan ?: 'All plans' }} / {{ $a->targetCompany?->name ?? 'All companies' }}</span>
+                        <span class="inline-flex items-center gap-1">@if($a->target_plan)@include('admin.partials.plan_badge', ['plan' => $a->target_plan])@else All plans @endif / {{ $a->targetCompany?->name ?? 'All companies' }}</span>
                         <span>Published: {{ $a->published_at?->format('Y-m-d H:i') ?? '—' }}</span>
                         <span>Expires: {{ $a->expires_at?->format('Y-m-d H:i') ?? '—' }}</span>
                     </div>

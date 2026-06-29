@@ -43,6 +43,9 @@ class PlatformSetting extends Model
         Cache::forget("platform_setting:{$key}");
     }
 
+    /** Flags actually consumed by the application (others are not yet wired). */
+    public const WIRED = ['dgi_auto_sync', 'maintenance_mode'];
+
     /** All feature flags resolved to their current boolean state. */
     public static function allFlags(): array
     {
@@ -52,6 +55,7 @@ class PlatformSetting extends Model
                 'label'       => $label,
                 'description' => $desc,
                 'enabled'     => static::flag($key, $default),
+                'wired'       => in_array($key, self::WIRED, true),
             ];
         }
         return $out;

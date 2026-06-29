@@ -22,20 +22,29 @@
             </thead>
             <tbody class="divide-y divide-slate-800/60">
                 @foreach($admins as $a)
-                <tr class="hover:bg-[#1C2A3A]/30">
+                <tr class="hover:bg-[#1C2A3A]/30 {{ $a->disabled_at ? 'opacity-60' : '' }}">
                     <td class="px-5 py-3 font-bold text-white">
                         {{ $a->name }}
                         @if($a->id === auth()->id())<span class="ml-2 text-[9px] font-black uppercase tracking-widest text-amber-300">You</span>@endif
+                        @if($a->disabled_at)<span class="ml-2 text-[9px] font-black uppercase tracking-widest text-red-400">Revoked</span>@endif
+                        @if(! $a->hasTwoFactorEnabled() && ! $a->disabled_at)<span class="ml-2 text-[9px] font-black uppercase tracking-widest text-amber-300" title="2FA not enabled on this privileged account">⚠ No 2FA</span>@endif
                     </td>
                     <td class="px-5 py-3 text-slate-300">{{ $a->email }}</td>
                     <td class="px-5 py-3 text-slate-500 text-xs">{{ $a->last_login_at ? $a->last_login_at->format('Y-m-d H:i') : '—' }}</td>
                     <td class="px-5 py-3 text-right">
-                        @if($a->id !== auth()->id() && $admins->count() > 1)
-                        <form method="POST" action="{{ route('admin.administrators.revoke', $a) }}"
-                              onsubmit="return confirm('Révoquer définitivement l\'accès de {{ $a->email }} ?')">
-                            @csrf
-                            <button class="text-[10px] font-black uppercase tracking-widest text-red-400 hover:text-red-300">Revoke</button>
-                        </form>
+                        @if($a->id !== auth()->id())
+                            @if($a->disabled_at)
+                            <form method="POST" action="{{ route('admin.administrators.reinstate', $a) }}">
+                                @csrf
+                                <button class="text-[10px] font-black uppercase tracking-widest text-emerald-400 hover:text-emerald-300">Reinstate</button>
+                            </form>
+                            @else
+                            <form method="POST" action="{{ route('admin.administrators.revoke', $a) }}"
+                                  onsubmit="return confirm('Révoquer l\'accès de {{ $a->email }} ?')">
+                                @csrf
+                                <button class="text-[10px] font-black uppercase tracking-widest text-red-400 hover:text-red-300">Revoke</button>
+                            </form>
+                            @endif
                         @endif
                     </td>
                 </tr>
